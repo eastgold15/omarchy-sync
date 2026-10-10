@@ -23,12 +23,7 @@ Omarsync records:
 omarchy plugin add https://github.com/lukebest/omarsync.git --enable
 ```
 
-The Omarchy plugin system does not put a plugin's `bin/` on `PATH`, so the terminal command is not available right after installing. To use `omarsync` from a terminal, add a small wrapper (a symlink does not work — the script locates its `src/` through its own path):
-
-```sh
-printf '#!/bin/sh\nexec "$HOME/.config/omarchy/plugins/io.github.lukebest.omarsync/bin/omarsync" "$@"\n' \
-  > ~/.local/bin/omarsync && chmod +x ~/.local/bin/omarsync
-```
+The Omarchy plugin system does not put a plugin's `bin/` on `PATH`, so the CLI installs its own shim: the first time the wrapper runs (the panel scans status right after installing), it creates `~/.local/bin/omarsync`, which is already on `PATH` in Omarchy. An existing file with that name that was not created by Omarsync is left untouched.
 
 Requires `git`, `rsync`, the system `lua` and `mise` (`/usr/bin/lua`, `/usr/bin/mise`), and the system GitHub CLI at `/usr/bin/gh`. Copies installed only into a user directory are ignored. If anything is missing, the panel can install it:
 

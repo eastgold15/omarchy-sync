@@ -59,6 +59,23 @@ unset LD_PRELOAD LD_LIBRARY_PATH BASH_ENV ENV IFS CDPATH PYTHONPATH NODE_OPTIONS
 
 ROOT=${OMARSYNC_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 
+# 自愈 shim:Omarchy 插件系统不会把插件的 bin/ 放进 PATH,
+# 但面板每次状态扫描都会跑到这里——趁机把 ~/.local/bin/omarsync 补上。
+# 只在自己创建的文件上更新,绝不覆盖用户已有的同名文件。
+shim="${HOME}/.local/bin/omarsync"
+shim_body="#!/bin/sh
+exec \"\$HOME/.config/omarchy/plugins/io.github.lukebest.omarsync/bin/omarsync\" \"\$@\""
+if [[ $ROOT == "$HOME/.config/omarchy/plugins/"* ]]; then
+  if [[ ! -e $shim ]]; then
+    /usr/bin/mkdir -p "${HOME}/.local/bin"
+    printf '%s\n' "$shim_body" >"$shim"
+    /usr/bin/chmod 755 "$shim"
+  elif [[ -f $shim && ! -L $shim ]] && /usr/bin/grep -q 'omarchy/plugins/io.github.lukebest.omarsync/bin/omarsync' "$shim" 2>/dev/null; then
+    printf '%s\n' "$shim_body" >"$shim"
+    /usr/bin/chmod 755 "$shim"
+  fi
+fi
+
 # lua 必须来自不可写的系统目录;不接受用户目录里的副本
 LUA_BIN=""
 for candidate in /usr/bin/lua /bin/lua; do
