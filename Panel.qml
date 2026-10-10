@@ -48,7 +48,7 @@ Panel {
     if (!root.hostWidget || root.hostWidget.statusReady !== true)
       return ""
     if (root.sync.ghInstalled !== true || root.sync.loggedIn !== true || root.sync.initialized !== true)
-      return "Get started"
+      return "setup"
     return ""
   }
 
@@ -203,7 +203,7 @@ Panel {
 
         Button {
           width: parent.width
-          text: root.working ? "Working…" : "Push"
+          text: root.working ? "Working…" : "push"
           visible: root.ready && (root.sync.dirty === true || (root.sync.ahead || 0) > 0)
           enabled: !root.working
           opacity: enabled ? 1 : 0.45
@@ -215,7 +215,7 @@ Panel {
 
         Button {
           width: parent.width
-          text: (root.firstApply && root.sync.remoteSigned !== true) ? "Apply this commit" : "Apply"
+          text: (root.firstApply && root.sync.remoteSigned !== true) ? "apply this commit" : "apply"
           visible: root.canApply && ((root.sync.behind || 0) > 0 || root.firstApply || root.sync.remoteSigned !== true)
           enabled: !root.working
           opacity: enabled ? 1 : 0.45
