@@ -221,6 +221,9 @@ function M.cmd_push()
     if saved == nil then
       common.die("mise dot save failed: " .. tostring(save_out or ""))
     end
+    if saved then
+      common.log("mise dot checkpoint saved")
+    end
     mise_head = mise.head_snapshot()
   else
     common.warn("mise is not installed; pushing metadata only. Run: omarchy pkg add mise")
@@ -258,6 +261,7 @@ function M.cmd_push()
       common.warn("resolve conflicts with: mise dot conflicts / mise dot pull --take-remote <path>")
       return 1
     end
+    common.log("mise dot history published")
   end
   common.notify("Omarsync", "Pushed " .. common.configured_repo())
   return 0

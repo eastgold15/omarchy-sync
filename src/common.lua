@@ -18,25 +18,30 @@ local HOME = assert(os.getenv("HOME"), "HOME is not set")
 
 -- ===== 日志 =====
 
-function M.log(msg)
-  if M.QUIET then return end
-  io.write("omarsync: " .. msg .. "\n")
-end
-
-function M.warn(msg)
-  io.stderr:write("omarsync: " .. msg .. "\n")
-  -- 同时追加到 last.log,面板可以查看
-  local logf = M.state_dir() .. "/last.log"
+-- 追加一行到 last.log(面板查看用);失败静默忽略
+local function append_log(msg)
   os.execute("/usr/bin/mkdir -p " .. exec.quote(M.state_dir()))
-  local fh = io.open(logf, "a")
+  local fh = io.open(M.state_dir() .. "/last.log", "a")
   if fh then
     fh:write(M.iso8601() .. " omarsync: " .. msg .. "\n")
     fh:close()
   end
 end
 
+function M.log(msg)
+  append_log(msg)
+  if M.QUIET then return end
+  io.write("omarsync: " .. msg .. "\n")
+end
+
+function M.warn(msg)
+  io.stderr:write("omarsync: " .. msg .. "\n")
+  append_log(msg)
+end
+
 function M.die(msg)
   io.stderr:write("omarsync: " .. msg .. "\n")
+  append_log(msg)
   os.exit(1)
 end
 

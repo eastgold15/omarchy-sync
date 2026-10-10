@@ -11,34 +11,34 @@ local status_mod = require("status")
 local trust = require("trust")
 
 local USAGE = [[
-Usage: omarsync <command> [options]
+用法: omarsync <命令> [选项]
 
-Commands:
-  status [--json]     Show login, repo, and whether this machine differs
-  doctor              Check git, rsync, lua, mise, gh, and the local mirror
-  login               Sign in with GitHub CLI (device code, interactive)
-  init [owner/name]   Create or clone the private data repository and
-                      connect the mise dot origin (omarchy-dotfiles)
+命令:
+  status [--json]     显示登录信息、仓库,以及本机是否与远端有差异
+  doctor              检查 git、rsync、lua、mise、gh 和本地镜像
+  login               使用 GitHub CLI 登录(设备码,交互式)
+  init [owner/name]   创建或克隆私有数据仓库,
+                      并连接 mise dot 远端(omarchy-dotfiles)
   push [--quiet] [--notify]
-                      Track scope files with mise dot, save a checkpoint,
-                      commit signed metadata, push both. --quiet skips the notification
+                      用 mise dot 跟踪 scope 文件、保存检查点、
+                      提交签名元数据并推送。--quiet 跳过通知
   trust-key <pub> [priv]
-                      Trust an SSH signing key. Push does this for its own key.
-  pull                Fetch once and detach the mirror at that exact commit
-  apply --commit <40-hex> [--no-packages] [--no-exec] [--trust-signer] [--force]
-                      Apply that commit. The SHA must be the one you reviewed.
-                      Files arrive via mise dot pull; packages, plugins, and
-                      hooks run only for a trusted signature, unless
-                      --no-exec or --force is set.
-  setup               Install mise/GitHub CLI if needed, sign in, create the repositories
+                      信任一个 SSH 签名密钥。push 会自动信任自己的密钥
+  pull                拉取一次,并将镜像分离(detach)到那个确切的提交
+  apply --commit <40位十六进制> [--no-packages] [--no-exec] [--trust-signer] [--force]
+                      应用该提交。SHA 必须是你审查过的那个。
+                      文件通过 mise dot pull 到达;软件包、插件和
+                      钩子仅在签名可信时执行,除非指定了
+                      --no-exec 或 --force。
+  setup               按需安装 mise/GitHub CLI,登录,并创建仓库
   sync [--quiet] [--notify]
-                      push, then pull
-  migrate             Move an old rsync-mirror repository to the mise dot layout
-  scope-path          Print the local scope file path
+                      先 push,再 pull
+  migrate             把旧的 rsync 镜像仓库迁移到 mise dot 布局
+  scope-path          打印本地 scope 文件路径
 
-Files sync through mise dot (track mode; the remote is <github-user>/omarchy-dotfiles).
-Signed metadata (packages, plugins, hooks, theme) stays in <github-user>/omarchy-config.
-Set OMARSYNC_ORIGIN / OMARSYNC_DOT_ORIGIN to use non-GitHub remotes.
+文件通过 mise dot 同步(track 模式;远端是 <github-user>/omarchy-dotfiles)。
+签名元数据(软件包、插件、钩子、主题)保存在 <github-user>/omarchy-config。
+设置 OMARSYNC_ORIGIN / OMARSYNC_DOT_ORIGIN 可使用非 GitHub 远端。
 ]]
 
 -- 退出时刷新一次 status.json(面板通过它感知状态变化)
