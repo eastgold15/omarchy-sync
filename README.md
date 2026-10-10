@@ -46,10 +46,20 @@ Before it overwrites anything, apply copies the current files to `~/.local/state
 
 ## Bar
 
-- Left click opens the panel.
+- Left click opens the panel. **Scan now** is the first button under the status.
 - Middle click pushes.
-- Right click refreshes status.
-- The icon dims until you are signed in, spins while a command is running, and shows a dot when there are local changes to push.
+- Right click scans now. The tooltip says so too.
+
+The icon follows one rule: red means you need to do something.
+
+| Icon | Meaning |
+| --- | --- |
+| Faded cloud | Not signed in or no repository yet. Use **Get started**. |
+| Normal cloud | Up to date. |
+| Red cloud with an up arrow | This machine has changes to push. |
+| Red cloud with a down arrow | The remote has changes to apply. |
+| Red warning sign | The last command failed. The tooltip and panel show why; **View log** has details. |
+| Spinning | A scan or push is running. |
 
 **Scan for changes** defaults to every hour. The same menu can set 15 minutes, 30 minutes, 6 hours, or 24 hours, or turn periodic scanning off. **Scan now**, or a right-click on the icon, checks immediately. Auto push follows the **Auto push** interval (minutes). `0` turns it off. The default interval after you enable it from the panel is 30 minutes.
 
@@ -80,6 +90,8 @@ Which files are uploaded is decided only by `~/.config/omarsync/scope` on this m
 .config/btop
 .config/lazygit
 .config/autostart
+.config/qingjian
+.config/fcitx5
 .local/bin | agent,cursor,cursor-agent
 .local/share/applications | mimeinfo.cache
 .local/share/icons/hicolor | icon-theme.cache
@@ -88,6 +100,8 @@ Which files are uploaded is decided only by `~/.config/omarsync/scope` on this m
 Paths are relative to `$HOME`. Text after `|` is a comma-separated list of rsync exclude patterns. A missing path is skipped. Paths that would include `.ssh`, `.config/gh`, `.config/git`, `.gnupg`, `.config/doubao-murmur`, `.var`, key files, or the local omarsync trust directory are rejected.
 
 Hooks are not scope entries. Put executable scripts in `~/.config/omarsync-hooks/post-apply.d/`. Apply copies them into the snapshot and, for a trusted commit, runs them in the terminal after the files are written. `examples/hooks/10-murmur.sh` re-applies Doubao Murmur patches and, if F9 cannot read the input device, installs a udev rule with sudo. Session cookies under `~/.config/doubao-murmur` are not synced.
+
+Input methods work the same way. For Qingjian (Fcitx5), scope `.config/qingjian` and `.config/fcitx5`; `examples/hooks/20-qingjian.sh` starts the service after apply, or tells you to install the program first. The program, its 200 MB dictionaries, and your learned words are not synced by default. To carry learned words, add `.local/share/qingjian | resources/,dicts/,install-manifest.json`; the last apply wins. A `.env` file (where apps keep API keys) is never synced from any scope path.
 
 ## Apply behavior
 

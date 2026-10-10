@@ -189,6 +189,15 @@ Panel {
           wrapMode: Text.WordWrap
         }
 
+        Text {
+          width: parent.width
+          text: "Faded cloud: not set up. Cloud: up to date.\nRed up: push. Red down: apply. Red !: failed."
+          color: root.dim
+          font.family: root.fontFamily
+          font.pixelSize: Style.font.caption
+          wrapMode: Text.WordWrap
+        }
+
         PanelSeparator { width: parent.width; foreground: root.barForeground }
 
         Button {
@@ -199,6 +208,17 @@ Panel {
           foreground: root.barForeground
           fontFamily: root.fontFamily
           onClicked: root.runPrimary()
+        }
+
+        Button {
+          width: parent.width
+          text: root.working ? "Scanning…" : "Scan now"
+          enabled: !root.working
+          opacity: enabled ? 1 : 0.45
+          leftAlign: true
+          foreground: root.barForeground
+          fontFamily: root.fontFamily
+          onClicked: root.callHost("refreshStatus")
         }
 
         Button {
@@ -245,17 +265,6 @@ Panel {
           foreground: root.barForeground
           fontFamily: root.fontFamily
           onClicked: root.callHost("editScope")
-        }
-
-        Button {
-          width: parent.width
-          text: root.working ? "Scanning…" : "Scan now"
-          enabled: !root.working
-          opacity: enabled ? 1 : 0.45
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.callHost("refreshStatus")
         }
 
         Button {

@@ -373,6 +373,9 @@ exclude_args() {
   local part
   printf '%s\0' "--exclude" ".git/"
   printf '%s\0' "--exclude" "node_modules/"
+  # Apps such as Qingjian keep API keys in a .env next to their config.
+  printf '%s\0' "--exclude" ".env"
+  printf '%s\0' "--exclude" ".env.*"
   [[ -n $csv ]] || return 0
   local IFS=','
   for part in $csv; do
