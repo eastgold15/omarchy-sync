@@ -259,6 +259,15 @@ Panel {
           onClicked: root.callHost("refreshStatus")
         }
 
+        Text {
+          width: parent.width
+          color: root.dim
+          font.family: root.fontFamily
+          font.pixelSize: Style.font.caption
+          wrapMode: Text.WordWrap
+          text: "只检查差异,不同步:本地有改动 → 显示 push;远程有新快照 → 显示 apply"
+        }
+
         Button {
           width: parent.width
           text: "View log"
@@ -346,6 +355,8 @@ Panel {
                 "2. 点 setup(装依赖、登录 GitHub、建仓库)\n" +
                 "3. 点 apply,终端里看预览后确认\n" +
                 "4. 首次会问是否信任签名密钥,选是即可\n\n" +
+                "Scan = 只检查本机/远程有无差异,不同步文件。\n" +
+                "Settings 里可改自动扫描间隔,Auto push 可自动上传。\n\n" +
                 "apply 前会自动备份到 ~/.local/state/omarsync/backup/。\n" +
                 "文件没同步过来?终端跑:\n" +
                 "mise dot pull --take-remote-all\n\n" +
