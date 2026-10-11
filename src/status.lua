@@ -58,6 +58,24 @@ local function mise_dirty()
   return saved == true
 end
 
+-- 最近一次 mise 检查点改动的文件(dirty 时面板据此展示/用编辑器打开)。
+-- 历史仓库里路径带 home/ 前缀,剥掉后相对于 $HOME。
+local function changed_files()
+  local repo = os.getenv("HOME") .. "/.local/state/mise/history/repo.git"
+  if not exec.is_dir(repo) then return {} end
+  local out = common.git_out({ "--git-dir=" .. repo, "show", "--name-only", "--format=", "HEAD" }) or ""
+  local files, seen = {}, {}
+  for line in out:gmatch("[^\n]+") do
+    local rel = line:gsub("^home/", "")
+    if rel ~= "" and not seen[rel] then
+      seen[rel] = true
+      files[#files + 1] = rel
+      if #files >= 30 then break end
+    end
+  end
+  return files
+end
+
 function M.collect()
   local st = {
     ghInstalled = false, loggedIn = false, user = "",
@@ -70,6 +88,7 @@ function M.collect()
     lastPush = { host = "", time = "", omarchyVersion = "" },
     running = false, error = "",
     miseConnected = false,
+    changedFiles = {},
   }
 
   if common.gh_installed() then
@@ -94,6 +113,9 @@ function M.collect()
       local dirty = meta.mirror_dirty(mirror)
       if not dirty then
         dirty = mise_dirty()
+        if dirty then
+          st.changedFiles = changed_files()
+        end
       end
       st.dirty = dirty
       local behind, ahead, tip = read_counts(mirror, st.branch)
@@ -153,9 +175,11 @@ function M.cmd_status(args)
     end
   end
   local st = M.collect()
+  -- 两种模式都落盘本次采集结果:否则退出时的二次采集里 mise save
+  -- 已经消费过改动,status.json 会错误地写成 dirty=false
+  local text = M.write_json(st)
+  M.written = true
   if as_json then
-    local text = M.write_json(st)
-    M.written = true
     io.write(text .. "\n")
     return 0
   end

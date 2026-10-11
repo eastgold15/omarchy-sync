@@ -227,6 +227,23 @@ BarWidget {
     root.bar.run("xdg-open " + Model.shellQuote("https://github.com/" + root.status.repo))
   }
 
+  function changedFiles() {
+    var files = root.status && root.status.changedFiles ? root.status.changedFiles : []
+    return files.length ? files : []
+  }
+
+  function openChanges() {
+    var home = Quickshell.env("HOME") || ""
+    var files = root.changedFiles()
+    if (!root.bar || typeof root.bar.run !== "function" || home === "" || files.length === 0)
+      return
+    var parts = []
+    var limit = Math.min(files.length, 10)
+    for (var i = 0; i < limit; i++)
+      parts.push(Model.shellQuote(home + "/" + String(files[i])))
+    root.bar.run("code " + parts.join(" "))
+  }
+
   function editScope() {
     var home = Quickshell.env("HOME") || ""
     if (!root.bar || typeof root.bar.run !== "function")

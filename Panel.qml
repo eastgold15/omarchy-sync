@@ -99,6 +99,36 @@ Panel {
     return "已关闭，开启后默认每 30 分钟上传"
   }
 
+  function changedFiles() {
+    var files = root.sync.changedFiles
+    return files && files.length ? files : []
+  }
+
+  function changedSummary() {
+    var files = root.changedFiles()
+    if (files.length === 0)
+      return ""
+    var names = []
+    var limit = Math.min(files.length, 3)
+    for (var i = 0; i < limit; i++)
+      names.push(String(files[i]).split("/").pop())
+    var text = "改动：" + names.join("、")
+    if (files.length > limit)
+      text += " 等 " + files.length + " 个文件"
+    return text
+  }
+
+  function changesTooltip() {
+    var files = root.changedFiles()
+    var tip = "code <改动的文件>\n"
+    var limit = Math.min(files.length, 10)
+    for (var i = 0; i < limit; i++)
+      tip += (i === 0 ? "" : "\n") + files[i]
+    if (files.length > limit)
+      tip += "\n… 共 " + files.length + " 个"
+    return tip
+  }
+
   function problemText() {
     if (root.hostWidget && root.hostWidget.statusError)
       return String(root.hostWidget.statusError)
@@ -246,7 +276,25 @@ Panel {
           wrapMode: Text.WordWrap
         }
 
+        Text {
+          width: parent.width
+          visible: root.changedSummary() !== ""
+          text: root.changedSummary()
+          color: root.dim
+          font.family: root.fontFamily
+          font.pixelSize: Style.font.caption
+          wrapMode: Text.WordWrap
+        }
+
         PanelSeparator { width: parent.width; foreground: root.barForeground }
+
+        ActionRow {
+          name: "查看改动"
+          desc: "用 VS Code 打开这些文件，确认无误再 push"
+          tooltip: root.changesTooltip()
+          rowVisible: root.changedFiles().length > 0
+          onTriggered: root.callHost("openChanges")
+        }
 
         ActionRow {
           name: "setup"
