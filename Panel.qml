@@ -110,6 +110,7 @@ Panel {
   }
 
   property bool settingsOpen: false
+  property bool helpOpen: false
 
   KeyboardPanel {
     id: panel
@@ -319,6 +320,36 @@ Panel {
           foreground: root.barForeground
           fontFamily: root.fontFamily
           onClicked: root.callHost("toggleNotify")
+        }
+
+        Button {
+          width: parent.width
+          text: root.helpOpen ? "Hide guide" : "Guide"
+          leftAlign: true
+          foreground: root.barForeground
+          fontFamily: root.fontFamily
+          onClicked: root.helpOpen = !root.helpOpen
+        }
+
+        Text {
+          width: parent.width
+          visible: root.helpOpen
+          color: root.dim
+          font.family: root.fontFamily
+          font.pixelSize: Style.font.caption
+          wrapMode: Text.WordWrap
+          lineHeight: 1.25
+          text: "这台电脑(日常):\n" +
+                "改完配置点 push,自动签名上传。中键图标 = push。\n\n" +
+                "新电脑(恢复):\n" +
+                "1. omarchy plugin add 装本插件\n" +
+                "2. 点 setup(装依赖、登录 GitHub、建仓库)\n" +
+                "3. 点 apply,终端里看预览后确认\n" +
+                "4. 首次会问是否信任签名密钥,选是即可\n\n" +
+                "apply 前会自动备份到 ~/.local/state/omarsync/backup/。\n" +
+                "文件没同步过来?终端跑:\n" +
+                "mise dot pull --take-remote-all\n\n" +
+                "完整文档: 仓库里的 docs/NEW_MACHINE.md"
         }
       }
     }
