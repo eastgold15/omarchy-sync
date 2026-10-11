@@ -19,4 +19,10 @@ if command -v omarchy-shell >/dev/null 2>&1; then
   omarchy-shell shell rescanPlugins || true
 fi
 
+# rescanPlugins only rediscovers the plugin list; already-loaded QML stays
+# cached in the running shell. Restart so Panel/BarWidget changes show up.
+if command -v omarchy-restart-shell >/dev/null 2>&1; then
+  omarchy-restart-shell || true
+fi
+
 printf 'installed %s\n' "$DEST"
