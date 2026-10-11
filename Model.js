@@ -55,30 +55,30 @@ function shortCommit(value) {
 
 function statusSentence(sync) {
   if (!sync || sync.initialized !== true)
-    return "Repository is not set up"
+    return "还没有设置同步仓库"
   if (sync.dirty === true && (sync.behind || 0) > 0)
-    return "Local changes to push, and " + sync.behind + " to apply"
+    return "本地有改动待 push，远程还有 " + sync.behind + " 个提交待 apply"
   if (sync.dirty === true)
-    return "Local changes to push"
+    return "本地有改动，点 push 上传"
   if ((sync.behind || 0) > 0)
-    return sync.behind + (sync.behind === 1 ? " commit to apply" : " commits to apply")
+    return "远程有 " + sync.behind + " 个新提交，点 apply 恢复"
   if ((sync.ahead || 0) > 0)
-    return sync.ahead + (sync.ahead === 1 ? " commit not on the remote yet" : " commits not on the remote yet")
-  return "Up to date"
+    return sync.ahead + " 个提交还没上传到远程"
+  return "一切已同步"
 }
 
 function relativeTime(iso) {
   if (!iso)
-    return "never"
+    return "从未"
   var then = Date.parse(iso)
   if (isNaN(then))
     return iso
   var seconds = Math.round((Date.now() - then) / 1000)
   if (seconds < 45)
-    return "just now"
+    return "刚刚"
   if (seconds < 3600)
-    return Math.floor(seconds / 60) + "m ago"
+    return Math.floor(seconds / 60) + " 分钟前"
   if (seconds < 86400)
-    return Math.floor(seconds / 3600) + "h ago"
-  return Math.floor(seconds / 86400) + "d ago"
+    return Math.floor(seconds / 3600) + " 小时前"
+  return Math.floor(seconds / 86400) + " 天前"
 }

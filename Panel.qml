@@ -56,22 +56,47 @@ Panel {
     root.callHost("setup")
   }
 
-  function lastPushText() {
+  function lastPushTime() {
     var push = sync.lastPush || ({})
-    if (!push.time)
-      return "No push yet"
-    var when = Qt.formatDateTime(new Date(push.time), "yyyy-MM-dd HH:mm")
-    if (isNaN(Date.parse(push.time)))
-      when = push.time
-    var who = push.host || "unknown host"
-    return "Last push " + when + " from " + who
+    return push.time ? String(push.time) : ""
+  }
+
+  function lastPushHost() {
+    var push = sync.lastPush || ({})
+    return push.host ? String(push.host) : ""
+  }
+
+  function lastPushText() {
+    if (lastPushTime() === "")
+      return "还没有 push 过"
+    return "上次 push：" + Model.relativeTime(lastPushTime()) + "，来自 " + (lastPushHost() || "未知机器")
+  }
+
+  function pushTooltip() {
+    var tip = "omarsync push"
+    if (lastPushTime() !== "")
+      tip += "\n上次结果：成功，" + lastPushTime().replace("T", " ").substring(0, 16) + " 来自 " + (lastPushHost() || "未知机器")
+    else
+      tip += "\n还没有推送过"
+    return tip
+  }
+
+  function applyTooltip() {
+    var tip = "omarsync apply --commit " + root.trustedCommit.substring(0, 7)
+    if (root.sync.remoteSigned === true)
+      tip += "\n签名可信"
+    else if (root.sync.remoteSignature === "untrusted")
+      tip += "\n签名密钥未登记，会询问是否信任"
+    else
+      tip += "\n未签名：只写配置，不装插件、不跑钩子"
+    return tip
   }
 
   function autoPushDescription() {
     var minutes = root.hostWidget ? root.hostWidget.settingInt("autoPushIntervalMin", 0) : 0
     if (minutes > 0)
-      return "Pushes this machine every " + minutes + " minutes"
-    return "Off. Turn on to push every 30 minutes"
+      return "每 " + minutes + " 分钟自动上传本机改动"
+    return "已关闭，开启后默认每 30 分钟上传"
   }
 
   function problemText() {
@@ -84,9 +109,9 @@ Panel {
 
   function changeText() {
     if (!root.hostWidget || root.hostWidget.statusReady !== true)
-      return "Checking status…"
+      return "正在检查状态…"
     if (root.working)
-      return "Working…"
+      return "执行中…"
     return Model.statusSentence(root.sync)
   }
 
@@ -97,20 +122,58 @@ Panel {
     var shortSha = sha.substring(0, 7)
     var fp = root.sync.signerFingerprint ? (" " + root.sync.signerFingerprint) : ""
     if (root.sync.remoteSigned === true)
-      return "Signed " + shortSha + fp
+      return "已签名 " + shortSha + fp
     if (root.sync.firstApply === true && root.sync.remoteSignature === "untrusted")
-      return "Signed " + shortSha + fp
+      return "已签名 " + shortSha + fp
     if (root.sync.firstApply === true)
-      return "First apply " + shortSha
+      return "首次应用 " + shortSha
     if (root.sync.remoteSignature === "untrusted" && root.sync.hasTrustedKeys === true)
-      return "Different key " + shortSha + fp
+      return "另一把密钥 " + shortSha + fp
     if (root.sync.remoteSignature === "untrusted")
-      return "Signed " + shortSha + fp
-    return "Unsigned " + shortSha
+      return "已签名 " + shortSha + fp
+    return "未签名 " + shortSha
   }
 
   property bool settingsOpen: false
   property bool helpOpen: false
+
+  // 一个动作 = 按钮(命令名) + 下方一行中文描述;hover 按钮显示真实命令与上次结果
+  component ActionRow: Column {
+    property string name: ""
+    property string desc: ""
+    property string tooltip: ""
+    property bool rowVisible: true
+    property bool rowEnabled: true
+    property bool recommended: false
+    signal triggered()
+
+    width: parent ? parent.width : 0
+    spacing: Style.space(1)
+    visible: rowVisible
+
+    Button {
+      width: parent.width
+      text: name
+      enabled: rowEnabled
+      opacity: enabled ? 1 : 0.45
+      selected: recommended
+      leftAlign: true
+      tooltipText: tooltip
+      foreground: root.barForeground
+      fontFamily: root.fontFamily
+      onClicked: triggered()
+    }
+    Text {
+      width: parent.width
+      visible: desc !== ""
+      text: desc
+      color: root.dim
+      font.family: root.fontFamily
+      font.pixelSize: Style.font.caption
+      wrapMode: Text.WordWrap
+      leftPadding: Style.spacing.controlPaddingX
+    }
+  }
 
   KeyboardPanel {
     id: panel
@@ -137,27 +200,19 @@ Panel {
         PanelHero {
           width: parent.width
           title: "Omarsync"
-          meta: root.sync.loggedIn === true ? (root.sync.user || "GitHub") : "Not signed in"
-          detail: root.sync.repo || "No repository yet"
+          meta: root.sync.loggedIn === true ? (root.sync.user || "GitHub") : "未登录 GitHub"
+          detail: root.sync.repo || "尚未设置仓库"
           foreground: root.barForeground
           fontFamily: root.fontFamily
         }
 
+        // 状态主角:一句普通话结论
         Text {
           width: parent.width
-          visible: root.pluginVersion !== ""
-          text: "Version " + root.pluginVersion
-          color: root.dim
+          text: root.changeText()
+          color: root.barForeground
           font.family: root.fontFamily
-          font.pixelSize: Style.font.caption
-        }
-
-        Text {
-          width: parent.width
-          text: root.lastPushText()
-          color: root.dim
-          font.family: root.fontFamily
-          font.pixelSize: Style.font.caption
+          font.pixelSize: Style.font.body
           wrapMode: Text.WordWrap
         }
 
@@ -165,7 +220,7 @@ Panel {
           width: parent.width
           visible: root.trustedCommit !== ""
           text: root.commitText()
-          color: root.barForeground
+          color: root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
           wrapMode: Text.WrapAnywhere
@@ -173,10 +228,11 @@ Panel {
 
         Text {
           width: parent.width
-          text: root.changeText()
-          color: root.barForeground
+          text: root.lastPushText()
+            + (root.pluginVersion !== "" ? " · 版本 " + root.pluginVersion : "")
+          color: root.dim
           font.family: root.fontFamily
-          font.pixelSize: Style.font.body
+          font.pixelSize: Style.font.caption
           wrapMode: Text.WordWrap
         }
 
@@ -192,115 +248,86 @@ Panel {
 
         PanelSeparator { width: parent.width; foreground: root.barForeground }
 
-        Button {
-          width: parent.width
-          visible: root.primaryLabel() !== ""
-          text: root.primaryLabel()
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.runPrimary()
+        ActionRow {
+          name: "setup"
+          desc: "首次使用：装依赖、登录 GitHub、创建私有仓库"
+          tooltip: "omarsync setup"
+          rowVisible: root.primaryLabel() !== ""
+          recommended: true
+          onTriggered: root.runPrimary()
         }
 
-        Button {
-          width: parent.width
-          text: root.working ? "Working…" : "push"
-          visible: root.ready && (root.sync.dirty === true || (root.sync.ahead || 0) > 0)
-          enabled: !root.working
-          opacity: enabled ? 1 : 0.45
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.callHost("pushNow")
+        ActionRow {
+          name: root.working ? "push（执行中…）" : "push"
+          desc: "上传本机最新配置，自动签名"
+          tooltip: root.pushTooltip()
+          rowVisible: root.ready && (root.sync.dirty === true || (root.sync.ahead || 0) > 0)
+          rowEnabled: !root.working
+          recommended: true
+          onTriggered: root.callHost("pushNow")
         }
 
-        Button {
-          width: parent.width
-          text: (root.firstApply && root.sync.remoteSigned !== true) ? "apply this commit" : "apply"
-          visible: root.canApply && ((root.sync.behind || 0) > 0 || root.firstApply || root.sync.remoteSigned !== true)
-          enabled: !root.working
-          opacity: enabled ? 1 : 0.45
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.callHost("pullAndApply")
+        ActionRow {
+          name: root.working ? "apply（执行中…）" : ((root.firstApply && root.sync.remoteSigned !== true) ? "apply this commit" : "apply")
+          desc: "把远程快照恢复到这台电脑，先预览再确认"
+          tooltip: root.applyTooltip()
+          rowVisible: root.canApply && ((root.sync.behind || 0) > 0 || root.firstApply || root.sync.remoteSigned !== true)
+          rowEnabled: !root.working
+          recommended: true
+          onTriggered: root.callHost("pullAndApply")
         }
 
-        Button {
-          width: parent.width
-          text: "Open repository"
-          enabled: root.sync.repo !== "" && root.sync.repo !== undefined
-          opacity: enabled ? 1 : 0.45
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.callHost("openRepo")
+        ActionRow {
+          name: root.working ? "检查中…" : "检查更新"
+          desc: "只检查差异，不同步文件"
+          tooltip: "omarsync status\n本地有改动 → 显示 push；远程有新快照 → 显示 apply"
+          rowEnabled: !root.working
+          onTriggered: root.callHost("refreshStatus")
         }
 
-        Button {
-          width: parent.width
-          text: "Edit scope"
-          enabled: root.sync.initialized === true
-          opacity: enabled ? 1 : 0.45
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.callHost("editScope")
+        PanelSeparator { width: parent.width; foreground: root.barForeground }
+
+        ActionRow {
+          name: "打开仓库"
+          tooltip: root.sync.repo ? ("github.com/" + root.sync.repo) : ""
+          rowEnabled: root.sync.repo !== "" && root.sync.repo !== undefined
+          onTriggered: root.callHost("openRepo")
         }
 
-        Button {
-          width: parent.width
-          text: root.working ? "Scanning…" : "Scan now"
-          enabled: !root.working
-          opacity: enabled ? 1 : 0.45
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.callHost("refreshStatus")
+        ActionRow {
+          name: "编辑同步范围"
+          desc: "决定哪些目录会被同步"
+          tooltip: "~/.config/omarsync/scope"
+          rowEnabled: root.sync.initialized === true
+          onTriggered: root.callHost("editScope")
         }
 
-        Text {
-          width: parent.width
-          color: root.dim
-          font.family: root.fontFamily
-          font.pixelSize: Style.font.caption
-          wrapMode: Text.WordWrap
-          text: "只检查差异,不同步:本地有改动 → 显示 push;远程有新快照 → 显示 apply"
+        ActionRow {
+          name: "查看日志"
+          tooltip: "~/.local/state/omarsync/last.log"
+          onTriggered: root.callHost("viewLog")
         }
 
-        Button {
-          width: parent.width
-          text: "View log"
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.callHost("viewLog")
-        }
-
-        Button {
-          width: parent.width
-          text: root.settingsOpen ? "Hide settings" : "Settings"
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.settingsOpen = !root.settingsOpen
+        ActionRow {
+          name: root.settingsOpen ? "收起设置" : "设置"
+          onTriggered: root.settingsOpen = !root.settingsOpen
         }
 
         Dropdown {
           id: scanInterval
           width: parent.width
           visible: root.settingsOpen
-          label: "Scan for changes"
+          label: "自动检查间隔"
           foreground: root.barForeground
           fontFamily: root.fontFamily
           value: String(root.hostWidget ? root.hostWidget.settingInt("refreshIntervalSec", 3600) : 3600)
           options: [
-            { "value": "0", "label": "Off, scan manually" },
-            { "value": "900", "label": "Every 15 minutes" },
-            { "value": "1800", "label": "Every 30 minutes" },
-            { "value": "3600", "label": "Every hour" },
-            { "value": "21600", "label": "Every 6 hours" },
-            { "value": "86400", "label": "Every 24 hours" }
+            { "value": "0", "label": "关闭，手动检查" },
+            { "value": "900", "label": "每 15 分钟" },
+            { "value": "1800", "label": "每 30 分钟" },
+            { "value": "3600", "label": "每小时" },
+            { "value": "21600", "label": "每 6 小时" },
+            { "value": "86400", "label": "每 24 小时" }
           ]
           onChanged: function(value) {
             if (root.hostWidget && root.hostWidget.setScanInterval)
@@ -311,7 +338,7 @@ Panel {
         Toggle {
           width: parent.width
           visible: root.settingsOpen
-          label: "Auto push"
+          label: "自动 push"
           description: root.autoPushDescription()
           checked: root.hostWidget ? root.hostWidget.settingInt("autoPushIntervalMin", 0) > 0 : false
           enabled: root.ready
@@ -323,21 +350,17 @@ Panel {
         Toggle {
           width: parent.width
           visible: root.settingsOpen
-          label: "Notify"
-          description: "Desktop notification after a push"
+          label: "桌面通知"
+          description: "push 完成后弹出通知"
           checked: root.hostWidget ? root.hostWidget.settingBool("notify", true) : true
           foreground: root.barForeground
           fontFamily: root.fontFamily
           onClicked: root.callHost("toggleNotify")
         }
 
-        Button {
-          width: parent.width
-          text: root.helpOpen ? "Hide guide" : "Guide"
-          leftAlign: true
-          foreground: root.barForeground
-          fontFamily: root.fontFamily
-          onClicked: root.helpOpen = !root.helpOpen
+        ActionRow {
+          name: root.helpOpen ? "收起指南" : "使用指南"
+          onTriggered: root.helpOpen = !root.helpOpen
         }
 
         Text {
@@ -348,19 +371,19 @@ Panel {
           font.pixelSize: Style.font.caption
           wrapMode: Text.WordWrap
           lineHeight: 1.25
-          text: "这台电脑(日常):\n" +
-                "改完配置点 push,自动签名上传。中键图标 = push。\n\n" +
-                "新电脑(恢复):\n" +
+          text: "这台电脑（日常）:\n" +
+                "改完配置点 push，自动签名上传。中键图标 = push。\n\n" +
+                "新电脑（恢复）:\n" +
                 "1. omarchy plugin add 装本插件\n" +
-                "2. 点 setup(装依赖、登录 GitHub、建仓库)\n" +
-                "3. 点 apply,终端里看预览后确认\n" +
-                "4. 首次会问是否信任签名密钥,选是即可\n\n" +
-                "Scan = 只检查本机/远程有无差异,不同步文件。\n" +
-                "Settings 里可改自动扫描间隔,Auto push 可自动上传。\n\n" +
+                "2. 点 setup（装依赖、登录 GitHub、建仓库）\n" +
+                "3. 点 apply，终端里看预览后确认\n" +
+                "4. 首次会问是否信任签名密钥，选是即可\n\n" +
+                "检查更新 = 只看差异，不同步文件。\n" +
+                "设置里可改自动检查间隔，自动 push 可自动上传。\n\n" +
                 "apply 前会自动备份到 ~/.local/state/omarsync/backup/。\n" +
-                "文件没同步过来?终端跑:\n" +
+                "文件没同步过来？终端跑:\n" +
                 "mise dot pull --take-remote-all\n\n" +
-                "完整文档: 仓库里的 docs/NEW_MACHINE.md"
+                "完整文档：仓库里的 docs/NEW_MACHINE.md"
         }
       }
     }
