@@ -90,6 +90,10 @@ grep -q '^rel:demo/a.png$' "$MIRROR/current/background"
 
 dirty=$(run "$TMP/home1" status --json | jq -r '.dirty')
 [[ $dirty == false ]]
+# Same bytes, newer mtime: not something to push.
+touch "$TMP/home1/.config/omarchy/shell.json"
+dirty=$(run "$TMP/home1" status --json | jq -r '.dirty')
+[[ $dirty == false ]]
 behind=$(run "$TMP/home1" status --json | jq -r '.behind')
 [[ $behind == 0 ]]
 

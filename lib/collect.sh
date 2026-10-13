@@ -38,6 +38,28 @@ write_meta() {
     >"$dest/omarsync.json"
 }
 
+# Print rsync --itemize-changes lines that would alter the snapshot.
+# A newer mtime with the same bytes is not a change: Fcitx5 rewrites its
+# config in place, and that alone must not keep the bar asking for a push.
+report_sync_changes() {
+  local line code flags
+  while IFS= read -r line; do
+    [[ -n $line ]] || continue
+    code=${line%% *}
+    case $code in
+      \*deleting|deleting)
+        printf '%s\n' "$line"
+        continue
+        ;;
+    esac
+    [[ $code == [\<\>c]* ]] || continue
+    # YXcstpoguax. Skip when the only attribute flag set is the mtime.
+    flags=${code:2}
+    [[ -n $flags && $flags != *[!t.]* && $flags == *t* ]] && continue
+    printf '%s\n' "$line"
+  done
+}
+
 # rsync one scope entry. Returns 0 when the destination changed (or would).
 # mode is "apply" or "check".
 sync_one() {
@@ -83,14 +105,14 @@ sync_one() {
     fi
     if [[ $mode == check ]]; then
       out=$(rsync -a --delete --max-size="$MAX_FILE_SIZE" "${dry[@]}" "${args[@]}" "$src/" "$dst/" 2>/dev/null || true)
-      printf '%s\n' "$out" | grep -E '^(<|>|c|\*deleting|deleting)' || true
+      printf '%s\n' "$out" | report_sync_changes || true
     else
       rsync -a --delete --max-size="$MAX_FILE_SIZE" "${args[@]}" "$src/" "$dst/"
     fi
   else
     if [[ $mode == check ]]; then
       out=$(rsync -a --max-size="$MAX_FILE_SIZE" "${dry[@]}" "${args[@]}" "$src" "$dst" 2>/dev/null || true)
-      printf '%s\n' "$out" | grep -E '^(<|>|c|\*deleting|deleting)' || true
+      printf '%s\n' "$out" | report_sync_changes || true
     else
       rsync -a --max-size="$MAX_FILE_SIZE" "${args[@]}" "$src" "$dst"
     fi

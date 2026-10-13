@@ -68,7 +68,9 @@ export_plugins() {
       ndjson+=$(jq -nc --arg id "$id" --arg url "$url" --arg rev "$rev" --argjson enabled "$enabled" \
         '{id:$id, url:$url, commit:$rev, enabled:$enabled, local:false}')
       ndjson+=$'\n'
-    elif [[ -d $dir && $mode == apply ]]; then
+    elif [[ -d $dir ]]; then
+      # Check mode uses a temp directory. It still has to record local plugins,
+      # or every status after a push looks dirty and the bar stays red.
       copy_local_plugin "$dir" "$dest/plugins-local/$id"
       ndjson+=$(jq -nc --arg id "$id" --argjson enabled "$enabled" \
         '{id:$id, url:"", commit:"", enabled:$enabled, local:true}')
