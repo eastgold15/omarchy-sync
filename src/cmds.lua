@@ -393,9 +393,11 @@ function M.cmd_apply(args)
   if mise.available() then
     mise.sync(true)
   end
+  -- 合并前必须看到更改:元数据 diff(自上次应用以来)+ 文件 dry-run 计划
+  apply_mod.show_changes(mirror, sha)
   apply_mod.preview_apply(mirror, sha, with_exec)
-  -- 非交互默认继续(与旧版一致;面板在终端里运行,会真实询问)
-  if not apply_mod.prompt_yes("Apply this snapshot?", true) then
+  -- 必须人工确认;非交互(无终端)直接拒绝,绝不默认应用
+  if not apply_mod.prompt_yes("Apply this snapshot?", false) then
     common.die("left the snapshot unapplied")
   end
   if apply_mod.apply_mirror(mirror, with_packages, sha, with_exec) then

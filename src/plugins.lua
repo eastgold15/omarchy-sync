@@ -33,6 +33,25 @@ local function local_plugin_url(url)
     and not url:find("\n")
 end
 
+-- 本机排除名单:~/.config/omarsync/plugins-skip,一行一个插件 id(# 为注释)。
+-- 文件留在本机,永不上传。名单里的插件:不导出(其他机器收不到),
+-- 也不安装(本机拒绝别人同步过来的同 id 插件)。因机器而异的插件写这里。
+function M.skip_file()
+  return HOME .. "/.config/omarsync/plugins-skip"
+end
+
+function M.skip_set()
+  local set = {}
+  local data = common.read_file(M.skip_file())
+  if data then
+    for line in data:gmatch("[^\n]+") do
+      local id = common.trim(line)
+      if id ~= "" and id:sub(1, 1) ~= "#" then set[id] = true end
+    end
+  end
+  return set
+end
+
 -- 读取 omarchy plugin list --json;失败返回 nil
 local function list_plugins()
   local omarchy = exec.resolve_tool("omarchy")
@@ -68,11 +87,14 @@ function M.export_plugins(dest, mode)
     os.execute("/usr/bin/rm -rf " .. exec.quote(dest .. "/plugins-local"))
   end
 
+  local skip = M.skip_set()
   local records = {}
   for _, row in ipairs(listing) do
     if row.firstParty ~= true then
       local id = row.id
-      if valid_plugin_id(id) and id ~= common.PLUGIN_ID then
+      if skip[id] then
+        common.log("plugin " .. id .. " is in plugins-skip; not exported")
+      elseif valid_plugin_id(id) and id ~= common.PLUGIN_ID then
         local enabled = row.enabled == true
         local dir = plugin_dir(id)
         local url, rev
@@ -133,6 +155,7 @@ function M.install_missing_plugins(mirror, allow_exec)
     return true
   end
   local data = json.decode_or_die(common.read_file(file) or "[]", "plugins.json")
+  local skip = M.skip_set()
   local failed = false
   local installed_any = false
   for _, row in ipairs(data) do
@@ -145,6 +168,10 @@ function M.install_missing_plugins(mirror, allow_exec)
       goto continue
     end
     if id == common.PLUGIN_ID then goto continue end
+    if skip[id] then
+      common.log("plugin " .. id .. " is in plugins-skip; not installed")
+      goto continue
+    end
     local dest = plugin_dir(id)
     if exec.is_dir(dest) then
       if rev ~= "" and exec.is_dir(dest .. "/.git") then

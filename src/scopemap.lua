@@ -17,6 +17,10 @@ local CONST_EXCLUDES = {
   -- 信任目录绝不能进历史(双保险;scope 本身已禁)
   "~/.config/omarsync/**",
   "~/.config/omarsync",
+  -- 插件目录永不由 mise 跟踪:只走签名快照。scope 里的 plugins/ 排除
+  -- 可能在本机 scope 文件里丢失,这里是兜底
+  "~/.config/omarchy/plugins/**",
+  "~/.config/omarchy/plugins",
 }
 
 -- 把一条 rsync 风格的排除模式转换为路径限定的 glob 列表。

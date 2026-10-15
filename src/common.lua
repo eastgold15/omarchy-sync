@@ -6,7 +6,7 @@ local exec = require("exec")
 
 local M = {}
 
-M.PLUGIN_ID = "io.github.lukebest.omarsync"
+M.PLUGIN_ID = "io.github.eastgold15.omarsync"
 M.MAX_FILE_SIZE = "50m"
 M.BACKUP_KEEP = 5
 

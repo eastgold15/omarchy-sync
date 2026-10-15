@@ -48,6 +48,24 @@ run() {
     "$ROOT/bin/omarsync" "${@:2}"
 }
 
+# 合并必须真人看到更改后确认:apply 在无终端时一律拒绝。
+# 这里用 script 分配伪终端,stdin 持续喂 y,模拟"看完 diff 输入 y"。
+run_yes() {
+  local home="$1"; shift
+  local args=("$@")
+  yes y | script -qec "env -u GH_TOKEN -u GITHUB_TOKEN -u GH_CONFIG_DIR \
+    HOME='$home' \
+    XDG_CONFIG_HOME='$home/.config' \
+    XDG_STATE_HOME='$home/.local/state' \
+    USER=tester LOGNAME=tester \
+    OMARSYNC_ORIGIN='${OMARSYNC_TEST_ORIGIN:-$ORIGIN}' \
+    OMARSYNC_DOT_ORIGIN='${OMARSYNC_TEST_DOT:-$DOT_ORIGIN}' \
+    OMARSYNC_SKIP_LIVE=1 \
+    PATH='$TMP/bin:/usr/bin:/bin:/usr/sbin:/usr/share/omarchy/bin' \
+    LANG=C.UTF-8 LC_ALL=C.UTF-8 \
+    '$ROOT/bin/omarsync' $(printf '%q ' "${args[@]}")" /dev/null
+}
+
 setup_home() {
   local home="$1"
   mkdir -p \
@@ -145,9 +163,13 @@ sha=$(git -C "$(mirror "$TMP/home2")" rev-parse --verify HEAD)
 if run "$TMP/home2" apply --commit 0000000000000000000000000000000000000000 --no-packages >/dev/null 2>&1; then
   fail "apply of a different commit should fail"
 fi
-mkdir -p "$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync"
-printf 'stay\n' >"$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync/keep"
-run "$TMP/home2" apply --commit "$sha" --no-packages
+mkdir -p "$TMP/home2/.config/omarchy/plugins/io.github.eastgold15.omarsync"
+printf 'stay\n' >"$TMP/home2/.config/omarchy/plugins/io.github.eastgold15.omarsync/keep"
+# 合并必须看到更改后人工确认:同一个合法提交,无终端时必须拒绝
+if run "$TMP/home2" apply --commit "$sha" --no-packages </dev/null >/dev/null 2>&1; then
+  fail "non-interactive apply merged without showing the changes"
+fi
+run_yes "$TMP/home2" apply --commit "$sha" --no-packages
 # 文件来自 mise dot
 grep -q '"changed": true' "$TMP/home2/.config/omarchy/shell.json"
 [[ ! -e $TMP/home2/.config/hypr/bindings.lua.bak.1 ]]
@@ -156,7 +178,7 @@ grep -q '"changed": true' "$TMP/home2/.config/omarchy/shell.json"
 [[ -f $TMP/home2/.config/omarchy/plugins/test.widget/Widget.qml ]]
 [[ -f $TMP/home2/hook-ran ]]
 # 已安装的插件目录原样保留
-grep -q '^stay$' "$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync/keep"
+grep -q '^stay$' "$TMP/home2/.config/omarchy/plugins/io.github.eastgold15.omarsync/keep"
 [[ -f $TMP/home2/.config/omarchy/plugins/secret/x ]]
 # 主题与壁纸(SKIP_LIVE 写状态文件)
 [[ $(tr -d '[:space:]' <"$TMP/home2/.local/state/omarchy/current/theme.name") == demo ]]
@@ -175,12 +197,12 @@ fresh=$(run "$TMP/home3" status --json)
 [[ $(jq -r '.hasTrustedKeys' <<<"$fresh") == false ]]
 [[ $(jq -r '.firstApply' <<<"$fresh") == true ]]
 [[ $(jq -r '.signerFingerprint' <<<"$fresh") == SHA256:* ]]
-run "$TMP/home3" apply --commit "$sha" --no-packages
+run_yes "$TMP/home3" apply --commit "$sha" --no-packages
 grep -q 'namespaces="git"' "$TMP/home3/.config/omarsync/trusted-keys"
 [[ -f $TMP/home3/.local/state/omarsync/applied ]]
 [[ $(run "$TMP/home3" status --json | jq -r '.remoteSigned') == true ]]
 [[ $(run "$TMP/home3" status --json | jq -r '.firstApply') == false ]]
-run "$TMP/home3" apply --commit "$sha" --no-packages
+run_yes "$TMP/home3" apply --commit "$sha" --no-packages
 [[ ! -f $TMP/yay-shadow ]]
 pass "first-apply TOFU pins the signer"
 
@@ -211,7 +233,7 @@ git -C "$M1" add plugins.json
 git -C "$M1" commit -S -m "pin a plugin commit" >/dev/null
 git -C "$M1" push --quiet origin HEAD:main
 remote_sha=$(git -C "$M1" rev-parse HEAD)
-run "$TMP/home2" apply --commit "$remote_sha" --no-packages
+run_yes "$TMP/home2" apply --commit "$remote_sha" --no-packages
 [[ -f $TMP/home2/.config/omarchy/plugins/test.remote/Widget.qml ]]
 rm -rf "$TMP/home2/.config/omarchy/plugins/test.remote"
 jq -n --arg url "file://$TMP/plug.git" \
@@ -233,7 +255,7 @@ printf 'from home1\n' >"$TMP/home1/.config/omarchy/shell.json"
 # home1 的 mise sync 与 home2 冲突:push 报冲突但元数据已推
 run "$TMP/home1" push --quiet >/dev/null 2>&1 || true
 h1_sha=$(git -C "$M1" rev-parse origin/main)
-run "$TMP/home1" apply --commit "$h1_sha" --no-packages
+run_yes "$TMP/home1" apply --commit "$h1_sha" --no-packages
 # take-remote-all:home2 的版本获胜
 grep -q 'from home2' "$TMP/home1/.config/omarchy/shell.json"
 git -C "$M1" -c gpg.ssh.allowedSignersFile="$TMP/home1/.config/omarsync/trusted-keys" verify-commit HEAD
@@ -293,7 +315,7 @@ if run "$TMP/home3" apply --trust-signer --commit "$other" --no-packages >/dev/n
 fi
 [[ $(cat "$TMP/home3/.config/omarsync/trusted-keys") == "$before" ]]
 keys_before=$(cat "$TMP/home3/.config/omarsync/trusted-keys")
-run "$TMP/home3" apply --force --commit "$other" --no-packages
+run_yes "$TMP/home3" apply --force --commit "$other" --no-packages
 [[ $(cat "$TMP/home3/.config/omarsync/trusted-keys") == "$keys_before" ]]
 pass "unsigned/foreign-signer/force policy"
 
@@ -345,7 +367,7 @@ OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$
 unsigned_status=$(OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$TMP/home5" status --json)
 [[ $(jq -r '.remoteSignature' <<<"$unsigned_status") == none ]]
 [[ $(jq -r '.firstApply' <<<"$unsigned_status") == true ]]
-OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$TMP/home5" apply --commit "$unsigned_tip" --no-packages
+OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run_yes "$TMP/home5" apply --commit "$unsigned_tip" --no-packages
 # 未签名首应用:配置写入,但 hooks 不跑
 [[ ! -f $TMP/home5/hook-ran ]]
 plant_unsigned 'second unsigned snapshot'
@@ -356,7 +378,7 @@ fi
 if OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$TMP/home5" apply --force --commit 0000000000000000000000000000000000000000 --no-packages >/dev/null 2>&1; then
   fail "force apply of a different commit should fail"
 fi
-OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$TMP/home5" apply --force --commit "$unsigned_tip2" --no-packages
+OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run_yes "$TMP/home5" apply --force --commit "$unsigned_tip2" --no-packages
 [[ ! -f $TMP/home5/hook-ran ]]
 pass "unsigned first-apply-once policy and force"
 

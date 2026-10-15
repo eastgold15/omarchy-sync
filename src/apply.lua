@@ -209,6 +209,46 @@ function M.apply_mirror(mirror, with_packages, sha, with_exec)
   return not failed
 end
 
+-- 合并前审查:显示自上次应用以来元数据仓库里的全部更改。
+-- 只读;applied 不在镜像历史里(旧备份/重置过)时退化为整体 stat。
+function M.show_changes(mirror, sha)
+  local applied = common.read_file(trust.applied_stamp_file())
+  applied = applied and common.trim(applied) or ""
+  if not trust.is_full_sha(applied) then
+    common.log("no previously applied commit; this snapshot is applied in full")
+    return
+  end
+  if applied == sha then
+    common.log("this exact commit was already applied on this machine")
+    return
+  end
+  if not select(2, common.git({ "-C", mirror, "cat-file", "-e", applied .. "^{commit}" }, { capture = true })) then
+    common.log("previously applied commit " .. applied .. " is not in the mirror; cannot diff")
+    return
+  end
+  common.log("changes since the last applied commit " .. applied:sub(1, 12) .. ":")
+  local log_out = common.git_out({ "-C", mirror, "log", "--oneline", "--no-decorate", applied .. ".." .. sha })
+  if log_out and log_out:match("%S") then
+    for line in log_out:gmatch("[^\n]+") do common.log("  commit " .. line) end
+  end
+  local stat = common.git_out({ "-C", mirror, "diff", "--stat", applied, sha })
+  if stat and stat:match("%S") then
+    for line in stat:gmatch("[^\n]+") do common.log("  " .. line) end
+  else
+    common.log("  (metadata unchanged)")
+  end
+  -- 关键文本文件给出完整 diff,必须能逐行看到改了什么
+  for _, f in ipairs({
+    "plugins.json", "packages/pacman.txt", "packages/flatpak.txt",
+    "current/theme.name", "current/background",
+  }) do
+    local d = common.git_out({ "-C", mirror, "diff", "--color=never", applied, sha, "--", f })
+    if d and d:match("%S") then
+      io.write(d .. "\n")
+    end
+  end
+end
+
 function M.preview_apply(mirror, sha, with_exec)
   common.log("commit " .. sha)
   -- 文件列表:scope 条目 + mise dry-run 预览
@@ -259,7 +299,8 @@ function M.preview_apply(mirror, sha, with_exec)
   end
 end
 
--- 交互确认:tty 下询问,非交互用默认值(default_yes 决定)
+-- 交互确认:tty 下询问,非交互一律拒绝(default_yes 只保留给信任流程的
+-- 历史调用点;apply 合并确认必须真人看到更改后输入 y)
 function M.prompt_yes(prompt, default_yes)
   if not common.stdin_is_tty() then
     return default_yes
