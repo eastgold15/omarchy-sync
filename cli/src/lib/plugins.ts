@@ -156,7 +156,22 @@ export function exportPlugins(dest: string, mode: "apply" | "check"): boolean {
 
 export function copyLocalPlugin(src: string, dest: string): void {
     mkdirSync(dest, { recursive: true });
-    rsync(["-a", "--delete", `--max-size=${MAX_FILE_SIZE}`, "--exclude", ".git/", "--exclude", "node_modules/", `${src}/`, `${dest}/`]);
+    rsync([
+        "-a",
+        "--delete",
+        `--max-size=${MAX_FILE_SIZE}`,
+        "--exclude",
+        ".git/",
+        "--exclude",
+        "node_modules/",
+        // 解释器缓存是机器生成的,每次跑都变,同步只会制造噪音
+        "--exclude",
+        "__pycache__/",
+        "--exclude",
+        "*.pyc",
+        `${src}/`,
+        `${dest}/`,
+    ]);
 
     // 剥掉快照里的所有符号链接(插件目录不允许符号链接)
     const find = resolveTool("find");

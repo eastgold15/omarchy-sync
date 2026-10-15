@@ -11531,7 +11531,22 @@ function exportPlugins(dest, mode) {
 }
 function copyLocalPlugin(src, dest) {
   mkdirSync(dest, { recursive: true });
-  rsync(["-a", "--delete", `--max-size=${MAX_FILE_SIZE}`, "--exclude", ".git/", "--exclude", "node_modules/", `${src}/`, `${dest}/`]);
+  rsync([
+    "-a",
+    "--delete",
+    `--max-size=${MAX_FILE_SIZE}`,
+    "--exclude",
+    ".git/",
+    "--exclude",
+    "node_modules/",
+    // 解释器缓存是机器生成的,每次跑都变,同步只会制造噪音
+    "--exclude",
+    "__pycache__/",
+    "--exclude",
+    "*.pyc",
+    `${src}/`,
+    `${dest}/`
+  ]);
   const find = resolveTool("find");
   const out = find ? capture(find, [dest, "-type", "l", "-print"]).stdout : "";
   for (const line of out.split("\n")) {
