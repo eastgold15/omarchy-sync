@@ -29,13 +29,13 @@ export function openInEditor(files: readonly string[]): void {
 
     const editor = editorCommand();
 
+    const quoted = files.map((f) => `'${f.replaceAll("'", "'\\''")}'`).join(" ");
+
     if (!editor) {
-        log.warn("找不到可用的编辑器;diff 只在终端显示");
+        log.warn(`找不到可用的编辑器;手动查看: cat ${quoted}`);
 
         return;
     }
-
-    const quoted = files.map((f) => `'${f.replaceAll("'", "'\\''")}'`).join(" ");
 
     // 编辑器可能带参数(如 "code --wait"),走 shell;后台启动不阻塞
     const child = spawn(`${editor} ${quoted}`, {
@@ -46,4 +46,6 @@ export function openInEditor(files: readonly string[]): void {
 
     child.unref();
     log.info(`已用编辑器打开审阅: ${editor}`);
+    log.info(`没弹出来?复制这条手动打开: ${editor} ${quoted}`);
+    log.info("想换编辑器(比如 VS Code): export OMARSYNC_EDITOR=code");
 }

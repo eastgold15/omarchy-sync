@@ -10264,11 +10264,11 @@ function openInEditor(files) {
     return;
   }
   const editor = editorCommand();
+  const quoted = files.map((f) => `'${f.replaceAll("'", "'\\''")}'`).join(" ");
   if (!editor) {
-    log.warn("找不到可用的编辑器;diff 只在终端显示");
+    log.warn(`找不到可用的编辑器;手动查看: cat ${quoted}`);
     return;
   }
-  const quoted = files.map((f) => `'${f.replaceAll("'", "'\\''")}'`).join(" ");
   const child = spawn(`${editor} ${quoted}`, {
     detached: true,
     shell: true,
@@ -10276,6 +10276,8 @@ function openInEditor(files) {
   });
   child.unref();
   log.info(`已用编辑器打开审阅: ${editor}`);
+  log.info(`没弹出来?复制这条手动打开: ${editor} ${quoted}`);
+  log.info("想换编辑器(比如 VS Code): export OMARSYNC_EDITOR=code");
 }
 
 function gitBin() {
@@ -10513,7 +10515,9 @@ const CONST_EXCLUDES = [
   "~/.config/omarsync/**",
   "~/.config/omarsync",
   "~/.config/omarchy/plugins/**",
-  "~/.config/omarchy/plugins"
+  "~/.config/omarchy/plugins",
+  // 各机器本地备份文件(形如 xxx.<主机名>-bak.<时间戳>),永不随同步走
+  "**/*-bak.*"
 ];
 function patternToGlobs(root, pattern) {
   const globs = [];

@@ -14,8 +14,8 @@
 # layout), input.lua (touchpad/keyboard), envs.lua (GPU/variables) differ
 # per machine. Delete those patterns if you want them shared.
 
-.config/omarchy | plugins/,*.bak.*,*.mp4,*.mkv,*.webm,*.mov,*.avi,*.m4v
-.config/hypr | *.bak.*,monitors.lua,input.lua,envs.lua
+.config/omarchy | plugins/,*.bak.*,*-bak.*,*.mp4,*.mkv,*.webm,*.mov,*.avi,*.m4v
+.config/hypr | *.bak.*,*-bak.*,monitors.lua,input.lua,envs.lua
 .config/alacritty
 .config/ghostty
 .config/kitty

@@ -150,6 +150,8 @@ const CONST_EXCLUDES = [
     "~/.config/omarsync",
     "~/.config/omarchy/plugins/**",
     "~/.config/omarchy/plugins",
+    // 各机器本地备份文件(形如 xxx.<主机名>-bak.<时间戳>),永不随同步走
+    "**/*-bak.*",
 ] as const;
 
 /** rsync 风格排除模式 → 路径限定的 glob 列表 */
