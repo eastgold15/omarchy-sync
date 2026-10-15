@@ -1,3 +1,6 @@
+import { mkdirSync, writeFileSync } from "node:fs";
+
+import { openInEditor } from "../lib/editor";
 import { isDir } from "../lib/exec";
 import { git, gitCapture } from "../lib/git";
 import { die, log } from "../lib/log";
@@ -54,32 +57,49 @@ export async function executePush(skipConfirm = false): Promise<void> {
         log.warn("mise 未安装;只推元数据。运行: omarchy pkg add mise");
     }
 
-    // 推之前先看这次要发布什么:元数据变化(git 暂存后 diff)+ 文件差异
+    // 推之前先看这次要发布什么:元数据完整 diff + 文件差异,
+    // 汇总写进 pending-push.diff 并用用户的编辑器打开审阅
     collectInto(mirror, miseHead);
     git(["-C", mirror, "add", "-A"]);
 
-    const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]);
+    const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
+    const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
+    const miseDiff = mise.available() ? mise.diff().out : "";
 
-    if (/\S/.test(metaDiff.out)) {
+    if (/\S/.test(metaStat)) {
         log.info("元数据变化:");
 
-        for (const line of metaDiff.out.split("\n")) {
+        for (const line of metaStat.split("\n")) {
             log.info(`  ${line}`);
         }
     } else {
         log.info("元数据无变化");
     }
 
-    if (mise.available()) {
-        const { out } = mise.diff();
+    let review = "";
 
-        if (/\S/.test(out)) {
-            log.info("文件差异(mise dot diff):");
+    if (/\S/.test(metaDiff)) {
+        review += `===== 元数据 diff(omarchy-config)=====\n${metaDiff}\n`;
+    }
 
-            for (const line of out.split("\n")) {
-                log.info(`  ${line}`);
-            }
+    if (/\S/.test(miseDiff)) {
+        log.info("文件差异(mise dot diff):");
+
+        for (const line of miseDiff.split("\n")) {
+            log.info(`  ${line}`);
         }
+
+        review += `===== 文件 diff(omarchy-dotfiles)=====\n${miseDiff}\n`;
+    }
+
+    if (review !== "") {
+        mkdirSync(paths.stateDir, { recursive: true });
+
+        const reviewFile = `${paths.stateDir}/pending-push.diff`;
+
+        writeFileSync(reviewFile, review);
+        log.info(`完整 diff 已写入 ${reviewFile}`);
+        openInEditor([reviewFile]);
     }
 
     // 发布默认要人工确认;--yes 只给面板的自动推送用

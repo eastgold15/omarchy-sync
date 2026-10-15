@@ -2,6 +2,7 @@ import { mkdirSync, readdirSync, symlinkSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname } from "node:path";
 
+import { openInEditor } from "./editor";
 import { capture, exists, isDir, isFile, isLink, realpath, resolveTool, rmrf } from "./exec";
 import { gitCapture, gitOut } from "./git";
 import { refreshUserServices, listHooks, runHooks } from "./hooks";
@@ -323,13 +324,25 @@ export function showChanges(mirror: string, sha: string): void {
         log.info("  (元数据无变化)");
     }
 
-    // 关键文本文件给出完整 diff,必须能逐行看到改了什么
+    // 关键文本文件给出完整 diff,必须能逐行看到改了什么;
+    // 同时汇总写进 pending-apply.diff 并用用户的编辑器打开审阅
+    let review = "";
+
     for (const file of ["plugins.json", "packages/pacman.txt", "packages/flatpak.txt", "current/theme.name", "current/background"]) {
         const d = gitOut(["-C", mirror, "diff", "--color=never", applied, sha, "--", file]);
 
         if (d && /\S/.test(d)) {
             process.stdout.write(`${d}\n`);
+            review += `${d}\n`;
         }
+    }
+
+    if (review !== "") {
+        const reviewFile = `${paths.stateDir}/pending-apply.diff`;
+
+        writeFileSync(reviewFile, `自 ${applied} 到 ${sha} 的元数据更改\n\n${review}`);
+        log.info(`完整 diff 已写入 ${reviewFile}`);
+        openInEditor([reviewFile]);
     }
 }
 

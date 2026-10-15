@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createRequire } from 'node:module';
 import { a as a$3, u as u$1, b as b$3, h as h$2, i as i$1, c as c$1, g as g$1, l as l$1, d as d$2, o, A as A$3, r as r$1, e as c$2, f as g$2, j as b$4, S as S$3, R as R$5, z as z$3, k as h$3, y, m as m$2, B as B$5, F as F$3, n as a$4, s as s$2, E as E$4, x as x$3, p as l$2, q as d$3, L as L$3, O as O$2, H as H$3, K as K$5, T as T$2, G as G$4, t as f$1, M as M$3, w as w$2, v as k$3, C as j$3, D as t$1 } from './packem_shared/index.server-iAND-ZxX.js';
-import { spawnSync } from 'node:child_process';
+import { spawnSync, spawn } from 'node:child_process';
 import { statSync, accessSync, constants, existsSync, lstatSync, mkdtempSync, rmSync, realpathSync, readFileSync, mkdirSync, appendFileSync, copyFileSync, chmodSync, readdirSync, unlinkSync, writeFileSync, symlinkSync } from 'node:fs';
 import { tmpdir, homedir } from 'node:os';
 import { join, dirname } from 'node:path';
@@ -10248,6 +10248,36 @@ function readTextFile(path) {
   }
 }
 
+function editorCommand() {
+  const fromEnv = process.env["OMARSYNC_EDITOR"] ?? process.env["VISUAL"] ?? process.env["EDITOR"];
+  if (fromEnv && fromEnv.trim() !== "") {
+    return fromEnv.trim();
+  }
+  const launcher = resolveTool("omarchy-launch-editor");
+  if (launcher) {
+    return launcher;
+  }
+  return resolveTool("code");
+}
+function openInEditor(files) {
+  if (files.length === 0) {
+    return;
+  }
+  const editor = editorCommand();
+  if (!editor) {
+    log.warn("找不到可用的编辑器;diff 只在终端显示");
+    return;
+  }
+  const quoted = files.map((f) => `'${f.replaceAll("'", "'\\''")}'`).join(" ");
+  const child = spawn(`${editor} ${quoted}`, {
+    detached: true,
+    shell: true,
+    stdio: "ignore"
+  });
+  child.unref();
+  log.info(`已用编辑器打开审阅: ${editor}`);
+}
+
 function gitBin() {
   const bin = resolveTool("git");
   if (!bin) {
@@ -11827,12 +11857,23 @@ function showChanges(mirror, sha) {
   } else {
     log.info("  (元数据无变化)");
   }
+  let review = "";
   for (const file of ["plugins.json", "packages/pacman.txt", "packages/flatpak.txt", "current/theme.name", "current/background"]) {
     const d = gitOut(["-C", mirror, "diff", "--color=never", applied, sha, "--", file]);
     if (d && /\S/.test(d)) {
       process.stdout.write(`${d}
 `);
+      review += `${d}
+`;
     }
+  }
+  if (review !== "") {
+    const reviewFile = `${paths.stateDir}/pending-apply.diff`;
+    writeFileSync(reviewFile, `自 ${applied} 到 ${sha} 的元数据更改
+
+${review}`);
+    log.info(`完整 diff 已写入 ${reviewFile}`);
+    openInEditor([reviewFile]);
   }
 }
 function previewApply(mirror, sha, withExec) {
@@ -12304,23 +12345,38 @@ async function executePush(skipConfirm = false) {
   }
   collectInto(mirror, miseHead);
   git(["-C", mirror, "add", "-A"]);
-  const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]);
-  if (/\S/.test(metaDiff.out)) {
+  const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
+  const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
+  const miseDiff = available() ? diff().out : "";
+  if (/\S/.test(metaStat)) {
     log.info("元数据变化:");
-    for (const line of metaDiff.out.split("\n")) {
+    for (const line of metaStat.split("\n")) {
       log.info(`  ${line}`);
     }
   } else {
     log.info("元数据无变化");
   }
-  if (available()) {
-    const { out } = diff();
-    if (/\S/.test(out)) {
-      log.info("文件差异(mise dot diff):");
-      for (const line of out.split("\n")) {
-        log.info(`  ${line}`);
-      }
+  let review = "";
+  if (/\S/.test(metaDiff)) {
+    review += `===== 元数据 diff(omarchy-config)=====
+${metaDiff}
+`;
+  }
+  if (/\S/.test(miseDiff)) {
+    log.info("文件差异(mise dot diff):");
+    for (const line of miseDiff.split("\n")) {
+      log.info(`  ${line}`);
     }
+    review += `===== 文件 diff(omarchy-dotfiles)=====
+${miseDiff}
+`;
+  }
+  if (review !== "") {
+    mkdirSync(paths.stateDir, { recursive: true });
+    const reviewFile = `${paths.stateDir}/pending-push.diff`;
+    writeFileSync(reviewFile, review);
+    log.info(`完整 diff 已写入 ${reviewFile}`);
+    openInEditor([reviewFile]);
   }
   if (!skipConfirm && !await confirm("发布这份快照到远程仓库?")) {
     die("已取消,未推送");

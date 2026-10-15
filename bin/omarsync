@@ -45,6 +45,13 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
   [[ -d $runtime ]] && vars+=("XDG_RUNTIME_DIR=${runtime}")
   [[ ${OMARSYNC_SKIP_LIVE:-} == 1 ]] && vars+=("OMARSYNC_SKIP_LIVE=1")
   [[ ${OMARSYNC_NOTIFY:-} == 1 ]] && vars+=("OMARSYNC_NOTIFY=1")
+  # 用户的编辑器选择透传给 CLI(push/apply 审阅时打开 diff)
+  for editor_var in OMARSYNC_EDITOR VISUAL EDITOR; do
+    editor_value=${!editor_var:-}
+    if [[ -n $editor_value && $editor_value != *$'\n'* ]]; then
+      vars+=("${editor_var}=${editor_value}")
+    fi
+  done
   [[ -n $keep_origin ]] && vars+=("OMARSYNC_ORIGIN=${keep_origin}")
   [[ -n $keep_dot_origin ]] && vars+=("OMARSYNC_DOT_ORIGIN=${keep_dot_origin}")
   exec /usr/bin/env -i "${vars[@]}" /usr/bin/bash "$0" "$@"
