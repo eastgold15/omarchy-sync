@@ -32,7 +32,7 @@ Omarsync 使用**两个私有 GitHub 仓库**，数据走两条通道：
 3. 安装 Omarsync 插件：
 
 ```sh
-omarchy plugin add https://github.com/lukebest/omarsync.git --enable
+omarchy plugin add https://github.com/eastgold15/omarsync.git --enable
 ```
 
 插件装好后，面板第一次扫描状态时会自动创建 `~/.local/bin/omarsync` 命令（Omarchy 已把该目录加入 PATH）。

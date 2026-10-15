@@ -20,7 +20,7 @@ Omarsync 会记录:
 ## 安装
 
 ```sh
-omarchy plugin add https://github.com/lukebest/omarsync.git --enable
+omarchy plugin add https://github.com/eastgold15/omarsync.git --enable
 ```
 
 Omarchy 插件系统不会把插件的 `bin/` 加入 PATH,所以 CLI 会自己装一个 shim:wrapper 第一次运行时(装好后面板扫描状态时)创建 `~/.local/bin/omarsync`,该目录在 Omarchy 里本就在 PATH 上。已存在且不是 Omarsync 创建的同名文件不会被覆盖。
@@ -94,7 +94,7 @@ omarsync doctor
 
 ```
 .config/omarchy | plugins/,*.bak.*,*.mp4,*.mkv,*.webm,*.mov,*.avi,*.m4v
-.config/hypr | *.bak.*
+.config/hypr | *.bak.*,monitors.lua,input.lua,envs.lua
 .config/nvim
 .config/btop
 .config/lazygit
@@ -104,7 +104,9 @@ omarsync doctor
 .local/share/icons/hicolor | icon-theme.cache
 ```
 
-路径相对于 `$HOME`。`|` 后面是逗号分隔的排除模式,会转换为 mise 的排除 glob。不存在的路径会被跳过。删掉某行就停止跟踪该目录(mise 保留已有历史)。会包含 `.ssh`、`.config/gh`、`.config/git`、`.gnupg`、`.config/doubao-murmur`、`.var`、`.config/mise` 或 mise 状态目录、密钥文件、omarsync 信任目录的路径会被拒绝。
+路径相对于 `$HOME`。`|` 后面是逗号分隔的排除模式,会转换为 mise 的排除 glob。不存在的路径会被跳过。删掉某行就停止跟踪该目录(mise 保留已有历史)。
+
+**因机器而异的文件默认排除**:`~/.config/hypr` 下的 `monitors.lua`(显示器布局)、`input.lua`(触摸板/键盘)、`envs.lua`(GPU/环境变量)每台机器都不同,默认不同步;想共享就从本机 scope 里删掉对应模式。`~/.config/omarchy/plugins` 永远不由 mise 跟踪——即使 scope 里忘了写 `plugins/` 排除,代码里也有兜底;插件只通过签名快照同步(见下)。会包含 `.ssh`、`.config/gh`、`.config/git`、`.gnupg`、`.config/doubao-murmur`、`.var`、`.config/mise` 或 mise 状态目录、密钥文件、omarsync 信任目录的路径会被拒绝。
 
 钩子不是 scope 条目。把可执行脚本放进 `~/.config/omarsync-hooks/post-apply.d/`。apply 会把它们复制进快照;提交可信时,文件写完后在终端里执行。`examples/hooks/10-murmur.sh` 会重新应用 Doubao Murmur 补丁,F9 读不到输入设备时用 sudo 装 udev 规则。`~/.config/doubao-murmur` 下的会话 cookie 不同步。
 
@@ -114,7 +116,8 @@ omarsync doctor
 - apply 不会动 `~/.config/omarchy/plugins`。该目录不在跟踪范围内,omarsync 和其他已装插件都会保留。
 - apply 只解析一次远程分支,分离(detach)检出那个完整 commit,并在改动任何东西之前对照 `~/.config/omarsync/trusted-keys` 检查签名。命令必须指定同一个 40 位 id。没有可信密钥的机器,首次 apply 可以使用未签名提交;提交已签名时则钉住该签名者。之后的 apply 要求可信签名。`--force` 强行应用该 commit,且不把签名密钥加进信任文件。
 - 签名快照里的官方软件包用 `omarchy pkg add` 安装(走 Arch 签名仓库)。用户 Flatpak 应用按记录的 remote 安装后移动到记录的 commit;缺 Flathub 用户 remote 时自动添加。没有下载地址的 remote(如被禁用的本地源)对应的应用会跳过。AUR 包只打印名字,Omarsync 不跑 `yay`。
-- 签名快照里缺失的插件会被安装:https 插件按记录的 commit 克隆检出;无远端的插件从快照复制。每个插件在移入 `~/.config/omarchy/plugins` 前都会校验。Omarsync 不安装自己的目录。`--no-exec`、未签名的首次 apply、`--force` 都会跳过这步。
+- 签名快照里缺失的插件会被安装:https 插件按记录的 commit 克隆检出;无远端的插件从快照复制。每个插件在移入 `~/.config/omarchy/plugins` 前都会校验。Omarsync 不安装自己的目录。`--no-exec`、未签名的首次 apply、`--force` 都会跳过这步。**因机器而异的插件**:把插件 id 一行一个写进本机的 `~/.config/omarsync/plugins-skip`(`#` 为注释,文件永不上传)——名单里的插件既不导出(其他机器收不到),也不安装(本机拒绝别人同步来的同 id 插件)。
+- 合并前必须看到更改:apply 会先显示自上次应用以来元数据仓库的提交列表与 diff(插件/包清单等关键文件逐行显示),再显示 `mise dot pull --dry-run` 的文件改动计划,然后**必须手动输入 y** 才继续;没有终端的非交互环境一律拒绝,绝不默认应用。
 - 两台机器改了同一个文件时,apply 以远程为准(`--take-remote-all`)。push 报 mise 冲突时,用 `mise dot conflicts`(或 `mise dot pull --take-remote-all` / `--keep-local`)解决后再 push。
 - `omarsync.json` 把 push 时的 mise 历史头记为 `miseHead`(仅留档取证;接收机本地历史头合法地不同,所以不做钉死校验)。
 
@@ -127,7 +130,7 @@ omarsync doctor
 ## 卸载
 
 ```sh
-omarchy plugin remove io.github.lukebest.omarsync
+omarchy plugin remove io.github.eastgold15.omarsync
 ```
 
 卸载插件不会删除 `~/.local/state/omarsync`、mise 跟踪配置或 GitHub 仓库。
@@ -136,12 +139,12 @@ omarchy plugin remove io.github.lukebest.omarsync
 
 ```sh
 scripts/dev-install.sh
-omarchy plugin enable io.github.lukebest.omarsync
+omarchy plugin enable io.github.eastgold15.omarsync
 scripts/self-test.sh
 omarchy plugin validate .
 qmllint -I "${OMARCHY_PATH:-/usr/share/omarchy}/shell" BarWidget.qml Panel.qml
 ```
 
-`scripts/dev-install.sh` 把本目录复制到 `~/.config/omarchy/plugins/io.github.lukebest.omarsync` 并让 shell 重新扫描。插件目录不允许符号链接,所以是真实复制。
+`scripts/dev-install.sh` 把本目录复制到 `~/.config/omarchy/plugins/io.github.eastgold15.omarsync` 并让 shell 重新扫描。插件目录不允许符号链接,所以是真实复制。
 
 `scripts/self-test.sh` 用本地裸仓库和假 HOME 跑完整端到端测试:签名 push、脏检测、双机 apply、冲突、信任策略(TOFU、未签名、陌生签名者、`--force`)、scope 投毒、禁用路径、删 scope 后 untrack、插件与钩子、密码密钥回退、旧镜像迁移。

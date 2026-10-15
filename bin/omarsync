@@ -64,13 +64,13 @@ ROOT=${OMARSYNC_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 # 只在自己创建的文件上更新,绝不覆盖用户已有的同名文件。
 shim="${HOME}/.local/bin/omarsync"
 shim_body="#!/bin/sh
-exec \"\$HOME/.config/omarchy/plugins/io.github.lukebest.omarsync/bin/omarsync\" \"\$@\""
+exec \"\$HOME/.config/omarchy/plugins/io.github.eastgold15.omarsync/bin/omarsync\" \"\$@\""
 if [[ $ROOT == "$HOME/.config/omarchy/plugins/"* ]]; then
   if [[ ! -e $shim ]]; then
     /usr/bin/mkdir -p "${HOME}/.local/bin"
     printf '%s\n' "$shim_body" >"$shim"
     /usr/bin/chmod 755 "$shim"
-  elif [[ -f $shim && ! -L $shim ]] && /usr/bin/grep -q 'omarchy/plugins/io.github.lukebest.omarsync/bin/omarsync' "$shim" 2>/dev/null; then
+  elif [[ -f $shim && ! -L $shim ]] && /usr/bin/grep -q 'omarchy/plugins/io.github.eastgold15.omarsync/bin/omarsync' "$shim" 2>/dev/null; then
     printf '%s\n' "$shim_body" >"$shim"
     /usr/bin/chmod 755 "$shim"
   fi

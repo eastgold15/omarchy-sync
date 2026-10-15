@@ -5,7 +5,7 @@
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-ID="io.github.lukebest.omarsync"
+ID="io.github.eastgold15.omarsync"
 DEST="$HOME/.config/omarchy/plugins/$ID"
 
 mkdir -p "$DEST"

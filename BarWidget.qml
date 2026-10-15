@@ -7,7 +7,7 @@ import "Model.js" as Model
 
 BarWidget {
   id: root
-  moduleName: "io.github.lukebest.omarsync"
+  moduleName: "io.github.eastgold15.omarsync"
 
   readonly property string cliPath: Model.pathFromUrl(Qt.resolvedUrl("bin/omarsync"))
   readonly property string manifestPath: Model.pathFromUrl(Qt.resolvedUrl("manifest.json"))

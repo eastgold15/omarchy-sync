@@ -5,7 +5,7 @@ import "Model.js" as Model
 
 Panel {
   id: root
-  moduleName: "io.github.lukebest.omarsync"
+  moduleName: "io.github.eastgold15.omarsync"
   manageIpc: false
 
   property var anchorItem: null
