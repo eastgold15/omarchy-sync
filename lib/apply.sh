@@ -223,7 +223,11 @@ apply_mirror() {
     log "skipped official package install"
   fi
   install_missing_plugins "$mirror" "$with_exec" || failed=1
-  refresh_user_services || failed=1
+  if (( with_exec )); then
+    refresh_user_services || failed=1
+  else
+    log "skipped user service start"
+  fi
   run_hooks "$mirror" "$with_exec" || failed=1
   assert_pinned "$mirror" "$sha"
   prune_backups

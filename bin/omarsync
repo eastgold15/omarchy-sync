@@ -37,6 +37,13 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
   [[ -d $runtime ]] && vars+=("XDG_RUNTIME_DIR=${runtime}")
   [[ ${OMARSYNC_SKIP_LIVE:-} == 1 ]] && vars+=("OMARSYNC_SKIP_LIVE=1")
   [[ -n $keep_origin ]] && vars+=("OMARSYNC_ORIGIN=${keep_origin}")
+  # shellcheck source=../lib/proxy.sh
+  source "$(cd "$(dirname "$0")" && pwd)/../lib/proxy.sh"
+  assignment=""
+  while IFS= read -r assignment; do
+    [[ -n $assignment ]] || continue
+    vars+=("$assignment")
+  done < <(proxy_assignments)
   exec /usr/bin/env -i "${vars[@]}" /usr/bin/bash "$0" "$@"
 fi
 
@@ -477,9 +484,9 @@ cmd_status() {
       fi
     fi
     if [[ -f $mirror/omarsync.json ]]; then
-      last_host=$(jq -r '.host // ""' "$mirror/omarsync.json")
-      last_time=$(jq -r '.pushedAt // ""' "$mirror/omarsync.json")
-      last_version=$(jq -r '.omarchyVersion // ""' "$mirror/omarsync.json")
+      last_host=$(display_token "$(jq -r '.host // ""' "$mirror/omarsync.json")")
+      last_time=$(display_time "$(jq -r '.pushedAt // ""' "$mirror/omarsync.json")")
+      last_version=$(display_token "$(jq -r '.omarchyVersion // ""' "$mirror/omarsync.json")")
     fi
   fi
 

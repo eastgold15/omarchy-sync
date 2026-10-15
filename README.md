@@ -115,7 +115,7 @@ Input methods work the same way. For Qingjian (Fcitx5), scope `.config/qingjian`
 
 ## Permissions
 
-This plugin runs unsandboxed inside the Omarchy shell, as your user. Automatic status and push start `/usr/bin/bash` with a cleared environment and a fixed `PATH`. The command then runs `git`, `rsync`, `jq`, `gh`, and Omarchy tools only from trusted system directories. Apply can overwrite configuration, reload Hyprland, and install official packages with sudo. Review the repository before enabling it.
+This plugin runs unsandboxed inside the Omarchy shell, as your user. Automatic status and push start `/usr/bin/bash` with a cleared environment and a fixed `PATH`. A session proxy is kept only when its name is `http_proxy`, `https_proxy`, `all_proxy`, or `no_proxy` (or the uppercase form) and the value is a plain `http`, `https`, `socks5`, `socks5h`, or `socks4` URL. That proxy is passed only to `git` and `gh`. The command then runs `git`, `rsync`, `jq`, `gh`, and Omarchy tools only from trusted system directories. Apply can overwrite configuration, reload Hyprland, and install official packages with sudo. User services from the snapshot start only after a trusted apply. Review the repository before enabling it.
 
 `OMARSYNC_ORIGIN` can point git at a non-GitHub remote. That is a development hook; the panel flow uses GitHub.
 

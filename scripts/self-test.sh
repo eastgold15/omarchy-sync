@@ -319,7 +319,12 @@ ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" init local/omarchy-config
 unsigned_status=$(ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" status --json)
 [[ $(jq -r '.remoteSignature' <<<"$unsigned_status") == none ]]
 [[ $(jq -r '.firstApply' <<<"$unsigned_status") == true ]]
-ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --commit "$unsigned_tip" --no-packages
+unsigned_log=$(ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --commit "$unsigned_tip" --no-packages)
+printf '%s\n' "$unsigned_log" | grep -q 'skipped user service start'
+if printf '%s\n' "$unsigned_log" | grep -q 'systemctl --user start'; then
+  echo "unsigned apply started a user service" >&2
+  exit 1
+fi
 [[ ! -f $TMP/home5/hook-ran ]]
 plant_unsigned 'second' 'second unsigned snapshot'
 unsigned_tip2=$(git --git-dir="$UNSIGNED_ORIGIN" rev-parse refs/heads/main)
@@ -331,7 +336,12 @@ if ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --force --commit 00000000000
   echo "force apply of a different commit should fail" >&2
   exit 1
 fi
-ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --force --commit "$unsigned_tip2" --no-packages
+force_log=$(ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --force --commit "$unsigned_tip2" --no-packages)
+printf '%s\n' "$force_log" | grep -q 'skipped user service start'
+if printf '%s\n' "$force_log" | grep -q 'systemctl --user start'; then
+  echo "force apply started a user service" >&2
+  exit 1
+fi
 grep -q 'second' "$TMP/home5/.config/omarchy/shell.json"
 keys_before=$(cat "$TMP/home3/.config/omarsync/trusted-keys")
 run "$TMP/home3" apply --force --commit "$other" --no-packages
@@ -353,4 +363,30 @@ if [[ -n ${BEFORE:-} ]]; then
 fi
 
 [[ ! -f $TMP/git-shadow ]]
+
+proxy_kept=$(
+  env -i \
+    http_proxy='http://127.0.0.1:7890' \
+    https_proxy='socks5://127.0.0.1:7891' \
+    all_proxy=$'http://127.0.0.1:7890\nLD_PRELOAD=x' \
+    no_proxy='localhost,127.0.0.1' \
+    HTTP_PROXY='$(id)' \
+    bash -c 'source "$1"; proxy_assignments' _ "$ROOT/lib/proxy.sh"
+)
+printf '%s\n' "$proxy_kept" | grep -qxF 'http_proxy=http://127.0.0.1:7890'
+printf '%s\n' "$proxy_kept" | grep -qxF 'https_proxy=socks5://127.0.0.1:7891'
+printf '%s\n' "$proxy_kept" | grep -qxF 'no_proxy=localhost,127.0.0.1'
+if printf '%s\n' "$proxy_kept" | grep -q 'LD_PRELOAD\|$(id)'; then
+  echo "a rejected proxy was kept" >&2
+  exit 1
+fi
+
+cat >"$TMP/home1/.local/state/omarsync/repo/omarsync.json" <<'EOF'
+{"host":"<img src=\"http://evil/x\">","pushedAt":"<img>","omarchyVersion":"1.11.2"}
+EOF
+hostile=$(run "$TMP/home1" status --json)
+[[ $(jq -r '.lastPush.host' <<<"$hostile") != *'<'* ]]
+[[ $(jq -r '.lastPush.time' <<<"$hostile") == "" ]]
+[[ $(jq -r '.lastPush.omarchyVersion' <<<"$hostile") == 1.11.2 ]]
+
 echo "self-test ok"

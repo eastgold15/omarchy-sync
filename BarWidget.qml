@@ -24,13 +24,24 @@ BarWidget {
   readonly property bool busy: statusProcess.running || pushProcess.running || status.running === true
 
   function trustedEnvironment() {
-    return {
+    var env = {
       "HOME": Quickshell.env("HOME") || "",
       "PATH": "/usr/bin:/bin:/usr/sbin:/usr/share/omarchy/bin",
       "LANG": "C.UTF-8",
       "LC_ALL": "C.UTF-8",
       "OMARCHY_PATH": "/usr/share/omarchy"
     }
+    var names = [
+      "http_proxy", "https_proxy", "all_proxy", "no_proxy",
+      "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY"
+    ]
+    var i, value
+    for (i = 0; i < names.length; i++) {
+      value = Quickshell.env(names[i]) || ""
+      if (value !== "")
+        env[names[i]] = value
+    }
+    return env
   }
 
   function boundedText(value) {

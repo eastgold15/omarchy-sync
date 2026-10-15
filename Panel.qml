@@ -146,6 +146,7 @@ Panel {
           width: parent.width
           visible: root.pluginVersion !== ""
           text: "Version " + root.pluginVersion
+          textFormat: Text.PlainText
           color: root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
@@ -154,6 +155,7 @@ Panel {
         Text {
           width: parent.width
           text: root.lastPushText()
+          textFormat: Text.PlainText
           color: root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
@@ -164,6 +166,7 @@ Panel {
           width: parent.width
           visible: root.trustedCommit !== ""
           text: root.commitText()
+          textFormat: Text.PlainText
           color: root.barForeground
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
@@ -173,6 +176,7 @@ Panel {
         Text {
           width: parent.width
           text: root.changeText()
+          textFormat: Text.PlainText
           color: root.barForeground
           font.family: root.fontFamily
           font.pixelSize: Style.font.body
@@ -183,6 +187,7 @@ Panel {
           width: parent.width
           visible: root.problemText() !== ""
           text: root.problemText()
+          textFormat: Text.PlainText
           color: root.barForeground
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
@@ -192,6 +197,7 @@ Panel {
         Text {
           width: parent.width
           text: "Faded cloud: not set up. Cloud: up to date.\nRed up: push. Red down: apply. Red !: failed."
+          textFormat: Text.PlainText
           color: root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption

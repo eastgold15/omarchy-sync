@@ -8,6 +8,8 @@ QUIET=0
 NOTIFY=0
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+# shellcheck source=proxy.sh
+source "$ROOT/lib/proxy.sh"
 
 log() {
   (( QUIET )) && return 0
@@ -119,26 +121,39 @@ resolve_tool() {
 }
 
 run_restricted() {
+  local with_proxy=0
+  if [[ ${1:-} == --with-proxy ]]; then
+    with_proxy=1
+    shift
+  fi
   local exe="$1"
   shift
   [[ $exe == /* && -x $exe && ! -w $exe ]] || die "refusing to run an untrusted program: ${exe}"
-  /usr/bin/env -i \
-    "HOME=${HOME}" \
-    "USER=${USER}" \
-    "LOGNAME=${LOGNAME:-$USER}" \
-    "PATH=${TRUSTED_PATH}" \
-    "LANG=C.UTF-8" \
-    "LC_ALL=C.UTF-8" \
-    "OMARCHY_PATH=/usr/share/omarchy" \
-    "GIT_TERMINAL_PROMPT=0" \
-    "GIT_EDITOR=/usr/bin/true" \
-    "GH_PROMPT_DISABLED=1" \
-    ${XDG_RUNTIME_DIR:+"XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}"} \
-    "$exe" "$@"
+  local -a envargs=(
+    "HOME=${HOME}"
+    "USER=${USER}"
+    "LOGNAME=${LOGNAME:-$USER}"
+    "PATH=${TRUSTED_PATH}"
+    "LANG=C.UTF-8"
+    "LC_ALL=C.UTF-8"
+    "OMARCHY_PATH=/usr/share/omarchy"
+    "GIT_TERMINAL_PROMPT=0"
+    "GIT_EDITOR=/usr/bin/true"
+    "GH_PROMPT_DISABLED=1"
+  )
+  [[ -n ${XDG_RUNTIME_DIR:-} ]] && envargs+=("XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}")
+  if (( with_proxy )); then
+    local assignment
+    while IFS= read -r assignment; do
+      [[ -n $assignment ]] || continue
+      envargs+=("$assignment")
+    done < <(proxy_assignments)
+  fi
+  /usr/bin/env -i "${envargs[@]}" "$exe" "$@"
 }
 
 git() {
-  run_restricted "$GIT_BIN" -c core.hooksPath=/dev/null -c gpg.ssh.program="$SSH_KEYGEN_BIN" "$@"
+  run_restricted --with-proxy "$GIT_BIN" -c core.hooksPath=/dev/null -c gpg.ssh.program="$SSH_KEYGEN_BIN" "$@"
 }
 
 rsync() {
@@ -151,7 +166,7 @@ jq() {
 
 gh() {
   [[ -n $GH_BIN ]] || die "GitHub CLI is not installed in a trusted directory"
-  run_restricted "$GH_BIN" "$@"
+  run_restricted --with-proxy "$GH_BIN" "$@"
 }
 
 pacman() {
@@ -443,4 +458,17 @@ hostname_safe() {
   fi
   name=${name//[^A-Za-z0-9._-]/}
   printf '%s\n' "${name:-unknown}"
+}
+
+display_token() {
+  local value="$1"
+  value=${value//[^A-Za-z0-9._-]/}
+  printf '%s\n' "${value:0:64}"
+}
+
+display_time() {
+  local value="$1"
+  local pattern='^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})?$'
+  [[ $value =~ $pattern ]] || return 0
+  printf '%s\n' "$value"
 }
