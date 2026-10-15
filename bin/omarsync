@@ -52,6 +52,16 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
       vars+=("${editor_var}=${editor_value}")
     fi
   done
+  # GUI 环境透传:否则 Electron 系编辑器(VS Code)在精简环境里启动会 SIGTRAP
+  for gui_var in DISPLAY WAYLAND_DISPLAY DBUS_SESSION_BUS_ADDRESS \
+    XDG_SESSION_TYPE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DESKTOP_SESSION \
+    HYPRLAND_INSTANCE_SIGNATURE QT_QPA_PLATFORM QT_WAYLAND_DISABLE_WINDOWDECORATION \
+    GDK_BACKEND ELECTRON_OZONE_PLATFORM_HINT; do
+    gui_value=${!gui_var:-}
+    if [[ -n $gui_value && $gui_value != *$'\n'* && $gui_value != *:*$'\n'* ]]; then
+      vars+=("${gui_var}=${gui_value}")
+    fi
+  done
   [[ -n $keep_origin ]] && vars+=("OMARSYNC_ORIGIN=${keep_origin}")
   [[ -n $keep_dot_origin ]] && vars+=("OMARSYNC_DOT_ORIGIN=${keep_dot_origin}")
   exec /usr/bin/env -i "${vars[@]}" /usr/bin/bash "$0" "$@"

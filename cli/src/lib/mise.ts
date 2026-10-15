@@ -139,12 +139,20 @@ export function headSnapshot(): string | undefined {
     }
 }
 
-/** 是否已连接 origin(解析 status 文本里的 Setup repository 行) */
+/** 是否已连接 origin(status 的 Repository 段,或 config.local.toml 的 history.origin) */
 export function originConnected(): boolean {
-    const { out } = miseCapture(["status"]);
-    const line = /Setup repository: ([^\n]+)/.exec(out)?.[1];
+    const { out } = miseCapture(["status"], true);
+    const repo = /Repository\s*\n\s*(\S[^\n]*)/.exec(out)?.[1]?.trim();
 
-    return line !== undefined && !line.startsWith("none");
+    if (repo !== undefined) {
+        return repo !== "" && !repo.startsWith("none") && !repo.startsWith("not ");
+    }
+
+    // 兜底:origin set 会写 [history.origin] 到 config.local.toml
+    const home = process.env["HOME"] ?? "";
+    const config = capture(resolveTool("cat") ?? "/usr/bin/cat", [`${home}/.config/mise/config.local.toml`]).stdout;
+
+    return /\[history\.origin\]\s*\n\s*url\s*=\s*\S/.test(config);
 }
 
 /** 连接 origin(非交互) */
@@ -193,13 +201,19 @@ export function diff(): { ok: boolean; out: string } {
     return miseCapture(["diff"], true);
 }
 
-/** mise dot status 文本里是否有待应用的远程变更 */
+/** 是否有待应用的远程变更(status 文本的 "N incoming" 或旧版提示语) */
 export function incomingPending(): boolean {
     if (!available()) {
         return false;
     }
 
-    const { out } = miseCapture(["status"]);
+    const { out } = miseCapture(["status"], true);
 
-    return /incoming change\(s\) pending/.test(out);
+    if (/incoming change\(s\) pending/.test(out)) {
+        return true;
+    }
+
+    const n = /(\d+)\s+incoming/.exec(out)?.[1];
+
+    return n !== undefined && n !== "0";
 }

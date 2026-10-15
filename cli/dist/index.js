@@ -10386,9 +10386,14 @@ function headSnapshot() {
   }
 }
 function originConnected() {
-  const { out } = miseCapture(["status"]);
-  const line = /Setup repository: ([^\n]+)/.exec(out)?.[1];
-  return line !== void 0 && !line.startsWith("none");
+  const { out } = miseCapture(["status"], true);
+  const repo = /Repository\s*\n\s*(\S[^\n]*)/.exec(out)?.[1]?.trim();
+  if (repo !== void 0) {
+    return repo !== "" && !repo.startsWith("none") && !repo.startsWith("not ");
+  }
+  const home = process.env["HOME"] ?? "";
+  const config = capture(resolveTool("cat") ?? "/usr/bin/cat", [`${home}/.config/mise/config.local.toml`]).stdout;
+  return /\[history\.origin\]\s*\n\s*url\s*=\s*\S/.test(config);
 }
 function originSet(url, branch = "main") {
   return mise(["origin", "set", url, "--branch", branch, "--sync", "sync", "-y"]);
@@ -10420,8 +10425,12 @@ function incomingPending() {
   if (!available()) {
     return false;
   }
-  const { out } = miseCapture(["status"]);
-  return /incoming change\(s\) pending/.test(out);
+  const { out } = miseCapture(["status"], true);
+  if (/incoming change\(s\) pending/.test(out)) {
+    return true;
+  }
+  const n = /(\d+)\s+incoming/.exec(out)?.[1];
+  return n !== void 0 && n !== "0";
 }
 
 const BANNED_PATHS = [
