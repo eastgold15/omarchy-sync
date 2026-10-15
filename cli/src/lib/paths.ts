@@ -19,6 +19,8 @@ export const paths = {
     trustedKeysFile: join(HOME, ".config", "omarsync", "trusted-keys"),
     appliedStamp: join(HOME, ".local", "state", "omarsync", "applied"),
     lastLog: join(HOME, ".local", "state", "omarsync", "last.log"),
+    lockFile: join(HOME, ".local", "state", "omarsync", "omarsync.lock"),
+    statusJson: join(HOME, ".local", "state", "omarsync", "status.json"),
 } as const;
 
 /** 读配置项(KEY=VALUE,取最后一处出现,与旧版一致);不存在返回 undefined */

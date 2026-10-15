@@ -30,7 +30,8 @@ BarWidget {
       "PATH": "/usr/bin:/bin:/usr/sbin:/usr/share/omarchy/bin",
       "LANG": "C.UTF-8",
       "LC_ALL": "C.UTF-8",
-      "OMARCHY_PATH": "/usr/share/omarchy"
+      "OMARCHY_PATH": "/usr/share/omarchy",
+      "OMARSYNC_NOTIFY": root.settingBool("notify", true) ? "1" : "0"
     }
   }
 
@@ -149,7 +150,7 @@ BarWidget {
     }
     var parsed = Model.parseStatus(root.boundedText(text))
     if (!parsed) {
-      root.statusError = "Could not read omarsync status"
+      root.statusError = "读不到 omarsync 状态；终端跑 omarsync doctor 检查"
       return
     }
     root.status = parsed
@@ -170,17 +171,22 @@ BarWidget {
     statusProcess.running = true
   }
 
+  // 手动 push:必须亲眼看到 diff 再确认,所以一律弹浮动终端
   function pushNow() {
+    if (root.cliPath === "")
+      return
+    root.runInTerminal(root.quotedCli() + " push")
+  }
+
+  // 自动 push(设置里开启):非交互,跳过确认
+  function autoPushNow() {
     if (pushProcess.running || root.cliPath === "")
       return
     var home = Quickshell.env("HOME") || ""
     if (home === "")
       return
-    var args = ["push", "--quiet"]
-    if (root.settingBool("notify", true))
-      args.push("--notify")
     root.armProcess(pushProcess)
-    pushProcess.command = root.trustedCommand(args)
+    pushProcess.command = root.trustedCommand(["push", "--yes"])
     pushDeadline.restart()
     pushProcess.running = true
   }
@@ -293,21 +299,21 @@ BarWidget {
     interval: Math.max(1, root.settingInt("autoPushIntervalMin", 0)) * 60000
     running: root.settingInt("autoPushIntervalMin", 0) > 0
     repeat: true
-    onTriggered: root.pushNow()
+    onTriggered: root.autoPushNow()
   }
 
   Timer {
     id: statusDeadline
     interval: root.statusDeadlineMs
     repeat: false
-    onTriggered: root.expireProcess(statusProcess, "status timed out")
+    onTriggered: root.expireProcess(statusProcess, "状态检查超时；网络可能不通")
   }
 
   Timer {
     id: pushDeadline
     interval: root.pushDeadlineMs
     repeat: false
-    onTriggered: root.expireProcess(pushProcess, "push timed out")
+    onTriggered: root.expireProcess(pushProcess, "push 超时；网络可能不通")
   }
 
   Process {
@@ -319,7 +325,7 @@ BarWidget {
       waitForEnd: true
       onDataChanged: {
         if (text.length > root.outputLimit)
-          root.expireProcess(statusProcess, "status output exceeded the limit")
+          root.expireProcess(statusProcess, "状态输出异常大；终端跑 omarsync status 检查")
       }
       onStreamFinished: root.applyStatus(text)
     }
@@ -328,7 +334,7 @@ BarWidget {
       waitForEnd: true
       onDataChanged: {
         if (text.length > root.outputLimit)
-          root.expireProcess(statusProcess, "status output exceeded the limit")
+          root.expireProcess(statusProcess, "状态输出异常大；终端跑 omarsync status 检查")
       }
     }
     onExited: function(exitCode, exitStatus) {
@@ -347,7 +353,7 @@ BarWidget {
       waitForEnd: true
       onDataChanged: {
         if (text.length > root.outputLimit)
-          root.expireProcess(pushProcess, "push output exceeded the limit")
+          root.expireProcess(pushProcess, "push 输出异常大；终端跑 omarsync doctor 检查")
       }
     }
     stderr: StdioCollector {
@@ -355,7 +361,7 @@ BarWidget {
       waitForEnd: true
       onDataChanged: {
         if (text.length > root.outputLimit)
-          root.expireProcess(pushProcess, "push output exceeded the limit")
+          root.expireProcess(pushProcess, "push 输出异常大；终端跑 omarsync doctor 检查")
       }
     }
     onExited: function(exitCode, exitStatus) {
@@ -416,13 +422,13 @@ BarWidget {
     tooltipText: {
       var line = root.version !== "" ? ("Omarsync " + root.version) : "Omarsync"
       if (root.busy)
-        return line + " · working"
+        return line + " · 执行中…"
       var sentence = Model.statusSentence(root.status)
       var when = root.status.lastPush && root.status.lastPush.time
         ? Model.relativeTime(root.status.lastPush.time)
         : ""
       if (when !== "")
-        return line + " · " + sentence + " · last push " + when
+        return line + " · " + sentence + " · 上次推送 " + when
       return line + " · " + sentence
     }
 

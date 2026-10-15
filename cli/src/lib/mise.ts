@@ -183,6 +183,16 @@ export function pull(options: PullOptions = {}): { ok: boolean; out: string } {
     return miseCapture(args, true);
 }
 
+/** conflicts:列出同步冲突 */
+export function conflicts(): { ok: boolean; out: string } {
+    return miseCapture(["conflicts"], true);
+}
+
+/** diff:本地与已保存检查点的差异(push 前的预览) */
+export function diff(): { ok: boolean; out: string } {
+    return miseCapture(["diff"], true);
+}
+
 /** mise dot status 文本里是否有待应用的远程变更 */
 export function incomingPending(): boolean {
     if (!available()) {

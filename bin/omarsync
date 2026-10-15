@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 # Sync an Omarchy setup to a private GitHub repository.
-# 薄 wrapper:清洗环境(安全边界)→ 按需持锁 → 以 /usr/bin/lua 启动 src/main.lua。
-# 业务逻辑全部在 src/*.lua(中文注释)。
+# 薄 wrapper:清洗环境(安全边界)→ 按需持锁 → 以 /usr/bin/node 启动 cli/dist/index.js。
+# 业务逻辑全部在 cli/src/*.ts(中文注释),打包成单个 ESM 文件。
 
 set -euo pipefail
 
-# Drop inherited loader, shell, and PATH state before any Lua code runs.
+# Drop inherited loader, shell, and PATH state before any Node code runs.
 # Automatic callers start this through a cleared environment;
 # a direct invocation re-execs itself the same way.
 if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
@@ -44,6 +44,7 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
   )
   [[ -d $runtime ]] && vars+=("XDG_RUNTIME_DIR=${runtime}")
   [[ ${OMARSYNC_SKIP_LIVE:-} == 1 ]] && vars+=("OMARSYNC_SKIP_LIVE=1")
+  [[ ${OMARSYNC_NOTIFY:-} == 1 ]] && vars+=("OMARSYNC_NOTIFY=1")
   [[ -n $keep_origin ]] && vars+=("OMARSYNC_ORIGIN=${keep_origin}")
   [[ -n $keep_dot_origin ]] && vars+=("OMARSYNC_DOT_ORIGIN=${keep_dot_origin}")
   exec /usr/bin/env -i "${vars[@]}" /usr/bin/bash "$0" "$@"
@@ -76,16 +77,16 @@ if [[ $ROOT == "$HOME/.config/omarchy/plugins/"* ]]; then
   fi
 fi
 
-# lua 必须来自不可写的系统目录;不接受用户目录里的副本
-LUA_BIN=""
-for candidate in /usr/bin/lua /bin/lua; do
+# node 必须来自不可写的系统目录;不接受用户目录里的副本
+NODE_BIN=""
+for candidate in /usr/bin/node /bin/node; do
   if [[ -x $candidate && ! -w $candidate ]]; then
-    LUA_BIN=$candidate
+    NODE_BIN=$candidate
     break
   fi
 done
-[[ -n $LUA_BIN ]] || {
-  printf 'omarsync: trusted lua not found. Run: omarchy pkg add lua\n' >&2
+[[ -n $NODE_BIN ]] || {
+  printf 'omarsync: trusted node not found. Run: omarchy pkg add nodejs\n' >&2
   exit 1
 }
 
@@ -102,4 +103,4 @@ case "${1:-status}" in
     ;;
 esac
 
-exec "$LUA_BIN" "${ROOT}/src/main.lua" "$@"
+exec "$NODE_BIN" "${ROOT}/cli/dist/index.js" "$@"

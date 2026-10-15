@@ -3,6 +3,10 @@ import qs.Commons
 import qs.Ui
 import "Model.js" as Model
 
+// Omarsync 面板:一眼回答"我和远程现在是什么关系,下一步点哪个"。
+// 竖向单一信息流,四个语义区:状态结论 → 需要你决定的 → 同步动作 → 维护与设置。
+// 全部文案中文;按钮名保留真实 CLI 命令,描述用人话。
+
 Panel {
   id: root
   moduleName: "io.github.eastgold15.omarsync"
@@ -73,18 +77,16 @@ Panel {
   }
 
   function pushTooltip() {
-    var tip = "omarsync push"
+    var tip = "omarsync push\n终端里展示这次要发布的 diff，按 y 才上传"
     if (lastPushTime() !== "")
-      tip += "\n上次结果：成功，" + lastPushTime().replace("T", " ").substring(0, 16) + " 来自 " + (lastPushHost() || "未知机器")
-    else
-      tip += "\n还没有推送过"
+      tip += "\n上次成功：" + lastPushTime().replace("T", " ").substring(0, 16) + "，来自 " + (lastPushHost() || "未知机器")
     return tip
   }
 
   function applyTooltip() {
     var tip = "omarsync apply --commit " + root.trustedCommit.substring(0, 7)
     if (root.sync.remoteSigned === true)
-      tip += "\n签名可信"
+      tip += "\n签名可信：插件与钩子会一并恢复"
     else if (root.sync.remoteSignature === "untrusted")
       tip += "\n签名密钥未登记，会询问是否信任"
     else
@@ -95,8 +97,8 @@ Panel {
   function autoPushDescription() {
     var minutes = root.hostWidget ? root.hostWidget.settingInt("autoPushIntervalMin", 0) : 0
     if (minutes > 0)
-      return "每 " + minutes + " 分钟自动上传本机改动"
-    return "已关闭，开启后默认每 30 分钟上传"
+      return "每 " + minutes + " 分钟自动上传本机改动（不经确认）"
+    return "已关闭。手动 push 永远先给你看 diff 再确认"
   }
 
   function changedFiles() {
@@ -120,7 +122,7 @@ Panel {
 
   function changesTooltip() {
     var files = root.changedFiles()
-    var tip = "code <改动的文件>\n"
+    var tip = "用编辑器打开这些文件\n"
     var limit = Math.min(files.length, 10)
     for (var i = 0; i < limit; i++)
       tip += (i === 0 ? "" : "\n") + files[i]
@@ -133,7 +135,7 @@ Panel {
     if (root.hostWidget && root.hostWidget.statusError)
       return String(root.hostWidget.statusError)
     if (root.sync && root.sync.error)
-      return String(root.sync.error)
+      return "连不上远程仓库；检查网络后再试"
     return ""
   }
 
@@ -152,22 +154,20 @@ Panel {
     var shortSha = sha.substring(0, 7)
     var fp = root.sync.signerFingerprint ? (" " + root.sync.signerFingerprint) : ""
     if (root.sync.remoteSigned === true)
-      return "已签名 " + shortSha + fp
-    if (root.sync.firstApply === true && root.sync.remoteSignature === "untrusted")
-      return "已签名 " + shortSha + fp
-    if (root.sync.firstApply === true)
-      return "首次应用 " + shortSha
+      return "远程快照 " + shortSha + " · 签名可信" + fp
     if (root.sync.remoteSignature === "untrusted" && root.sync.hasTrustedKeys === true)
-      return "另一把密钥 " + shortSha + fp
+      return "远程快照 " + shortSha + " · 出自另一把密钥" + fp
     if (root.sync.remoteSignature === "untrusted")
-      return "已签名 " + shortSha + fp
-    return "未签名 " + shortSha
+      return "远程快照 " + shortSha + " · 签名未登记" + fp
+    if (root.sync.firstApply === true)
+      return "远程快照 " + shortSha + " · 未签名，可作首次应用"
+    return "远程快照 " + shortSha + " · 未签名"
   }
 
   property bool settingsOpen: false
   property bool helpOpen: false
 
-  // 一个动作 = 按钮(命令名) + 下方一行中文描述;hover 按钮显示真实命令与上次结果
+  // 一个动作 = 按钮(命令名) + 下方一行中文描述;hover 按钮显示真实命令与细节
   component ActionRow: Column {
     property string name: ""
     property string desc: ""
@@ -236,7 +236,7 @@ Panel {
           fontFamily: root.fontFamily
         }
 
-        // 状态主角:一句普通话结论
+        // ===== 状态结论:全面板唯一的主角 =====
         Text {
           width: parent.width
           text: root.changeText()
@@ -266,6 +266,7 @@ Panel {
           wrapMode: Text.WordWrap
         }
 
+        // ===== 需要你决定的 =====
         Text {
           width: parent.width
           visible: root.problemText() !== ""
@@ -288,9 +289,10 @@ Panel {
 
         PanelSeparator { width: parent.width; foreground: root.barForeground }
 
+        // ===== 同步动作 =====
         ActionRow {
           name: "查看改动"
-          desc: "用 VS Code 打开这些文件，确认无误再 push"
+          desc: "用编辑器打开这些文件，确认无误再 push"
           tooltip: root.changesTooltip()
           rowVisible: root.changedFiles().length > 0
           onTriggered: root.callHost("openChanges")
@@ -298,7 +300,7 @@ Panel {
 
         ActionRow {
           name: "setup"
-          desc: "首次使用：装依赖、登录 GitHub、创建私有仓库"
+          desc: "首次使用：装依赖、登录 GitHub、建好私有仓库"
           tooltip: "omarsync setup"
           rowVisible: root.primaryLabel() !== ""
           recommended: true
@@ -307,7 +309,7 @@ Panel {
 
         ActionRow {
           name: root.working ? "push（执行中…）" : "push"
-          desc: "上传本机最新配置，自动签名"
+          desc: "上传本机最新配置；终端里看完 diff 按 y 才发布"
           tooltip: root.pushTooltip()
           rowVisible: root.ready && (root.sync.dirty === true || (root.sync.ahead || 0) > 0)
           rowEnabled: !root.working
@@ -316,8 +318,8 @@ Panel {
         }
 
         ActionRow {
-          name: root.working ? "apply（执行中…）" : ((root.firstApply && root.sync.remoteSigned !== true) ? "apply this commit" : "apply")
-          desc: "把远程快照恢复到这台电脑，先预览再确认"
+          name: root.working ? "apply（执行中…）" : "apply"
+          desc: "把远程快照恢复到这台电脑；先审阅更改再确认"
           tooltip: root.applyTooltip()
           rowVisible: root.canApply && ((root.sync.behind || 0) > 0 || root.firstApply || root.sync.remoteSigned !== true)
           rowEnabled: !root.working
@@ -327,7 +329,7 @@ Panel {
 
         ActionRow {
           name: root.working ? "检查中…" : "检查更新"
-          desc: "只检查差异，不同步文件"
+          desc: "只刷新状态，不动任何文件"
           tooltip: "omarsync status\n本地有改动 → 显示 push；远程有新快照 → 显示 apply"
           rowEnabled: !root.working
           onTriggered: root.callHost("refreshStatus")
@@ -335,6 +337,7 @@ Panel {
 
         PanelSeparator { width: parent.width; foreground: root.barForeground }
 
+        // ===== 维护 =====
         ActionRow {
           name: "打开仓库"
           tooltip: root.sync.repo ? ("github.com/" + root.sync.repo) : ""
@@ -420,17 +423,17 @@ Panel {
           wrapMode: Text.WordWrap
           lineHeight: 1.25
           text: "这台电脑（日常）:\n" +
-                "改完配置点 push，自动签名上传。中键图标 = push。\n\n" +
+                "改完配置点 push，会弹出终端展示 diff，按 y 上传。\n" +
+                "中键图标 = push，右键 = 检查更新。\n\n" +
                 "新电脑（恢复）:\n" +
                 "1. omarchy plugin add 装本插件\n" +
                 "2. 点 setup（装依赖、登录 GitHub、建仓库）\n" +
-                "3. 点 apply，终端里看预览后确认\n" +
+                "3. 点 apply，终端里先看到全部更改，按 y 才写入\n" +
                 "4. 首次会问是否信任签名密钥，选是即可\n\n" +
-                "检查更新 = 只看差异，不同步文件。\n" +
-                "设置里可改自动检查间隔，自动 push 可自动上传。\n\n" +
                 "apply 前会自动备份到 ~/.local/state/omarsync/backup/。\n" +
                 "文件没同步过来？终端跑:\n" +
-                "mise dot pull --take-remote-all\n\n" +
+                "mise dot pull --take-remote-all\n" +
+                "遇到冲突跑: omarsync conflicts\n\n" +
                 "完整文档：仓库里的 docs/NEW_MACHINE.md"
         }
       }

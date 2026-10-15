@@ -30,10 +30,10 @@ export function git(args: readonly string[]): boolean {
 }
 
 /** 执行并捕获输出 */
-export function gitCapture(args: readonly string[]): { ok: boolean; out: string } {
+export function gitCapture(args: readonly string[]): { ok: boolean; code: number; out: string } {
     const result = capture(gitBin(), [...baseArgs(), ...args]);
 
-    return { ok: result.code === 0, out: result.stdout };
+    return { ok: result.code === 0, code: result.code, out: result.stdout };
 }
 
 /** 捕获输出并去掉尾部空白;失败返回 undefined */

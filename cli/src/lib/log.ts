@@ -2,14 +2,22 @@ import { appendFileSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 import { createPail } from "@visulima/pail";
+import { SimpleReporter } from "@visulima/pail/reporter/simple";
 
 import { paths } from "./paths";
 
-// 日志:终端走 pail(彩色),同时追加一份到 last.log(面板查看用)。
-// 对应旧版 common.lua 的 log/warn/die。
+// 日志:终端走 pail(SimpleReporter 单行输出),同时追加一份到 last.log(面板查看用)。
+// @visulima/fmt 只是字符串格式化工具,不替代日志器。对应旧版 common.lua 的 log/warn/die。
 
 export const logger = createPail({
     logLevel: "informational",
+    reporters: [
+        new SimpleReporter({
+            // 只留时分秒
+            dateFormatter: (date: Date) => date.toTimeString().slice(0, 8),
+            uppercase: { label: false },
+        }),
+    ],
     stderr: process.stderr,
     stdout: process.stdout,
 });

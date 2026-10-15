@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
-import { accessSync, constants, existsSync, statSync } from "node:fs";
+import { accessSync, constants, existsSync, lstatSync, mkdtempSync, realpathSync, rmSync, statSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // 可信子进程封装:只从固定系统目录解析工具,挡住 PATH 投毒(影子二进制)。
@@ -88,4 +89,36 @@ export function isDir(path: string): boolean {
 
 export function exists(path: string): boolean {
     return existsSync(path);
+}
+
+/** 是否为符号链接(不跟随) */
+export function isLink(path: string): boolean {
+    try {
+        return lstatSync(path).isSymbolicLink();
+    } catch {
+        return false;
+    }
+}
+
+/** 解析符号链接后的真实路径;失败返回 undefined */
+export function realpath(path: string): string | undefined {
+    try {
+        return realpathSync(path);
+    } catch {
+        return undefined;
+    }
+}
+
+/** 创建临时目录(等价 mktemp -d) */
+export function mktempDir(): string {
+    return mkdtempSync(join(tmpdir(), "omarsync-"));
+}
+
+/** 递归删除;不存在静默忽略 */
+export function rmrf(path: string): void {
+    try {
+        rmSync(path, { force: true, recursive: true });
+    } catch {
+        // 忽略
+    }
 }
