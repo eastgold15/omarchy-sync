@@ -17,6 +17,9 @@ Omarsync 会记录:
 - 第三方 shell 插件。有 https 远端的插件按 commit 记录、恢复时按该 commit 克隆;没有远端的插件整体复制进快照。Omarsync 自己不复制。插件永远不经 mise 跟踪——可执行代码只走签名元数据通道
 - `~/.config/omarsync-hooks/post-apply.d` 里的 post-apply 钩子
 
+
+![预览](./preview.png)
+
 ## 安装
 
 ```sh
