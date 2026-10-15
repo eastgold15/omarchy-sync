@@ -25,16 +25,16 @@ omarchy plugin add https://github.com/eastgold15/omarsync.git --enable
 
 Omarchy 插件系统不会把插件的 `bin/` 加入 PATH,所以 CLI 会自己装一个 shim:wrapper 第一次运行时(装好后面板扫描状态时)创建 `~/.local/bin/omarsync`,该目录在 Omarchy 里本就在 PATH 上。已存在且不是 Omarsync 创建的同名文件不会被覆盖。
 
-依赖:`git`、`rsync`、系统的 `lua` 和 `mise`(`/usr/bin/lua`、`/usr/bin/mise`),以及 `/usr/bin/gh`。只装在用户目录里的副本会被忽略。缺依赖可以让面板安装,或手动:
+依赖:`git`、`rsync`、系统的 `node`(≥22)和 `mise`(`/usr/bin/node`、`/usr/bin/mise`),以及 `/usr/bin/gh`。只装在用户目录里的副本会被忽略。CLI 是 TypeScript 写的、打包成单个文件随仓库分发(`cli/dist/index.js`),安装即用,不需要构建。缺依赖可以让面板安装,或手动:
 
 ```sh
-omarchy pkg add lua mise github-cli
+omarchy pkg add nodejs mise github-cli
 ```
 
 ## 第一次同步
 
 1. 点状态栏云图标,点 **setup**(对应 `omarsync setup`)。它会装缺失的依赖、登录 GitHub、创建两个私有仓库,并把 `mise dot` 连到 dotfiles 仓库。
-2. 点 **push**(对应 `omarsync push`)。元数据提交会签名:push 优先使用无密码的 `~/.ssh/id_ed25519`;否则会创建 `~/.config/omarsync/signing_key` 并在本机信任它(私钥不出本机)。文件用 `mise dot save` 存检查点,用 `mise dot sync` 发布。
+2. 点 **push**(对应 `omarsync push`)。会弹出浮动终端:先展示这次要发布的元数据 diff 和 `mise dot diff`,**按 y 确认才上传**。元数据提交会签名:push 优先使用无密码的 `~/.ssh/id_ed25519`;否则会创建 `~/.config/omarsync/signing_key` 并在本机信任它(私钥不出本机)。文件用 `mise dot save` 存检查点,用 `mise dot sync` 发布。
 
 命令结束后状态栏立即刷新,不需要右键扫描。打开面板本身不会扫描。
 
@@ -62,10 +62,10 @@ omarsync trust-key ~/.config/omarsync/signing_key.pub   # 路径换成你拷过�
 ## 状态栏
 
 - 左键打开面板
-- 中键 push
+- 中键 push(弹终端,看完 diff 按 y 确认)
 - 右键刷新状态
 - 未登录时图标变暗;命令运行中转动;有本地改动待 push 时显示圆点
-- 面板底部的 **Guide** 折叠区内置了中文快速操作指引(日常 push / 新机 setup→apply / 常见问题),不用翻文档
+- 面板底部的 **使用指南** 折叠区内置了中文快速操作指引(日常 push / 新机 setup→apply / 常见问题),不用翻文档
 
 **扫描改动**默认每小时一次。同一个菜单可设 15 分钟、30 分钟、6 小时、24 小时,或关闭定时扫描。**立即扫描**或右键图标会立刻检查。自动 push 跟随 **Auto push** 间隔(分钟),`0` 为关闭;从面板开启后默认 30 分钟。
 
@@ -74,17 +74,21 @@ omarsync trust-key ~/.config/omarsync/signing_key.pub   # 路径换成你拷过�
 ```sh
 omarsync login
 omarsync setup
-omarsync init [owner/name]
-omarsync push
-omarsync trust-key <公钥> [私钥]
+omarsync init --repo owner/name
+omarsync push [--yes]
+omarsync trust-key --pubkey <公钥> [--privkey <私钥>]
 omarsync pull
-omarsync apply --commit <40位sha> [--no-packages] [--no-exec] [--force]
+omarsync apply --commit <40位sha> [--no-packages] [--no-exec] [--force] [--trust-signer]
+omarsync conflicts
 omarsync migrate
-omarsync status
+omarsync status [--json]
 omarsync doctor
+omarsync scope-path
 ```
 
-`push --quiet` 跳过桌面通知;静默 push 仍要通知时加 `--notify`。面板上的 Notify 开关控制这个行为。
+手动 `push` 一律先展示 diff 并要求按 y 确认;`push --yes` 跳过确认,只供面板的自动推送定时器使用。桌面通知由 `OMARSYNC_NOTIFY=1` 环境变量开启,面板上的"桌面通知"开关控制这个行为。
+
+遇到同步冲突跑 `omarsync conflicts`:列出冲突文件并用 `$EDITOR` 打开审阅;解决后 `mise dot save`,或整体采用远程 `mise dot pull --take-remote-all`。
 
 `migrate` 升级旧安装:元数据仓库里还有 `home/` 文件镜像的旧布局,改为通过 mise 发布文件并从仓库删除 `home/`(旧内容仍可从 git 历史找回)。
 
@@ -118,12 +122,12 @@ omarsync doctor
 - 签名快照里的官方软件包用 `omarchy pkg add` 安装(走 Arch 签名仓库)。用户 Flatpak 应用按记录的 remote 安装后移动到记录的 commit;缺 Flathub 用户 remote 时自动添加。没有下载地址的 remote(如被禁用的本地源)对应的应用会跳过。AUR 包只打印名字,Omarsync 不跑 `yay`。
 - 签名快照里缺失的插件会被安装:https 插件按记录的 commit 克隆检出;无远端的插件从快照复制。每个插件在移入 `~/.config/omarchy/plugins` 前都会校验。Omarsync 不安装自己的目录。`--no-exec`、未签名的首次 apply、`--force` 都会跳过这步。**因机器而异的插件**:把插件 id 一行一个写进本机的 `~/.config/omarsync/plugins-skip`(`#` 为注释,文件永不上传)——名单里的插件既不导出(其他机器收不到),也不安装(本机拒绝别人同步来的同 id 插件)。
 - 合并前必须看到更改:apply 会先显示自上次应用以来元数据仓库的提交列表与 diff(插件/包清单等关键文件逐行显示),再显示 `mise dot pull --dry-run` 的文件改动计划,然后**必须手动输入 y** 才继续;没有终端的非交互环境一律拒绝,绝不默认应用。
-- 两台机器改了同一个文件时,apply 以远程为准(`--take-remote-all`)。push 报 mise 冲突时,用 `mise dot conflicts`(或 `mise dot pull --take-remote-all` / `--keep-local`)解决后再 push。
+- 两台机器改了同一个文件时,apply 以远程为准(`--take-remote-all`)。push 报 mise 冲突时,用 `omarsync conflicts`(列出冲突并用编辑器打开审阅)或 `mise dot pull --take-remote-all` / `--keep-local` 解决后再 push。
 - `omarsync.json` 把 push 时的 mise 历史头记为 `miseHead`(仅留档取证;接收机本地历史头合法地不同,所以不做钉死校验)。
 
 ## 权限
 
-本插件在 Omarchy shell 里以你的用户身份非沙箱运行。自动状态和 push 用清空的环境和固定 PATH 启动 CLI。CLI 是 Lua(系统 `/usr/bin/lua`),外面包一层薄薄的 bash wrapper,只从可信系统目录调用 `git`、`rsync`、`mise`、`gh` 和 Omarchy 工具。apply 可以覆盖配置、重载 Hyprland、用 sudo 装官方软件包。启用前请审查仓库。
+本插件在 Omarchy shell 里以你的用户身份非沙箱运行。自动状态和自动 push 用清空的环境和固定 PATH 启动 CLI。CLI 是 TypeScript([visulima](https://visulima.com) 生态)写的,打包成单个 ESM 文件(`cli/dist/index.js`,随仓库分发),由系统 `/usr/bin/node`(≥22)运行,外面包一层薄薄的 bash wrapper,只从可信系统目录调用 `git`、`rsync`、`mise`、`gh` 和 Omarchy 工具。apply 可以覆盖配置、重载 Hyprland、用 sudo 装官方软件包。启用前请审查仓库。
 
 `OMARSYNC_ORIGIN` 和 `OMARSYNC_DOT_ORIGIN` 可以把 git 和 mise 指向非 GitHub 远端。那是开发用的钩子;面板流程走 GitHub。
 
@@ -138,13 +142,15 @@ omarchy plugin remove io.github.eastgold15.omarsync
 ## 开发
 
 ```sh
-scripts/dev-install.sh
+scripts/dev-install.sh   # 构建 CLI(bun)→ 复制到插件目录 → 重扫并重启 shell
 omarchy plugin enable io.github.eastgold15.omarsync
 scripts/self-test.sh
 omarchy plugin validate .
 qmllint -I "${OMARCHY_PATH:-/usr/share/omarchy}/shell" BarWidget.qml Panel.qml
 ```
 
-`scripts/dev-install.sh` 把本目录复制到 `~/.config/omarchy/plugins/io.github.eastgold15.omarsync` 并让 shell 重新扫描。插件目录不允许符号链接,所以是真实复制。
+`scripts/dev-install.sh` 先用 bun 把 `cli/` 打包成 `dist/index.js`,再把本目录(排除 `cli/node_modules`)复制到 `~/.config/omarchy/plugins/io.github.eastgold15.omarsync` 并让 shell 重新扫描。插件目录不允许符号链接,所以是真实复制。改 CLI 源码后重新跑这个脚本即可。
 
-`scripts/self-test.sh` 用本地裸仓库和假 HOME 跑完整端到端测试:签名 push、脏检测、双机 apply、冲突、信任策略(TOFU、未签名、陌生签名者、`--force`)、scope 投毒、禁用路径、删 scope 后 untrack、插件与钩子、密码密钥回退、旧镜像迁移。
+CLI 开发:`cd cli && bun install` 后,`bun run dev -- <args>` 直接跑源码,`bun run typecheck` 类型检查,`bun run build` 打包。技术栈与同步流程见 [docs/TECH_STACK.md](docs/TECH_STACK.md) 与 [docs/SYNC_FLOW.md](docs/SYNC_FLOW.md)。
+
+`scripts/self-test.sh` 是关键路径冒烟测试:CLI 可用、`status --json` 字段与面板 schema 一致、`status.json` 落盘、非交互 apply 一律拒绝(审阅模型不能被绕过)。

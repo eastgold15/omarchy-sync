@@ -37,10 +37,10 @@ omarchy plugin add https://github.com/eastgold15/omarsync.git --enable
 
 插件装好后，面板第一次扫描状态时会自动创建 `~/.local/bin/omarsync` 命令（Omarchy 已把该目录加入 PATH）。
 
-缺少依赖（`lua`、`mise`、`github-cli`）可以在面板里点装，或手动：
+缺少依赖（`nodejs`、`mise`、`github-cli`）可以在面板里点装，或手动：
 
 ```sh
-omarchy pkg add lua mise github-cli
+omarchy pkg add nodejs mise github-cli
 ```
 
 ## 新机同步步骤
@@ -85,7 +85,7 @@ omarsync apply --commit <40位sha>
 - `~/.ssh/id_ed25519` 存在且无密码 → 用它签名，公钥是 `~/.ssh/id_ed25519.pub`
 - 否则 → 自动创建 `~/.config/omarsync/signing_key`，公钥是 `~/.config/omarsync/signing_key.pub`
 
-在旧机器上跑 `omarsync push` 时终端会打印 `signing with ...`，以那个路径为准。
+在旧机器上跑 `omarsync push` 时终端会打印 `使用 ... 签名`，以那个路径为准。
 
 **大多数情况下你什么都不用做**：新机器第一次 apply 时，终端会提示是否信任这个签名者，确认一次，之后该密钥的提交就全自动通过。
 
@@ -93,7 +93,7 @@ omarsync apply --commit <40位sha>
 
 ```sh
 # 路径换成你拷过来的实际位置，例如：
-omarsync trust-key ~/signing_key.pub
+omarsync trust-key --pubkey ~/signing_key.pub
 ```
 
 `apply --force` 或提交不受信任时：只写配置，**不装插件、不跑钩子**。
@@ -169,4 +169,4 @@ mise 自己也留了保护检查点，可以 `mise dot recover` 撤销。
 正常现象。插件目录本身是嵌套 git 仓库，mise dot 会跳过它们；它们由 `plugins.json` 按钉死的 commit 在 apply 时自动克隆安装。
 
 **Q: 新机器 apply 后又想同步回旧机器？**
-两台机器都正常 push/pull 即可。mise dot 历史是双向合并的，冲突时用 `mise dot conflicts` 处理。
+两台机器都正常 push/pull 即可。mise dot 历史是双向合并的，冲突时用 `omarsync conflicts` 处理。
