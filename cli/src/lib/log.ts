@@ -24,6 +24,13 @@ function appendLog(level: string, message: string): void {
     }
 }
 
+/** 致命错误:写日志、打印、退出(独立导出以便控制流收窄) */
+export function die(message: string): never {
+    appendLog("error", message);
+    logger.error(`omarsync: ${message}`);
+    process.exit(1);
+}
+
 export const log = {
     info(message: string): void {
         appendLog("info", message);
@@ -33,12 +40,7 @@ export const log = {
         appendLog("warn", message);
         logger.warn(`omarsync: ${message}`);
     },
-    /** 致命错误:写日志、打印、退出 */
-    die(message: string): never {
-        appendLog("error", message);
-        logger.error(`omarsync: ${message}`);
-        process.exit(1);
-    },
+    die,
 };
 
 /** 读文本文件;不存在返回 undefined(配合 paths.configGet 使用) */

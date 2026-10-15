@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { createCerebro } from "@visulima/cerebro";
 
+import { executeDoctor } from "./commands/doctor";
+import { executePull } from "./commands/pull";
 import { executeStatus } from "./commands/status";
 
 // Omarsync CLI(visulima 重构版)
@@ -27,11 +29,26 @@ cli.addCommand({
     },
 });
 
+cli.addCommand({
+    name: "doctor",
+    description: "依赖体检(git/rsync/node/mise/gh、镜像与 dotfiles 仓库)",
+    execute: () => {
+        process.exitCode = executeDoctor();
+    },
+});
+
+cli.addCommand({
+    name: "pull",
+    description: "只抓取远程快照并钉住 commit,不写任何活文件(下一步用 apply 审阅)",
+    execute: () => {
+        executePull();
+    },
+});
+
 // 后续阶段注册的命令(与旧版同名,面板接口不变):
-//   doctor  依赖体检        login   GitHub 登录
-//   init    初始化镜像      setup   一键装机引导
+//   login   GitHub 登录     init    初始化镜像
+//   setup   一键装机引导
 //   push    推前手动存 + 审阅后发布
-//   pull    只抓取,不动活文件
 //   apply   审阅 diff 后手动确认才写入
 //   conflicts 用本机编辑器审阅并解决同步冲突
 //   trust-key / scope-path / migrate
