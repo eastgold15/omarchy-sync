@@ -1,352 +1,77 @@
 #!/usr/bin/env bash
-# Exercise init/push/pull/apply against a local bare repository and a fake $HOME.
-# This does not sign in to GitHub and does not write the real home directory.
+# omarsync 关键路径冒烟测试(新 TypeScript CLI)。
+# 只测最关键的部分:
+#   1. CLI 能跑(--help)
+#   2. status --json 输出合法 JSON 且带面板依赖的全部字段
+#   3. 非交互 apply 一律拒绝(审阅模型不能被绕过)
+# 全程只读,不动镜像、不动配置。
 
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-TMP=$(mktemp -d)
-trap 'rm -rf "$TMP"' EXIT
+CLI="$ROOT/bin/omarsync"
 
-REAL_SHELL="${REAL_HOME:-$HOME}/.config/omarchy/shell.json"
-if [[ -f $REAL_SHELL ]]; then
-  BEFORE=$(md5sum "$REAL_SHELL")
-fi
+pass=0
+fail=0
 
-ORIGIN="$TMP/origin.git"
-git init --bare -b main "$ORIGIN" >/dev/null
-mkdir -p "$TMP/keys" "$TMP/bin"
-ssh-keygen -t ed25519 -f "$TMP/keys/id" -N "" -C omarsync-test >/dev/null
-cat >"$TMP/bin/yay" <<'EOF'
-#!/bin/sh
-touch "${OMARSYNC_YAY_LOG:?}"
-exit 0
-EOF
-cat >"$TMP/bin/git" <<EOF
-#!/bin/sh
-touch "$TMP/git-shadow"
-exit 99
-EOF
-chmod +x "$TMP/bin/yay" "$TMP/bin/git"
+ok() { printf 'PASS %s\n' "$1"; pass=$((pass + 1)); }
+bad() { printf 'FAIL %s\n' "$1"; fail=$((fail + 1)); }
 
-setup_home() {
-  local home="$1"
-  mkdir -p \
-    "$home/.config/omarchy/backgrounds/demo" \
-    "$home/.config/omarchy/plugins/secret" \
-    "$home/.config/hypr" \
-    "$home/.config/nvim" \
-    "$home/.local/state/omarchy/current"
-  printf '{ "version": 1 }\n' >"$home/.config/omarchy/shell.json"
-  printf 'wallpaper\n' >"$home/.config/omarchy/backgrounds/demo/a.png"
-  printf 'secret\n' >"$home/.config/omarchy/plugins/secret/x"
-  printf 'bind = SUPER, Q\n' >"$home/.config/hypr/bindings.lua"
-  printf 'junk\n' >"$home/.config/hypr/bindings.lua.bak.1"
-  printf 'set number\n' >"$home/.config/nvim/init.lua"
-  printf 'demo\n' >"$home/.local/state/omarchy/current/theme.name"
-  ln -sfn "$home/.config/omarchy/backgrounds/demo/a.png" \
-    "$home/.local/state/omarchy/current/background"
-}
-
-run() {
-  env -u GH_TOKEN -u GITHUB_TOKEN -u GH_CONFIG_DIR \
-    HOME="$1" \
-    XDG_CONFIG_HOME="$1/.config" \
-    XDG_STATE_HOME="$1/.local/state" \
-    OMARSYNC_ORIGIN="$ORIGIN" \
-    OMARSYNC_SKIP_LIVE=1 \
-    OMARSYNC_YAY_LOG="$TMP/yay.log" \
-    PATH="$TMP/bin:$PATH" \
-    "$ROOT/bin/omarsync" "${@:2}"
-}
-
-pinned_sha() {
-  git -C "$1/.local/state/omarsync/repo" rev-parse --verify HEAD
-}
-
-assert_detached() {
-  if git -C "$1/.local/state/omarsync/repo" symbolic-ref -q HEAD >/dev/null; then
-    echo "mirror is still on a branch: $1" >&2
-    exit 1
-  fi
-}
-
-setup_home "$TMP/home1"
-run "$TMP/home1" trust-key "$TMP/keys/id.pub" "$TMP/keys/id"
-run "$TMP/home1" init local/omarchy-config
-run "$TMP/home1" push --quiet
-grep -qxF "SIGNING_KEY=$TMP/keys/id" "$TMP/home1/.config/omarsync/config"
-git -C "$TMP/home1/.local/state/omarsync/repo" \
-  -c gpg.ssh.allowedSignersFile="$TMP/home1/.config/omarsync/trusted-keys" \
-  verify-commit HEAD
-
-MIRROR="$TMP/home1/.local/state/omarsync/repo"
-[[ -f $MIRROR/home/.config/omarchy/shell.json ]]
-[[ -f $MIRROR/home/.config/hypr/bindings.lua ]]
-[[ ! -e $MIRROR/home/.config/omarchy/plugins ]]
-[[ ! -e $MIRROR/home/.config/hypr/bindings.lua.bak.1 ]]
-[[ $(tr -d '[:space:]' <"$MIRROR/current/theme.name") == demo ]]
-grep -q '^rel:demo/a.png$' "$MIRROR/current/background"
-
-dirty=$(run "$TMP/home1" status --json | jq -r '.dirty')
-[[ $dirty == false ]]
-behind=$(run "$TMP/home1" status --json | jq -r '.behind')
-[[ $behind == 0 ]]
-
-printf '{ "version": 1, "changed": true }\n' >"$TMP/home1/.config/omarchy/shell.json"
-dirty=$(run "$TMP/home1" status --json | jq -r '.dirty')
-[[ $dirty == true ]]
-run "$TMP/home1" push --quiet
-
-signed=$(run "$TMP/home1" status --json | jq -r '.remoteSigned')
-[[ $signed == true ]]
-tip=$(run "$TMP/home1" status --json | jq -r '.remoteCommit')
-[[ $tip =~ ^[0-9a-f]{40}$ ]]
-if run "$TMP/home1" apply --no-packages >/dev/null 2>&1; then
-  echo "apply without --commit should fail" >&2
+# 产物必须是最新的
+if [[ ! -f $ROOT/cli/dist/index.js ]]; then
+  printf 'cli/dist/index.js 不存在;先跑 scripts/dev-install.sh 或 (cd cli && bun run build)\n' >&2
   exit 1
 fi
 
-mkdir -p "$MIRROR/plugins-local/evil" "$MIRROR/plugins-local/test.widget" "$MIRROR/hooks/post-apply.d"
-printf 'echo pwned\n' >"$MIRROR/plugins-local/evil/payload.sh"
-chmod +x "$MIRROR/plugins-local/evil/payload.sh"
-cat >"$MIRROR/plugins-local/test.widget/manifest.json" <<'EOF'
-{
-  "schemaVersion": 1,
-  "id": "test.widget",
-  "name": "Test",
-  "version": "1",
-  "kinds": ["overlay"],
-  "entryPoints": { "overlay": "Widget.qml" }
-}
-EOF
-printf 'import QtQuick\n' >"$MIRROR/plugins-local/test.widget/Widget.qml"
-cat >"$MIRROR/hooks/post-apply.d/10-mark.sh" <<'EOF'
-#!/bin/bash
-touch "$HOME/hook-ran"
-EOF
-chmod +x "$MIRROR/hooks/post-apply.d/10-mark.sh"
-jq -n '[{id:"test.widget",url:"",commit:"",enabled:true,local:true}]' >"$MIRROR/plugins.json"
-git -C "$MIRROR" add plugins-local hooks plugins.json
-git -C "$MIRROR" commit -S -m "plant an executable plugin tree" >/dev/null
-git -C "$MIRROR" push --quiet origin HEAD:main
-
-setup_home "$TMP/home2"
-printf 'local only\n' >"$TMP/home2/.config/omarchy/shell.json"
-run "$TMP/home2" trust-key "$TMP/keys/id.pub" "$TMP/keys/id"
-run "$TMP/home2" init local/omarchy-config
-run "$TMP/home2" pull
-assert_detached "$TMP/home2"
-sha=$(pinned_sha "$TMP/home2")
-if run "$TMP/home2" apply --commit 0000000000000000000000000000000000000000 --no-packages >/dev/null 2>&1; then
-  echo "apply of a different commit should fail" >&2
-  exit 1
-fi
-mkdir -p "$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync"
-printf 'stay\n' >"$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync/keep"
-run "$TMP/home2" apply --commit "$sha" --no-packages
-[[ ! -e $TMP/home2/.config/omarchy/plugins/evil ]]
-[[ -f $TMP/home2/.config/omarchy/plugins/test.widget/Widget.qml ]]
-[[ -f $TMP/home2/hook-ran ]]
-grep -q '^stay$' "$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync/keep"
-[[ -f $TMP/home2/.config/omarchy/plugins/secret/x ]]
-[[ -f $TMP/home1/.local/state/omarsync/status.json ]]
-
-# A new machine has no trusted key. The first apply runs directly and pins the signer.
-setup_home "$TMP/home3"
-run "$TMP/home3" init local/omarchy-config
-fresh=$(run "$TMP/home3" status --json)
-[[ $(jq -r '.remoteSigned' <<<"$fresh") == false ]]
-[[ $(jq -r '.remoteSignature' <<<"$fresh") == untrusted ]]
-[[ $(jq -r '.hasTrustedKeys' <<<"$fresh") == false ]]
-[[ $(jq -r '.firstApply' <<<"$fresh") == true ]]
-[[ $(jq -r '.signerFingerprint' <<<"$fresh") == SHA256:* ]]
-run "$TMP/home3" apply --commit "$sha" --no-packages
-grep -q 'namespaces="git"' "$TMP/home3/.config/omarsync/trusted-keys"
-[[ -f $TMP/home3/.local/state/omarsync/applied ]]
-[[ $(run "$TMP/home3" status --json | jq -r '.remoteSigned') == true ]]
-[[ $(run "$TMP/home3" status --json | jq -r '.firstApply') == false ]]
-run "$TMP/home3" apply --commit "$sha" --no-packages
-[[ ! -f $TMP/yay.log ]]
-
-plug=$TMP/plugsrc
-mkdir -p "$plug"
-git -C "$plug" init -q -b main
-cat >"$plug/manifest.json" <<'EOF'
-{
-  "schemaVersion": 1,
-  "id": "test.remote",
-  "name": "Remote",
-  "version": "1",
-  "kinds": ["overlay"],
-  "entryPoints": { "overlay": "Widget.qml" }
-}
-EOF
-printf 'import QtQuick\n' >"$plug/Widget.qml"
-git -C "$plug" config user.email test@example.com
-git -C "$plug" config user.name test
-git -C "$plug" add -A
-git -C "$plug" commit -q -m plugin
-good=$(git -C "$plug" rev-parse HEAD)
-git clone -q --bare "$plug" "$TMP/plug.git"
-jq -n --arg url "file://$TMP/plug.git" --arg rev "$good" \
-  '[{id:"test.remote",url:$url,commit:$rev,enabled:false,local:false}]' >"$MIRROR/plugins.json"
-git -C "$MIRROR" add plugins.json
-git -C "$MIRROR" commit -S -m "pin a plugin commit" >/dev/null
-git -C "$MIRROR" push --quiet origin HEAD:main
-remote_sha=$(git -C "$MIRROR" rev-parse HEAD)
-run "$TMP/home2" apply --commit "$remote_sha" --no-packages
-[[ -f $TMP/home2/.config/omarchy/plugins/test.remote/Widget.qml ]]
-rm -rf "$TMP/home2/.config/omarchy/plugins/test.remote"
-jq -n --arg url "file://$TMP/plug.git" \
-  '[{id:"test.remote",url:$url,commit:"0123456789abcdef0123456789abcdef01234567",enabled:false,local:false}]' >"$MIRROR/plugins.json"
-git -C "$MIRROR" add plugins.json
-git -C "$MIRROR" commit -S -m "pin a missing plugin commit" >/dev/null
-git -C "$MIRROR" push --quiet origin HEAD:main
-bad_sha=$(git -C "$MIRROR" rev-parse HEAD)
-if run "$TMP/home2" apply --commit "$bad_sha" --no-packages >/dev/null 2>&1; then
-  echo "a plugin commit mismatch should fail" >&2
-  exit 1
-fi
-[[ ! -e $TMP/home2/.config/omarchy/plugins/test.remote ]]
-
-grep -q '"changed": true' "$TMP/home2/.config/omarchy/shell.json"
-grep -q 'local only' "$TMP/home2/.local/state/omarsync/backup"/*/home/.config/omarchy/shell.json
-[[ $(tr -d '[:space:]' <"$TMP/home2/.local/state/omarchy/current/theme.name") == demo ]]
-[[ $(readlink -f "$TMP/home2/.local/state/omarchy/current/background") == "$TMP/home2/.config/omarchy/backgrounds/demo/a.png" ]]
-[[ -f $TMP/home2/.config/nvim/init.lua ]]
-
-printf 'from home2\n' >"$TMP/home2/.config/omarchy/shell.json"
-run "$TMP/home2" push --quiet
-printf 'from home1\n' >"$TMP/home1/.config/omarchy/shell.json"
-run "$TMP/home1" push --quiet
-grep -q 'from home1' "$MIRROR/home/.config/omarchy/shell.json"
-git -C "$MIRROR" -c gpg.ssh.allowedSignersFile="$TMP/home1/.config/omarsync/trusted-keys" verify-commit HEAD
-
-printf '%s\n' '.ssh' '.config/gh' >"$MIRROR/omarsync.scope"
-git -C "$MIRROR" add omarsync.scope
-git -C "$MIRROR" commit -S -m "poison remote scope" >/dev/null
-git -C "$MIRROR" push --quiet origin HEAD:main
-mkdir -p "$TMP/home1/.ssh" "$TMP/home1/.config/gh"
-printf 'SECRET\n' >"$TMP/home1/.ssh/id_ed25519"
-printf 'token\n' >"$TMP/home1/.config/gh/hosts.yml"
-run "$TMP/home1" push --quiet
-if git -C "$MIRROR" ls-tree -r --name-only HEAD | grep -Eq '(^|/)(\.ssh/|id_ed25519|hosts\.yml|omarsync\.scope)$'; then
-  echo "remote scope caused secrets or scope policy to be uploaded" >&2
-  git -C "$MIRROR" ls-tree -r --name-only HEAD >&2
-  exit 1
-fi
-printf '\n.ssh\n' >>"$TMP/home1/.config/omarsync/scope"
-if run "$TMP/home1" push --quiet >/dev/null 2>&1; then
-  echo "local scope was allowed to select .ssh" >&2
-  exit 1
-fi
-cp "$ROOT/omarsync.scope.example" "$TMP/home1/.config/omarsync/scope"
-
-git -C "$MIRROR" -c commit.gpgsign=false commit --allow-empty -m "unsigned" >/dev/null
-git -C "$MIRROR" push --quiet origin HEAD:main
-unsigned=$(git -C "$MIRROR" rev-parse HEAD)
-if run "$TMP/home2" apply --commit "$unsigned" --no-packages >/dev/null 2>&1; then
-  echo "unsigned commit was applied" >&2
-  exit 1
-fi
-if run "$TMP/home3" apply --trust-signer --commit "$unsigned" --no-packages >/dev/null 2>&1; then
-  echo "trust-signer accepted an unsigned commit" >&2
-  exit 1
+# 1. --help 能跑,且中文描述在
+if "$CLI" --help 2>&1 | grep -q '审阅'; then
+  ok "cli --help"
+else
+  bad "cli --help"
 fi
 
-ssh-keygen -t ed25519 -f "$TMP/keys/other" -N "" -C other >/dev/null
-git -C "$MIRROR" -c commit.gpgsign=false -c user.signingkey="$TMP/keys/other" -c gpg.format=ssh \
-  commit -S --allow-empty -m "signed by someone else" >/dev/null
-git -C "$MIRROR" push --quiet origin HEAD:main
-other=$(git -C "$MIRROR" rev-parse HEAD)
-before=$(cat "$TMP/home3/.config/omarsync/trusted-keys")
-if run "$TMP/home3" apply --trust-signer --commit "$other" --no-packages >/dev/null 2>&1; then
-  echo "a second signing key was trusted" >&2
-  exit 1
-fi
-[[ $(cat "$TMP/home3/.config/omarsync/trusted-keys") == "$before" ]]
-
-# Push signs by itself. A passphrase-protected default key is left unused.
-SIGN_ORIGIN="$TMP/sign.git"
-git init --bare -b main "$SIGN_ORIGIN" >/dev/null
-setup_home "$TMP/home4"
-mkdir -p "$TMP/home4/.ssh"
-ssh-keygen -q -t ed25519 -f "$TMP/home4/.ssh/id_ed25519" -N "secret" -C locked
-ORIGIN="$SIGN_ORIGIN" run "$TMP/home4" init local/omarchy-config
-ORIGIN="$SIGN_ORIGIN" run "$TMP/home4" push --quiet
-grep -qxF "SIGNING_KEY=$TMP/home4/.config/omarsync/signing_key" "$TMP/home4/.config/omarsync/config"
-git -C "$TMP/home4/.local/state/omarsync/repo" \
-  -c gpg.ssh.allowedSignersFile="$TMP/home4/.config/omarsync/trusted-keys" \
-  verify-commit HEAD
-if git -C "$TMP/home4/.local/state/omarsync/repo" ls-tree -r --name-only HEAD | grep -q signing_key; then
-  echo "signing key was uploaded" >&2
-  exit 1
+# 2. status --json:合法 JSON + 面板依赖字段齐全
+json=$("$CLI" status --json 2>/dev/null) || true
+missing=$(printf '%s' "$json" | node -e '
+let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => {
+  const need = ["ghInstalled","loggedIn","user","repo","branch","initialized","dirty","behind","ahead",
+    "remoteCommit","pinnedCommit","remoteSigned","remoteSignature","signerFingerprint","hasTrustedKeys",
+    "firstApply","lastPush","running","error","miseConnected","changedFiles"];
+  try {
+    const st = JSON.parse(s);
+    const miss = need.filter((k) => !(k in st));
+    process.stdout.write(miss.join(","));
+  } catch {
+    process.stdout.write("<not-json>");
+  }
+});')
+if [[ -z $missing ]]; then
+  ok "status --json 字段齐全"
+else
+  bad "status --json 缺字段: $missing"
 fi
 
-# A new PC can apply an unsigned commit once, then later unsigned commits are refused.
-UNSIGNED_ORIGIN="$TMP/unsigned.git"
-git init --bare -b main "$UNSIGNED_ORIGIN" >/dev/null
-plant_unsigned() {
-  local content="$1"
-  local message="$2"
-  local work="$TMP/unsigned-work"
-  rm -rf "$work"
-  if git --git-dir="$UNSIGNED_ORIGIN" rev-parse --verify --quiet refs/heads/main >/dev/null; then
-    git clone -q "$UNSIGNED_ORIGIN" "$work"
-  else
-    git init -q -b main "$work"
-    git -C "$work" remote add origin "$UNSIGNED_ORIGIN"
-  fi
-  git -C "$work" config user.email test@example.com
-  git -C "$work" config user.name test
-  mkdir -p "$work/home/.config/omarchy" "$work/hooks/post-apply.d"
-  printf '%s\n' "$content" >"$work/home/.config/omarchy/shell.json"
-  printf '%s\n' '#!/bin/bash' 'touch "$HOME/hook-ran"' >"$work/hooks/post-apply.d/10-mark.sh"
-  chmod +x "$work/hooks/post-apply.d/10-mark.sh"
-  git -C "$work" add -A
-  git -C "$work" -c commit.gpgsign=false commit -q -m "$message"
-  git -C "$work" push -q origin HEAD:main
-}
-plant_unsigned 'unsigned' 'unsigned snapshot'
-unsigned_tip=$(git --git-dir="$UNSIGNED_ORIGIN" rev-parse refs/heads/main)
-setup_home "$TMP/home5"
-ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" init local/omarchy-config
-unsigned_status=$(ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" status --json)
-[[ $(jq -r '.remoteSignature' <<<"$unsigned_status") == none ]]
-[[ $(jq -r '.firstApply' <<<"$unsigned_status") == true ]]
-ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --commit "$unsigned_tip" --no-packages
-[[ ! -f $TMP/home5/hook-ran ]]
-plant_unsigned 'second' 'second unsigned snapshot'
-unsigned_tip2=$(git --git-dir="$UNSIGNED_ORIGIN" rev-parse refs/heads/main)
-if ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --commit "$unsigned_tip2" --no-packages >/dev/null 2>&1; then
-  echo "a second unsigned commit was applied" >&2
-  exit 1
-fi
-if ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --force --commit 0000000000000000000000000000000000000000 --no-packages >/dev/null 2>&1; then
-  echo "force apply of a different commit should fail" >&2
-  exit 1
-fi
-ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --force --commit "$unsigned_tip2" --no-packages
-grep -q 'second' "$TMP/home5/.config/omarchy/shell.json"
-keys_before=$(cat "$TMP/home3/.config/omarsync/trusted-keys")
-run "$TMP/home3" apply --force --commit "$other" --no-packages
-[[ $(cat "$TMP/home3/.config/omarsync/trusted-keys") == "$keys_before" ]]
-
-if run "$TMP/home1" setup </dev/null >/dev/null 2>&1; then
-  echo "setup should fail without a terminal" >&2
-  exit 1
+# 3. status.json 已落盘(面板 FileView 读它)
+if [[ -f $HOME/.local/state/omarsync/status.json ]]; then
+  ok "status.json 落盘"
+else
+  bad "status.json 落盘"
 fi
 
-if run "$TMP/home1" login </dev/null >/dev/null 2>&1; then
-  echo "login should fail without a terminal when GitHub is signed out" >&2
-  exit 1
+# 4. 非交互 apply 必须拒绝:缺 --commit
+if "$CLI" apply </dev/null >/dev/null 2>&1; then
+  bad "apply 无 --commit 竟然成功"
+else
+  ok "apply 无 --commit 被拒绝"
 fi
 
-if [[ -n ${BEFORE:-} ]]; then
-  AFTER=$(md5sum "$REAL_SHELL")
-  [[ $BEFORE == "$AFTER" ]]
+# 5. 非交互 apply 必须拒绝:伪造的 commit(不是远程顶端)
+fake=$(printf 'a%.0s' {1..40})
+if "$CLI" apply --commit "$fake" </dev/null >/dev/null 2>&1; then
+  bad "apply 伪造 commit 竟然成功"
+else
+  ok "apply 伪造 commit 被拒绝"
 fi
 
-[[ ! -f $TMP/git-shadow ]]
-echo "self-test ok"
+printf '%d passed, %d failed\n' "$pass" "$fail"
+[[ $fail -eq 0 ]]

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "vis": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@visulima/vis-mcp"
+      ]
+    }
+  }
+}
