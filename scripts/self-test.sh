@@ -111,7 +111,8 @@ if run "$TMP/home1" apply --no-packages >/dev/null 2>&1; then
   exit 1
 fi
 
-mkdir -p "$MIRROR/plugins-local/evil" "$MIRROR/plugins-local/test.widget" "$MIRROR/hooks/post-apply.d"
+mkdir -p "$MIRROR/plugins-local/evil" "$MIRROR/plugins-local/test.widget" \
+  "$MIRROR/hooks/post-apply.d" "$MIRROR/home/.config/omarchy/hooks/theme-set.d"
 printf 'echo pwned\n' >"$MIRROR/plugins-local/evil/payload.sh"
 chmod +x "$MIRROR/plugins-local/evil/payload.sh"
 cat >"$MIRROR/plugins-local/test.widget/manifest.json" <<'EOF'
@@ -130,8 +131,13 @@ cat >"$MIRROR/hooks/post-apply.d/10-mark.sh" <<'EOF'
 touch "$HOME/hook-ran"
 EOF
 chmod +x "$MIRROR/hooks/post-apply.d/10-mark.sh"
+cat >"$MIRROR/home/.config/omarchy/hooks/theme-set.d/10-mark" <<'EOF'
+#!/bin/bash
+touch "$HOME/theme-hook-trusted"
+EOF
+chmod +x "$MIRROR/home/.config/omarchy/hooks/theme-set.d/10-mark"
 jq -n '[{id:"test.widget",url:"",commit:"",enabled:true,local:true}]' >"$MIRROR/plugins.json"
-git -C "$MIRROR" add plugins-local hooks plugins.json
+git -C "$MIRROR" add plugins-local hooks plugins.json home/.config/omarchy/hooks
 git -C "$MIRROR" commit -S -m "plant an executable plugin tree" >/dev/null
 git -C "$MIRROR" push --quiet origin HEAD:main
 
@@ -152,6 +158,7 @@ run "$TMP/home2" apply --commit "$sha" --no-packages
 [[ ! -e $TMP/home2/.config/omarchy/plugins/evil ]]
 [[ -f $TMP/home2/.config/omarchy/plugins/test.widget/Widget.qml ]]
 [[ -f $TMP/home2/hook-ran ]]
+[[ -f $TMP/home2/.config/omarchy/hooks/theme-set.d/10-mark ]]
 grep -q '^stay$' "$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync/keep"
 [[ -f $TMP/home2/.config/omarchy/plugins/secret/x ]]
 [[ -f $TMP/home1/.local/state/omarsync/status.json ]]
@@ -304,10 +311,13 @@ plant_unsigned() {
   fi
   git -C "$work" config user.email test@example.com
   git -C "$work" config user.name test
-  mkdir -p "$work/home/.config/omarchy" "$work/hooks/post-apply.d"
+  mkdir -p "$work/home/.config/omarchy/hooks/theme-set.d" "$work/hooks/post-apply.d"
   printf '%s\n' "$content" >"$work/home/.config/omarchy/shell.json"
   printf '%s\n' '#!/bin/bash' 'touch "$HOME/hook-ran"' >"$work/hooks/post-apply.d/10-mark.sh"
   chmod +x "$work/hooks/post-apply.d/10-mark.sh"
+  printf '%s\n' '#!/bin/bash' 'touch "$HOME/theme-hook-ran"' \
+    >"$work/home/.config/omarchy/hooks/theme-set.d/pwn.sh"
+  chmod +x "$work/home/.config/omarchy/hooks/theme-set.d/pwn.sh"
   git -C "$work" add -A
   git -C "$work" -c commit.gpgsign=false commit -q -m "$message"
   git -C "$work" push -q origin HEAD:main
@@ -321,11 +331,14 @@ unsigned_status=$(ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" status --json)
 [[ $(jq -r '.firstApply' <<<"$unsigned_status") == true ]]
 unsigned_log=$(ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --commit "$unsigned_tip" --no-packages)
 printf '%s\n' "$unsigned_log" | grep -q 'skipped user service start'
+printf '%s\n' "$unsigned_log" | grep -q 'skipped omarchy hooks restore'
 if printf '%s\n' "$unsigned_log" | grep -q 'systemctl --user start'; then
   echo "unsigned apply started a user service" >&2
   exit 1
 fi
 [[ ! -f $TMP/home5/hook-ran ]]
+[[ ! -e $TMP/home5/.config/omarchy/hooks/theme-set.d/pwn.sh ]]
+[[ ! -f $TMP/home5/theme-hook-ran ]]
 plant_unsigned 'second' 'second unsigned snapshot'
 unsigned_tip2=$(git --git-dir="$UNSIGNED_ORIGIN" rev-parse refs/heads/main)
 if ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --commit "$unsigned_tip2" --no-packages >/dev/null 2>&1; then
@@ -338,11 +351,13 @@ if ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --force --commit 00000000000
 fi
 force_log=$(ORIGIN="$UNSIGNED_ORIGIN" run "$TMP/home5" apply --force --commit "$unsigned_tip2" --no-packages)
 printf '%s\n' "$force_log" | grep -q 'skipped user service start'
+printf '%s\n' "$force_log" | grep -q 'skipped omarchy hooks restore'
 if printf '%s\n' "$force_log" | grep -q 'systemctl --user start'; then
   echo "force apply started a user service" >&2
   exit 1
 fi
 grep -q 'second' "$TMP/home5/.config/omarchy/shell.json"
+[[ ! -e $TMP/home5/.config/omarchy/hooks/theme-set.d/pwn.sh ]]
 keys_before=$(cat "$TMP/home3/.config/omarsync/trusted-keys")
 run "$TMP/home3" apply --force --commit "$other" --no-packages
 [[ $(cat "$TMP/home3/.config/omarsync/trusted-keys") == "$keys_before" ]]

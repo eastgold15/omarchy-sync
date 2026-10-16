@@ -62,16 +62,30 @@ plugin_restore_excludes() {
   fi
 }
 
+# Omarchy runs scripts under ~/.config/omarchy/hooks after theme set and
+# other lifecycle events. Restoring that tree and then calling
+# `omarchy theme set` would execute snapshot code. Keep both behind the
+# same trust gate as plugins and post-apply hooks.
+omarchy_hooks_rel() {
+  printf '%s\n' ".config/omarchy/hooks"
+}
+
 restore_scope() {
   local mirror="$1"
-  local scope_file rel excludes src dst entries plugins
+  local with_exec="${2:-1}"
+  local scope_file rel excludes src dst entries plugins hooks
   scope_file=$(scope_file_for)
   plugins=$(installed_plugins_rel)
+  hooks=$(omarchy_hooks_rel)
   entries=$(load_scope "$scope_file")
   while IFS=$'\t' read -r rel excludes; do
     [[ -n $rel ]] || continue
     if [[ $rel == "$plugins" || $rel == "$plugins"/* ]]; then
       log "left ${rel} alone so installed plugins stay"
+      continue
+    fi
+    if (( with_exec != 1 )) && [[ $rel == "$hooks" || $rel == "$hooks"/* ]]; then
+      log "left ${rel} alone; executable restore needs a trusted signature"
       continue
     fi
     src="$mirror/home/$rel"
@@ -86,6 +100,15 @@ restore_scope() {
     local part
     if [[ $rel == .config || $rel == .config/* ]]; then
       trust_exclude=(--exclude "omarsync/")
+    fi
+    if (( with_exec != 1 )); then
+      if [[ $rel == .config/omarchy || $rel == .config/omarchy/* ]]; then
+        trust_exclude+=(--exclude "hooks/")
+        log "skipped omarchy hooks restore"
+      elif [[ $rel == .config ]]; then
+        trust_exclude+=(--exclude "omarchy/hooks/")
+        log "skipped omarchy hooks restore"
+      fi
     fi
     while IFS= read -r -d '' part; do
       plugin_exclude+=("$part")
@@ -102,6 +125,7 @@ restore_scope() {
 
 apply_current() {
   local mirror="$1"
+  local with_exec="${2:-1}"
   local theme="" background="" target=""
   [[ -f $mirror/current/theme.name ]] && theme=$(tr -d '[:space:]' <"$mirror/current/theme.name")
   [[ -f $mirror/current/background ]] && background=$(tr -d '[:space:]' <"$mirror/current/background")
@@ -119,6 +143,13 @@ apply_current() {
     fi
     if [[ -n $target && -e $target ]]; then
       ln -sfn "$target" "$state/background"
+    fi
+    return 0
+  fi
+
+  if (( with_exec != 1 )); then
+    if [[ -n $theme || -n $background ]]; then
+      log "skipped theme switch; executable restore needs a trusted signature"
     fi
     return 0
   fi
@@ -213,9 +244,9 @@ apply_mirror() {
   local backup
   backup=$(backup_tree "$mirror")
   log "backed up existing files to ${backup}"
-  restore_scope "$mirror"
+  restore_scope "$mirror" "$with_exec"
   local failed=0
-  apply_current "$mirror" || failed=1
+  apply_current "$mirror" "$with_exec" || failed=1
   reload_desktop
   if (( with_packages )); then
     install_missing_packages "$mirror" || failed=1
@@ -267,6 +298,7 @@ preview_apply() {
   done
   if (( with_exec != 1 )); then
     log "plugins and hooks will not run"
+    log "theme switch and omarchy hooks will be skipped"
   fi
 }
 

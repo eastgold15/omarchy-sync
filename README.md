@@ -34,7 +34,7 @@ omarchy pkg add github-cli
 
 The bar updates as soon as those commands finish. A right-click scan is not required. Opening the panel does not scan.
 
-On the other machine, install the plugin and choose **Get started**, then **Apply**. Apply shows what will change and asks before it writes. A signed commit can install missing plugins and run hooks. An unsigned first apply, or **apply --force**, writes configuration and skips those executable steps. `--no-exec` skips them even for a signed commit.
+On the other machine, install the plugin and choose **Get started**, then **Apply**. Apply shows what will change and asks before it writes. A signed commit can install missing plugins, restore Omarchy hooks, switch the theme, and run post-apply hooks. An unsigned first apply, or **apply --force**, writes configuration and skips those executable steps. `--no-exec` skips them even for a signed commit.
 
 ```sh
 omarsync trust-key /path/to/the-signing-key.pub
@@ -115,7 +115,7 @@ Input methods work the same way. For Qingjian (Fcitx5), scope `.config/qingjian`
 
 ## Permissions
 
-This plugin runs unsandboxed inside the Omarchy shell, as your user. Automatic status and push start `/usr/bin/bash` with a cleared environment and a fixed `PATH`. A session proxy is kept only when its name is `http_proxy`, `https_proxy`, `all_proxy`, or `no_proxy` (or the uppercase form) and the value is a plain `http`, `https`, `socks5`, `socks5h`, or `socks4` URL. That proxy is passed only to `git` and `gh`. The command then runs `git`, `rsync`, `jq`, `gh`, and Omarchy tools only from trusted system directories. Apply can overwrite configuration, reload Hyprland, and install official packages with sudo. User services from the snapshot start only after a trusted apply. Review the repository before enabling it.
+This plugin runs unsandboxed inside the Omarchy shell, as your user. Automatic status and push start `/usr/bin/bash` with a cleared environment and a fixed `PATH`. A session proxy is kept only when its name is `http_proxy`, `https_proxy`, `all_proxy`, or `no_proxy` (or the uppercase form) and the value is a plain `http`, `https`, `socks5`, `socks5h`, or `socks4` URL. That proxy is passed only to `git` and `gh`. The command then runs `git`, `rsync`, `jq`, `gh`, and Omarchy tools only from trusted system directories. Apply can overwrite configuration, reload Hyprland, and install official packages with sudo. User services, Omarchy hooks under `.config/omarchy/hooks`, and the live theme switch start only after a trusted apply. Review the repository before enabling it.
 
 `OMARSYNC_ORIGIN` can point git at a non-GitHub remote. That is a development hook; the panel flow uses GitHub.
 
