@@ -4,10 +4,10 @@ import { resolveTool } from "./exec";
 import { log } from "./log";
 
 // 用用户的编辑器打开文件审阅(非阻塞;用户看完回终端按 y)。
-// 优先级:OMARSYNC_EDITOR → VISUAL → EDITOR → omarchy-launch-editor → code。
+// 优先级:OMARCHY_SYNC_EDITOR → VISUAL → EDITOR → omarchy-launch-editor → code。
 
 function editorCommand(): string | undefined {
-    const fromEnv = process.env["OMARSYNC_EDITOR"] ?? process.env["VISUAL"] ?? process.env["EDITOR"];
+    const fromEnv = process.env["OMARCHY_SYNC_EDITOR"] ?? process.env["VISUAL"] ?? process.env["EDITOR"];
 
     if (fromEnv && fromEnv.trim() !== "") {
         return fromEnv.trim();
@@ -47,5 +47,5 @@ export function openInEditor(files: readonly string[]): void {
     child.unref();
     log.info(`已用编辑器打开审阅: ${editor}`);
     log.info(`没弹出来?复制这条手动打开: ${editor} ${quoted}`);
-    log.info("想换编辑器(比如 VS Code): export OMARSYNC_EDITOR=code");
+    log.info("想换编辑器(比如 VS Code): export OMARCHY_SYNC_EDITOR=code");
 }

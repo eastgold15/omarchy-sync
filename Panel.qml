@@ -3,13 +3,13 @@ import qs.Commons
 import qs.Ui
 import "Model.js" as Model
 
-// Omarsync 面板:一眼回答"我和远程现在是什么关系,下一步点哪个"。
+// omarchy.sync 面板:一眼回答"我和远程现在是什么关系,下一步点哪个"。
 // 竖向单一信息流,四个语义区:状态结论 → 需要你决定的 → 同步动作 → 维护与设置。
 // 全部文案中文;按钮名保留真实 CLI 命令,描述用人话。
 
 Panel {
   id: root
-  moduleName: "io.github.eastgold15.omarsync"
+  moduleName: "io.github.eastgold15.omarchy.sync"
   manageIpc: false
 
   property var anchorItem: null
@@ -77,14 +77,14 @@ Panel {
   }
 
   function pushTooltip() {
-    var tip = "omarsync push\n终端里展示这次要发布的 diff，按 y 才上传"
+    var tip = "omarchy.sync push\n终端里展示这次要发布的 diff，按 y 才上传"
     if (lastPushTime() !== "")
       tip += "\n上次成功：" + lastPushTime().replace("T", " ").substring(0, 16) + "，来自 " + (lastPushHost() || "未知机器")
     return tip
   }
 
   function applyTooltip() {
-    var tip = "omarsync apply --commit " + root.trustedCommit.substring(0, 7)
+    var tip = "omarchy.sync apply --commit " + root.trustedCommit.substring(0, 7)
     if (root.sync.remoteSigned === true)
       tip += "\n签名可信：插件与钩子会一并恢复"
     else if (root.sync.remoteSignature === "untrusted")
@@ -229,7 +229,7 @@ Panel {
 
         PanelHero {
           width: parent.width
-          title: "Omarsync"
+          title: "omarchy.sync"
           meta: root.sync.loggedIn === true ? (root.sync.user || "GitHub") : "未登录 GitHub"
           detail: root.sync.repo || "尚未设置仓库"
           foreground: root.barForeground
@@ -301,7 +301,7 @@ Panel {
         ActionRow {
           name: "setup"
           desc: "首次使用：装依赖、登录 GitHub、建好私有仓库"
-          tooltip: "omarsync setup"
+          tooltip: "omarchy.sync setup"
           rowVisible: root.primaryLabel() !== ""
           recommended: true
           onTriggered: root.runPrimary()
@@ -330,7 +330,7 @@ Panel {
         ActionRow {
           name: root.working ? "检查中…" : "检查更新"
           desc: "只刷新状态，不动任何文件"
-          tooltip: "omarsync status\n本地有改动 → 显示 push；远程有新快照 → 显示 apply"
+          tooltip: "omarchy.sync status\n本地有改动 → 显示 push；远程有新快照 → 显示 apply"
           rowEnabled: !root.working
           onTriggered: root.callHost("refreshStatus")
         }
@@ -348,14 +348,14 @@ Panel {
         ActionRow {
           name: "编辑同步范围"
           desc: "决定哪些目录会被同步"
-          tooltip: "~/.config/omarsync/scope"
+          tooltip: "~/.config/omarchy.sync/scope"
           rowEnabled: root.sync.initialized === true
           onTriggered: root.callHost("editScope")
         }
 
         ActionRow {
           name: "查看日志"
-          tooltip: "~/.local/state/omarsync/last.log"
+          tooltip: "~/.local/state/omarchy.sync/last.log"
           onTriggered: root.callHost("viewLog")
         }
 
@@ -430,10 +430,10 @@ Panel {
                 "2. 点 setup（装依赖、登录 GitHub、建仓库）\n" +
                 "3. 点 apply，终端里先看到全部更改，按 y 才写入\n" +
                 "4. 首次会问是否信任签名密钥，选是即可\n\n" +
-                "apply 前会自动备份到 ~/.local/state/omarsync/backup/。\n" +
+                "apply 前会自动备份到 ~/.local/state/omarchy.sync/backup/。\n" +
                 "文件没同步过来？终端跑:\n" +
                 "mise dot pull --take-remote-all\n" +
-                "遇到冲突跑: omarsync conflicts\n\n" +
+                "遇到冲突跑: omarchy.sync conflicts\n\n" +
                 "完整文档：仓库里的 docs/NEW_MACHINE.md"
         }
       }

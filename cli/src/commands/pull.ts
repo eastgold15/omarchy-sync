@@ -11,7 +11,7 @@ import { checkoutPinnedCommit, resolveRemoteSha } from "../lib/trust";
 
 function requireMirror(): string {
     if (!isDir(`${paths.mirrorDir}/.git`)) {
-        die("未初始化。运行: omarsync init");
+        die("未初始化。运行: omarchy.sync init");
     }
 
     return paths.mirrorDir;
@@ -30,5 +30,5 @@ export function executePull(): void {
     }
 
     log.info(`已钉住 ${sha}`);
-    log.info("下一步: omarsync apply --commit " + sha + "(会先展示更改再请你确认)");
+    log.info("下一步: omarchy.sync apply --commit " + sha + "(会先展示更改再请你确认)");
 }

@@ -7,7 +7,7 @@ import * as mise from "./mise";
 import { paths } from "./paths";
 
 // scope 解析、安全校验,以及 scope → mise dot 跟踪条目的幂等对齐(reconcile)。
-// scope(~/.config/omarsync/scope)是唯一事实来源,且只信本机这份;
+// scope(~/.config/omarchy.sync/scope)是唯一事实来源,且只信本机这份;
 // 同步仓库里的同名文件永远被丢弃。1:1 移植自 common.lua 与 scopemap.lua。
 
 export interface ScopeEntry {
@@ -20,7 +20,7 @@ const BANNED_PATHS = [
     ".ssh",
     ".config/gh",
     ".config/git",
-    ".config/omarsync",
+    ".config/omarchy.sync",
     ".gnupg",
     ".aws",
     ".kube",
@@ -30,7 +30,7 @@ const BANNED_PATHS = [
     ".config/npm",
     ".password-store",
     ".local/share/keyrings",
-    ".local/state/omarsync",
+    ".local/state/omarchy.sync",
     ".config/doubao-murmur",
     ".var",
     // mise 自身的配置与状态:同步它们会循环
@@ -100,7 +100,7 @@ export function ensureLocalScope(root: string): void {
     }
 
     mkdirSync(dirname(paths.scopeFile), { recursive: true });
-    copyFileSync(`${root}/omarsync.scope.example`, paths.scopeFile);
+    copyFileSync(`${root}/omarchy.sync.scope.example`, paths.scopeFile);
     chmodSync(paths.scopeFile, 0o644);
 }
 
@@ -146,8 +146,8 @@ const CONST_EXCLUDES = [
     "**/.git",
     "**/node_modules/**",
     "**/node_modules",
-    "~/.config/omarsync/**",
-    "~/.config/omarsync",
+    "~/.config/omarchy.sync/**",
+    "~/.config/omarchy.sync",
     "~/.config/omarchy/plugins/**",
     "~/.config/omarchy/plugins",
     // 各机器本地备份文件(形如 xxx.<主机名>-bak.<时间戳>),永不随同步走
@@ -195,7 +195,7 @@ export function desiredExcludes(entries: readonly ScopeEntry[]): Set<string> {
 }
 
 /** 幂等对齐:track 集合 = scope 条目;排除集合 = desiredExcludes。
- *  omarsync 拥有这台机器的 mise dot 配置;scope 之外的手动 track 会被 untrack。 */
+ *  omarchy.sync 拥有这台机器的 mise dot 配置;scope 之外的手动 track 会被 untrack。 */
 export function reconcile(entries: readonly ScopeEntry[]): void {
     if (!mise.available()) {
         die("mise 未安装。运行: omarchy pkg add mise");

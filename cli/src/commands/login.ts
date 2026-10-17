@@ -17,7 +17,7 @@ export function executeLogin(): void {
     }
 
     if (!stdinIsTty()) {
-        die("GitHub 登录需要终端。运行: omarsync login");
+        die("GitHub 登录需要终端。运行: omarchy.sync login");
     }
 
     gh(["auth", "login", "-h", "github.com", "-p", "https", "-w"]);

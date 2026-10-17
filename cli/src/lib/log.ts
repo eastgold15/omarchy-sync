@@ -26,7 +26,7 @@ export const logger = createPail({
 function appendLog(level: string, message: string): void {
     try {
         mkdirSync(dirname(paths.lastLog), { recursive: true });
-        appendFileSync(paths.lastLog, `${new Date().toISOString()} omarsync[${level}]: ${message}\n`);
+        appendFileSync(paths.lastLog, `${new Date().toISOString()} omarchy.sync[${level}]: ${message}\n`);
     } catch {
         // 日志失败不影响主流程
     }
@@ -35,18 +35,18 @@ function appendLog(level: string, message: string): void {
 /** 致命错误:写日志、打印、退出(独立导出以便控制流收窄) */
 export function die(message: string): never {
     appendLog("error", message);
-    logger.error(`omarsync: ${message}`);
+    logger.error(`omarchy.sync: ${message}`);
     process.exit(1);
 }
 
 export const log = {
     info(message: string): void {
         appendLog("info", message);
-        logger.info(`omarsync: ${message}`);
+        logger.info(`omarchy.sync: ${message}`);
     },
     warn(message: string): void {
         appendLog("warn", message);
-        logger.warn(`omarsync: ${message}`);
+        logger.warn(`omarchy.sync: ${message}`);
     },
     die,
 };

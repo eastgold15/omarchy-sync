@@ -5,7 +5,7 @@
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-ID="io.github.eastgold15.omarsync"
+ID="io.github.eastgold15.omarchy.sync"
 DEST="$HOME/.config/omarchy/plugins/$ID"
 
 # 先构建 CLI 产物(打包成单个 dist/index.js)
@@ -19,7 +19,7 @@ rsync -a --delete \
   --exclude preview.png \
   --exclude cli/node_modules \
   "$ROOT/" "$DEST/"
-chmod +x "$DEST/bin/omarsync" "$DEST/scripts/"*.sh
+chmod +x "$DEST/bin/omarchy.sync" "$DEST/scripts/"*.sh
 
 if command -v omarchy-shell >/dev/null 2>&1; then
   omarchy-shell shell rescanPlugins || true

@@ -23,7 +23,7 @@ export function executeDoctor(): number {
         if (ghLoggedIn()) {
             log.info(`ok  gh (${githubUser() ?? "?"})`);
         } else {
-            log.warn("gh 已安装但未登录。运行: omarsync login");
+            log.warn("gh 已安装但未登录。运行: omarchy.sync login");
         }
     } else {
         log.warn("missing gh。运行: omarchy pkg add github-cli");
@@ -41,7 +41,7 @@ export function executeDoctor(): number {
         if (mise.originConnected()) {
             log.info("ok  mise dot origin 已连接");
         } else {
-            log.warn("mise dot origin 未连接。运行: omarsync init");
+            log.warn("mise dot origin 未连接。运行: omarchy.sync init");
         }
     }
 
@@ -51,7 +51,7 @@ export function executeDoctor(): number {
 
         log.info(`ok  镜像 ${paths.mirrorDir}(${repo} ${branch})`);
     } else {
-        log.warn("镜像未初始化。运行: omarsync init");
+        log.warn("镜像未初始化。运行: omarchy.sync init");
     }
 
     return missing ? 1 : 0;

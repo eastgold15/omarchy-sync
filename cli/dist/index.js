@@ -2,7 +2,7 @@
 import { createRequire } from 'node:module';
 import { a as a$3, u as u$1, b as b$3, h as h$2, i as i$1, c as c$1, g as g$1, l as l$1, d as d$2, o, A as A$3, r as r$1, e as c$2, f as g$2, j as b$4, S as S$3, R as R$5, z as z$3, k as h$3, y, m as m$2, B as B$5, F as F$3, n as a$4, s as s$2, E as E$4, x as x$3, p as l$2, q as d$3, L as L$3, O as O$2, H as H$3, K as K$5, T as T$2, G as G$4, t as f$1, M as M$3, w as w$2, v as k$3, C as j$3, D as t$1 } from './packem_shared/index.server-iAND-ZxX.js';
 import { spawnSync, spawn } from 'node:child_process';
-import { statSync, accessSync, constants, existsSync, lstatSync, mkdtempSync, rmSync, realpathSync, readFileSync, mkdirSync, appendFileSync, copyFileSync, chmodSync, readdirSync, unlinkSync, writeFileSync, symlinkSync } from 'node:fs';
+import { statSync, accessSync, constants, existsSync, lstatSync, mkdtempSync, rmSync, realpathSync, renameSync, readFileSync, mkdirSync, appendFileSync, copyFileSync, chmodSync, readdirSync, unlinkSync, writeFileSync, symlinkSync } from 'node:fs';
 import { tmpdir, homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import * as readline from 'node:readline';
@@ -1923,7 +1923,7 @@ function realpath$1(path) {
   }
 }
 function mktempDir() {
-  return mkdtempSync(join(tmpdir(), "omarsync-"));
+  return mkdtempSync(join(tmpdir(), "omarchy.sync-"));
 }
 function rmrf(path) {
   try {
@@ -10173,21 +10173,33 @@ ${Qr(E, { ...this.#s, filterStacktrace: L, hideErrorCauseCodeView: true, hideErr
 }
 
 const HOME$4 = homedir();
+function migrateLegacyDir(legacy, current) {
+  if (!existsSync(legacy) || existsSync(current)) {
+    return;
+  }
+  try {
+    renameSync(legacy, current);
+  } catch (error) {
+    console.warn(`omarchy.sync: 无法迁移旧目录 ${legacy} -> ${current}:`, error);
+  }
+}
+migrateLegacyDir(join(HOME$4, ".config", "omarsync"), join(HOME$4, ".config", "omarchy.sync"));
+migrateLegacyDir(join(HOME$4, ".local", "state", "omarsync"), join(HOME$4, ".local", "state", "omarchy.sync"));
 const paths = {
   /** 本机配置目录(信任文件、scope、plugins-skip 都在这,永不上传) */
-  configDir: join(HOME$4, ".config", "omarsync"),
-  configFile: join(HOME$4, ".config", "omarsync", "config"),
+  configDir: join(HOME$4, ".config", "omarchy.sync"),
+  configFile: join(HOME$4, ".config", "omarchy.sync", "config"),
   /** 状态目录(镜像、备份、applied 印章、last.log) */
-  stateDir: join(HOME$4, ".local", "state", "omarsync"),
-  mirrorDir: join(HOME$4, ".local", "state", "omarsync", "repo"),
-  backupDir: join(HOME$4, ".local", "state", "omarsync", "backup"),
-  scopeFile: join(HOME$4, ".config", "omarsync", "scope"),
-  pluginsSkipFile: join(HOME$4, ".config", "omarsync", "plugins-skip"),
-  trustedKeysFile: join(HOME$4, ".config", "omarsync", "trusted-keys"),
-  appliedStamp: join(HOME$4, ".local", "state", "omarsync", "applied"),
-  lastLog: join(HOME$4, ".local", "state", "omarsync", "last.log"),
-  lockFile: join(HOME$4, ".local", "state", "omarsync", "omarsync.lock"),
-  statusJson: join(HOME$4, ".local", "state", "omarsync", "status.json")
+  stateDir: join(HOME$4, ".local", "state", "omarchy.sync"),
+  mirrorDir: join(HOME$4, ".local", "state", "omarchy.sync", "repo"),
+  backupDir: join(HOME$4, ".local", "state", "omarchy.sync", "backup"),
+  scopeFile: join(HOME$4, ".config", "omarchy.sync", "scope"),
+  pluginsSkipFile: join(HOME$4, ".config", "omarchy.sync", "plugins-skip"),
+  trustedKeysFile: join(HOME$4, ".config", "omarchy.sync", "trusted-keys"),
+  appliedStamp: join(HOME$4, ".local", "state", "omarchy.sync", "applied"),
+  lastLog: join(HOME$4, ".local", "state", "omarchy.sync", "last.log"),
+  lockFile: join(HOME$4, ".local", "state", "omarchy.sync", "omarchy.sync.lock"),
+  statusJson: join(HOME$4, ".local", "state", "omarchy.sync", "status.json")
 };
 function configGet(key, readFile) {
   const data = readFile(paths.configFile);
@@ -10219,24 +10231,24 @@ const logger = Nt({
 function appendLog(level, message) {
   try {
     mkdirSync(dirname(paths.lastLog), { recursive: true });
-    appendFileSync(paths.lastLog, `${(/* @__PURE__ */ new Date()).toISOString()} omarsync[${level}]: ${message}
+    appendFileSync(paths.lastLog, `${(/* @__PURE__ */ new Date()).toISOString()} omarchy.sync[${level}]: ${message}
 `);
   } catch {
   }
 }
 function die(message) {
   appendLog("error", message);
-  logger.error(`omarsync: ${message}`);
+  logger.error(`omarchy.sync: ${message}`);
   process.exit(1);
 }
 const log = {
   info(message) {
     appendLog("info", message);
-    logger.info(`omarsync: ${message}`);
+    logger.info(`omarchy.sync: ${message}`);
   },
   warn(message) {
     appendLog("warn", message);
-    logger.warn(`omarsync: ${message}`);
+    logger.warn(`omarchy.sync: ${message}`);
   },
   die
 };
@@ -10249,7 +10261,7 @@ function readTextFile(path) {
 }
 
 function editorCommand() {
-  const fromEnv = process.env["OMARSYNC_EDITOR"] ?? process.env["VISUAL"] ?? process.env["EDITOR"];
+  const fromEnv = process.env["OMARCHY_SYNC_EDITOR"] ?? process.env["VISUAL"] ?? process.env["EDITOR"];
   if (fromEnv && fromEnv.trim() !== "") {
     return fromEnv.trim();
   }
@@ -10277,7 +10289,7 @@ function openInEditor(files) {
   child.unref();
   log.info(`已用编辑器打开审阅: ${editor}`);
   log.info(`没弹出来?复制这条手动打开: ${editor} ${quoted}`);
-  log.info("想换编辑器(比如 VS Code): export OMARSYNC_EDITOR=code");
+  log.info("想换编辑器(比如 VS Code): export OMARCHY_SYNC_EDITOR=code");
 }
 
 function gitBin() {
@@ -10437,7 +10449,7 @@ const BANNED_PATHS = [
   ".ssh",
   ".config/gh",
   ".config/git",
-  ".config/omarsync",
+  ".config/omarchy.sync",
   ".gnupg",
   ".aws",
   ".kube",
@@ -10447,7 +10459,7 @@ const BANNED_PATHS = [
   ".config/npm",
   ".password-store",
   ".local/share/keyrings",
-  ".local/state/omarsync",
+  ".local/state/omarchy.sync",
   ".config/doubao-murmur",
   ".var",
   // mise 自身的配置与状态:同步它们会循环
@@ -10493,7 +10505,7 @@ function ensureLocalScope(root) {
     return;
   }
   mkdirSync(dirname(paths.scopeFile), { recursive: true });
-  copyFileSync(`${root}/omarsync.scope.example`, paths.scopeFile);
+  copyFileSync(`${root}/omarchy.sync.scope.example`, paths.scopeFile);
   chmodSync(paths.scopeFile, 420);
 }
 function readScope(file) {
@@ -10521,8 +10533,8 @@ const CONST_EXCLUDES = [
   "**/.git",
   "**/node_modules/**",
   "**/node_modules",
-  "~/.config/omarsync/**",
-  "~/.config/omarsync",
+  "~/.config/omarchy.sync/**",
+  "~/.config/omarchy.sync",
   "~/.config/omarchy/plugins/**",
   "~/.config/omarchy/plugins",
   // 各机器本地备份文件(形如 xxx.<主机名>-bak.<时间戳>),永不随同步走
@@ -10597,7 +10609,7 @@ function reconcile(entries) {
 
 const HOME$3 = homedir();
 function hooksSourceDir() {
-  return `${HOME$3}/.config/omarsync-hooks/post-apply.d`;
+  return `${HOME$3}/.config/omarchy.sync-hooks/post-apply.d`;
 }
 function hookNames(dir) {
   if (!isDir(dir)) {
@@ -10723,7 +10735,7 @@ function githubUser() {
   return ok && user !== "" ? user : void 0;
 }
 
-const PLUGIN_ID = "io.github.eastgold15.omarsync";
+const PLUGIN_ID = "io.github.eastgold15.omarchy.sync";
 const MAX_FILE_SIZE = "50m";
 const BACKUP_KEEP = 5;
 function omarchy(args) {
@@ -10748,14 +10760,14 @@ function rsync(args) {
   return run(bin, args);
 }
 function notify(headline, body) {
-  if (process.env["OMARSYNC_NOTIFY"] !== "1") {
+  if (process.env["OMARCHY_SYNC_NOTIFY"] !== "1") {
     return;
   }
   const bin = resolveTool("omarchy-notification-send");
   if (!bin) {
     return;
   }
-  const args = ["--app-name", "omarsync", headline];
+  const args = ["--app-name", "omarchy.sync", headline];
   if (body !== "") {
     args.push(body);
   }
@@ -10770,7 +10782,7 @@ function dotRepoName() {
   return `${owner}/omarchy-dotfiles`;
 }
 function dotOriginUrl() {
-  const override = process.env["OMARSYNC_DOT_ORIGIN"];
+  const override = process.env["OMARCHY_SYNC_DOT_ORIGIN"];
   if (override && override !== "") {
     return override;
   }
@@ -10780,15 +10792,15 @@ function discardRemoteScope(mirror) {
   if (!isDir(mirror)) {
     return;
   }
-  const file = `${mirror}/omarsync.scope`;
+  const file = `${mirror}/omarchy.sync.scope`;
   if (exists(file) || isLink(file)) {
     try {
       unlinkSync(file);
     } catch {
     }
   }
-  if (isDir(`${mirror}/.git`) && gitOut(["-C", mirror, "ls-files", "--error-unmatch", "--", "omarsync.scope"])) {
-    git(["-C", mirror, "rm", "-q", "--ignore-unmatch", "--", "omarsync.scope"]);
+  if (isDir(`${mirror}/.git`) && gitOut(["-C", mirror, "ls-files", "--error-unmatch", "--", "omarchy.sync.scope"])) {
+    git(["-C", mirror, "rm", "-q", "--ignore-unmatch", "--", "omarchy.sync.scope"]);
   }
 }
 function ensureIdentity(mirror) {
@@ -10808,9 +10820,9 @@ function ensureIdentity(mirror) {
         email = `${id}+${login}@users.noreply.github.com`;
       }
     }
-    email ??= "omarsync@localhost";
+    email ??= "omarchy.sync@localhost";
   }
-  git(["-C", mirror, "config", "user.name", name && name !== "" ? name : "Omarsync"]);
+  git(["-C", mirror, "config", "user.name", name && name !== "" ? name : "omarchy.sync"]);
   git(["-C", mirror, "config", "user.email", email]);
   const signingKey = configGet("SIGNING_KEY", readTextFile);
   if (signingKey && isFile(signingKey)) {
@@ -11311,7 +11323,7 @@ function recordTrustedSigner(keyType, keyData, priv) {
   }
   let email = configGet("SIGNING_EMAIL", readTextFile);
   if (!email) {
-    email = "omarsync@localhost";
+    email = "omarchy.sync@localhost";
     configSet("SIGNING_EMAIL", email);
   }
   const keys = paths.trustedKeysFile;
@@ -11370,7 +11382,7 @@ function createDedicatedSigningKey(priv) {
   if (!keygen) {
     die("ssh-keygen 不可用");
   }
-  if (!run(keygen, ["-q", "-t", "ed25519", "-f", priv, "-N", "", "-C", `omarsync@${hostnameSafe()}`])) {
+  if (!run(keygen, ["-q", "-t", "ed25519", "-f", priv, "-N", "", "-C", `omarchy.sync@${hostnameSafe()}`])) {
     die("创建签名密钥失败");
   }
   chmodSync(priv, 384);
@@ -11420,7 +11432,7 @@ function signUntrustedTip(mirror) {
 }
 function cmdTrustKey(pubFile, priv) {
   if (!pubFile || !isFile(pubFile)) {
-    die("用法: omarsync trust-key <ssh公钥> [私钥]");
+    die("用法: omarchy.sync trust-key <ssh公钥> [私钥]");
   }
   refuseInsideMirror(pubFile);
   if (priv && !isFile(priv)) {
@@ -11656,12 +11668,12 @@ function installMissingPlugins(mirror, allowExec) {
       rmrf(tmp);
       log.info(`已安装插件 ${id}`);
       installedAny = true;
-      if (enabled && process.env["OMARSYNC_SKIP_LIVE"] !== "1" && !omarchy(["plugin", "enable", id])) {
+      if (enabled && process.env["OMARCHY_SYNC_SKIP_LIVE"] !== "1" && !omarchy(["plugin", "enable", id])) {
         log.warn(`启用插件 ${id} 失败`);
       }
     }
   }
-  if (installedAny && process.env["OMARSYNC_SKIP_LIVE"] !== "1" && resolveTool("omarchy-shell")) {
+  if (installedAny && process.env["OMARCHY_SYNC_SKIP_LIVE"] !== "1" && resolveTool("omarchy-shell")) {
     if (!omarchyShell(["shell", "rescanPlugins"])) {
       log.warn("shell 插件重扫失败");
     }
@@ -11720,7 +11732,7 @@ function applyCurrent(mirror) {
   } else if (background.startsWith("abs:")) {
     target = background.slice(4);
   }
-  if (process.env["OMARSYNC_SKIP_LIVE"] === "1") {
+  if (process.env["OMARCHY_SYNC_SKIP_LIVE"] === "1") {
     mkdirSync(state, { recursive: true });
     if (theme !== "") {
       writeFileSync(`${state}/theme.name`, `${theme}
@@ -11768,7 +11780,7 @@ function hyprInstanceSignature() {
   return found.length === 1 ? found[0] : void 0;
 }
 function reloadDesktop() {
-  if (process.env["OMARSYNC_SKIP_LIVE"] === "1") {
+  if (process.env["OMARCHY_SYNC_SKIP_LIVE"] === "1") {
     return;
   }
   if (resolveTool("omarchy-shell")) {
@@ -11957,7 +11969,7 @@ function previewApply(mirror, sha, withExec) {
 
 function requireMirror$2() {
   if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
+    die("未初始化。运行: omarchy.sync init");
   }
   return paths.mirrorDir;
 }
@@ -12059,7 +12071,7 @@ function executeDoctor() {
     if (ghLoggedIn()) {
       log.info(`ok  gh (${githubUser() ?? "?"})`);
     } else {
-      log.warn("gh 已安装但未登录。运行: omarsync login");
+      log.warn("gh 已安装但未登录。运行: omarchy.sync login");
     }
   } else {
     log.warn("missing gh。运行: omarchy pkg add github-cli");
@@ -12075,7 +12087,7 @@ function executeDoctor() {
     if (originConnected()) {
       log.info("ok  mise dot origin 已连接");
     } else {
-      log.warn("mise dot origin 未连接。运行: omarsync init");
+      log.warn("mise dot origin 未连接。运行: omarchy.sync init");
     }
   }
   if (isDir(`${paths.mirrorDir}/.git`)) {
@@ -12083,7 +12095,7 @@ function executeDoctor() {
     const branch = configGet("BRANCH", readTextFile) ?? "main";
     log.info(`ok  镜像 ${paths.mirrorDir}(${repo} ${branch})`);
   } else {
-    log.warn("镜像未初始化。运行: omarsync init");
+    log.warn("镜像未初始化。运行: omarchy.sync init");
   }
   return missing ? 1 : 0;
 }
@@ -12100,12 +12112,12 @@ function ensureDotfilesRepo() {
     return;
   }
   const url = dotOriginUrl();
-  if (!process.env["OMARSYNC_DOT_ORIGIN"] && !process.env["OMARSYNC_ORIGIN"]) {
+  if (!process.env["OMARCHY_SYNC_DOT_ORIGIN"] && !process.env["OMARCHY_SYNC_ORIGIN"]) {
     const dotRepo = dotRepoName();
     const name = dotRepo.split("/").pop() ?? dotRepo;
     if (!ghCapture(["repo", "view", dotRepo]).ok) {
       log.info(`创建私有仓库 ${dotRepo}`);
-      gh(["repo", "create", name, "--private", "--description", "Omarchy dotfiles synced by omarsync via mise"]);
+      gh(["repo", "create", name, "--private", "--description", "Omarchy dotfiles synced by omarchy.sync via mise"]);
     }
   }
   if (!originSet(url, "main")) {
@@ -12125,12 +12137,12 @@ function ensureDotfilesRepo() {
 function executeInit(repoArg) {
   let repo = repoArg ?? "";
   const user = githubUser();
-  if (!process.env["OMARSYNC_ORIGIN"]) {
+  if (!process.env["OMARCHY_SYNC_ORIGIN"]) {
     if (!ghInstalled()) {
       die("GitHub CLI 未安装。运行: omarchy pkg add github-cli");
     }
     if (!ghLoggedIn()) {
-      die("未登录 GitHub。运行: omarsync login");
+      die("未登录 GitHub。运行: omarchy.sync login");
     }
     if (!user) {
       die("读取不到 GitHub 用户");
@@ -12147,7 +12159,7 @@ function executeInit(repoArg) {
         die(`仓库 ${repo} 不存在,也不属于 ${user}`);
       }
       log.info(`创建私有仓库 ${repo}`);
-      gh(["repo", "create", name, "--private", "--description", "Omarchy configuration synced by omarsync"]);
+      gh(["repo", "create", name, "--private", "--description", "Omarchy configuration synced by omarchy.sync"]);
     }
   } else {
     if (repo === "") {
@@ -12158,7 +12170,7 @@ function executeInit(repoArg) {
     }
   }
   const branch = "main";
-  const url = process.env["OMARSYNC_ORIGIN"] || `https://github.com/${repo}.git`;
+  const url = process.env["OMARCHY_SYNC_ORIGIN"] || `https://github.com/${repo}.git`;
   const mirror = paths.mirrorDir;
   mkdirSync(paths.stateDir, { recursive: true });
   if (isDir(`${mirror}/.git`)) {
@@ -12197,7 +12209,7 @@ function executeLogin() {
     return;
   }
   if (!stdinIsTty()) {
-    die("GitHub 登录需要终端。运行: omarsync login");
+    die("GitHub 登录需要终端。运行: omarchy.sync login");
   }
   gh(["auth", "login", "-h", "github.com", "-p", "https", "-w"]);
   gh(["auth", "setup-git"]);
@@ -12206,7 +12218,7 @@ function executeLogin() {
 
 function executeMigrate() {
   if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
+    die("未初始化。运行: omarchy.sync init");
   }
   const mirror = paths.mirrorDir;
   const branch = configGet("BRANCH", readTextFile) ?? "main";
@@ -12235,7 +12247,7 @@ function executeMigrate() {
 
 function requireMirror$1() {
   if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
+    die("未初始化。运行: omarchy.sync init");
   }
   return paths.mirrorDir;
 }
@@ -12248,7 +12260,7 @@ function executePull() {
     sync(true);
   }
   log.info(`已钉住 ${sha}`);
-  log.info("下一步: omarsync apply --commit " + sha + "(会先展示更改再请你确认)");
+  log.info("下一步: omarchy.sync apply --commit " + sha + "(会先展示更改再请你确认)");
 }
 
 const HOME = homedir();
@@ -12282,7 +12294,7 @@ function writeMeta(dest, miseHead) {
     pushedAt: iso8601(),
     miseHead: miseHead ?? null
   };
-  writeFileSync(`${dest}/omarsync.json`, `${JSON.stringify(data)}
+  writeFileSync(`${dest}/omarchy.sync.json`, `${JSON.stringify(data)}
 `);
 }
 function collectInto(dest, miseHead) {
@@ -12344,7 +12356,7 @@ function mirrorDirty(mirror) {
 
 function requireMirror() {
   if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
+    die("未初始化。运行: omarchy.sync init");
   }
   return paths.mirrorDir;
 }
@@ -12440,12 +12452,12 @@ ${miseDiff}
     }
     log.info("mise dot 历史已发布");
   }
-  notify("Omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
+  notify("omarchy.sync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
 }
 
 function executeSetup() {
   if (!stdinIsTty()) {
-    die("setup 需要终端。运行: omarsync setup");
+    die("setup 需要终端。运行: omarchy.sync setup");
   }
   if (!available()) {
     log.info("安装 mise");
@@ -12608,7 +12620,7 @@ function collect() {
         }
       }
     }
-    const metaRaw = readTextFile(join(mirror, "omarsync.json"));
+    const metaRaw = readTextFile(join(mirror, "omarchy.sync.json"));
     if (metaRaw) {
       try {
         const data = JSON.parse(metaRaw);
@@ -12654,8 +12666,8 @@ function executeStatus(json) {
   }
 }
 
-const cli = a$2("omarsync", {
-  packageName: "omarsync",
+const cli = a$2("omarchy.sync", {
+  packageName: "omarchy.sync",
   packageVersion: "2.0.0"
 });
 cli.addCommand({
@@ -12812,7 +12824,7 @@ cli.addCommand({
     try {
       ensureLocalScope(root);
     } catch {
-      die(`scope 示例不存在: ${root}/omarsync.scope.example`);
+      die(`scope 示例不存在: ${root}/omarchy.sync.scope.example`);
     }
     process.stdout.write(`${paths.scopeFile}
 `);

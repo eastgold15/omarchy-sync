@@ -29,7 +29,7 @@ export interface ApplyOptions {
 
 function requireMirror(): string {
     if (!isDir(`${paths.mirrorDir}/.git`)) {
-        die("未初始化。运行: omarsync init");
+        die("未初始化。运行: omarchy.sync init");
     }
 
     return paths.mirrorDir;

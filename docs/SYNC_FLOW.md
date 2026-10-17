@@ -23,7 +23,7 @@
 本机文件改动
    │
    ▼
-omarsync push
+omarchy.sync push
    ├─ 1. reconcile：track 集合对齐【本机 scope】（远程永远改不了本机 track 什么）
    ├─ 2. mise dot save  ──────★ 手动存：先把当前状态显式存成检查点
    │        └─ 无变化 → 跳过；失败 → 中止,不推半成品
@@ -37,11 +37,11 @@ omarsync push
 ## 拉（pull）与 应用（apply）——拉之后先审阅再应用
 
 ```
-omarsync pull            ← 只抓取,一个字节都不写进活配置
+omarchy.sync pull            ← 只抓取,一个字节都不写进活配置
    ├─ fetch 元数据仓库,detach 钉住 origin/main 的完整 commit
    └─ mise dot sync --fetch-only
 
-omarsync apply --commit <40位sha>
+omarchy.sync apply --commit <40位sha>
    ├─ 1. 签名校验（trusted-keys）
    │       可信签名 → 可装插件/跑 hooks
    │       不可信   → 拒绝；或 --force 只写配置,可执行步骤全关
@@ -69,11 +69,11 @@ omarsync apply --commit <40位sha>
 
 | 决定 | 由谁说了算 | 存在哪 |
 |---|---|---|
-| 同步哪些目录 | 本机 scope（仓库里的 scope 文件直接丢弃） | `~/.config/omarsync/scope` |
+| 同步哪些目录 | 本机 scope（仓库里的 scope 文件直接丢弃） | `~/.config/omarchy.sync/scope` |
 | 哪些文件因机而异 | 本机 scope 排除（monitors/input/envs 默认排除） | 同上 |
-| 哪些插件不同步 | 本机 plugins-skip（不导出也不安装） | `~/.config/omarsync/plugins-skip` |
+| 哪些插件不同步 | 本机 plugins-skip（不导出也不安装） | `~/.config/omarchy.sync/plugins-skip` |
 | 是否应用这次合并 | 本机看完 diff 后输 y；无终端=拒绝 | 终端 |
-| 信任哪个签名者 | 本机 trusted-keys（TOFU 首用即钉） | `~/.config/omarsync/trusted-keys` |
+| 信任哪个签名者 | 本机 trusted-keys（TOFU 首用即钉） | `~/.config/omarchy.sync/trusted-keys` |
 | 冲突谁赢 | 本机逐条 keep-local / take-remote | mise dot conflicts |
 
 ## 待你确认的点
@@ -82,4 +82,4 @@ omarsync apply --commit <40位sha>
 2. push 前的"手动存"：现在是 push 自动 save。要加一步
    `mise dot diff` 预览让你看到自己将推出什么，输 y 才推？
    （对称于 apply 的审阅）
-3. 冲突解决入口要做成 omarsync 子命令（如 `omarsync conflicts`  最好使用用户的编辑器打开查看更改
+3. 冲突解决入口要做成 omarchy.sync 子命令（如 `omarchy.sync conflicts`  最好使用用户的编辑器打开查看更改

@@ -1,20 +1,27 @@
 {
   "schemaVersion": 1,
-  "id": "io.github.eastgold15.omarsync",
-  "name": "Omarsync",
+  "id": "io.github.eastgold15.omarchy.sync",
+  "name": "omarchy.sync",
   "version": "1.10.1",
   "author": "lukeliu",
   "license": "MIT",
   "description": "Sync this Omarchy setup — config, wallpapers, packages, and plugins — to a private GitHub repo.",
-  "kinds": ["bar-widget"],
+  "kinds": [
+    "bar-widget"
+  ],
   "entryPoints": {
     "barWidget": "BarWidget.qml"
   },
   "barWidget": {
-    "displayName": "Omarsync",
+    "displayName": "omarchy.sync",
     "description": "Push and pull this machine's Omarchy setup through GitHub.",
     "category": "System",
-    "aliases": ["sync", "backup", "github", "dotfiles"],
+    "aliases": [
+      "sync",
+      "backup",
+      "github",
+      "dotfiles"
+    ],
     "allowMultiple": false,
     "defaultSection": "right",
     "defaults": {

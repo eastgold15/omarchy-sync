@@ -6,13 +6,13 @@ import { log } from "./log";
 import { readScope } from "./scope";
 import { paths } from "./paths";
 
-// post-apply hooks:由编写的机器放入 ~/.config/omarsync-hooks/post-apply.d,
+// post-apply hooks:由编写的机器放入 ~/.config/omarchy.sync-hooks/post-apply.d,
 // push 时复制进签名快照;apply 仅对可信提交执行。1:1 移植自 src/hooks.lua。
 
 const HOME = homedir();
 
 export function hooksSourceDir(): string {
-    return `${HOME}/.config/omarsync-hooks/post-apply.d`;
+    return `${HOME}/.config/omarchy.sync-hooks/post-apply.d`;
 }
 
 /** 目录下的普通文件名(排除符号链接),按名字排序 */

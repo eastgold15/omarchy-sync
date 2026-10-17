@@ -14,7 +14,7 @@ import { executeLogin } from "./login";
 
 export function executeSetup(): void {
     if (!stdinIsTty()) {
-        die("setup 需要终端。运行: omarsync setup");
+        die("setup 需要终端。运行: omarchy.sync setup");
     }
 
     if (!mise.available()) {

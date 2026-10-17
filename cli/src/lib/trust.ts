@@ -390,7 +390,7 @@ export function recordTrustedSigner(keyType: string, keyData: string, priv?: str
     let email = configGet("SIGNING_EMAIL", readTextFile);
 
     if (!email) {
-        email = "omarsync@localhost";
+        email = "omarchy.sync@localhost";
         configSet("SIGNING_EMAIL", email);
     }
 
@@ -474,7 +474,7 @@ export function createDedicatedSigningKey(priv: string): void {
         die("ssh-keygen 不可用");
     }
 
-    if (!run(keygen, ["-q", "-t", "ed25519", "-f", priv, "-N", "", "-C", `omarsync@${hostnameSafe()}`])) {
+    if (!run(keygen, ["-q", "-t", "ed25519", "-f", priv, "-N", "", "-C", `omarchy.sync@${hostnameSafe()}`])) {
         die("创建签名密钥失败");
     }
 
@@ -545,7 +545,7 @@ export function signUntrustedTip(mirror: string): void {
 /** trust-key 子命令 */
 export function cmdTrustKey(pubFile: string | undefined, priv?: string): void {
     if (!pubFile || !isFile(pubFile)) {
-        die("用法: omarsync trust-key <ssh公钥> [私钥]");
+        die("用法: omarchy.sync trust-key <ssh公钥> [私钥]");
     }
 
     refuseInsideMirror(pubFile);

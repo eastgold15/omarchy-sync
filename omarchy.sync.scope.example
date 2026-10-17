@@ -1,14 +1,14 @@
-# Installed copy: ~/.config/omarsync/scope
+# Installed copy: ~/.config/omarchy.sync/scope
 # This file stays on the machine. The copy inside a sync repository is ignored.
 # Paths are relative to $HOME. Missing paths are skipped.
 # Optional excludes follow a pipe and are comma-separated patterns
 # (translated to mise dot exclude globs).
 # .git directories and node_modules are always skipped.
-# .ssh, .config/gh, .config/mise, key files, and the omarsync trust directory
+# .ssh, .config/gh, .config/mise, key files, and the omarchy.sync trust directory
 # are rejected. Removing a line stops tracking that directory.
 # The plugin directory (.config/omarchy/plugins) is never tracked by mise,
 # even without the plugins/ exclude below; plugins sync only as signed
-# snapshots, and ~/.config/omarsync/plugins-skip keeps machine-specific
+# snapshots, and ~/.config/omarchy.sync/plugins-skip keeps machine-specific
 # plugins out of the snapshot entirely.
 # Machine-specific files are excluded by default: monitors.lua (display
 # layout), input.lua (touchpad/keyboard), envs.lua (GPU/variables) differ

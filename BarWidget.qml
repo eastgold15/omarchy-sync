@@ -7,12 +7,12 @@ import "Model.js" as Model
 
 BarWidget {
   id: root
-  moduleName: "io.github.eastgold15.omarsync"
+  moduleName: "io.github.eastgold15.omarchy.sync"
 
-  readonly property string cliPath: Model.pathFromUrl(Qt.resolvedUrl("bin/omarsync"))
+  readonly property string cliPath: Model.pathFromUrl(Qt.resolvedUrl("bin/omarchy.sync"))
   readonly property string manifestPath: Model.pathFromUrl(Qt.resolvedUrl("manifest.json"))
   property string version: ""
-  // bin/omarsync 是可执行 wrapper(自带 shebang 和环境清洗),直接执行即可
+  // bin/omarchy.sync 是可执行 wrapper(自带 shebang 和环境清洗),直接执行即可
   readonly property string trustedShell: ""
   readonly property int outputLimit: 65536
   readonly property int statusDeadlineMs: 120000
@@ -31,7 +31,7 @@ BarWidget {
       "LANG": "C.UTF-8",
       "LC_ALL": "C.UTF-8",
       "OMARCHY_PATH": "/usr/share/omarchy",
-      "OMARSYNC_NOTIFY": root.settingBool("notify", true) ? "1" : "0"
+      "OMARCHY_SYNC_NOTIFY": root.settingBool("notify", true) ? "1" : "0"
     }
   }
 
@@ -150,7 +150,7 @@ BarWidget {
     }
     var parsed = Model.parseStatus(root.boundedText(text))
     if (!parsed) {
-      root.statusError = "读不到 omarsync 状态；终端跑 omarsync doctor 检查"
+      root.statusError = "读不到 omarchy.sync 状态；终端跑 omarchy.sync doctor 检查"
       return
     }
     root.status = parsed
@@ -217,7 +217,7 @@ BarWidget {
     var home = Quickshell.env("HOME") || ""
     if (!root.bar || typeof root.bar.run !== "function" || home === "")
       return
-    root.bar.run("omarchy-launch-editor " + Model.shellQuote(home + "/.local/state/omarsync/last.log"))
+    root.bar.run("omarchy-launch-editor " + Model.shellQuote(home + "/.local/state/omarchy.sync/last.log"))
   }
 
   function pullAndApply() {
@@ -254,7 +254,7 @@ BarWidget {
     var home = Quickshell.env("HOME") || ""
     if (!root.bar || typeof root.bar.run !== "function")
       return
-    root.bar.run("omarchy-launch-editor " + Model.shellQuote(home + "/.config/omarsync/scope"))
+    root.bar.run("omarchy-launch-editor " + Model.shellQuote(home + "/.config/omarchy.sync/scope"))
   }
 
   function toggleAutoPush() {
@@ -325,7 +325,7 @@ BarWidget {
       waitForEnd: true
       onDataChanged: {
         if (text.length > root.outputLimit)
-          root.expireProcess(statusProcess, "状态输出异常大；终端跑 omarsync status 检查")
+          root.expireProcess(statusProcess, "状态输出异常大；终端跑 omarchy.sync status 检查")
       }
       onStreamFinished: root.applyStatus(text)
     }
@@ -334,7 +334,7 @@ BarWidget {
       waitForEnd: true
       onDataChanged: {
         if (text.length > root.outputLimit)
-          root.expireProcess(statusProcess, "状态输出异常大；终端跑 omarsync status 检查")
+          root.expireProcess(statusProcess, "状态输出异常大；终端跑 omarchy.sync status 检查")
       }
     }
     onExited: function(exitCode, exitStatus) {
@@ -353,7 +353,7 @@ BarWidget {
       waitForEnd: true
       onDataChanged: {
         if (text.length > root.outputLimit)
-          root.expireProcess(pushProcess, "push 输出异常大；终端跑 omarsync doctor 检查")
+          root.expireProcess(pushProcess, "push 输出异常大；终端跑 omarchy.sync doctor 检查")
       }
     }
     stderr: StdioCollector {
@@ -361,7 +361,7 @@ BarWidget {
       waitForEnd: true
       onDataChanged: {
         if (text.length > root.outputLimit)
-          root.expireProcess(pushProcess, "push 输出异常大；终端跑 omarsync doctor 检查")
+          root.expireProcess(pushProcess, "push 输出异常大；终端跑 omarchy.sync doctor 检查")
       }
     }
     onExited: function(exitCode, exitStatus) {
@@ -380,7 +380,7 @@ BarWidget {
       pushProcess.signal(9)
   }
 
-  readonly property string statusPath: (Quickshell.env("HOME") || "") + "/.local/state/omarsync/status.json"
+  readonly property string statusPath: (Quickshell.env("HOME") || "") + "/.local/state/omarchy.sync/status.json"
 
   FileView {
     path: root.manifestPath
@@ -420,7 +420,7 @@ BarWidget {
     dimmed: root.status.loggedIn !== true
     active: root.dirty || (root.status.behind || 0) > 0
     tooltipText: {
-      var line = root.version !== "" ? ("Omarsync " + root.version) : "Omarsync"
+      var line = root.version !== "" ? ("omarchy.sync " + root.version) : "omarchy.sync"
       if (root.busy)
         return line + " · 执行中…"
       var sentence = Model.statusSentence(root.status)

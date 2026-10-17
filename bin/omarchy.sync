@@ -8,17 +8,17 @@ set -euo pipefail
 # Drop inherited loader, shell, and PATH state before any Node code runs.
 # Automatic callers start this through a cleared environment;
 # a direct invocation re-execs itself the same way.
-if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
+if [[ ${OMARCHY_SYNC_SANITIZED:-} != 1 ]]; then
   home=${HOME:-}
   [[ $home == /* && $home != *$'\n'* && $home != *:* ]] || {
-    printf 'omarsync: HOME must be an absolute path\n' >&2
+    printf 'omarchy.sync: HOME must be an absolute path\n' >&2
     exit 1
   }
   user=$(/usr/bin/id -un)
   uid=$(/usr/bin/id -u)
   runtime="/run/user/${uid}"
-  origin=${OMARSYNC_ORIGIN:-}
-  dot_origin=${OMARSYNC_DOT_ORIGIN:-}
+  origin=${OMARCHY_SYNC_ORIGIN:-}
+  dot_origin=${OMARCHY_SYNC_DOT_ORIGIN:-}
   keep_origin=""
   keep_dot_origin=""
   if [[ $origin == /* && $origin != *..* && $origin != *[[:space:]]* ]]; then
@@ -36,17 +36,17 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
     "LANG=C.UTF-8"
     "LC_ALL=C.UTF-8"
     "OMARCHY_PATH=/usr/share/omarchy"
-    "OMARSYNC_SANITIZED=1"
-    "OMARSYNC_ROOT=${root}"
+    "OMARCHY_SYNC_SANITIZED=1"
+    "OMARCHY_SYNC_ROOT=${root}"
     "GIT_TERMINAL_PROMPT=0"
     "GIT_EDITOR=/usr/bin/true"
     "GH_PROMPT_DISABLED=1"
   )
   [[ -d $runtime ]] && vars+=("XDG_RUNTIME_DIR=${runtime}")
-  [[ ${OMARSYNC_SKIP_LIVE:-} == 1 ]] && vars+=("OMARSYNC_SKIP_LIVE=1")
-  [[ ${OMARSYNC_NOTIFY:-} == 1 ]] && vars+=("OMARSYNC_NOTIFY=1")
+  [[ ${OMARCHY_SYNC_SKIP_LIVE:-} == 1 ]] && vars+=("OMARCHY_SYNC_SKIP_LIVE=1")
+  [[ ${OMARCHY_SYNC_NOTIFY:-} == 1 ]] && vars+=("OMARCHY_SYNC_NOTIFY=1")
   # 用户的编辑器选择透传给 CLI(push/apply 审阅时打开 diff)
-  for editor_var in OMARSYNC_EDITOR VISUAL EDITOR; do
+  for editor_var in OMARCHY_SYNC_EDITOR VISUAL EDITOR; do
     editor_value=${!editor_var:-}
     if [[ -n $editor_value && $editor_value != *$'\n'* ]]; then
       vars+=("${editor_var}=${editor_value}")
@@ -62,8 +62,8 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
       vars+=("${gui_var}=${gui_value}")
     fi
   done
-  [[ -n $keep_origin ]] && vars+=("OMARSYNC_ORIGIN=${keep_origin}")
-  [[ -n $keep_dot_origin ]] && vars+=("OMARSYNC_DOT_ORIGIN=${keep_dot_origin}")
+  [[ -n $keep_origin ]] && vars+=("OMARCHY_SYNC_ORIGIN=${keep_origin}")
+  [[ -n $keep_dot_origin ]] && vars+=("OMARCHY_SYNC_DOT_ORIGIN=${keep_dot_origin}")
   exec /usr/bin/env -i "${vars[@]}" /usr/bin/bash "$0" "$@"
 fi
 
@@ -75,20 +75,25 @@ unset LD_PRELOAD LD_LIBRARY_PATH BASH_ENV ENV IFS CDPATH PYTHONPATH NODE_OPTIONS
   PERL5OPT RUBYOPT GIT_EXEC_PATH GIT_SSH GIT_SSH_COMMAND GIT_CONFIG_PARAMETERS \
   GIT_CONFIG_COUNT GH_TOKEN GITHUB_TOKEN SSH_AUTH_SOCK MISE_CONFIG_FILE || true
 
-ROOT=${OMARSYNC_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
+ROOT=${OMARCHY_SYNC_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 
 # 自愈 shim:Omarchy 插件系统不会把插件的 bin/ 放进 PATH,
-# 但面板每次状态扫描都会跑到这里——趁机把 ~/.local/bin/omarsync 补上。
+# 但面板每次状态扫描都会跑到这里——趁机把 ~/.local/bin/omarchy.sync 补上。
 # 只在自己创建的文件上更新,绝不覆盖用户已有的同名文件。
-shim="${HOME}/.local/bin/omarsync"
+shim="${HOME}/.local/bin/omarchy.sync"
+old_shim="${HOME}/.local/bin/omarsync"
 shim_body="#!/bin/sh
-exec \"\$HOME/.config/omarchy/plugins/io.github.eastgold15.omarsync/bin/omarsync\" \"\$@\""
+exec \"\$HOME/.config/omarchy/plugins/io.github.eastgold15.omarchy.sync/bin/omarchy.sync\" \"\$@\""
+# 清理旧命名(omarsync)残留的 shim;只删自己创建的,不碰用户文件
+if [[ -f $old_shim && ! -L $old_shim ]] && /usr/bin/grep -q 'omarchy/plugins/.*omarsync' "$old_shim" 2>/dev/null; then
+  /usr/bin/rm -f "$old_shim"
+fi
 if [[ $ROOT == "$HOME/.config/omarchy/plugins/"* ]]; then
   if [[ ! -e $shim ]]; then
     /usr/bin/mkdir -p "${HOME}/.local/bin"
     printf '%s\n' "$shim_body" >"$shim"
     /usr/bin/chmod 755 "$shim"
-  elif [[ -f $shim && ! -L $shim ]] && /usr/bin/grep -q 'omarchy/plugins/io.github.eastgold15.omarsync/bin/omarsync' "$shim" 2>/dev/null; then
+  elif [[ -f $shim && ! -L $shim ]] && /usr/bin/grep -q 'omarchy/plugins/io.github.eastgold15.omarchy.sync/bin/omarchy.sync' "$shim" 2>/dev/null; then
     printf '%s\n' "$shim_body" >"$shim"
     /usr/bin/chmod 755 "$shim"
   fi
@@ -103,18 +108,29 @@ for candidate in /usr/bin/node /bin/node; do
   fi
 done
 [[ -n $NODE_BIN ]] || {
-  printf 'omarsync: trusted node not found. Run: omarchy pkg add nodejs\n' >&2
+  printf 'omarchy.sync: trusted node not found. Run: omarchy pkg add nodejs\n' >&2
   exit 1
 }
+
+# 命名规范 omarsync -> omarchy.sync 的一次性数据目录迁移。
+# 必须在下面 mkdir 新 state 目录之前做,否则新目录已存在会导致迁移被跳过。
+for parent in .config .local/state; do
+  legacy="${HOME}/${parent}/omarsync"
+  current="${HOME}/${parent}/omarchy.sync"
+  if [[ -d $legacy && ! -e $current ]]; then
+    /usr/bin/mkdir -p "${HOME}/${parent}"
+    /usr/bin/mv "$legacy" "$current" 2>/dev/null || true
+  fi
+done
 
 # 写操作命令在执行前持锁(整个进程生命周期);status 等只读命令不取锁
 case "${1:-status}" in
   push|pull|apply|sync|migrate)
-    state="${HOME}/.local/state/omarsync"
+    state="${HOME}/.local/state/omarchy.sync"
     /usr/bin/mkdir -p "$state"
-    exec 9>"${state}/omarsync.lock"
+    exec 9>"${state}/omarchy.sync.lock"
     if ! /usr/bin/flock -n 9; then
-      printf 'omarsync: another omarsync operation is running\n' >&2
+      printf 'omarchy.sync: another omarchy.sync operation is running\n' >&2
       exit 1
     fi
     ;;

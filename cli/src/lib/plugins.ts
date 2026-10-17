@@ -312,13 +312,13 @@ export function installMissingPlugins(mirror: string, allowExec: boolean): boole
             log.info(`已安装插件 ${id}`);
             installedAny = true;
 
-            if (enabled && process.env["OMARSYNC_SKIP_LIVE"] !== "1" && !omarchy(["plugin", "enable", id])) {
+            if (enabled && process.env["OMARCHY_SYNC_SKIP_LIVE"] !== "1" && !omarchy(["plugin", "enable", id])) {
                 log.warn(`启用插件 ${id} 失败`);
             }
         }
     }
 
-    if (installedAny && process.env["OMARSYNC_SKIP_LIVE"] !== "1" && resolveTool("omarchy-shell")) {
+    if (installedAny && process.env["OMARCHY_SYNC_SKIP_LIVE"] !== "1" && resolveTool("omarchy-shell")) {
         if (!omarchyShell(["shell", "rescanPlugins"])) {
             log.warn("shell 插件重扫失败");
         }

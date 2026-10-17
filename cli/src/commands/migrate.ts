@@ -25,7 +25,7 @@ export function needsMigrate(): boolean {
 
 export function executeMigrate(): void {
     if (!isDir(`${paths.mirrorDir}/.git`)) {
-        die("未初始化。运行: omarsync init");
+        die("未初始化。运行: omarchy.sync init");
     }
 
     const mirror = paths.mirrorDir;

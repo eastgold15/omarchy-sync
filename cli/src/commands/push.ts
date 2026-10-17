@@ -18,7 +18,7 @@ import { confirm, hostnameSafe, iso8601 } from "../lib/util";
 
 function requireMirror(): string {
     if (!isDir(`${paths.mirrorDir}/.git`)) {
-        die("未初始化。运行: omarsync init");
+        die("未初始化。运行: omarchy.sync init");
     }
 
     return paths.mirrorDir;
@@ -151,5 +151,5 @@ export async function executePush(skipConfirm = false): Promise<void> {
         log.info("mise dot 历史已发布");
     }
 
-    notify("Omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
+    notify("omarchy.sync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
 }

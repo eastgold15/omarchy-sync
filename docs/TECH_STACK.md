@@ -1,6 +1,6 @@
-# Omarsync CLI 重构技术栈
+# omarchy.sync CLI 重构技术栈
 
-目标：把现有 `src/*.lua`（约 3400 行）+ `bin/omarsync`（bash wrapper）重构为
+目标：把现有 `src/*.lua`（约 3400 行）+ `bin/omarchy.sync`（bash wrapper）重构为
 TypeScript CLI，全面使用 [Visulima 生态](https://visulima.com/llms.txt)。
 同步内核仍交给 **mise dot**（子进程调用，不重新实现）；QML 面板接口
 （`status --json`、子命令名）保持不变。
@@ -14,7 +14,7 @@ TypeScript CLI，全面使用 [Visulima 生态](https://visulima.com/llms.txt)�
 
 
 
-打包：使用bun包管理,不构建二进制.   `@visulima/packem` 打成单个 ESM 文件（`dist/omarsync.mjs`），
+打包：使用bun包管理,不构建二进制.   `@visulima/packem` 打成单个 ESM 文件（`dist/omarchy.sync.mjs`），
 插件安装时复制进插件目录，不依赖用户机器装 npm 包。
 
 ## 依赖映射（Lua 模块 → visulima 包）
@@ -69,7 +69,7 @@ cli/
 1. **脚手架**：`cli/` 初始化、packem 构建出可运行的空 CLI（status 只读版）
 2. **核心移植**：common/exec/mise/scopemap/trust → status/push/pull 可用
 3. **apply 链路**：meta/packages/plugins/hooks/apply 编排 + 审查 diff
-4. **面板对接**：bin/omarsync 改为调 dist 产物，self-test 全绿
+4. **面板对接**：bin/omarchy.sync 改为调 dist 产物，self-test 全绿
 5. spinner/tabular/boxen 美化
 
 - cli命令描述注释都使用中文

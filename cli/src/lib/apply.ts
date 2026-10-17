@@ -77,7 +77,7 @@ export function backupTree(): string {
     return dest;
 }
 
-/** 应用主题与壁纸(在线模式调用 omarchy;OMARSYNC_SKIP_LIVE=1 时只写状态文件) */
+/** 应用主题与壁纸(在线模式调用 omarchy;OMARCHY_SYNC_SKIP_LIVE=1 时只写状态文件) */
 export function applyCurrent(mirror: string): boolean {
     const theme = (readTextFile(`${mirror}/current/theme.name`) ?? "").replaceAll(/\s+/g, "");
     const background = (readTextFile(`${mirror}/current/background`) ?? "").replaceAll(/\s+/g, "");
@@ -91,7 +91,7 @@ export function applyCurrent(mirror: string): boolean {
         target = background.slice(4);
     }
 
-    if (process.env["OMARSYNC_SKIP_LIVE"] === "1") {
+    if (process.env["OMARCHY_SYNC_SKIP_LIVE"] === "1") {
         mkdirSync(state, { recursive: true });
 
         if (theme !== "") {
@@ -158,7 +158,7 @@ function hyprInstanceSignature(): string | undefined {
 }
 
 export function reloadDesktop(): void {
-    if (process.env["OMARSYNC_SKIP_LIVE"] === "1") {
+    if (process.env["OMARCHY_SYNC_SKIP_LIVE"] === "1") {
         return;
     }
 
@@ -208,7 +208,7 @@ export function assertPinned(mirror: string, sha: string): void {
     }
 }
 
-/** mise 侧的文件同步:fetch → pull(take-remote-all;omarsync.json 的 miseHead 只留档) */
+/** mise 侧的文件同步:fetch → pull(take-remote-all;omarchy.sync.json 的 miseHead 只留档) */
 export function syncDotfiles(): boolean {
     if (!mise.available()) {
         log.warn("mise 未安装;跳过 dotfiles。运行: omarchy pkg add mise");

@@ -16,12 +16,12 @@ import { ensureLocalScope } from "./lib/scope";
 import { cmdTrustKey } from "./lib/trust";
 import { paths } from "./lib/paths";
 
-// Omarsync CLI(visulima 重构版)
+// omarchy.sync CLI(visulima 重构版)
 // 核心思想:track 模式点对点配置同步;推之前手动存;拉之后先审阅再应用;本机保留决定权。
 // 命令描述与注释一律使用中文。
 
-const cli = createCerebro("omarsync", {
-    packageName: "omarsync",
+const cli = createCerebro("omarchy.sync", {
+    packageName: "omarchy.sync",
     packageVersion: "2.0.0",
 });
 
@@ -192,7 +192,7 @@ cli.addCommand({
         try {
             ensureLocalScope(root);
         } catch {
-            die(`scope 示例不存在: ${root}/omarsync.scope.example`);
+            die(`scope 示例不存在: ${root}/omarchy.sync.scope.example`);
         }
 
         process.stdout.write(`${paths.scopeFile}\n`);

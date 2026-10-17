@@ -10,7 +10,7 @@ import { exportPackages } from "./packages";
 import { exportPlugins } from "./plugins";
 import { hostnameSafe, iso8601 } from "./util";
 
-// 元数据导出:当前主题/壁纸、包清单、插件清单、hooks、omarsync.json。
+// 元数据导出:当前主题/壁纸、包清单、插件清单、hooks、omarchy.sync.json。
 // 文件本体同步已由 mise dot 接管,这里只处理"非文件"的机器状态。1:1 移植自 src/meta.lua。
 
 const HOME = homedir();
@@ -36,7 +36,7 @@ export function exportCurrent(dest: string): void {
     writeFileSync(`${dest}/current/background`, `${record}\n`);
 }
 
-/** omarsync.json:主机、Omarchy 版本、推送时间、mise 历史头(tree.snapshot) */
+/** omarchy.sync.json:主机、Omarchy 版本、推送时间、mise 历史头(tree.snapshot) */
 export function writeMeta(dest: string, miseHead: string | undefined): void {
     let version = "unknown";
     const vf = `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/version`;
@@ -54,7 +54,7 @@ export function writeMeta(dest: string, miseHead: string | undefined): void {
         miseHead: miseHead ?? null,
     };
 
-    writeFileSync(`${dest}/omarsync.json`, `${JSON.stringify(data)}\n`);
+    writeFileSync(`${dest}/omarchy.sync.json`, `${JSON.stringify(data)}\n`);
 }
 
 /** 采集元数据到镜像(不再含 home/ 目录;dotfiles 走 mise) */

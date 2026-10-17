@@ -111,7 +111,7 @@ export function realpath(path: string): string | undefined {
 
 /** 创建临时目录(等价 mktemp -d) */
 export function mktempDir(): string {
-    return mkdtempSync(join(tmpdir(), "omarsync-"));
+    return mkdtempSync(join(tmpdir(), "omarchy.sync-"));
 }
 
 /** 递归删除;不存在静默忽略 */

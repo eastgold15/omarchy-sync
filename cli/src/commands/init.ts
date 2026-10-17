@@ -34,14 +34,14 @@ export function ensureDotfilesRepo(): void {
 
     const url = dotOriginUrl();
 
-    if (!process.env["OMARSYNC_DOT_ORIGIN"] && !process.env["OMARSYNC_ORIGIN"]) {
+    if (!process.env["OMARCHY_SYNC_DOT_ORIGIN"] && !process.env["OMARCHY_SYNC_ORIGIN"]) {
         // 只有 GitHub 流程才负责建仓库
         const dotRepo = dotRepoName();
         const name = dotRepo.split("/").pop() ?? dotRepo;
 
         if (!ghCapture(["repo", "view", dotRepo]).ok) {
             log.info(`创建私有仓库 ${dotRepo}`);
-            gh(["repo", "create", name, "--private", "--description", "Omarchy dotfiles synced by omarsync via mise"]);
+            gh(["repo", "create", name, "--private", "--description", "Omarchy dotfiles synced by omarchy.sync via mise"]);
         }
     }
 
@@ -71,13 +71,13 @@ export function executeInit(repoArg: string | undefined): void {
 
     const user = githubUser();
 
-    if (!process.env["OMARSYNC_ORIGIN"]) {
+    if (!process.env["OMARCHY_SYNC_ORIGIN"]) {
         if (!ghInstalled()) {
             die("GitHub CLI 未安装。运行: omarchy pkg add github-cli");
         }
 
         if (!ghLoggedIn()) {
-            die("未登录 GitHub。运行: omarsync login");
+            die("未登录 GitHub。运行: omarchy.sync login");
         }
 
         if (!user) {
@@ -100,7 +100,7 @@ export function executeInit(repoArg: string | undefined): void {
             }
 
             log.info(`创建私有仓库 ${repo}`);
-            gh(["repo", "create", name!, "--private", "--description", "Omarchy configuration synced by omarsync"]);
+            gh(["repo", "create", name!, "--private", "--description", "Omarchy configuration synced by omarchy.sync"]);
         }
     } else {
         if (repo === "") {
@@ -113,7 +113,7 @@ export function executeInit(repoArg: string | undefined): void {
     }
 
     const branch = "main";
-    const url = process.env["OMARSYNC_ORIGIN"] || `https://github.com/${repo}.git`;
+    const url = process.env["OMARCHY_SYNC_ORIGIN"] || `https://github.com/${repo}.git`;
     const mirror = paths.mirrorDir;
 
     mkdirSync(paths.stateDir, { recursive: true });

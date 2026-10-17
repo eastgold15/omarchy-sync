@@ -4,7 +4,7 @@
 
 ## 同步内容总览
 
-Omarsync 使用**两个私有 GitHub 仓库**，数据走两条通道：
+omarchy.sync 使用**两个私有 GitHub 仓库**，数据走两条通道：
 
 | 仓库 | 内容 | 通道 |
 |---|---|---|
@@ -13,12 +13,12 @@ Omarsync 使用**两个私有 GitHub 仓库**，数据走两条通道：
 
 恢复时会自动处理：
 
-- **配置文件**：按 `~/.config/omarsync/scope` 的条目，由 mise dot 整体拉回
+- **配置文件**：按 `~/.config/omarchy.sync/scope` 的条目，由 mise dot 整体拉回
 - **官方/AUR 软件包**：安装缺失的显式安装包
 - **Flatpak 应用**：按钉住的 commit 安装
 - **shell 插件**：按 `plugins.json` 里钉死的 commit 克隆、校验、安装、按原状态启用
 - **主题与壁纸**：恢复 apply 时记录的主题和壁纸
-- **post-apply 钩子**：`~/.config/omarsync-hooks/post-apply.d` 里的脚本
+- **post-apply 钩子**：`~/.config/omarchy.sync-hooks/post-apply.d` 里的脚本
 
 > 插件、钩子等"可执行内容"只在**提交带可信签名**（或你明确信任签名者）时才会执行。
 > 未签名的首次 apply 只写配置，跳过这些步骤——这是安全设计，不是故障。
@@ -29,13 +29,13 @@ Omarsync 使用**两个私有 GitHub 仓库**，数据走两条通道：
 
 1. 已装好 Omarchy
 2. 能登录同一个 GitHub 账号（对两个私有仓库有访问权）
-3. 安装 Omarsync 插件：
+3. 安装 omarchy.sync 插件：
 
 ```sh
-omarchy plugin add https://github.com/eastgold15/omarsync.git --enable
+omarchy plugin add https://github.com/eastgold15/omarchy.sync.git --enable
 ```
 
-插件装好后，面板第一次扫描状态时会自动创建 `~/.local/bin/omarsync` 命令（Omarchy 已把该目录加入 PATH）。
+插件装好后，面板第一次扫描状态时会自动创建 `~/.local/bin/omarchy.sync` 命令（Omarchy 已把该目录加入 PATH）。
 
 缺少依赖（`nodejs`、`mise`、`github-cli`）可以在面板里点装，或手动：
 
@@ -47,7 +47,7 @@ omarchy pkg add nodejs mise github-cli
 
 ### 1. setup（初始化）
 
-点击面板上的云图标 → **setup**（对应 `omarsync setup`）。这一步会：
+点击面板上的云图标 → **setup**（对应 `omarchy.sync setup`）。这一步会：
 
 - 安装缺失的依赖
 - 登录 GitHub（`gh auth login`）
@@ -58,22 +58,22 @@ omarchy pkg add nodejs mise github-cli
 等价命令：
 
 ```sh
-omarsync init
+omarchy.sync init
 ```
 
 ### 2. apply（应用快照）
 
-初始化完成后，面板会显示远程最新提交的短 id。点 **apply**（对应 `omarsync apply --commit <sha>`）：
+初始化完成后，面板会显示远程最新提交的短 id。点 **apply**（对应 `omarchy.sync apply --commit <sha>`）：
 
 1. 弹出终端，先显示**预览**（哪些文件会变、哪些包/插件会装）
 2. 询问确认后才真正写入
-3. 写入前自动把现有文件备份到 `~/.local/state/omarsync/backup/<时间戳>/`（保留最近 5 份）
+3. 写入前自动把现有文件备份到 `~/.local/state/omarchy.sync/backup/<时间戳>/`（保留最近 5 份）
 4. 依次执行：mise dot 拉取文件 → 恢复主题/壁纸 → 装缺失软件包 → 装插件 → 跑钩子 → 重载桌面
 
 等价命令（sha 为面板显示的完整 40 位提交号）：
 
 ```sh
-omarsync apply --commit <40位sha>
+omarchy.sync apply --commit <40位sha>
 ```
 
 ### 3. 关于签名信任
@@ -83,9 +83,9 @@ omarsync apply --commit <40位sha>
 **签名密钥在旧（push）机器上**，位置只有两种可能：
 
 - `~/.ssh/id_ed25519` 存在且无密码 → 用它签名，公钥是 `~/.ssh/id_ed25519.pub`
-- 否则 → 自动创建 `~/.config/omarsync/signing_key`，公钥是 `~/.config/omarsync/signing_key.pub`
+- 否则 → 自动创建 `~/.config/omarchy.sync/signing_key`，公钥是 `~/.config/omarchy.sync/signing_key.pub`
 
-在旧机器上跑 `omarsync push` 时终端会打印 `使用 ... 签名`，以那个路径为准。
+在旧机器上跑 `omarchy.sync push` 时终端会打印 `使用 ... 签名`，以那个路径为准。
 
 **大多数情况下你什么都不用做**：新机器第一次 apply 时，终端会提示是否信任这个签名者，确认一次，之后该密钥的提交就全自动通过。
 
@@ -93,7 +93,7 @@ omarsync apply --commit <40位sha>
 
 ```sh
 # 路径换成你拷过来的实际位置，例如：
-omarsync trust-key --pubkey ~/signing_key.pub
+omarchy.sync trust-key --pubkey ~/signing_key.pub
 ```
 
 `apply --force` 或提交不受信任时：只写配置，**不装插件、不跑钩子**。
@@ -112,7 +112,7 @@ gh api repos/<用户名>/omarchy-dotfiles/contents/home/.config/hypr --jq '.[].n
 
 ```sh
 mise dot status      # 看 ~/.config/hypr 是否 tracked、有无未保存改动
-omarsync push
+omarchy.sync push
 ```
 
 ### ② 确认新机器 mise dot 已连接远程
@@ -122,7 +122,7 @@ mise dot status
 ```
 
 - 显示 `Setup repository: ...omarchy-dotfiles.git` 且有文件列表 → 正常
-- 提示没有 setup 仓库 → 重新跑 `omarsync init`
+- 提示没有 setup 仓库 → 重新跑 `omarchy.sync init`
 - 显示 `incoming change(s) pending` → 有改动还没拉下来，执行：
 
 ```sh
@@ -138,7 +138,7 @@ mise dot paths | grep hypr
 没有输出说明 track 条目没生效（scope 文件缺失或被改过）。检查：
 
 ```sh
-cat ~/.config/omarsync/scope    # 应包含 .config/hypr
+cat ~/.config/omarchy.sync/scope    # 应包含 .config/hypr
 ```
 
 scope 正常后再执行 `mise dot pull --take-remote-all`，或直接重新 apply。
@@ -155,7 +155,7 @@ mise dot pull --take-remote-all         # 全部以远程为准
 apply 前的旧文件都在：
 
 ```sh
-ls ~/.local/state/omarsync/backup/
+ls ~/.local/state/omarchy.sync/backup/
 ```
 
 mise 自己也留了保护检查点，可以 `mise dot recover` 撤销。
@@ -169,4 +169,4 @@ mise 自己也留了保护检查点，可以 `mise dot recover` 撤销。
 正常现象。插件目录本身是嵌套 git 仓库，mise dot 会跳过它们；它们由 `plugins.json` 按钉死的 commit 在 apply 时自动克隆安装。
 
 **Q: 新机器 apply 后又想同步回旧机器？**
-两台机器都正常 push/pull 即可。mise dot 历史是双向合并的，冲突时用 `omarsync conflicts` 处理。
+两台机器都正常 push/pull 即可。mise dot 历史是双向合并的，冲突时用 `omarchy.sync conflicts` 处理。

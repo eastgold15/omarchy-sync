@@ -75,7 +75,7 @@ function readCounts(mirror: string, branch: string): [number, number, string] | 
     return [behind, ahead, sha];
 }
 
-/** 是否有其他 omarsync 进程在跑(flock 探测) */
+/** 是否有其他 omarchy.sync 进程在跑(flock 探测) */
 function isRunning(): boolean {
     const flock = resolveTool("flock");
 
@@ -216,7 +216,7 @@ function collect(): Status {
             }
         }
 
-        const metaRaw = readTextFile(join(mirror, "omarsync.json"));
+        const metaRaw = readTextFile(join(mirror, "omarchy.sync.json"));
 
         if (metaRaw) {
             try {

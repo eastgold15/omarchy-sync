@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# omarsync 关键路径冒烟测试(新 TypeScript CLI)。
+# omarchy.sync 关键路径冒烟测试(新 TypeScript CLI)。
 # 只测最关键的部分:
 #   1. CLI 能跑(--help)
 #   2. status --json 输出合法 JSON 且带面板依赖的全部字段
@@ -9,7 +9,7 @@
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-CLI="$ROOT/bin/omarsync"
+CLI="$ROOT/bin/omarchy.sync"
 
 pass=0
 fail=0
@@ -52,7 +52,7 @@ else
 fi
 
 # 3. status.json 已落盘(面板 FileView 读它)
-if [[ -f $HOME/.local/state/omarsync/status.json ]]; then
+if [[ -f $HOME/.local/state/omarchy.sync/status.json ]]; then
   ok "status.json 落盘"
 else
   bad "status.json 落盘"
