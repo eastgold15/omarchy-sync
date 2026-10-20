@@ -12,7 +12,8 @@ BarWidget {
   readonly property string cliPath: Model.pathFromUrl(Qt.resolvedUrl("bin/omarsync"))
   readonly property string manifestPath: Model.pathFromUrl(Qt.resolvedUrl("manifest.json"))
   property string version: ""
-  readonly property string trustedShell: "/usr/bin/bash"
+  // bin/omarsync 是可执行 wrapper(自带 shebang 和环境清洗),直接执行即可
+  readonly property string trustedShell: ""
   readonly property int outputLimit: 65536
   readonly property int statusDeadlineMs: 120000
   readonly property int pushDeadlineMs: 300000
@@ -57,7 +58,10 @@ BarWidget {
   }
 
   function trustedCommand(args) {
-    var command = [root.trustedShell, root.cliPath]
+    var command = []
+    if (root.trustedShell !== "")
+      command.push(root.trustedShell)
+    command.push(root.cliPath)
     var index
     for (index = 0; index < args.length; index++)
       command.push(String(args[index]))
@@ -166,7 +170,7 @@ BarWidget {
   }
 
   function refreshStatus() {
-    if (statusProcess.running || root.cliPath === "" || root.trustedShell === "")
+    if (statusProcess.running || root.cliPath === "")
       return
     var home = Quickshell.env("HOME") || ""
     if (home === "")
@@ -179,7 +183,7 @@ BarWidget {
   }
 
   function pushNow() {
-    if (pushProcess.running || root.cliPath === "" || root.trustedShell === "")
+    if (pushProcess.running || root.cliPath === "")
       return
     var home = Quickshell.env("HOME") || ""
     if (home === "")
@@ -233,6 +237,23 @@ BarWidget {
     if (!Model.safeRepo(root.status.repo) || !root.bar || typeof root.bar.run !== "function")
       return
     root.bar.run("xdg-open " + Model.shellQuote("https://github.com/" + root.status.repo))
+  }
+
+  function changedFiles() {
+    var files = root.status && root.status.changedFiles ? root.status.changedFiles : []
+    return files.length ? files : []
+  }
+
+  function openChanges() {
+    var home = Quickshell.env("HOME") || ""
+    var files = root.changedFiles()
+    if (!root.bar || typeof root.bar.run !== "function" || home === "" || files.length === 0)
+      return
+    var parts = []
+    var limit = Math.min(files.length, 10)
+    for (var i = 0; i < limit; i++)
+      parts.push(Model.shellQuote(home + "/" + String(files[i])))
+    root.bar.run("code " + parts.join(" "))
   }
 
   function editScope() {

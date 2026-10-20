@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Forward only a checked proxy to git and gh. Other tools stay without it.
 
 proxy_url_ok() {
