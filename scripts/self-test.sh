@@ -160,7 +160,20 @@ if run "$TMP/home2" apply --commit 0000000000000000000000000000000000000000 --no
 fi
 mkdir -p "$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync"
 printf 'stay\n' >"$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync/keep"
-run "$TMP/home2" apply --commit "$sha" --no-packages
+# 另一台机器只点 apply:元数据仓库已有,但 mise 还没连接 origin
+env -u GH_TOKEN -u GITHUB_TOKEN \
+  HOME="$TMP/home2" \
+  XDG_CONFIG_HOME="$TMP/home2/.config" \
+  XDG_STATE_HOME="$TMP/home2/.local/state" \
+  USER=tester LOGNAME=tester \
+  PATH=/usr/bin:/bin \
+  /usr/bin/mise dot origin --remove
+if ! apply_log=$(run "$TMP/home2" apply --commit "$sha" --no-packages); then
+  printf '%s\n' "$apply_log" >&2
+  fail "apply without a connected origin failed"
+fi
+grep -q 'connected mise dot origin' <<<"$apply_log"
+grep -q 'branch = "dotfiles"' "$TMP/home2/.config/mise/config.local.toml"
 # 文件来自 mise dot
 grep -q '"changed": true' "$TMP/home2/.config/omarchy/shell.json"
 # 排除规则不再在 apply 时删掉接收端的本地文件

@@ -209,17 +209,38 @@ local function restore_omarchy_hooks(stash)
   common.log("skipped omarchy hooks restore")
 end
 
--- mise 侧的文件同步:fetch → 校验签名提交记录的 miseHead → pull
-function M.sync_dotfiles(mirror, force)
+-- 另一台机器往往还没跑过 setup,mise 没有 origin。先连上再抓取。
+-- 连接用 manual:不在这里发布本机历史。
+function M.prepare_dotfiles()
   if not mise.available() then
     common.warn("mise is not installed; skipping dotfiles. Run: omarchy pkg add mise")
     return false
+  end
+  local url = common.dot_origin_url()
+  local branch = common.dot_branch()
+  local already = mise.origin_matches(url, branch)
+  local connected, connect_out = mise.connect(url, branch)
+  if not connected then
+    common.warn("could not connect mise dot origin " .. (url ~= "" and url or "(not configured)"))
+    if type(connect_out) == "string" and connect_out ~= "" then
+      common.warn(connect_out)
+    end
+    return false
+  end
+  if not already then
+    common.log("connected mise dot origin " .. url .. " branch " .. branch)
   end
   local ok, out = mise.sync(true) -- 只抓取,不发布
   if not ok then
     common.warn("mise fetch failed: " .. tostring(out or ""))
     return false
   end
+  return true
+end
+
+-- mise 侧的文件同步:连接 origin → fetch → pull
+function M.sync_dotfiles(mirror, force)
+  if not M.prepare_dotfiles() then return false end
   -- omarsync.json 里的 miseHead 只做留档(取证用),不做钉死校验:
   -- 接收机本地历史头与发布机的合法地不同,mise 的 pull 事务自带保护检查点
   local pull_out, pull_ok = mise.pull({ take_remote_all = true, capture = true })

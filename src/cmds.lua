@@ -402,9 +402,10 @@ function M.cmd_apply(args)
   else
     common.log("reviewed first commit " .. sha .. "; plugins and hooks stay off until it is signed")
   end
-  -- 先抓取 mise 远程,让预览的 dry-run 反映真实待应用内容
-  if mise.available() then
-    mise.sync(true)
+  -- 先连上 dotfiles 分支再抓取,让预览反映真实待应用内容。
+  -- 没跑过 setup 的机器这里才会第一次 origin set。
+  if mise.available() and not apply_mod.prepare_dotfiles() then
+    common.die("mise could not fetch the dotfiles branch, so nothing was applied")
   end
   apply_mod.preview_apply(mirror, sha, with_exec)
   -- 非交互默认继续(与旧版一致;面板在终端里运行,会真实询问)

@@ -179,6 +179,18 @@ function M.origin_matches(url, branch)
   return true
 end
 
+-- 接收机在 fetch 之前调用。已经连到同一地址和分支时什么都不做。
+-- 只写入连接,不 reconcile、不 save、不 push,避免本地基线和远程历史变成 unrelated。
+function M.connect(url, branch)
+  if type(url) ~= "string" or url == "" then
+    return false, "metadata repository is not configured"
+  end
+  if M.origin_matches(url, branch) then
+    return true, nil
+  end
+  return M.origin_set(url, branch)
+end
+
 -- 连接 origin(非交互)。用 manual,避免第一次发布失败时连连接记录都不留下。
 function M.origin_set(url, branch)
   local out, ok = mise({
