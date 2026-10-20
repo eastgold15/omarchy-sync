@@ -3,6 +3,7 @@
 -- 这里只负责"探测锁是否被别的进程持有"(status 的 running 标志)。
 
 local exec = require("exec")
+local proxy = require("proxy")
 
 local M = {}
 
@@ -73,6 +74,33 @@ function M.iso8601()
   local sign = diff >= 0 and "+" or "-"
   diff = math.abs(diff)
   return string.format("%s%s%02d:%02d", local_str, sign, diff // 3600, (diff % 3600) // 60)
+end
+
+-- 面板会把这些字段画出来。只留普通记号,丢掉远程 omarsync.json 里的标记。
+function M.display_token(value)
+  if type(value) ~= "string" then return "" end
+  local cleaned = value:gsub("[^A-Za-z0-9._%-]", "")
+  if #cleaned > 64 then
+    cleaned = cleaned:sub(1, 64)
+  end
+  return cleaned
+end
+
+function M.display_time(value)
+  if type(value) ~= "string" then return "" end
+  local date = "%d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%d"
+  local frac = "%.%d+"
+  local zone = "Z"
+  local off = "[+-]%d%d:%d%d"
+  if value:match("^" .. date .. "$")
+    or value:match("^" .. date .. frac .. "$")
+    or value:match("^" .. date .. zone .. "$")
+    or value:match("^" .. date .. frac .. zone .. "$")
+    or value:match("^" .. date .. off .. "$")
+    or value:match("^" .. date .. frac .. off .. "$") then
+    return value
+  end
+  return ""
 end
 
 function M.hostname_safe()
@@ -191,16 +219,34 @@ function M.tool(name)
   return exec.resolve_tool(name)
 end
 
--- git 包装:禁用 hooks,指定 ssh-keygen 作为签名程序
+-- 把核对过的代理并进一次调用的环境。只给会访问 GitHub 的客户端用。
+local function with_proxy(opts)
+  opts = opts or {}
+  local env = proxy.assignments()
+  if opts.env then
+    for _, item in ipairs(opts.env) do
+      env[#env + 1] = item
+    end
+  end
+  local merged = {}
+  for key, value in pairs(opts) do
+    merged[key] = value
+  end
+  merged.env = env
+  return merged
+end
+
+-- git 包装:禁用 hooks,指定 ssh-keygen 作为签名程序,并带上核对过的代理
 function M.git(args, opts)
   local git = exec.resolve_tool("git") or M.die("git is not available")
   local keygen = exec.resolve_tool("ssh-keygen") or M.die("ssh-keygen is not available")
   local full = { "-c", "core.hooksPath=/dev/null", "-c", "gpg.ssh.program=" .. keygen }
   for _, a in ipairs(args) do full[#full + 1] = a end
-  if opts and opts.capture then
+  opts = with_proxy(opts)
+  if opts.capture then
     return exec.capture(git, full, opts)
   end
-  return exec.run(git, full, opts and opts.env)
+  return exec.run(git, full, opts.env)
 end
 
 -- git 捕获输出的便捷形式(去掉尾部换行)
@@ -220,10 +266,11 @@ end
 
 function M.gh(args, opts)
   local bin = exec.resolve_tool("gh") or M.die("GitHub CLI is not installed in a trusted directory")
-  if opts and opts.capture then
+  opts = with_proxy(opts)
+  if opts.capture then
     return exec.capture(bin, args, opts)
   end
-  return exec.run(bin, args)
+  return exec.run(bin, args, opts.env)
 end
 
 function M.gh_installed()

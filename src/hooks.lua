@@ -4,6 +4,7 @@
 
 local common = require("common")
 local exec = require("exec")
+local proxy = require("proxy")
 
 local M = {}
 
@@ -59,7 +60,7 @@ function M.run_hooks(mirror, allow_exec)
     end
     common.log("running hook " .. name)
     -- hooks 用系统 bash 执行(它们本身是 shell 脚本)
-    local ok = exec.run("/usr/bin/bash", { path })
+    local ok = exec.run("/usr/bin/bash", { path }, proxy.assignments())
     if not ok then
       common.warn("hook " .. name .. " failed")
       failed = true

@@ -197,6 +197,7 @@ Panel {
       width: parent.width
       visible: desc !== ""
       text: desc
+      textFormat: Text.PlainText
       color: root.dim
       font.family: root.fontFamily
       font.pixelSize: Style.font.caption
@@ -240,6 +241,7 @@ Panel {
         Text {
           width: parent.width
           text: root.changeText()
+          textFormat: Text.PlainText
           color: root.barForeground
           font.family: root.fontFamily
           font.pixelSize: Style.font.body
@@ -250,6 +252,7 @@ Panel {
           width: parent.width
           visible: root.trustedCommit !== ""
           text: root.commitText()
+          textFormat: Text.PlainText
           color: root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
@@ -260,6 +263,7 @@ Panel {
           width: parent.width
           text: root.lastPushText()
             + (root.pluginVersion !== "" ? " · 版本 " + root.pluginVersion : "")
+          textFormat: Text.PlainText
           color: root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
@@ -270,6 +274,7 @@ Panel {
           width: parent.width
           visible: root.problemText() !== ""
           text: root.problemText()
+          textFormat: Text.PlainText
           color: root.barForeground
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
@@ -280,6 +285,17 @@ Panel {
           width: parent.width
           visible: root.changedSummary() !== ""
           text: root.changedSummary()
+          textFormat: Text.PlainText
+          color: root.dim
+          font.family: root.fontFamily
+          font.pixelSize: Style.font.caption
+          wrapMode: Text.WordWrap
+        }
+
+        Text {
+          width: parent.width
+          text: "暗云：还没设置。云：已同步。红上箭头：需要 push。红下箭头：需要 apply。红叹号：上次失败。"
+          textFormat: Text.PlainText
           color: root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
@@ -419,6 +435,7 @@ Panel {
           font.pixelSize: Style.font.caption
           wrapMode: Text.WordWrap
           lineHeight: 1.25
+          textFormat: Text.PlainText
           text: "这台电脑（日常）:\n" +
                 "改完配置点 push，自动签名上传。中键图标 = push。\n\n" +
                 "新电脑（恢复）:\n" +

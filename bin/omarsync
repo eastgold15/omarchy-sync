@@ -28,6 +28,8 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
     keep_dot_origin=$dot_origin
   fi
   root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+  # shellcheck disable=SC1091
+  source "$root/lib/proxy.sh"
   vars=(
     "HOME=${home}"
     "USER=${user}"
@@ -46,6 +48,11 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
   [[ ${OMARSYNC_SKIP_LIVE:-} == 1 ]] && vars+=("OMARSYNC_SKIP_LIVE=1")
   [[ -n $keep_origin ]] && vars+=("OMARSYNC_ORIGIN=${keep_origin}")
   [[ -n $keep_dot_origin ]] && vars+=("OMARSYNC_DOT_ORIGIN=${keep_dot_origin}")
+  assignment=""
+  while IFS= read -r assignment; do
+    [[ -n $assignment ]] || continue
+    vars+=("$assignment")
+  done < <(proxy_assignments)
   exec /usr/bin/env -i "${vars[@]}" /usr/bin/bash "$0" "$@"
 fi
 

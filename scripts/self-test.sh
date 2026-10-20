@@ -77,6 +77,8 @@ mirror() { printf '%s\n' "$1/.local/state/omarsync/repo"; }
 
 # ===== 1. 签名 push 与状态 =====
 setup_home "$TMP/home1"
+printf 'SECRET_DOTENV\n' >"$TMP/home1/.config/omarchy/.env"
+printf 'SECRET_DOTENV_LOCAL\n' >"$TMP/home1/.config/omarchy/.env.local"
 run "$TMP/home1" trust-key "$TMP/keys/id.pub" "$TMP/keys/id"
 run "$TMP/home1" init local/omarchy-config
 run "$TMP/home1" push --quiet
@@ -90,10 +92,20 @@ grep -q '^rel:demo/a.png$' "$M1/current/background"
 grep -q '"miseHead"' "$M1/omarsync.json"
 # dotfiles 仓库已有 mise 历史
 [[ $(git --git-dir="$DOT_ORIGIN" rev-list --all --count) -gt 0 ]]
+if git --git-dir="$DOT_ORIGIN" log -p --all | grep -q 'SECRET_DOTENV'; then
+  fail ".env was published to the dotfiles history"
+fi
 pass "signed push, meta-only mirror, dotfiles published"
 
 [[ $(run "$TMP/home1" status --json | jq -r '.dirty') == false ]]
 [[ $(run "$TMP/home1" status --json | jq -r '.behind') == 0 ]]
+# 同样的字节、更新的 mtime 不是需要 push 的改动(Fcitx5 会原地重写配置)。
+touch "$TMP/home1/.config/omarchy/shell.json"
+[[ $(run "$TMP/home1" status --json | jq -r '.dirty') == false ]]
+mkdir -p "$TMP/home1/.config/omarchy/hooks/theme-set.d"
+printf '%s\n' '#!/bin/bash' 'touch "$HOME/theme-hook-trusted"' \
+  >"$TMP/home1/.config/omarchy/hooks/theme-set.d/10-mark"
+chmod +x "$TMP/home1/.config/omarchy/hooks/theme-set.d/10-mark"
 printf '{ "version": 1, "changed": true }\n' >"$TMP/home1/.config/omarchy/shell.json"
 [[ $(run "$TMP/home1" status --json | jq -r '.dirty') == true ]]
 run "$TMP/home1" push --quiet
@@ -134,7 +146,7 @@ pass "planted signed plugin/hook snapshot"
 # ===== 3. home2 应用(信任密钥已导入)=====
 setup_home "$TMP/home2"
 printf 'local only\n' >"$TMP/home2/.config/omarchy/shell.json"
-rm -f "$TMP/home2/.config/hypr/bindings.lua.bak.1"
+printf 'local backup\n' >"$TMP/home2/.config/hypr/bindings.lua.bak.1"
 run "$TMP/home2" trust-key "$TMP/keys/id.pub" "$TMP/keys/id"
 run "$TMP/home2" init local/omarchy-config
 run "$TMP/home2" pull
@@ -150,7 +162,9 @@ printf 'stay\n' >"$TMP/home2/.config/omarchy/plugins/io.github.lukebest.omarsync
 run "$TMP/home2" apply --commit "$sha" --no-packages
 # 文件来自 mise dot
 grep -q '"changed": true' "$TMP/home2/.config/omarchy/shell.json"
-[[ ! -e $TMP/home2/.config/hypr/bindings.lua.bak.1 ]]
+# 排除规则不再在 apply 时删掉接收端的本地文件
+grep -qxF 'local backup' "$TMP/home2/.config/hypr/bindings.lua.bak.1"
+[[ -f $TMP/home2/.config/omarchy/hooks/theme-set.d/10-mark ]]
 # 插件与 hooks 来自签名元数据
 [[ ! -e $TMP/home2/.config/omarchy/plugins/evil ]]
 [[ -f $TMP/home2/.config/omarchy/plugins/test.widget/Widget.qml ]]
@@ -293,7 +307,21 @@ if run "$TMP/home3" apply --trust-signer --commit "$other" --no-packages >/dev/n
 fi
 [[ $(cat "$TMP/home3/.config/omarsync/trusted-keys") == "$before" ]]
 keys_before=$(cat "$TMP/home3/.config/omarsync/trusted-keys")
-run "$TMP/home3" apply --force --commit "$other" --no-packages
+mkdir -p "$TMP/home1/.config/omarchy/hooks/theme-set.d"
+printf '%s\n' '#!/bin/bash' 'touch "$HOME/theme-hook-ran"' \
+  >"$TMP/home1/.config/omarchy/hooks/theme-set.d/pwn.sh"
+chmod +x "$TMP/home1/.config/omarchy/hooks/theme-set.d/pwn.sh"
+env -i HOME="$TMP/home1" PATH=/usr/bin:/bin USER=tester mise dot save
+env -i HOME="$TMP/home1" PATH=/usr/bin:/bin USER=tester mise dot sync
+force_log=$(run "$TMP/home3" apply --force --commit "$other" --no-packages)
+printf '%s\n' "$force_log" | grep -q 'skipped user service start'
+printf '%s\n' "$force_log" | grep -q 'skipped omarchy hooks restore'
+if printf '%s\n' "$force_log" | grep -q 'systemctl --user start'; then
+  fail "force apply started a user service"
+fi
+[[ -f $TMP/home3/.config/omarchy/hooks/theme-set.d/10-mark ]]
+[[ ! -e $TMP/home3/.config/omarchy/hooks/theme-set.d/pwn.sh ]]
+[[ ! -f $TMP/home3/theme-hook-ran ]]
 [[ $(cat "$TMP/home3/.config/omarsync/trusted-keys") == "$keys_before" ]]
 pass "unsigned/foreign-signer/force policy"
 
@@ -345,7 +373,13 @@ OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$
 unsigned_status=$(OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$TMP/home5" status --json)
 [[ $(jq -r '.remoteSignature' <<<"$unsigned_status") == none ]]
 [[ $(jq -r '.firstApply' <<<"$unsigned_status") == true ]]
-OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$TMP/home5" apply --commit "$unsigned_tip" --no-packages
+unsigned_log=$(OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" \
+  run "$TMP/home5" apply --commit "$unsigned_tip" --no-packages)
+printf '%s\n' "$unsigned_log" | grep -q 'skipped user service start'
+printf '%s\n' "$unsigned_log" | grep -q 'skipped omarchy hooks restore'
+if printf '%s\n' "$unsigned_log" | grep -q 'systemctl --user start'; then
+  fail "unsigned apply started a user service"
+fi
 # 未签名首应用:配置写入,但 hooks 不跑
 [[ ! -f $TMP/home5/hook-ran ]]
 plant_unsigned 'second unsigned snapshot'
@@ -356,7 +390,10 @@ fi
 if OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$TMP/home5" apply --force --commit 0000000000000000000000000000000000000000 --no-packages >/dev/null 2>&1; then
   fail "force apply of a different commit should fail"
 fi
-OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" run "$TMP/home5" apply --force --commit "$unsigned_tip2" --no-packages
+force_unsigned=$(OMARSYNC_TEST_ORIGIN="$UNSIGNED_ORIGIN" OMARSYNC_TEST_DOT="$UNSIGNED_DOT" \
+  run "$TMP/home5" apply --force --commit "$unsigned_tip2" --no-packages)
+printf '%s\n' "$force_unsigned" | grep -q 'skipped user service start'
+printf '%s\n' "$force_unsigned" | grep -q 'skipped omarchy hooks restore'
 [[ ! -f $TMP/home5/hook-ran ]]
 pass "unsigned first-apply-once policy and force"
 
@@ -391,6 +428,55 @@ fi
 [[ ! -f $TMP/lua-shadow ]]
 [[ ! -f $TMP/mise-shadow ]]
 pass "no shadow binaries were executed"
+
+# ===== 14. 代理过滤与远程标记 =====
+proxy_kept=$(
+  env -i \
+    http_proxy='http://127.0.0.1:7890' \
+    https_proxy='socks5://127.0.0.1:7891' \
+    all_proxy=$'http://127.0.0.1:7890\nLD_PRELOAD=x' \
+    no_proxy='localhost,127.0.0.1' \
+    HTTP_PROXY='$(id)' \
+    bash -c 'source "$1"; proxy_assignments' _ "$ROOT/lib/proxy.sh"
+)
+printf '%s\n' "$proxy_kept" | grep -qxF 'http_proxy=http://127.0.0.1:7890'
+printf '%s\n' "$proxy_kept" | grep -qxF 'https_proxy=socks5://127.0.0.1:7891'
+printf '%s\n' "$proxy_kept" | grep -qxF 'no_proxy=localhost,127.0.0.1'
+if printf '%s\n' "$proxy_kept" | grep -q 'LD_PRELOAD\|$(id)'; then
+  fail "a rejected proxy was kept"
+fi
+cat >"$TMP/proxy-check.lua" <<EOF
+package.path = "$ROOT/src/?.lua;" .. package.path
+local p = require("proxy")
+for _, line in ipairs(p.assignments()) do
+  io.write(line .. "\n")
+end
+EOF
+proxy_lua=$(
+  env -i \
+    http_proxy='http://127.0.0.1:7890' \
+    https_proxy='socks5://127.0.0.1:7891' \
+    all_proxy=$'http://127.0.0.1:7890\nLD_PRELOAD=x' \
+    no_proxy='localhost,127.0.0.1' \
+    HTTP_PROXY='$(id)' \
+    /usr/bin/lua "$TMP/proxy-check.lua"
+)
+printf '%s\n' "$proxy_lua" | grep -qxF 'http_proxy=http://127.0.0.1:7890'
+printf '%s\n' "$proxy_lua" | grep -qxF 'https_proxy=socks5://127.0.0.1:7891'
+printf '%s\n' "$proxy_lua" | grep -qxF 'no_proxy=localhost,127.0.0.1'
+if printf '%s\n' "$proxy_lua" | grep -q 'LD_PRELOAD\|$(id)'; then
+  fail "lua kept a rejected proxy"
+fi
+pass "proxy filter"
+
+cat >"$TMP/home1/.local/state/omarsync/repo/omarsync.json" <<'EOF'
+{"host":"<img src=\"http://evil/x\">","pushedAt":"<img>","omarchyVersion":"1.11.2"}
+EOF
+hostile=$(run "$TMP/home1" status --json)
+[[ $(jq -r '.lastPush.host' <<<"$hostile") != *'<'* ]]
+[[ $(jq -r '.lastPush.time' <<<"$hostile") == "" ]]
+[[ $(jq -r '.lastPush.omarchyVersion' <<<"$hostile") == 1.11.2 ]]
+pass "remote markup is not shown as text"
 
 echo
 echo "self-test ok"

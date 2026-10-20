@@ -4,6 +4,7 @@
 local common = require("common")
 local exec = require("exec")
 local json = require("json")
+local proxy = require("proxy")
 
 local M = {}
 
@@ -23,10 +24,23 @@ end
 
 local function mise(args, opts)
   local bin = exec.resolve_tool("mise") or common.die("mise is not installed. Run: omarchy pkg add mise")
-  if opts and opts.capture then
-    return exec.capture(bin, { "dot", table.unpack(args) }, opts)
+  opts = opts or {}
+  local env = proxy.assignments()
+  if opts.env then
+    for _, item in ipairs(opts.env) do
+      env[#env + 1] = item
+    end
   end
-  return exec.run(bin, { "dot", table.unpack(args) })
+  local full = { "dot", table.unpack(args) }
+  if opts.capture then
+    local cap = {}
+    for key, value in pairs(opts) do
+      cap[key] = value
+    end
+    cap.env = env
+    return exec.capture(bin, full, cap)
+  end
+  return exec.run(bin, full, env)
 end
 
 -- status -J,返回解码后的 table;失败返回 nil
@@ -114,13 +128,24 @@ function M.head_snapshot()
   return nil
 end
 
--- 是否已连接 origin(解析 status 文本里的 Setup repository 行)
+-- 是否已连接 origin。新版 mise 把地址放在 status -J 的 history.sync.origin;
+-- 旧版只在文本里写 "Setup repository:"。两种都认。
 function M.origin_connected()
+  local data = M.status()
+  if type(data) == "table" and type(data.history) == "table"
+    and type(data.history.sync) == "table" then
+    local origin = data.history.sync.origin
+    return type(origin) == "string" and origin ~= ""
+  end
   local out = mise({ "status" }, { capture = true })
   if type(out) ~= "string" then return false end
   local line = out:match("Setup repository: ([^\n]+)")
-  if not line then return false end
-  return not line:find("^none")
+  if line then
+    return not line:find("^none")
+  end
+  local repo = out:match("Repository\n%s*([^\n]+)")
+  if not repo then return false end
+  return not repo:find("^none")
 end
 
 -- 连接 origin(非交互)

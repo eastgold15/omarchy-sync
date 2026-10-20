@@ -83,7 +83,9 @@ function M.export_plugins(dest, mode)
         end
         if url and https_plugin_url(url) and rev then
           records[#records + 1] = { id = id, url = url, commit = rev, enabled = enabled, local_ = false, key = id }
-        elseif exec.is_dir(dir) and mode == "apply" then
+        elseif exec.is_dir(dir) then
+          -- check 与 apply 都要记录本地插件。check 写到临时目录;
+          -- 漏记的话,每次 status 都会把镜像看成脏的,状态栏一直提示 push。
           M.copy_local_plugin(dir, dest .. "/plugins-local/" .. id)
           records[#records + 1] = { id = id, url = "", commit = "", enabled = enabled, local_ = true, key = id }
         end

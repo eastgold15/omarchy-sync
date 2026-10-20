@@ -22,3 +22,9 @@
 .local/bin | agent,cursor,cursor-agent
 .local/share/applications | mimeinfo.cache
 .local/share/icons/hicolor | icon-theme.cache
+
+# Qingjian input method (Fcitx5). Settings only; install the program itself on each machine.
+.config/qingjian
+.config/fcitx5
+# Optional: your learned words and frequencies. The newest apply wins, so use it on one main machine.
+# .local/share/qingjian | resources/,dicts/,install-manifest.json

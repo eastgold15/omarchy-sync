@@ -14,6 +14,9 @@ local CONST_EXCLUDES = {
   "**/.git",
   "**/node_modules/**",
   "**/node_modules",
+  -- 应用把 API key 放在配置旁边的 .env 里(例如轻简)。任何 scope 都不同步。
+  "**/.env",
+  "**/.env.*",
   -- 信任目录绝不能进历史(双保险;scope 本身已禁)
   "~/.config/omarsync/**",
   "~/.config/omarsync",
@@ -68,10 +71,25 @@ function M.reconcile()
     common.die("mise dot is not working on this machine; check `mise dot status`")
   end
   local entries = common.read_scope(common.scope_file_for())
+  local desired = M.desired_excludes(entries)
+  -- 先落下排除规则再 track。mise track 会立刻写基线检查点,
+  -- 晚加的 .env / .git 排除来不及挡住第一次保存。
+  local have = {}
+  for _, g in ipairs(mise.current_excludes()) do
+    have[g] = true
+  end
+  for g in pairs(desired) do
+    if not have[g] then
+      if not mise.exclude_add(g) then
+        common.warn("failed to add exclude " .. g)
+      end
+    end
+  end
   local wanted = {}
+  local tracked_now = mise.tracked_rels()
   for _, e in ipairs(entries) do
     wanted[e.rel] = true
-    if not mise.tracked_rels()[e.rel] then
+    if not tracked_now[e.rel] then
       if mise.track(e.rel) then
         common.log("tracking " .. e.rel)
       else
@@ -90,23 +108,11 @@ function M.reconcile()
       end
     end
   end
-  -- 排除 glob 差量对齐
-  local desired = M.desired_excludes(entries)
+  -- 不再需要的排除规则最后再删,避免 track 期间少一层保护
   for _, g in ipairs(mise.current_excludes()) do
     if not desired[g] then
       if not mise.exclude_del(g) then
         common.warn("failed to remove exclude " .. g)
-      end
-    end
-  end
-  for g in pairs(desired) do
-    local have = false
-    for _, cur in ipairs(mise.current_excludes()) do
-      if cur == g then have = true break end
-    end
-    if not have then
-      if not mise.exclude_add(g) then
-        common.warn("failed to add exclude " .. g)
       end
     end
   end

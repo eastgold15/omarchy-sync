@@ -25,13 +25,24 @@ BarWidget {
   readonly property bool busy: statusProcess.running || pushProcess.running || status.running === true
 
   function trustedEnvironment() {
-    return {
+    var env = {
       "HOME": Quickshell.env("HOME") || "",
       "PATH": "/usr/bin:/bin:/usr/sbin:/usr/share/omarchy/bin",
       "LANG": "C.UTF-8",
       "LC_ALL": "C.UTF-8",
       "OMARCHY_PATH": "/usr/share/omarchy"
     }
+    var names = [
+      "http_proxy", "https_proxy", "all_proxy", "no_proxy",
+      "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY"
+    ]
+    var i, value
+    for (i = 0; i < names.length; i++) {
+      value = Quickshell.env(names[i]) || ""
+      if (value !== "")
+        env[names[i]] = value
+    }
+    return env
   }
 
   function boundedText(value) {
@@ -70,6 +81,7 @@ BarWidget {
     })
   }
   readonly property bool dirty: status.dirty === true
+  readonly property var icon: Model.iconState(root.status, root.statusError)
 
   onBusyChanged: if (!busy) button.textRotation = 0
 
@@ -410,20 +422,23 @@ BarWidget {
     id: button
     anchors.fill: parent
     bar: root.bar
-    text: "\uf0c2"
-    dimmed: root.status.loggedIn !== true
-    active: root.dirty || (root.status.behind || 0) > 0
+    text: root.icon.glyph
+    dimmed: root.icon.dimmed
+    active: root.icon.alert
     tooltipText: {
       var line = root.version !== "" ? ("Omarsync " + root.version) : "Omarsync"
       if (root.busy)
-        return line + " · working"
+        return line + " · working…"
       var sentence = Model.statusSentence(root.status)
+      if (root.icon.label === "last command failed")
+        sentence = "Last command failed: " + String(root.statusError).split("\n")[0]
+      var hint = "\nLeft: panel · Middle: push · Right: scan now"
       var when = root.status.lastPush && root.status.lastPush.time
         ? Model.relativeTime(root.status.lastPush.time)
         : ""
       if (when !== "")
-        return line + " · " + sentence + " · last push " + when
-      return line + " · " + sentence
+        return line + " · " + sentence + " · last push " + when + hint
+      return line + " · " + sentence + hint
     }
 
     RotationAnimation on textRotation {
@@ -442,16 +457,5 @@ BarWidget {
       else if (buttonCode === Qt.LeftButton)
         root.toggle()
     }
-  }
-
-  Rectangle {
-    visible: root.dirty && !root.busy
-    width: 5
-    height: 5
-    radius: 2.5
-    color: root.bar ? root.bar.urgent : Color.urgent
-    anchors.right: button.right
-    anchors.top: button.top
-    anchors.margins: 3
   }
 }

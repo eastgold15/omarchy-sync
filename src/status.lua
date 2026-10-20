@@ -149,9 +149,10 @@ function M.collect()
     if meta_raw then
       local data = json.decode(meta_raw)
       if type(data) == "table" then
-        st.lastPush.host = type(data.host) == "string" and data.host or ""
-        st.lastPush.time = type(data.pushedAt) == "string" and data.pushedAt or ""
-        st.lastPush.omarchyVersion = type(data.omarchyVersion) == "string" and data.omarchyVersion or ""
+        st.lastPush.host = common.display_token(type(data.host) == "string" and data.host or "")
+        st.lastPush.time = common.display_time(type(data.pushedAt) == "string" and data.pushedAt or "")
+        st.lastPush.omarchyVersion = common.display_token(
+          type(data.omarchyVersion) == "string" and data.omarchyVersion or "")
       end
     end
   end

@@ -59,8 +59,9 @@ function M.backup_tree()
   return dest
 end
 
--- 应用主题与壁纸(在线模式调用 omarchy;OMARSYNC_SKIP_LIVE=1 时只写状态文件)
-function M.apply_current(mirror)
+-- 应用主题与壁纸(在线模式调用 omarchy;OMARSYNC_SKIP_LIVE=1 时只写状态文件)。
+-- 在线的 `omarchy theme set` 会跑 ~/.config/omarchy/hooks,所以不可信的 apply 跳过它。
+function M.apply_current(mirror, with_exec)
   local theme = ""
   local background = ""
   local t = common.read_file(mirror .. "/current/theme.name")
@@ -81,6 +82,13 @@ function M.apply_current(mirror)
     if theme ~= "" then common.write_file(state .. "/theme.name", theme .. "\n") end
     if target ~= "" and exec.exists(target) then
       os.execute(string.format("/usr/bin/ln -sfn %s %s", exec.quote(target), exec.quote(state .. "/background")))
+    end
+    return true
+  end
+
+  if not with_exec then
+    if theme ~= "" or background ~= "" then
+      common.log("skipped theme switch; executable restore needs a trusted signature")
     end
     return true
   end
@@ -165,6 +173,42 @@ function M.assert_pinned(mirror, sha)
   end
 end
 
+local HOOKS_REL = ".config/omarchy/hooks"
+
+-- 不可信的 apply 不能把快照里的 Omarchy hooks 落到磁盘:
+-- 主题切换和其它生命周期事件会执行那棵树。先拷走本机原样,pull 之后放回去。
+local function stash_omarchy_hooks()
+  local src = HOME .. "/" .. HOOKS_REL
+  local existed = exec.exists(src) or exec.is_link(src)
+  local mktemp = exec.resolve_tool("mktemp")
+  local tmp = ""
+  if mktemp then
+    tmp = (exec.capture(mktemp, { "-d" }) or ""):gsub("%s+$", "")
+  end
+  if existed then
+    if tmp == "" or not common.rsync({ "-a", src, tmp .. "/" }) then
+      common.die("could not preserve ~/.config/omarchy/hooks before an untrusted apply")
+    end
+  end
+  return { tmp = tmp, existed = existed }
+end
+
+local function restore_omarchy_hooks(stash)
+  local dst = HOME .. "/" .. HOOKS_REL
+  os.execute("/usr/bin/rm -rf " .. exec.quote(dst))
+  if stash and stash.existed and stash.tmp ~= "" then
+    local saved = stash.tmp .. "/hooks"
+    if exec.exists(saved) or exec.is_link(saved) then
+      common.mkdirp(HOME .. "/.config/omarchy")
+      common.rsync({ "-a", saved, HOME .. "/.config/omarchy/" })
+    end
+  end
+  if stash and stash.tmp ~= "" then
+    os.execute("/usr/bin/rm -rf " .. exec.quote(stash.tmp))
+  end
+  common.log("skipped omarchy hooks restore")
+end
+
 -- mise 侧的文件同步:fetch → 校验签名提交记录的 miseHead → pull
 function M.sync_dotfiles(mirror, force)
   if not mise.available() then
@@ -193,8 +237,15 @@ function M.apply_mirror(mirror, with_packages, sha, with_exec)
   local backup = M.backup_tree()
   common.log("backed up existing files to " .. backup)
   local failed = false
+  local hooks_stash = nil
+  if not with_exec then
+    hooks_stash = stash_omarchy_hooks()
+  end
   if not M.sync_dotfiles(mirror, false) then failed = true end
-  if not M.apply_current(mirror) then failed = true end
+  if not with_exec then
+    restore_omarchy_hooks(hooks_stash)
+  end
+  if not M.apply_current(mirror, with_exec) then failed = true end
   M.reload_desktop()
   if with_packages then
     if not packages.install_missing_packages(mirror) then failed = true end
@@ -202,7 +253,11 @@ function M.apply_mirror(mirror, with_packages, sha, with_exec)
     common.log("skipped official package install")
   end
   if not plugins.install_missing_plugins(mirror, with_exec) then failed = true end
-  if not hooks.refresh_user_services() then failed = true end
+  if with_exec then
+    if not hooks.refresh_user_services() then failed = true end
+  else
+    common.log("skipped user service start")
+  end
   if not hooks.run_hooks(mirror, with_exec) then failed = true end
   M.assert_pinned(mirror, sha)
   M.prune_backups()
@@ -256,6 +311,7 @@ function M.preview_apply(mirror, sha, with_exec)
   end
   if not with_exec then
     common.log("plugins and hooks will not run")
+    common.log("theme switch and omarchy hooks will be skipped")
   end
 end
 

@@ -27,9 +27,9 @@ local USAGE = [[
   pull                拉取一次,并将镜像分离(detach)到那个确切的提交
   apply --commit <40位十六进制> [--no-packages] [--no-exec] [--trust-signer] [--force]
                       应用该提交。SHA 必须是你审查过的那个。
-                      文件通过 mise dot pull 到达;软件包、插件和
-                      钩子仅在签名可信时执行,除非指定了
-                      --no-exec 或 --force。
+                      文件通过 mise dot pull 到达;软件包、插件、
+                      post-apply 钩子、Omarchy hooks、主题切换和用户服务
+                      仅在签名可信时执行,除非指定了 --no-exec 或 --force。
   setup               按需安装 mise/GitHub CLI,登录,并创建仓库
   sync [--quiet] [--notify]
                       先 push,再 pull

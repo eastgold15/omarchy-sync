@@ -67,6 +67,25 @@ function statusSentence(sync) {
   return "一切已同步"
 }
 
+// One rule for the bar icon. Red means "you need to do something".
+//   faded cloud          not set up or not signed in
+//   normal cloud         up to date
+//   red cloud-down       the remote has changes to apply
+//   red cloud-up         this machine has changes to push
+//   red warning          the last command failed
+function iconState(sync, error) {
+  var s = sync || ({})
+  if (s.loggedIn !== true || s.initialized !== true)
+    return { glyph: "\uf0c2", alert: false, dimmed: true, label: "not set up" }
+  if (error)
+    return { glyph: "\uf071", alert: true, dimmed: false, label: "last command failed" }
+  if ((s.behind || 0) > 0)
+    return { glyph: "\uf0ed", alert: true, dimmed: false, label: "apply needed" }
+  if (s.dirty === true || (s.ahead || 0) > 0)
+    return { glyph: "\uf0ee", alert: true, dimmed: false, label: "push needed" }
+  return { glyph: "\uf0c2", alert: false, dimmed: false, label: "up to date" }
+}
+
 function relativeTime(iso) {
   if (!iso)
     return "从未"
