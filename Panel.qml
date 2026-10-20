@@ -341,11 +341,14 @@ Panel {
 
         PanelSeparator { width: parent.width; foreground: root.barForeground }
 
-        ActionRow {
-          name: root.language === "zh" ? "English" : "中文"
-          desc: root.tr("languageDesc")
-          tooltip: root.language === "zh" ? "Switch the panel to English" : "把面板切换成中文"
-          onTriggered: root.toggleLanguage()
+        Toggle {
+          width: parent.width
+          label: Model.tr(root.language === "zh" ? "en" : "zh", "language")
+          description: Model.tr(root.language === "zh" ? "en" : "zh", "languageDesc")
+          checked: root.language === "en"
+          foreground: root.barForeground
+          fontFamily: root.fontFamily
+          onClicked: root.toggleLanguage()
         }
 
         ActionRow {
@@ -357,7 +360,7 @@ Panel {
         }
 
         ActionRow {
-          name: "setup"
+          name: root.tr("setup")
           desc: root.sync.miseConnected === true
                 ? root.tr("setupConnected")
                 : root.tr("setupNeeded")

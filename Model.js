@@ -106,6 +106,7 @@ var copy = {
     legend: "暗云：还没设置。云：已同步。红上箭头：需要 push。红下箭头：需要 apply。红叹号：上次失败。",
     viewChanges: "查看改动",
     viewChangesDesc: "用 VS Code 打开这些文件，确认无误再 push",
+    setup: "初始化",
     setupConnected: "重新检查依赖、登录，以及 dotfiles 分支的连接",
     setupNeeded: "装依赖、登录 GitHub，并连接 omarchy-config 的两条分支",
     pushRunning: "push（执行中…）",
@@ -137,12 +138,13 @@ var copy = {
     notifyDesc: "push 完成后弹出通知",
     helpHide: "收起指南",
     help: "使用指南",
-    languageDesc: "界面语言。未手动切换时跟随系统。",
+    language: "界面语言",
+    languageDesc: "向右是英文。没拨过时跟随系统。",
     helpBody: "这台电脑（日常）:\n" +
       "改完配置点 push，自动签名上传。中键图标 = push。\n\n" +
       "新电脑（恢复）:\n" +
       "1. omarchy plugin add 装本插件\n" +
-      "2. 点 setup（装依赖、登录 GitHub、建仓库）\n" +
+      "2. 点「初始化」（装依赖、登录 GitHub、建仓库）\n" +
       "3. 点 apply，终端里看预览后确认\n" +
       "4. 首次会问是否信任签名密钥，选是即可\n\n" +
       "检查更新 = 只看差异，不同步文件。\n" +
@@ -190,6 +192,7 @@ var copy = {
     legend: "Faded cloud: not set up. Cloud: up to date. Red up: push. Red down: apply. Red !: failed.",
     viewChanges: "Review changes",
     viewChangesDesc: "Open the files in VS Code, then push",
+    setup: "Set up",
     setupConnected: "Check dependencies, sign-in, and the dotfiles branch again",
     setupNeeded: "Install dependencies, sign in to GitHub, and connect both branches of omarchy-config",
     pushRunning: "push (working…)",
@@ -221,12 +224,13 @@ var copy = {
     notifyDesc: "Notify when a push finishes",
     helpHide: "Hide guide",
     help: "Guide",
-    languageDesc: "Panel language. Follows the system until you switch it.",
+    language: "Language",
+    languageDesc: "To the right is English. Follows the system until you change it.",
     helpBody: "This machine:\n" +
       "Push after you change configuration. The commit is signed. Middle-click the icon to push.\n\n" +
       "A new machine:\n" +
       "1. Install this plugin with omarchy plugin add\n" +
-      "2. Run setup (dependencies, GitHub sign-in, repository)\n" +
+      "2. Choose Set up (dependencies, GitHub sign-in, repository)\n" +
       "3. Run apply and confirm the preview in the terminal\n" +
       "4. The first time, agree to trust the signing key\n\n" +
       "Check for updates only looks for differences.\n" +
