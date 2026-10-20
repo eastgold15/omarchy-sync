@@ -233,10 +233,24 @@ BarWidget {
     root.runInTerminal(root.quotedCli() + " apply --commit " + sha)
   }
 
-  function openRepo() {
-    if (!Model.safeRepo(root.status.repo) || !root.bar || typeof root.bar.run !== "function")
+  function openGitHubRepo(repo) {
+    if (!Model.safeRepo(repo) || !root.bar || typeof root.bar.run !== "function")
       return
-    root.bar.run("xdg-open " + Model.shellQuote("https://github.com/" + root.status.repo))
+    root.bar.run("xdg-open " + Model.shellQuote("https://github.com/" + repo))
+  }
+
+  function openRepo() {
+    root.openGitHubRepo(root.status.repo)
+  }
+
+  function openDotRepo() {
+    var repo = root.status.dotRepo
+    var branch = String(root.status.dotBranch || "dotfiles")
+    if (!Model.safeRepo(repo) || !/^[A-Za-z0-9._-]+$/.test(branch))
+      return
+    if (!root.bar || typeof root.bar.run !== "function")
+      return
+    root.bar.run("xdg-open " + Model.shellQuote("https://github.com/" + repo + "/tree/" + branch))
   }
 
   function changedFiles() {

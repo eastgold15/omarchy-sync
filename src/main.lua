@@ -18,7 +18,7 @@ local USAGE = [[
   doctor              检查 git、rsync、lua、mise、gh 和本地镜像
   login               使用 GitHub CLI 登录(设备码,交互式)
   init [owner/name]   创建或克隆私有数据仓库,
-                      并连接 mise dot 远端(omarchy-dotfiles)
+                      并把 mise dot 连到同一仓库的 dotfiles 分支
   push [--quiet] [--notify]
                       用 mise dot 跟踪 scope 文件、保存检查点、
                       提交签名元数据并推送。--quiet 跳过通知
@@ -36,8 +36,8 @@ local USAGE = [[
   migrate             把旧的 rsync 镜像仓库迁移到 mise dot 布局
   scope-path          打印本地 scope 文件路径
 
-文件通过 mise dot 同步(track 模式;远端是 <github-user>/omarchy-dotfiles)。
-签名元数据(软件包、插件、钩子、主题)保存在 <github-user>/omarchy-config。
+文件通过 mise dot 同步(track 模式;远端是 <github-user>/omarchy-config 的 dotfiles 分支)。
+签名元数据(软件包、插件、钩子、主题)在同一仓库的 main 分支。
 设置 OMARSYNC_ORIGIN / OMARSYNC_DOT_ORIGIN 可使用非 GitHub 远端。
 ]]
 

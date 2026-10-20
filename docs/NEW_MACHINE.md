@@ -4,12 +4,12 @@
 
 ## 同步内容总览
 
-Omarsync 使用**两个私有 GitHub 仓库**，数据走两条通道：
+Omarsync 使用**一个私有 GitHub 仓库** `<用户名>/omarchy-config`，数据走两条分支：
 
-| 仓库 | 内容 | 通道 |
+| 分支 | 内容 | 通道 |
 |---|---|---|
-| `<用户名>/omarchy-dotfiles` | scope 里列出的所有配置文件（hypr、nvim、终端、omarchy 主题等） | mise dot |
-| `<用户名>/omarchy-config` | 软件包清单、`plugins.json`、本地插件快照、钩子、当前主题/壁纸 | 带签名的元数据仓库 |
+| `dotfiles` | scope 里列出的所有配置文件（hypr、nvim、终端、omarchy 主题等） | mise dot |
+| `main` | 软件包清单、`plugins.json`、本地插件快照、钩子、当前主题/壁纸 | 带签名的元数据提交 |
 
 恢复时会自动处理：
 
@@ -28,7 +28,7 @@ Omarsync 使用**两个私有 GitHub 仓库**，数据走两条通道：
 新电脑需要：
 
 1. 已装好 Omarchy
-2. 能登录同一个 GitHub 账号（对两个私有仓库有访问权）
+2. 能登录同一个 GitHub 账号（对私有仓库 `omarchy-config` 有访问权）
 3. 安装 Omarsync 插件：
 
 ```sh
@@ -51,8 +51,8 @@ omarchy pkg add lua mise github-cli
 
 - 安装缺失的依赖
 - 登录 GitHub（`gh auth login`）
-- 连接（或创建）两个私有仓库
-- 把 mise dot 指向 `omarchy-dotfiles` 仓库，并**整体采用远程历史**——
+- 连接（或创建）私有仓库 `omarchy-config`
+- 把 mise dot 指向该仓库的 `dotfiles` 分支，并**整体采用远程历史**——
   新机器永远不会先建本地基线，所以两边历史一定能合并
 
 等价命令：
@@ -105,7 +105,7 @@ omarsync trust-key ~/signing_key.pub
 ### ① 确认远程仓库里确实有该文件
 
 ```sh
-gh api repos/<用户名>/omarchy-dotfiles/contents/home/.config/hypr --jq '.[].name'
+gh api repos/<用户名>/omarchy-config/contents/home/.config/hypr?ref=dotfiles --jq '.[].name'
 ```
 
 列表里没有 `input.lua` → 问题在**旧机器没推上去**，回旧机器执行：
@@ -121,7 +121,7 @@ omarsync push
 mise dot status
 ```
 
-- 显示 `Setup repository: ...omarchy-dotfiles.git` 且有文件列表 → 正常
+- 显示 `Setup repository: ...omarchy-config.git`，分支是 `dotfiles`，且有文件列表 → 正常
 - 提示没有 setup 仓库 → 重新跑 `omarsync init`
 - 显示 `incoming change(s) pending` → 有改动还没拉下来，执行：
 
@@ -165,7 +165,7 @@ mise 自己也留了保护检查点，可以 `mise dot recover` 撤销。
 **Q: apply 后插件没装上？**
 提交未受信任（未签名或密钥未登记）。见上文"关于签名信任"。
 
-**Q: `~/.config/omarchy/plugins/` 下的插件源码不在 dotfiles 仓库里？**
+**Q: `~/.config/omarchy/plugins/` 下的插件源码不在 `dotfiles` 分支里？**
 正常现象。插件目录本身是嵌套 git 仓库，mise dot 会跳过它们；它们由 `plugins.json` 按钉死的 commit 在 apply 时自动克隆安装。
 
 **Q: 新机器 apply 后又想同步回旧机器？**

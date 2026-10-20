@@ -128,37 +128,77 @@ function M.head_snapshot()
   return nil
 end
 
+local function norm_origin(url)
+  if type(url) ~= "string" then return "" end
+  return url:gsub("/+$", ""):gsub("%.git$", "")
+end
+
 -- 是否已连接 origin。新版 mise 把地址放在 status -J 的 history.sync.origin;
 -- 旧版只在文本里写 "Setup repository:"。两种都认。
 function M.origin_connected()
+  local origin = M.origin_url()
+  return origin ~= ""
+end
+
+function M.origin_url()
   local data = M.status()
   if type(data) == "table" and type(data.history) == "table"
     and type(data.history.sync) == "table" then
     local origin = data.history.sync.origin
-    return type(origin) == "string" and origin ~= ""
+    if type(origin) == "string" then return origin end
+    return ""
   end
   local out = mise({ "status" }, { capture = true })
-  if type(out) ~= "string" then return false end
+  if type(out) ~= "string" then return "" end
   local line = out:match("Setup repository: ([^\n]+)")
-  if line then
-    return not line:find("^none")
-  end
+  if line and not line:find("^none") then return line end
   local repo = out:match("Repository\n%s*([^\n]+)")
-  if not repo then return false end
-  return not repo:find("^none")
+  if repo and not repo:find("^none") then return repo end
+  return ""
 end
 
--- 连接 origin(非交互)
+function M.origin_branch()
+  local data = M.status()
+  if type(data) == "table" and type(data.history) == "table"
+    and type(data.history.sync) == "table" then
+    local branch = data.history.sync.branch
+    if type(branch) == "string" then return branch end
+  end
+  return ""
+end
+
+-- 地址和分支都对上才算已经连好。换仓库或换分支时要重连。
+function M.origin_matches(url, branch)
+  if norm_origin(M.origin_url()) == "" or norm_origin(M.origin_url()) ~= norm_origin(url) then
+    return false
+  end
+  local got = M.origin_branch()
+  if branch and branch ~= "" and got ~= "" and got ~= branch then
+    return false
+  end
+  return true
+end
+
+-- 连接 origin(非交互)。用 manual,避免第一次发布失败时连连接记录都不留下。
 function M.origin_set(url, branch)
-  return mise({ "origin", "set", url, "--branch", branch or "main", "--sync", "sync", "-y" })
+  local out, ok = mise({
+    "origin", "set", url, "--branch", branch or "main", "--sync", "manual", "-y",
+  }, { capture = true, merge_stderr = true })
+  return ok, out
 end
 
--- 发布 + 抓取;fetch_only=true 时只抓取
+-- 发布 + 抓取;fetch_only=true 时只抓取。
+-- mise 会把快捷键一类的字符串当成密钥而拒绝整次发布;私有仓库仍要发出去。
 function M.sync(fetch_only)
   local args = { "sync" }
   if fetch_only then args[#args + 1] = "--fetch-only" end
   local out, ok = mise(args, { capture = true, merge_stderr = true })
-  return ok, out
+  if ok or fetch_only or type(out) ~= "string" or not out:find("allow-plaintext-history", 1, true) then
+    return ok, out
+  end
+  common.warn("mise blocked publication because a saved version looks like a secret; publishing the private history anyway")
+  args[#args + 1] = "--allow-plaintext-history"
+  return mise(args, { capture = true, merge_stderr = true })
 end
 
 -- pull:把远程共享内容写进活文件。opts: dry_run / take_remote_all

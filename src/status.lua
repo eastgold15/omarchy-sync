@@ -79,7 +79,7 @@ end
 function M.collect()
   local st = {
     ghInstalled = false, loggedIn = false, user = "",
-    repo = "", branch = "main",
+    repo = "", dotRepo = "", dotBranch = "dotfiles", branch = "main",
     initialized = false, dirty = false,
     behind = json.null, ahead = json.null,
     remoteCommit = "", pinnedCommit = "",
@@ -99,6 +99,8 @@ function M.collect()
     end
   end
   st.repo = common.configured_repo()
+  st.dotRepo = common.dot_repo_name()
+  st.dotBranch = common.dot_branch()
   st.branch = common.configured_branch()
   if common.is_running() then
     st.running = true

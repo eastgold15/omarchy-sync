@@ -97,24 +97,33 @@ local function ensure_dotfiles_repo(user)
     common.warn("mise is not installed; skipping dotfiles repository. Run: omarchy pkg add mise")
     return
   end
-  if mise.origin_connected() then
+  local url = common.dot_origin_url()
+  local branch = common.dot_branch()
+  if url == "" then
+    common.warn("metadata repository is not configured; skipping dotfiles branch")
     return
   end
-  local url = common.dot_origin_url()
-  if not os.getenv("OMARSYNC_DOT_ORIGIN") and not os.getenv("OMARSYNC_ORIGIN") then
-    -- 只有 GitHub 流程才负责建仓库
-    local dot_repo = common.dot_repo_name()
-    local name = dot_repo:match("[^/]+$")
-    if not select(2, common.gh({ "repo", "view", dot_repo }, { capture = true })) then
-      common.log("creating private repository " .. dot_repo)
-      common.gh({ "repo", "create", name, "--private", "--description", "Omarchy dotfiles synced by omarsync via mise" })
+  if mise.origin_matches(url, branch) then
+    return
+  end
+  local connected, connect_out = mise.origin_set(url, branch)
+  if not connected and type(connect_out) == "string" and connect_out:find("has no branch", 1, true) then
+    local history = (os.getenv("HOME") or "") .. "/.local/state/mise/history/repo.git"
+    if exec.is_dir(history) then
+      common.log("creating branch " .. branch .. " from the local mise history")
+      if common.git({ "--git-dir", history, "push", url, "HEAD:refs/heads/" .. branch }) then
+        connected, connect_out = mise.origin_set(url, branch)
+      end
     end
   end
-  if not mise.origin_set(url, "main") then
+  if not connected then
     common.warn("could not connect mise dot origin " .. url)
+    if type(connect_out) == "string" and connect_out ~= "" then
+      common.warn(connect_out)
+    end
     return
   end
-  common.log("connected mise dot origin " .. url)
+  common.log("connected mise dot origin " .. url .. " branch " .. branch)
   if mise_incoming_pending() then
     -- 接收方:直接采用远程历史(含远程声明的 track 条目)
     local out, ok = mise.pull({ take_remote_all = true, capture = true })
@@ -216,6 +225,10 @@ function M.cmd_push()
   -- 文件同步:对齐 track 集合,保存检查点,记录历史头
   local mise_head
   if mise.available() then
+    ensure_dotfiles_repo(common.github_user())
+    if not mise.origin_connected() then
+      common.die("mise dot origin is not connected, so the dotfiles repository was not updated")
+    end
     scopemap.reconcile()
     local saved, save_out = mise.save()
     if saved == nil then

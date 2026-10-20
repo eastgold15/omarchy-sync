@@ -2,12 +2,12 @@
 
 把一台 [Omarchy](https://omarchy.org) 机器的整体环境同步到私有 GitHub 仓库,并在另一台机器上恢复。状态栏图标可以 push 和 pull;同样的功能在终端里都有对应命令——**面板按钮的名字就是 CLI 子命令**(`setup` / `push` / `apply`)。
 
-文件同步由 **[mise dot](https://mise.jdx.dev)** 负责:Omarsync 用 `mise dot track` 跟踪配置目录(文件留在原地,不做符号链接),保存历史检查点,并发布到私有 dotfiles 仓库。mise 做不了的事——软件包清单、钉住 commit 的 Flatpak、shell 插件、post-apply 钩子、信任/签名门槛——都放在 Omarsync 的签名元数据仓库里。
+文件同步由 **[mise dot](https://mise.jdx.dev)** 负责:Omarsync 用 `mise dot track` 跟踪配置目录(文件留在原地,不做符号链接),保存历史检查点,并发布到同一个私有仓库的 `dotfiles` 分支。mise 做不了的事——软件包清单、钉住 commit 的 Flatpak、shell 插件、post-apply 钩子、信任/签名门槛——都放在该仓库 `main` 分支的签名提交里。
 
-使用两个私有仓库:
+只用一个私有仓库 `<github用户名>/omarchy-config`:
 
-- `<github用户名>/omarchy-config` — 签名元数据:软件包清单、`plugins.json`、本地插件快照、钩子、当前主题/壁纸,以及 `omarsync.json`(记录 push 时的 mise 历史头)。
-- `<github用户名>/omarchy-dotfiles` — mise dot 的远端,保存真正的文件历史。
+- `main` — 签名元数据:软件包清单、`plugins.json`、本地插件快照、钩子、当前主题/壁纸,以及 `omarsync.json`(记录 push 时的 mise 历史头)。
+- `dotfiles` — mise 自己的文件历史。这条分支不和 `main` 合并。
 
 Omarsync 会记录:
 
@@ -33,7 +33,7 @@ omarchy pkg add lua mise github-cli
 
 ## 第一次同步
 
-1. 点状态栏云图标,点 **setup**(对应 `omarsync setup`)。它会装缺失的依赖、登录 GitHub、创建两个私有仓库,并把 `mise dot` 连到 dotfiles 仓库。
+1. 点状态栏云图标,点 **setup**(对应 `omarsync setup`)。它会装缺失的依赖、登录 GitHub、创建私有仓库 `omarchy-config`,并把 `mise dot` 连到该仓库的 `dotfiles` 分支。
 2. 点 **push**(对应 `omarsync push`)。元数据提交会签名:push 优先使用无密码的 `~/.ssh/id_ed25519`;否则会创建 `~/.config/omarsync/signing_key` 并在本机信任它(私钥不出本机)。文件用 `mise dot save` 存检查点,用 `mise dot sync` 发布。
 
 命令结束后状态栏立即刷新,不需要右键扫描。打开面板本身不会扫描。

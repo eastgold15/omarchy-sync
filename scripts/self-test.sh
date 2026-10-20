@@ -90,8 +90,9 @@ git -C "$M1" -c gpg.ssh.allowedSignersFile="$TMP/home1/.config/omarsync/trusted-
 [[ $(tr -d '[:space:]' <"$M1/current/theme.name") == demo ]]
 grep -q '^rel:demo/a.png$' "$M1/current/background"
 grep -q '"miseHead"' "$M1/omarsync.json"
-# dotfiles 仓库已有 mise 历史
-[[ $(git --git-dir="$DOT_ORIGIN" rev-list --all --count) -gt 0 ]]
+# 文件历史在 dotfiles 分支,不在元数据仓库的 main 上
+git --git-dir="$DOT_ORIGIN" rev-parse --verify --quiet refs/heads/dotfiles >/dev/null
+[[ $(git --git-dir="$DOT_ORIGIN" rev-list --count refs/heads/dotfiles) -gt 0 ]]
 if git --git-dir="$DOT_ORIGIN" log -p --all | grep -q 'SECRET_DOTENV'; then
   fail ".env was published to the dotfiles history"
 fi

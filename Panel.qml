@@ -314,10 +314,12 @@ Panel {
 
         ActionRow {
           name: "setup"
-          desc: "首次使用：装依赖、登录 GitHub、创建私有仓库"
+          desc: root.sync.miseConnected === true
+                ? "重新检查依赖、登录，以及 dotfiles 分支的连接"
+                : "装依赖、登录 GitHub，并连接 omarchy-config 的两条分支"
           tooltip: "omarsync setup"
-          rowVisible: root.primaryLabel() !== ""
-          recommended: true
+          rowVisible: root.hostWidget && root.hostWidget.statusReady === true
+          recommended: root.primaryLabel() !== "" || root.sync.miseConnected !== true
           onTriggered: root.runPrimary()
         }
 
@@ -352,10 +354,19 @@ Panel {
         PanelSeparator { width: parent.width; foreground: root.barForeground }
 
         ActionRow {
-          name: "打开仓库"
+          name: "打开配置仓库"
+          desc: "签名元数据：软件包、插件、钩子"
           tooltip: root.sync.repo ? ("github.com/" + root.sync.repo) : ""
           rowEnabled: root.sync.repo !== "" && root.sync.repo !== undefined
           onTriggered: root.callHost("openRepo")
+        }
+
+        ActionRow {
+          name: "打开文件分支"
+          desc: "同一仓库的 dotfiles 分支"
+          tooltip: root.sync.dotRepo ? ("github.com/" + root.sync.dotRepo + "/tree/dotfiles") : ""
+          rowEnabled: root.sync.dotRepo !== "" && root.sync.dotRepo !== undefined
+          onTriggered: root.callHost("openDotRepo")
         }
 
         ActionRow {

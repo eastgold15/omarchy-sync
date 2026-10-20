@@ -178,18 +178,21 @@ function M.valid_repo_name(s)
   return type(s) == "string" and s:match("^[A-Za-z0-9_.%-]+/[A-Za-z0-9_.%-]+$") ~= nil
 end
 
--- dotfiles 仓库地址:mise dot origin 用;默认取元数据仓库的兄弟仓库
+-- 文件历史和签名元数据在同一个 GitHub 仓库。mise 只用 dotfiles 分支。
+function M.dot_branch()
+  return "dotfiles"
+end
+
 function M.dot_repo_name()
-  local repo = M.configured_repo()
-  if repo == "" then return "" end
-  local owner = repo:match("^(.+)/[^/]+$")
-  return (owner or repo) .. "/omarchy-dotfiles"
+  return M.configured_repo()
 end
 
 function M.dot_origin_url()
   local override = os.getenv("OMARSYNC_DOT_ORIGIN")
   if override and override ~= "" then return override end
-  return "https://github.com/" .. M.dot_repo_name() .. ".git"
+  local repo = M.configured_repo()
+  if repo == "" then return "" end
+  return "https://github.com/" .. repo .. ".git"
 end
 
 -- ===== 工具初始化 =====
