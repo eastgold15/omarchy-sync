@@ -46,6 +46,12 @@
         "type": "boolean",
         "label": "Notify when a push finishes",
         "defaultValue": true
+      },
+      {
+        "key": "language",
+        "type": "string",
+        "label": "Panel language (empty follows the system, zh or en)",
+        "defaultValue": ""
       }
     ]
   }
