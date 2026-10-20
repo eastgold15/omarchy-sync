@@ -23,7 +23,7 @@ omarchy.sync 会记录:
 ## 安装
 
 ```sh
-omarchy plugin add https://github.com/eastgold15/omarchy.sync.git --enable
+omarchy plugin add https://github.com/eastgold15/omarchy-sync.git --enable
 ```
 
 Omarchy 插件系统不会把插件的 `bin/` 加入 PATH,所以 CLI 会自己装一个 shim:wrapper 第一次运行时(装好后面板扫描状态时)创建 `~/.local/bin/omarchy.sync`,该目录在 Omarchy 里本就在 PATH 上。已存在且不是 omarchy.sync 创建的同名文件不会被覆盖。
