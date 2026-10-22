@@ -1,6 +1,11 @@
-import { capture, resolveTool } from "./exec";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+import { capture, isDir, resolveTool } from "./exec";
+import { gitOut } from "./git";
 import { die, log } from "./log";
 import { assignments } from "./proxy";
+import { isFullSha } from "./trust";
 
 // mise dot 的封装:track/untrack/exclude/save/sync/pull/status/history。
 // 文件同步的全部传输都由 mise 负责(track 模式,原地跟踪,不建符号链接)。
@@ -243,6 +248,44 @@ export function sync(fetchOnly: boolean): { ok: boolean; out: string } {
 export interface PullOptions {
     readonly dryRun?: boolean;
     readonly takeRemoteAll?: boolean;
+}
+
+function historyRepo(): string {
+    return join(homedir(), ".local", "state", "mise", "history", "repo.git");
+}
+
+/** 签名提交里的 miseHead 是检查点的 tree。找到对应的 commit,供 rollback 钉住。 */
+export function commitForSnapshot(snapshot: string): string | undefined {
+    if (!isFullSha(snapshot) || !isDir(historyRepo())) {
+        return undefined;
+    }
+
+    const out = gitOut(["--git-dir", historyRepo(), "log", "--all", "--format=%H %T"]);
+
+    if (!out) {
+        return undefined;
+    }
+
+    for (const line of out.split("\n")) {
+        const [commit, tree] = line.split(" ");
+
+        if (tree === snapshot && isFullSha(commit)) {
+            return commit;
+        }
+    }
+
+    return undefined;
+}
+
+/** 把跟踪文件恢复成某个检查点。dryRun 只打印计划。 */
+export function rollbackTo(commit: string, dryRun = false): { ok: boolean; out: string } {
+    const args = ["rollback", "--to", `commit:${commit}`, "--all", "-y"];
+
+    if (dryRun) {
+        args.push("--dry-run");
+    }
+
+    return miseCapture(args, true);
 }
 
 /** pull:把远程共享内容写进活文件 */

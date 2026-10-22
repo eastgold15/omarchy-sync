@@ -291,17 +291,55 @@ export function prepareDotfiles(): boolean {
     return true;
 }
 
-/** mise 侧的文件同步:连接 origin → fetch → pull(miseHead 只留档) */
-export function syncDotfiles(): boolean {
+/** 签名提交记录的文件树。不是分支尖端。 */
+function signedMiseHead(mirror: string): string | undefined {
+    const raw = readTextFile(`${mirror}/omarsync.json`);
+
+    if (!raw) {
+        return undefined;
+    }
+
+    try {
+        const data = JSON.parse(raw) as { miseHead?: unknown };
+        const head = data.miseHead;
+
+        return isFullSha(typeof head === "string" ? head : undefined) ? head : undefined;
+    } catch {
+        return undefined;
+    }
+}
+
+/**
+ * 文件同步钉在签名的 miseHead 上。
+ * dotfiles 分支谁都能推,不能拿它的尖端覆盖文件后再跑 omarchy theme set。
+ */
+export function syncDotfiles(mirror: string): boolean {
     if (!prepareDotfiles()) {
         return false;
     }
 
-    const pull = mise.pull({ takeRemoteAll: true });
+    const snapshot = signedMiseHead(mirror);
 
-    if (!pull.ok) {
-        log.warn(`mise pull 失败: ${pull.out}`);
-        log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote-all");
+    if (!snapshot) {
+        log.warn("签名提交没有 miseHead;拒绝应用可变的 dotfiles 分支");
+
+        return false;
+    }
+
+    const commit = mise.commitForSnapshot(snapshot);
+
+    if (!commit) {
+        log.warn(`已抓取的历史里没有签名的 miseHead ${snapshot};拒绝应用分支尖端`);
+
+        return false;
+    }
+
+    log.info(`按签名的 miseHead ${snapshot} 恢复文件`);
+
+    const rolled = mise.rollbackTo(commit);
+
+    if (!rolled.ok) {
+        log.warn(`mise rollback 失败: ${rolled.out}`);
 
         return false;
     }
@@ -320,7 +358,9 @@ export function applyMirror(mirror: string, withPackages: boolean, sha: string, 
     let failed = false;
     const hooksStash = withExec ? undefined : stashOmarchyHooks();
 
-    if (!syncDotfiles()) {
+    const filesOk = syncDotfiles(mirror);
+
+    if (!filesOk) {
         failed = true;
     }
 
@@ -328,8 +368,12 @@ export function applyMirror(mirror: string, withPackages: boolean, sha: string, 
         restoreOmarchyHooks(hooksStash);
     }
 
-    if (!applyCurrent(mirror, withExec)) {
-        failed = true;
+    if (filesOk) {
+        if (!applyCurrent(mirror, withExec)) {
+            failed = true;
+        }
+    } else {
+        log.info("已跳过主题切换;文件没有对上签名的 miseHead");
     }
 
     reloadDesktop();
@@ -436,14 +480,21 @@ export function previewApply(mirror: string, sha: string, withExec: boolean): vo
         log.info(`  ${entry.rel}`);
     }
 
-    if (mise.available()) {
-        const { out } = mise.pull({ dryRun: true, takeRemoteAll: true });
+    const snapshot = signedMiseHead(mirror);
+    const pinned = snapshot ? mise.commitForSnapshot(snapshot) : undefined;
+
+    if (pinned && snapshot) {
+        log.info(`文件将恢复到签名的 miseHead ${snapshot}`);
+
+        const { out } = mise.rollbackTo(pinned, true);
 
         if (/\S/.test(out)) {
             for (const line of out.split("\n")) {
                 log.info(`  ${line}`);
             }
         }
+    } else {
+        log.info("没有签名的 miseHead;不会应用 dotfiles 分支");
     }
 
     const pac = readTextFile(`${mirror}/packages/pacman.txt`);

@@ -2,7 +2,7 @@
 import { createRequire } from 'node:module';
 import { a as a$3, u as u$1, b as b$3, h as h$2, i as i$1, c as c$1, g as g$1, l as l$1, d as d$2, o, A as A$3, r as r$1, e as c$2, f as g$2, j as b$4, S as S$3, R as R$5, z as z$3, k as h$3, y, m as m$2, B as B$5, F as F$3, n as a$4, s as s$2, E as E$4, x as x$3, p as l$2, q as d$3, L as L$3, O as O$2, H as H$3, K as K$5, T as T$2, G as G$4, t as f$1, M as M$3, w as w$2, v as k$3, C as j$3, D as t$1 } from './packem_shared/index.server-iAND-ZxX.js';
 import { spawnSync, spawn } from 'node:child_process';
-import { statSync, accessSync, constants, existsSync, lstatSync, mkdtempSync, rmSync, realpathSync, readFileSync, mkdirSync, appendFileSync, copyFileSync, chmodSync, readdirSync, unlinkSync, writeFileSync, symlinkSync } from 'node:fs';
+import { statSync, accessSync, constants, existsSync, lstatSync, mkdtempSync, rmSync, realpathSync, readFileSync, mkdirSync, appendFileSync, writeFileSync, chmodSync, unlinkSync, copyFileSync, readdirSync, symlinkSync } from 'node:fs';
 import { tmpdir, homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import * as readline from 'node:readline';
@@ -10370,6 +10370,453 @@ function gitOut(args) {
   return out.trimEnd();
 }
 
+function displayToken(value) {
+  if (typeof value !== "string") {
+    return "";
+  }
+  const cleaned = value.replaceAll(/[^A-Za-z0-9._-]/g, "");
+  return cleaned.length > 64 ? cleaned.slice(0, 64) : cleaned;
+}
+function displayTime(value) {
+  if (typeof value !== "string") {
+    return "";
+  }
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$/.test(value) ? value : "";
+}
+function hostnameSafe() {
+  let name = "";
+  try {
+    name = readFileSync("/etc/hostname", "utf8").split("\n")[0] ?? "";
+  } catch {
+  }
+  name = name.replaceAll(/[^A-Za-z0-9._-]/g, "");
+  return name === "" ? "unknown" : name;
+}
+function iso8601() {
+  const date = /* @__PURE__ */ new Date();
+  const offset = -date.getTimezoneOffset();
+  const sign = offset >= 0 ? "+" : "-";
+  const abs = Math.abs(offset);
+  const pad = (n) => String(n).padStart(2, "0");
+  const local = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  return `${local}${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)}`;
+}
+function stdinIsTty() {
+  return process.stdin.isTTY === true && process.stdout.isTTY === true;
+}
+async function confirm(prompt) {
+  if (!stdinIsTty()) {
+    return false;
+  }
+  const rl = readline.createInterface({ input: process.stdin, output: process.stderr });
+  return new Promise((resolve) => {
+    rl.question(`${prompt} [y/N] `, (answer) => {
+      rl.close();
+      resolve(answer === "y" || answer === "Y");
+    });
+  });
+}
+function configSet(key, value) {
+  let lines = [];
+  try {
+    lines = readFileSync(paths.configFile, "utf8").split("\n").filter((line) => line !== "" && !line.startsWith(`${key}=`));
+  } catch {
+  }
+  lines.push(`${key}=${value}`);
+  writeFileSync(paths.configFile, `${lines.join("\n")}
+`);
+}
+
+function isFullSha(value) {
+  return typeof value === "string" && /^[0-9a-f]{40}$/.test(value);
+}
+function realpath(path) {
+  try {
+    return realpathSync(path);
+  } catch {
+    return void 0;
+  }
+}
+function pathWithin(a, b) {
+  return a === b || a.startsWith(`${b}/`);
+}
+function refuseInsideMirror(path) {
+  if (!isDir(paths.mirrorDir)) {
+    return;
+  }
+  const realPath = realpath(path);
+  const realMirror = realpath(paths.mirrorDir);
+  if (realPath && realMirror && pathWithin(realPath, realMirror)) {
+    die(`拒绝使用同步镜像内的信任文件: ${path}`);
+  }
+}
+function resolveRemoteSha(mirror, branch) {
+  git(["-C", mirror, "fetch", "--quiet", "origin", branch]);
+  const sha = gitOut(["-C", mirror, "rev-parse", "--verify", `refs/remotes/origin/${branch}^{commit}`]);
+  if (!isFullSha(sha)) {
+    die(`origin/${branch} 没有解析出完整提交: ${sha ?? "<空>"}`);
+  }
+  return sha;
+}
+function checkoutPinnedCommit(mirror, sha) {
+  if (!isFullSha(sha)) {
+    die(`拒绝检出非提交: ${sha}`);
+  }
+  git(["-C", mirror, "checkout", "--quiet", "--force", "--detach", sha]);
+  const head = gitOut(["-C", mirror, "rev-parse", "--verify", "HEAD"]);
+  if (head !== sha) {
+    die(`镜像 HEAD ${head ?? "?"} 不是钉住的提交 ${sha}`);
+  }
+  if (gitCapture(["-C", mirror, "symbolic-ref", "-q", "HEAD"]).ok) {
+    die(`钉住 ${sha} 后镜像仍挂在分支上`);
+  }
+}
+function commitIsTrusted(mirror, sha) {
+  const keys = paths.trustedKeysFile;
+  if (!isFile(keys)) {
+    return false;
+  }
+  const data = readTextFile(keys) ?? "";
+  if (!/\S/.test(data)) {
+    return false;
+  }
+  refuseInsideMirror(keys);
+  return gitCapture(["-C", mirror, "-c", `gpg.ssh.allowedSignersFile=${keys}`, "verify-commit", sha]).ok;
+}
+function trustedKeysPresent() {
+  if (!isFile(paths.trustedKeysFile)) {
+    return false;
+  }
+  return /\S/.test(readTextFile(paths.trustedKeysFile) ?? "");
+}
+function extractArmor(commitText) {
+  const lines = [];
+  let on = false;
+  for (const line of commitText.split("\n")) {
+    if (!on) {
+      const rest = /^gpgsig (.*)$/.exec(line)?.[1];
+      if (rest !== void 0) {
+        on = true;
+        lines.push(rest);
+        if (rest.includes("END SSH SIGNATURE")) {
+          break;
+        }
+      }
+    } else {
+      const rest = /^ (.*)$/.exec(line)?.[1];
+      if (rest === void 0) {
+        break;
+      }
+      lines.push(rest);
+      if (rest.includes("END SSH SIGNATURE")) {
+        break;
+      }
+    }
+  }
+  const armor = lines.join("\n");
+  if (!armor.includes("BEGIN SSH SIGNATURE") || !armor.includes("END SSH SIGNATURE")) {
+    return void 0;
+  }
+  return armor;
+}
+function signaturePubkeyLine(mirror, sha) {
+  const commit = gitOut(["-C", mirror, "cat-file", "commit", sha]);
+  if (!commit) {
+    return void 0;
+  }
+  const armor = extractArmor(commit);
+  if (!armor) {
+    return void 0;
+  }
+  const body = armor.replace("-----BEGIN SSH SIGNATURE-----", "").replace("-----END SSH SIGNATURE-----", "");
+  const sig = Buffer.from(body.replaceAll(/\s/g, ""), "base64");
+  if (sig.length < 14 || sig.subarray(0, 6).toString("ascii") !== "SSHSIG") {
+    return void 0;
+  }
+  if (sig.readUInt32BE(6) !== 1) {
+    return void 0;
+  }
+  const keyLength = sig.readUInt32BE(10);
+  if (keyLength < 16 || keyLength > 4096 || sig.length < 14 + keyLength) {
+    return void 0;
+  }
+  const key = sig.subarray(14, 14 + keyLength);
+  const typeLength = key.readUInt32BE(0);
+  if (typeLength < 4 || typeLength > 64 || key.length < 4 + typeLength) {
+    return void 0;
+  }
+  const keyType = key.subarray(4, 4 + typeLength).toString("ascii");
+  if (!/^ssh-[a-z0-9-]+$/.test(keyType)) {
+    return void 0;
+  }
+  return `${keyType} ${key.toString("base64")}`;
+}
+function fingerprintOfPubkeyLine(pub) {
+  const mktemp = resolveTool("mktemp");
+  if (!mktemp) {
+    return void 0;
+  }
+  const tmp = capture(mktemp, []).stdout.trim();
+  if (tmp === "") {
+    return void 0;
+  }
+  writeFileSync(tmp, `${pub}
+`);
+  const keygen = resolveTool("ssh-keygen");
+  const out = keygen ? capture(keygen, ["-lf", tmp]).stdout : "";
+  try {
+    unlinkSync(tmp);
+  } catch {
+  }
+  return /\S+\s+(SHA256:[A-Za-z0-9+/]+=*)/.exec(out)?.[1];
+}
+function pubkeyVerifiesCommit(mirror, sha, pub) {
+  const mktemp = resolveTool("mktemp");
+  if (!mktemp) {
+    return false;
+  }
+  const tmp = capture(mktemp, []).stdout.trim();
+  if (tmp === "") {
+    return false;
+  }
+  writeFileSync(tmp, `* namespaces="git" ${pub}
+`);
+  const ok = gitCapture(["-C", mirror, "-c", `gpg.ssh.allowedSignersFile=${tmp}`, "verify-commit", sha]).ok;
+  try {
+    unlinkSync(tmp);
+  } catch {
+  }
+  return ok;
+}
+function appliedStampFile() {
+  return paths.appliedStamp;
+}
+function firstApplyAvailable() {
+  if (trustedKeysPresent()) {
+    return false;
+  }
+  return !isFile(appliedStampFile());
+}
+function markApplied(sha) {
+  mkdirSync(dirname(appliedStampFile()), { recursive: true });
+  writeFileSync(appliedStampFile(), `${sha}
+`);
+}
+function rememberSigner(pub) {
+  const keys = paths.trustedKeysFile;
+  refuseInsideMirror(keys);
+  mkdirSync(dirname(keys), { recursive: true });
+  if (!isFile(keys)) {
+    writeFileSync(keys, "");
+  }
+  chmodSync(keys, 420);
+  const entry = `* namespaces="git" ${pub}`;
+  const data = readTextFile(keys) ?? "";
+  if (!data.split("\n").includes(entry)) {
+    appendFileSync(keys, `${entry}
+`);
+  }
+}
+function acceptFirstApply(mirror, sha) {
+  const pub = signaturePubkeyLine(mirror, sha);
+  const fp = pub ? fingerprintOfPubkeyLine(pub) : void 0;
+  if (pub && fp && pubkeyVerifiesCommit(mirror, sha, pub)) {
+    rememberSigner(pub);
+    log.info(`已信任签名者 ${fp}`);
+    return;
+  }
+  log.info(`本机首次应用;提交 ${sha} 未签名`);
+  log.info("之后的 apply 需要可信签名");
+}
+async function trustSignerOfCommit(mirror, sha, allowPrompt) {
+  const pub = signaturePubkeyLine(mirror, sha);
+  const fp = pub ? fingerprintOfPubkeyLine(pub) : void 0;
+  if (trustedKeysPresent()) {
+    if (fp) {
+      die(`提交 ${sha} 由 ${fp} 签名,不在 ${paths.trustedKeysFile} 里。拒绝应用。`);
+    }
+    die(`提交 ${sha} 不是由 ${paths.trustedKeysFile} 里的密钥签名的。拒绝应用。`);
+  }
+  if (!pub || !fp || !pubkeyVerifiesCommit(mirror, sha, pub)) {
+    die(`提交 ${sha} 未签名。拒绝应用。`);
+  }
+  if (!allowPrompt) {
+    if (stdinIsTty()) {
+      log.info("这台机器还没有信任过签名密钥");
+      log.info(`提交 ${sha} 由 ${fp} 签名`);
+      if (!await confirm("信任这把密钥并应用?")) {
+        die("未信任该签名密钥");
+      }
+    } else {
+      die(`提交 ${sha} 由 ${fp} 签名,而本机还没信任过签名密钥。在终端里运行 apply 并确认,或加 --trust-signer。`);
+    }
+  }
+  rememberSigner(pub);
+  log.info(`已信任签名者 ${fp}`);
+}
+function requireTrustedCommit(mirror, sha) {
+  if (!isFullSha(sha)) {
+    die(`拒绝未钉住的版本: ${sha}`);
+  }
+  if (!commitIsTrusted(mirror, sha)) {
+    die(`提交 ${sha} 不是由 ${paths.trustedKeysFile} 里的密钥签名的。拒绝应用。`);
+  }
+}
+function commitSignatureState(mirror, sha) {
+  let state = "none";
+  if (commitIsTrusted(mirror, sha)) {
+    state = "trusted";
+  }
+  const pub = signaturePubkeyLine(mirror, sha);
+  const fp = (pub ? fingerprintOfPubkeyLine(pub) : void 0) ?? "";
+  if (state === "none" && pub && fp !== "" && pubkeyVerifiesCommit(mirror, sha, pub)) {
+    state = "untrusted";
+  }
+  return { state, fingerprint: fp };
+}
+function preparePushBranch(mirror, branch) {
+  git(["-C", mirror, "checkout", "-q", "-B", branch]);
+}
+function recordTrustedSigner(keyType, keyData, priv) {
+  if (!keyType.startsWith("ssh-")) {
+    die("不是 ssh 公钥");
+  }
+  if (!/^[A-Za-z0-9+/=]+$/.test(keyData)) {
+    die("ssh 公钥格式不对");
+  }
+  if (priv) {
+    if (!isFile(priv)) {
+      die(`私钥不存在: ${priv}`);
+    }
+    refuseInsideMirror(priv);
+  }
+  let email = configGet("SIGNING_EMAIL", readTextFile);
+  if (!email) {
+    email = "omarsync@localhost";
+    configSet("SIGNING_EMAIL", email);
+  }
+  const keys = paths.trustedKeysFile;
+  refuseInsideMirror(keys);
+  mkdirSync(dirname(keys), { recursive: true });
+  if (!isFile(keys)) {
+    writeFileSync(keys, "");
+  }
+  chmodSync(keys, 420);
+  const entry = `${email} namespaces="git" ${keyType} ${keyData}`;
+  const data = readTextFile(keys) ?? "";
+  if (!data.split("\n").includes(entry)) {
+    appendFileSync(keys, `${entry}
+`);
+  }
+  if (priv) {
+    configSet("SIGNING_KEY", priv);
+  }
+  log.info(`已为 ${email} 信任 ${keyType} 密钥`);
+}
+function privateKeyPub(priv) {
+  if (!priv || !isFile(priv)) {
+    return void 0;
+  }
+  if (isDir(paths.mirrorDir)) {
+    const realPath = realpath(priv);
+    const realMirror = realpath(paths.mirrorDir);
+    if (!realPath || !realMirror || pathWithin(realPath, realMirror)) {
+      return void 0;
+    }
+  }
+  if ((statSync(priv).mode & 18) !== 0) {
+    return void 0;
+  }
+  const keygen = resolveTool("ssh-keygen");
+  if (!keygen) {
+    return void 0;
+  }
+  const { code, stdout } = capture(keygen, ["-y", "-f", priv, "-P", ""]);
+  if (code !== 0) {
+    return void 0;
+  }
+  const pub = stdout.trim();
+  return /^ssh-[a-z0-9-]+\s+[A-Za-z0-9+/=]+/.test(pub) ? pub : void 0;
+}
+function dedicatedSigningKey() {
+  return `${dirname(paths.trustedKeysFile)}/signing_key`;
+}
+function createDedicatedSigningKey(priv) {
+  if (exists(priv) || exists(`${priv}.pub`)) {
+    die(`无法在 ${priv} 创建签名密钥`);
+  }
+  refuseInsideMirror(priv);
+  mkdirSync(dirname(priv), { recursive: true });
+  const keygen = resolveTool("ssh-keygen");
+  if (!keygen) {
+    die("ssh-keygen 不可用");
+  }
+  if (!run(keygen, ["-q", "-t", "ed25519", "-f", priv, "-N", "", "-C", `omarsync@${hostnameSafe()}`])) {
+    die("创建签名密钥失败");
+  }
+  chmodSync(priv, 384);
+}
+function ensurePushSigner() {
+  const home = dirname(dirname(paths.trustedKeysFile));
+  let priv;
+  let pub;
+  const configured = configGet("SIGNING_KEY", readTextFile);
+  if (configured) {
+    pub = privateKeyPub(configured);
+    if (!pub) {
+      die(`SIGNING_KEY 无法免密签名: ${configured}`);
+    }
+    priv = configured;
+  } else {
+    const defaultKey = `${home}/.ssh/id_ed25519`;
+    pub = privateKeyPub(defaultKey);
+    if (pub) {
+      priv = defaultKey;
+      log.info("使用 ~/.ssh/id_ed25519 签名");
+    } else {
+      priv = dedicatedSigningKey();
+      pub = privateKeyPub(priv);
+      if (!pub) {
+        createDedicatedSigningKey(priv);
+        pub = privateKeyPub(priv);
+        if (!pub) {
+          die("创建签名密钥失败");
+        }
+      }
+      log.info(`使用 ${priv} 签名`);
+    }
+  }
+  const [keyType, keyData] = pub.split(/\s+/);
+  recordTrustedSigner(keyType, keyData, priv);
+}
+function signUntrustedTip(mirror) {
+  const sha = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
+  if (sha) {
+    if (commitIsTrusted(mirror, sha)) {
+      return;
+    }
+    log.info("为快照补签名");
+  }
+  git(["-C", mirror, "commit", "-S", "--allow-empty", "-m", `sign snapshot from ${hostnameSafe()} @ ${iso8601()}`]);
+}
+function cmdTrustKey(pubFile, priv) {
+  if (!pubFile || !isFile(pubFile)) {
+    die("用法: omarsync trust-key --pubkey <ssh公钥> [--privkey 私钥]");
+  }
+  refuseInsideMirror(pubFile);
+  if (priv && !isFile(priv)) {
+    die(`私钥不存在: ${priv}`);
+  }
+  if (priv) {
+    refuseInsideMirror(priv);
+  }
+  const [keyType, keyData] = (readTextFile(pubFile) ?? "").trim().split(/\s+/);
+  if (!keyType) {
+    die("不是 ssh 公钥");
+  }
+  recordTrustedSigner(keyType, keyData ?? "", priv);
+}
+
 function available() {
   return resolveTool("mise") !== void 0;
 }
@@ -10517,6 +10964,32 @@ function sync(fetchOnly) {
   }
   log.warn("mise 因某次保存看起来像密钥而拒绝发布;私有历史仍然发布");
   return miseCapture([...args, "--allow-plaintext-history"], true);
+}
+function historyRepo() {
+  return join(homedir(), ".local", "state", "mise", "history", "repo.git");
+}
+function commitForSnapshot(snapshot) {
+  if (!isFullSha(snapshot) || !isDir(historyRepo())) {
+    return void 0;
+  }
+  const out = gitOut(["--git-dir", historyRepo(), "log", "--all", "--format=%H %T"]);
+  if (!out) {
+    return void 0;
+  }
+  for (const line of out.split("\n")) {
+    const [commit, tree] = line.split(" ");
+    if (tree === snapshot && isFullSha(commit)) {
+      return commit;
+    }
+  }
+  return void 0;
+}
+function rollbackTo(commit, dryRun = false) {
+  const args = ["rollback", "--to", `commit:${commit}`, "--all", "-y"];
+  if (dryRun) {
+    args.push("--dry-run");
+  }
+  return miseCapture(args, true);
 }
 function pull(options = {}) {
   const args = ["pull", "-y"];
@@ -11121,453 +11594,6 @@ function installMissingFlatpaks(mirror) {
   return !failed;
 }
 
-function displayToken(value) {
-  if (typeof value !== "string") {
-    return "";
-  }
-  const cleaned = value.replaceAll(/[^A-Za-z0-9._-]/g, "");
-  return cleaned.length > 64 ? cleaned.slice(0, 64) : cleaned;
-}
-function displayTime(value) {
-  if (typeof value !== "string") {
-    return "";
-  }
-  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$/.test(value) ? value : "";
-}
-function hostnameSafe() {
-  let name = "";
-  try {
-    name = readFileSync("/etc/hostname", "utf8").split("\n")[0] ?? "";
-  } catch {
-  }
-  name = name.replaceAll(/[^A-Za-z0-9._-]/g, "");
-  return name === "" ? "unknown" : name;
-}
-function iso8601() {
-  const date = /* @__PURE__ */ new Date();
-  const offset = -date.getTimezoneOffset();
-  const sign = offset >= 0 ? "+" : "-";
-  const abs = Math.abs(offset);
-  const pad = (n) => String(n).padStart(2, "0");
-  const local = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-  return `${local}${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)}`;
-}
-function stdinIsTty() {
-  return process.stdin.isTTY === true && process.stdout.isTTY === true;
-}
-async function confirm(prompt) {
-  if (!stdinIsTty()) {
-    return false;
-  }
-  const rl = readline.createInterface({ input: process.stdin, output: process.stderr });
-  return new Promise((resolve) => {
-    rl.question(`${prompt} [y/N] `, (answer) => {
-      rl.close();
-      resolve(answer === "y" || answer === "Y");
-    });
-  });
-}
-function configSet(key, value) {
-  let lines = [];
-  try {
-    lines = readFileSync(paths.configFile, "utf8").split("\n").filter((line) => line !== "" && !line.startsWith(`${key}=`));
-  } catch {
-  }
-  lines.push(`${key}=${value}`);
-  writeFileSync(paths.configFile, `${lines.join("\n")}
-`);
-}
-
-function isFullSha(value) {
-  return typeof value === "string" && /^[0-9a-f]{40}$/.test(value);
-}
-function realpath(path) {
-  try {
-    return realpathSync(path);
-  } catch {
-    return void 0;
-  }
-}
-function pathWithin(a, b) {
-  return a === b || a.startsWith(`${b}/`);
-}
-function refuseInsideMirror(path) {
-  if (!isDir(paths.mirrorDir)) {
-    return;
-  }
-  const realPath = realpath(path);
-  const realMirror = realpath(paths.mirrorDir);
-  if (realPath && realMirror && pathWithin(realPath, realMirror)) {
-    die(`拒绝使用同步镜像内的信任文件: ${path}`);
-  }
-}
-function resolveRemoteSha(mirror, branch) {
-  git(["-C", mirror, "fetch", "--quiet", "origin", branch]);
-  const sha = gitOut(["-C", mirror, "rev-parse", "--verify", `refs/remotes/origin/${branch}^{commit}`]);
-  if (!isFullSha(sha)) {
-    die(`origin/${branch} 没有解析出完整提交: ${sha ?? "<空>"}`);
-  }
-  return sha;
-}
-function checkoutPinnedCommit(mirror, sha) {
-  if (!isFullSha(sha)) {
-    die(`拒绝检出非提交: ${sha}`);
-  }
-  git(["-C", mirror, "checkout", "--quiet", "--force", "--detach", sha]);
-  const head = gitOut(["-C", mirror, "rev-parse", "--verify", "HEAD"]);
-  if (head !== sha) {
-    die(`镜像 HEAD ${head ?? "?"} 不是钉住的提交 ${sha}`);
-  }
-  if (gitCapture(["-C", mirror, "symbolic-ref", "-q", "HEAD"]).ok) {
-    die(`钉住 ${sha} 后镜像仍挂在分支上`);
-  }
-}
-function commitIsTrusted(mirror, sha) {
-  const keys = paths.trustedKeysFile;
-  if (!isFile(keys)) {
-    return false;
-  }
-  const data = readTextFile(keys) ?? "";
-  if (!/\S/.test(data)) {
-    return false;
-  }
-  refuseInsideMirror(keys);
-  return gitCapture(["-C", mirror, "-c", `gpg.ssh.allowedSignersFile=${keys}`, "verify-commit", sha]).ok;
-}
-function trustedKeysPresent() {
-  if (!isFile(paths.trustedKeysFile)) {
-    return false;
-  }
-  return /\S/.test(readTextFile(paths.trustedKeysFile) ?? "");
-}
-function extractArmor(commitText) {
-  const lines = [];
-  let on = false;
-  for (const line of commitText.split("\n")) {
-    if (!on) {
-      const rest = /^gpgsig (.*)$/.exec(line)?.[1];
-      if (rest !== void 0) {
-        on = true;
-        lines.push(rest);
-        if (rest.includes("END SSH SIGNATURE")) {
-          break;
-        }
-      }
-    } else {
-      const rest = /^ (.*)$/.exec(line)?.[1];
-      if (rest === void 0) {
-        break;
-      }
-      lines.push(rest);
-      if (rest.includes("END SSH SIGNATURE")) {
-        break;
-      }
-    }
-  }
-  const armor = lines.join("\n");
-  if (!armor.includes("BEGIN SSH SIGNATURE") || !armor.includes("END SSH SIGNATURE")) {
-    return void 0;
-  }
-  return armor;
-}
-function signaturePubkeyLine(mirror, sha) {
-  const commit = gitOut(["-C", mirror, "cat-file", "commit", sha]);
-  if (!commit) {
-    return void 0;
-  }
-  const armor = extractArmor(commit);
-  if (!armor) {
-    return void 0;
-  }
-  const body = armor.replace("-----BEGIN SSH SIGNATURE-----", "").replace("-----END SSH SIGNATURE-----", "");
-  const sig = Buffer.from(body.replaceAll(/\s/g, ""), "base64");
-  if (sig.length < 14 || sig.subarray(0, 6).toString("ascii") !== "SSHSIG") {
-    return void 0;
-  }
-  if (sig.readUInt32BE(6) !== 1) {
-    return void 0;
-  }
-  const keyLength = sig.readUInt32BE(10);
-  if (keyLength < 16 || keyLength > 4096 || sig.length < 14 + keyLength) {
-    return void 0;
-  }
-  const key = sig.subarray(14, 14 + keyLength);
-  const typeLength = key.readUInt32BE(0);
-  if (typeLength < 4 || typeLength > 64 || key.length < 4 + typeLength) {
-    return void 0;
-  }
-  const keyType = key.subarray(4, 4 + typeLength).toString("ascii");
-  if (!/^ssh-[a-z0-9-]+$/.test(keyType)) {
-    return void 0;
-  }
-  return `${keyType} ${key.toString("base64")}`;
-}
-function fingerprintOfPubkeyLine(pub) {
-  const mktemp = resolveTool("mktemp");
-  if (!mktemp) {
-    return void 0;
-  }
-  const tmp = capture(mktemp, []).stdout.trim();
-  if (tmp === "") {
-    return void 0;
-  }
-  writeFileSync(tmp, `${pub}
-`);
-  const keygen = resolveTool("ssh-keygen");
-  const out = keygen ? capture(keygen, ["-lf", tmp]).stdout : "";
-  try {
-    unlinkSync(tmp);
-  } catch {
-  }
-  return /\S+\s+(SHA256:[A-Za-z0-9+/]+=*)/.exec(out)?.[1];
-}
-function pubkeyVerifiesCommit(mirror, sha, pub) {
-  const mktemp = resolveTool("mktemp");
-  if (!mktemp) {
-    return false;
-  }
-  const tmp = capture(mktemp, []).stdout.trim();
-  if (tmp === "") {
-    return false;
-  }
-  writeFileSync(tmp, `* namespaces="git" ${pub}
-`);
-  const ok = gitCapture(["-C", mirror, "-c", `gpg.ssh.allowedSignersFile=${tmp}`, "verify-commit", sha]).ok;
-  try {
-    unlinkSync(tmp);
-  } catch {
-  }
-  return ok;
-}
-function appliedStampFile() {
-  return paths.appliedStamp;
-}
-function firstApplyAvailable() {
-  if (trustedKeysPresent()) {
-    return false;
-  }
-  return !isFile(appliedStampFile());
-}
-function markApplied(sha) {
-  mkdirSync(dirname(appliedStampFile()), { recursive: true });
-  writeFileSync(appliedStampFile(), `${sha}
-`);
-}
-function rememberSigner(pub) {
-  const keys = paths.trustedKeysFile;
-  refuseInsideMirror(keys);
-  mkdirSync(dirname(keys), { recursive: true });
-  if (!isFile(keys)) {
-    writeFileSync(keys, "");
-  }
-  chmodSync(keys, 420);
-  const entry = `* namespaces="git" ${pub}`;
-  const data = readTextFile(keys) ?? "";
-  if (!data.split("\n").includes(entry)) {
-    appendFileSync(keys, `${entry}
-`);
-  }
-}
-function acceptFirstApply(mirror, sha) {
-  const pub = signaturePubkeyLine(mirror, sha);
-  const fp = pub ? fingerprintOfPubkeyLine(pub) : void 0;
-  if (pub && fp && pubkeyVerifiesCommit(mirror, sha, pub)) {
-    rememberSigner(pub);
-    log.info(`已信任签名者 ${fp}`);
-    return;
-  }
-  log.info(`本机首次应用;提交 ${sha} 未签名`);
-  log.info("之后的 apply 需要可信签名");
-}
-async function trustSignerOfCommit(mirror, sha, allowPrompt) {
-  const pub = signaturePubkeyLine(mirror, sha);
-  const fp = pub ? fingerprintOfPubkeyLine(pub) : void 0;
-  if (trustedKeysPresent()) {
-    if (fp) {
-      die(`提交 ${sha} 由 ${fp} 签名,不在 ${paths.trustedKeysFile} 里。拒绝应用。`);
-    }
-    die(`提交 ${sha} 不是由 ${paths.trustedKeysFile} 里的密钥签名的。拒绝应用。`);
-  }
-  if (!pub || !fp || !pubkeyVerifiesCommit(mirror, sha, pub)) {
-    die(`提交 ${sha} 未签名。拒绝应用。`);
-  }
-  if (!allowPrompt) {
-    if (stdinIsTty()) {
-      log.info("这台机器还没有信任过签名密钥");
-      log.info(`提交 ${sha} 由 ${fp} 签名`);
-      if (!await confirm("信任这把密钥并应用?")) {
-        die("未信任该签名密钥");
-      }
-    } else {
-      die(`提交 ${sha} 由 ${fp} 签名,而本机还没信任过签名密钥。在终端里运行 apply 并确认,或加 --trust-signer。`);
-    }
-  }
-  rememberSigner(pub);
-  log.info(`已信任签名者 ${fp}`);
-}
-function requireTrustedCommit(mirror, sha) {
-  if (!isFullSha(sha)) {
-    die(`拒绝未钉住的版本: ${sha}`);
-  }
-  if (!commitIsTrusted(mirror, sha)) {
-    die(`提交 ${sha} 不是由 ${paths.trustedKeysFile} 里的密钥签名的。拒绝应用。`);
-  }
-}
-function commitSignatureState(mirror, sha) {
-  let state = "none";
-  if (commitIsTrusted(mirror, sha)) {
-    state = "trusted";
-  }
-  const pub = signaturePubkeyLine(mirror, sha);
-  const fp = (pub ? fingerprintOfPubkeyLine(pub) : void 0) ?? "";
-  if (state === "none" && pub && fp !== "" && pubkeyVerifiesCommit(mirror, sha, pub)) {
-    state = "untrusted";
-  }
-  return { state, fingerprint: fp };
-}
-function preparePushBranch(mirror, branch) {
-  git(["-C", mirror, "checkout", "-q", "-B", branch]);
-}
-function recordTrustedSigner(keyType, keyData, priv) {
-  if (!keyType.startsWith("ssh-")) {
-    die("不是 ssh 公钥");
-  }
-  if (!/^[A-Za-z0-9+/=]+$/.test(keyData)) {
-    die("ssh 公钥格式不对");
-  }
-  if (priv) {
-    if (!isFile(priv)) {
-      die(`私钥不存在: ${priv}`);
-    }
-    refuseInsideMirror(priv);
-  }
-  let email = configGet("SIGNING_EMAIL", readTextFile);
-  if (!email) {
-    email = "omarsync@localhost";
-    configSet("SIGNING_EMAIL", email);
-  }
-  const keys = paths.trustedKeysFile;
-  refuseInsideMirror(keys);
-  mkdirSync(dirname(keys), { recursive: true });
-  if (!isFile(keys)) {
-    writeFileSync(keys, "");
-  }
-  chmodSync(keys, 420);
-  const entry = `${email} namespaces="git" ${keyType} ${keyData}`;
-  const data = readTextFile(keys) ?? "";
-  if (!data.split("\n").includes(entry)) {
-    appendFileSync(keys, `${entry}
-`);
-  }
-  if (priv) {
-    configSet("SIGNING_KEY", priv);
-  }
-  log.info(`已为 ${email} 信任 ${keyType} 密钥`);
-}
-function privateKeyPub(priv) {
-  if (!priv || !isFile(priv)) {
-    return void 0;
-  }
-  if (isDir(paths.mirrorDir)) {
-    const realPath = realpath(priv);
-    const realMirror = realpath(paths.mirrorDir);
-    if (!realPath || !realMirror || pathWithin(realPath, realMirror)) {
-      return void 0;
-    }
-  }
-  if ((statSync(priv).mode & 18) !== 0) {
-    return void 0;
-  }
-  const keygen = resolveTool("ssh-keygen");
-  if (!keygen) {
-    return void 0;
-  }
-  const { code, stdout } = capture(keygen, ["-y", "-f", priv, "-P", ""]);
-  if (code !== 0) {
-    return void 0;
-  }
-  const pub = stdout.trim();
-  return /^ssh-[a-z0-9-]+\s+[A-Za-z0-9+/=]+/.test(pub) ? pub : void 0;
-}
-function dedicatedSigningKey() {
-  return `${dirname(paths.trustedKeysFile)}/signing_key`;
-}
-function createDedicatedSigningKey(priv) {
-  if (exists(priv) || exists(`${priv}.pub`)) {
-    die(`无法在 ${priv} 创建签名密钥`);
-  }
-  refuseInsideMirror(priv);
-  mkdirSync(dirname(priv), { recursive: true });
-  const keygen = resolveTool("ssh-keygen");
-  if (!keygen) {
-    die("ssh-keygen 不可用");
-  }
-  if (!run(keygen, ["-q", "-t", "ed25519", "-f", priv, "-N", "", "-C", `omarsync@${hostnameSafe()}`])) {
-    die("创建签名密钥失败");
-  }
-  chmodSync(priv, 384);
-}
-function ensurePushSigner() {
-  const home = dirname(dirname(paths.trustedKeysFile));
-  let priv;
-  let pub;
-  const configured = configGet("SIGNING_KEY", readTextFile);
-  if (configured) {
-    pub = privateKeyPub(configured);
-    if (!pub) {
-      die(`SIGNING_KEY 无法免密签名: ${configured}`);
-    }
-    priv = configured;
-  } else {
-    const defaultKey = `${home}/.ssh/id_ed25519`;
-    pub = privateKeyPub(defaultKey);
-    if (pub) {
-      priv = defaultKey;
-      log.info("使用 ~/.ssh/id_ed25519 签名");
-    } else {
-      priv = dedicatedSigningKey();
-      pub = privateKeyPub(priv);
-      if (!pub) {
-        createDedicatedSigningKey(priv);
-        pub = privateKeyPub(priv);
-        if (!pub) {
-          die("创建签名密钥失败");
-        }
-      }
-      log.info(`使用 ${priv} 签名`);
-    }
-  }
-  const [keyType, keyData] = pub.split(/\s+/);
-  recordTrustedSigner(keyType, keyData, priv);
-}
-function signUntrustedTip(mirror) {
-  const sha = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-  if (sha) {
-    if (commitIsTrusted(mirror, sha)) {
-      return;
-    }
-    log.info("为快照补签名");
-  }
-  git(["-C", mirror, "commit", "-S", "--allow-empty", "-m", `sign snapshot from ${hostnameSafe()} @ ${iso8601()}`]);
-}
-function cmdTrustKey(pubFile, priv) {
-  if (!pubFile || !isFile(pubFile)) {
-    die("用法: omarsync trust-key --pubkey <ssh公钥> [--privkey 私钥]");
-  }
-  refuseInsideMirror(pubFile);
-  if (priv && !isFile(priv)) {
-    die(`私钥不存在: ${priv}`);
-  }
-  if (priv) {
-    refuseInsideMirror(priv);
-  }
-  const [keyType, keyData] = (readTextFile(pubFile) ?? "").trim().split(/\s+/);
-  if (!keyType) {
-    die("不是 ssh 公钥");
-  }
-  recordTrustedSigner(keyType, keyData ?? "", priv);
-}
-
 const HOME$2 = homedir();
 function pluginDir(id) {
   return `${HOME$2}/.config/omarchy/plugins/${id}`;
@@ -11994,14 +12020,37 @@ function prepareDotfiles() {
   }
   return true;
 }
-function syncDotfiles() {
+function signedMiseHead(mirror) {
+  const raw = readTextFile(`${mirror}/omarsync.json`);
+  if (!raw) {
+    return void 0;
+  }
+  try {
+    const data = JSON.parse(raw);
+    const head = data.miseHead;
+    return isFullSha(typeof head === "string" ? head : void 0) ? head : void 0;
+  } catch {
+    return void 0;
+  }
+}
+function syncDotfiles(mirror) {
   if (!prepareDotfiles()) {
     return false;
   }
-  const pull$1 = pull({ takeRemoteAll: true });
-  if (!pull$1.ok) {
-    log.warn(`mise pull 失败: ${pull$1.out}`);
-    log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote-all");
+  const snapshot = signedMiseHead(mirror);
+  if (!snapshot) {
+    log.warn("签名提交没有 miseHead;拒绝应用可变的 dotfiles 分支");
+    return false;
+  }
+  const commit = commitForSnapshot(snapshot);
+  if (!commit) {
+    log.warn(`已抓取的历史里没有签名的 miseHead ${snapshot};拒绝应用分支尖端`);
+    return false;
+  }
+  log.info(`按签名的 miseHead ${snapshot} 恢复文件`);
+  const rolled = rollbackTo(commit);
+  if (!rolled.ok) {
+    log.warn(`mise rollback 失败: ${rolled.out}`);
     return false;
   }
   return true;
@@ -12013,14 +12062,19 @@ function applyMirror(mirror, withPackages, sha, withExec) {
   log.info(`已备份现有文件到 ${backup}`);
   let failed = false;
   const hooksStash = withExec ? void 0 : stashOmarchyHooks();
-  if (!syncDotfiles()) {
+  const filesOk = syncDotfiles(mirror);
+  if (!filesOk) {
     failed = true;
   }
   if (hooksStash) {
     restoreOmarchyHooks(hooksStash);
   }
-  if (!applyCurrent(mirror, withExec)) {
-    failed = true;
+  if (filesOk) {
+    if (!applyCurrent(mirror, withExec)) {
+      failed = true;
+    }
+  } else {
+    log.info("已跳过主题切换;文件没有对上签名的 miseHead");
   }
   reloadDesktop();
   if (withPackages) {
@@ -12101,13 +12155,18 @@ function previewApply(mirror, sha, withExec) {
   for (const entry of readScope(paths.scopeFile)) {
     log.info(`  ${entry.rel}`);
   }
-  if (available()) {
-    const { out } = pull({ dryRun: true, takeRemoteAll: true });
+  const snapshot = signedMiseHead(mirror);
+  const pinned = snapshot ? commitForSnapshot(snapshot) : void 0;
+  if (pinned && snapshot) {
+    log.info(`文件将恢复到签名的 miseHead ${snapshot}`);
+    const { out } = rollbackTo(pinned, true);
     if (/\S/.test(out)) {
       for (const line of out.split("\n")) {
         log.info(`  ${line}`);
       }
     }
+  } else {
+    log.info("没有签名的 miseHead;不会应用 dotfiles 分支");
   }
   const pac = readTextFile(`${mirror}/packages/pacman.txt`);
   if (pac) {
