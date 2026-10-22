@@ -15,7 +15,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "packem build",
+    "build": "packem build && node scripts/wrap-help.mjs",
     "typecheck": "tsc --noEmit"
   },
   "engines": {
