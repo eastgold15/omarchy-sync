@@ -12902,9 +12902,17 @@ cli.addCommand({
       name: "yes",
       type: Boolean,
       description: "跳过发布确认(供面板自动推送使用)"
+    },
+    {
+      name: "notify",
+      type: Boolean,
+      description: "推送完成后弹出桌面通知"
     }
   ],
   execute: async ({ options }) => {
+    if (options["notify"] === true) {
+      process.env["OMARSYNC_NOTIFY"] = "1";
+    }
     await executePush(options["yes"] === true);
   }
 });

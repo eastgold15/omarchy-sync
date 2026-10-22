@@ -65,8 +65,18 @@ cli.addCommand({
             type: Boolean,
             description: "跳过发布确认(供面板自动推送使用)",
         },
+        {
+            name: "notify",
+            type: Boolean,
+            description: "推送完成后弹出桌面通知",
+        },
     ],
     execute: async ({ options }) => {
+        // 旧面板把通知做成命令行参数。新面板改走 OMARSYNC_NOTIFY,两种都认。
+        if (options["notify"] === true) {
+            process.env["OMARSYNC_NOTIFY"] = "1";
+        }
+
         await executePush(options["yes"] === true);
     },
 });
