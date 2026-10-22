@@ -8,6 +8,7 @@ import { collectInto } from "../lib/meta";
 import * as mise from "../lib/mise";
 import { discardRemoteScope, ensureIdentity, notify } from "../lib/omarchy";
 import { ensureDotfilesRepo } from "./init";
+import { executeStatus } from "./status";
 import { configGet, paths } from "../lib/paths";
 import { readTextFile } from "../lib/log";
 import { readScope, reconcile } from "../lib/scope";
@@ -151,6 +152,7 @@ export async function executePush(skipConfirm = false): Promise<void> {
             log.warn(`mise dot sync 失败: ${out}`);
             log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote <path>");
             process.exitCode = 1;
+            executeStatus(false);
 
             return;
         }
@@ -159,4 +161,6 @@ export async function executePush(skipConfirm = false): Promise<void> {
     }
 
     notify("omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
+    // 面板只看 status.json。终端里的 push 不会自己结束那个进程,所以这里重写状态。
+    executeStatus(false);
 }

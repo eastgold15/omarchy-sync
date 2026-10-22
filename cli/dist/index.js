@@ -12544,145 +12544,6 @@ function mirrorDirty(mirror) {
   }
 }
 
-function requireMirror() {
-  if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
-  }
-  return paths.mirrorDir;
-}
-function remoteHasBranch(mirror, branch) {
-  return gitCapture(["-C", mirror, "ls-remote", "--exit-code", "--heads", "origin", branch]).ok;
-}
-async function executePush(skipConfirm = false) {
-  const mirror = requireMirror();
-  const branch = configGet("BRANCH", readTextFile) ?? "main";
-  ensurePushSigner();
-  ensureIdentity(mirror);
-  preparePushBranch(mirror, branch);
-  let miseHead;
-  if (available()) {
-    ensureDotfilesRepo();
-    if (!originConnected()) {
-      die("mise dot origin 未连接,所以 dotfiles 分支没有更新");
-    }
-    reconcile(readScope(paths.scopeFile));
-    const saved = save();
-    if (saved === void 0) {
-      die("mise dot save 失败");
-    }
-    if (saved) {
-      log.info("mise dot 检查点已保存");
-    }
-    miseHead = headSnapshot();
-  } else {
-    log.warn("mise 未安装;只推元数据。运行: omarchy pkg add mise");
-  }
-  collectInto(mirror, miseHead);
-  git(["-C", mirror, "add", "-A"]);
-  const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
-  const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
-  const miseDiff = available() ? diff().out : "";
-  if (/\S/.test(metaStat)) {
-    log.info("元数据变化:");
-    for (const line of metaStat.split("\n")) {
-      log.info(`  ${line}`);
-    }
-  } else {
-    log.info("元数据无变化");
-  }
-  let review = "";
-  if (/\S/.test(metaDiff)) {
-    review += `===== 元数据 diff(omarchy-config)=====
-${metaDiff}
-`;
-  }
-  if (/\S/.test(miseDiff)) {
-    log.info("文件差异(mise dot diff):");
-    for (const line of miseDiff.split("\n")) {
-      log.info(`  ${line}`);
-    }
-    review += `===== 文件 diff(dotfiles 分支)=====
-${miseDiff}
-`;
-  }
-  if (review !== "") {
-    mkdirSync(paths.stateDir, { recursive: true });
-    const reviewFile = `${paths.stateDir}/pending-push.diff`;
-    writeFileSync(reviewFile, review);
-    log.info(`完整 diff 已写入 ${reviewFile}`);
-    openInEditor([reviewFile]);
-  }
-  if (!skipConfirm && !await confirm("发布这份快照到远程仓库?")) {
-    die("已取消,未推送");
-  }
-  if (gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
-    log.info("没有要提交的本地变化");
-  } else {
-    git(["-C", mirror, "commit", "-S", "-m", `sync from ${hostnameSafe()} @ ${iso8601()}`]);
-    log.info("已提交本地变化");
-  }
-  if (remoteHasBranch(mirror, branch)) {
-    if (!git(["-C", mirror, "pull", "--quiet", "--rebase", "-X", "theirs", "origin", branch])) {
-      git(["-C", mirror, "rebase", "--abort"]);
-      die(`rebase 到 origin/${branch} 失败`);
-    }
-  }
-  discardRemoteScope(mirror);
-  if (!gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
-    git(["-C", mirror, "commit", "-S", "-m", "drop untrusted remote scope file"]);
-  }
-  signUntrustedTip(mirror);
-  if (!git(["-C", mirror, "push", "--quiet", "-u", "origin", `HEAD:${branch}`])) {
-    die("git push 失败");
-  }
-  log.info(`已推送 ${branch}`);
-  if (available()) {
-    const { ok, out } = sync(false);
-    if (!ok) {
-      log.warn(`mise dot sync 失败: ${out}`);
-      log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote <path>");
-      process.exitCode = 1;
-      return;
-    }
-    log.info("mise dot 历史已发布");
-  }
-  notify("omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
-}
-
-function executeSetup() {
-  if (!stdinIsTty()) {
-    die("setup 需要终端。运行: omarsync setup");
-  }
-  if (!available()) {
-    log.info("安装 mise");
-    if (!omarchy(["pkg", "add", "mise"])) {
-      die("安装 mise 失败");
-    }
-  }
-  if (!ghInstalled()) {
-    log.info("安装 GitHub CLI");
-    if (!omarchy(["pkg", "add", "github-cli"])) {
-      die("安装 github-cli 失败");
-    }
-  }
-  if (!ghLoggedIn()) {
-    executeLogin();
-  }
-  if (!isDir(`${paths.mirrorDir}/.git`)) {
-    executeInit(void 0);
-  } else {
-    ensureDotfilesRepo();
-  }
-  const sha = gitOut(["-C", paths.mirrorDir, "rev-parse", "--verify", "--quiet", "refs/remotes/origin/main^{commit}"]);
-  if (sha) {
-    log.info(`仓库已有 commit ${sha}`);
-    log.info("打开面板选择 apply(先审阅再应用)");
-  } else {
-    log.info("仓库是空的");
-    log.info("打开面板选择 push");
-  }
-}
-
 function readCounts(mirror, branch) {
   const ls = gitCapture(["-C", mirror, "ls-remote", "--exit-code", "--heads", "origin", branch]);
   if (ls.code === 2) {
@@ -12859,6 +12720,147 @@ function executeStatus(json) {
   }
   if (st.error !== "") {
     log.warn(st.error);
+  }
+}
+
+function requireMirror() {
+  if (!isDir(`${paths.mirrorDir}/.git`)) {
+    die("未初始化。运行: omarsync init");
+  }
+  return paths.mirrorDir;
+}
+function remoteHasBranch(mirror, branch) {
+  return gitCapture(["-C", mirror, "ls-remote", "--exit-code", "--heads", "origin", branch]).ok;
+}
+async function executePush(skipConfirm = false) {
+  const mirror = requireMirror();
+  const branch = configGet("BRANCH", readTextFile) ?? "main";
+  ensurePushSigner();
+  ensureIdentity(mirror);
+  preparePushBranch(mirror, branch);
+  let miseHead;
+  if (available()) {
+    ensureDotfilesRepo();
+    if (!originConnected()) {
+      die("mise dot origin 未连接,所以 dotfiles 分支没有更新");
+    }
+    reconcile(readScope(paths.scopeFile));
+    const saved = save();
+    if (saved === void 0) {
+      die("mise dot save 失败");
+    }
+    if (saved) {
+      log.info("mise dot 检查点已保存");
+    }
+    miseHead = headSnapshot();
+  } else {
+    log.warn("mise 未安装;只推元数据。运行: omarchy pkg add mise");
+  }
+  collectInto(mirror, miseHead);
+  git(["-C", mirror, "add", "-A"]);
+  const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
+  const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
+  const miseDiff = available() ? diff().out : "";
+  if (/\S/.test(metaStat)) {
+    log.info("元数据变化:");
+    for (const line of metaStat.split("\n")) {
+      log.info(`  ${line}`);
+    }
+  } else {
+    log.info("元数据无变化");
+  }
+  let review = "";
+  if (/\S/.test(metaDiff)) {
+    review += `===== 元数据 diff(omarchy-config)=====
+${metaDiff}
+`;
+  }
+  if (/\S/.test(miseDiff)) {
+    log.info("文件差异(mise dot diff):");
+    for (const line of miseDiff.split("\n")) {
+      log.info(`  ${line}`);
+    }
+    review += `===== 文件 diff(dotfiles 分支)=====
+${miseDiff}
+`;
+  }
+  if (review !== "") {
+    mkdirSync(paths.stateDir, { recursive: true });
+    const reviewFile = `${paths.stateDir}/pending-push.diff`;
+    writeFileSync(reviewFile, review);
+    log.info(`完整 diff 已写入 ${reviewFile}`);
+    openInEditor([reviewFile]);
+  }
+  if (!skipConfirm && !await confirm("发布这份快照到远程仓库?")) {
+    die("已取消,未推送");
+  }
+  if (gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
+    log.info("没有要提交的本地变化");
+  } else {
+    git(["-C", mirror, "commit", "-S", "-m", `sync from ${hostnameSafe()} @ ${iso8601()}`]);
+    log.info("已提交本地变化");
+  }
+  if (remoteHasBranch(mirror, branch)) {
+    if (!git(["-C", mirror, "pull", "--quiet", "--rebase", "-X", "theirs", "origin", branch])) {
+      git(["-C", mirror, "rebase", "--abort"]);
+      die(`rebase 到 origin/${branch} 失败`);
+    }
+  }
+  discardRemoteScope(mirror);
+  if (!gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
+    git(["-C", mirror, "commit", "-S", "-m", "drop untrusted remote scope file"]);
+  }
+  signUntrustedTip(mirror);
+  if (!git(["-C", mirror, "push", "--quiet", "-u", "origin", `HEAD:${branch}`])) {
+    die("git push 失败");
+  }
+  log.info(`已推送 ${branch}`);
+  if (available()) {
+    const { ok, out } = sync(false);
+    if (!ok) {
+      log.warn(`mise dot sync 失败: ${out}`);
+      log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote <path>");
+      process.exitCode = 1;
+      executeStatus(false);
+      return;
+    }
+    log.info("mise dot 历史已发布");
+  }
+  notify("omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
+  executeStatus(false);
+}
+
+function executeSetup() {
+  if (!stdinIsTty()) {
+    die("setup 需要终端。运行: omarsync setup");
+  }
+  if (!available()) {
+    log.info("安装 mise");
+    if (!omarchy(["pkg", "add", "mise"])) {
+      die("安装 mise 失败");
+    }
+  }
+  if (!ghInstalled()) {
+    log.info("安装 GitHub CLI");
+    if (!omarchy(["pkg", "add", "github-cli"])) {
+      die("安装 github-cli 失败");
+    }
+  }
+  if (!ghLoggedIn()) {
+    executeLogin();
+  }
+  if (!isDir(`${paths.mirrorDir}/.git`)) {
+    executeInit(void 0);
+  } else {
+    ensureDotfilesRepo();
+  }
+  const sha = gitOut(["-C", paths.mirrorDir, "rev-parse", "--verify", "--quiet", "refs/remotes/origin/main^{commit}"]);
+  if (sha) {
+    log.info(`仓库已有 commit ${sha}`);
+    log.info("打开面板选择 apply(先审阅再应用)");
+  } else {
+    log.info("仓库是空的");
+    log.info("打开面板选择 push");
   }
 }
 
