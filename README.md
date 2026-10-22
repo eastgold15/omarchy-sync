@@ -96,7 +96,7 @@ omarsync doctor
 omarsync scope-path
 ```
 
-手动 `push` 一律先展示 diff 并要求按 y 确认;`push --yes` 跳过确认,只供面板的自动推送定时器使用。桌面通知由 `OMARSYNC_NOTIFY=1` 开启,面板上的通知开关控制这个行为。
+手动 `push` 先展示 diff 并要求按 y 确认。`push --yes` 只跳过这一次确认,供面板的自动推送使用。fetch 之后,远程尖端不是可信签名就拒绝变基,也不会补签名。变基或丢掉远程 scope 之后,树和已确认的不一样时,自动推送直接停下;手动 push 会再打开最终 diff,确认后才签名。桌面通知由 `OMARSYNC_NOTIFY=1` 开启,面板上的通知开关控制这个行为。
 
 遇到同步冲突跑 `omarsync conflicts`:列出冲突文件并用编辑器打开审阅。
 

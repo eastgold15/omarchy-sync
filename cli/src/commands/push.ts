@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 
 import { openInEditor } from "../lib/editor";
 import { isDir } from "../lib/exec";
-import { git, gitCapture } from "../lib/git";
+import { git, gitCapture, gitOut } from "../lib/git";
 import { die, log } from "../lib/log";
 import { collectInto } from "../lib/meta";
 import * as mise from "../lib/mise";
@@ -12,7 +12,7 @@ import { executeStatus } from "./status";
 import { configGet, paths } from "../lib/paths";
 import { readTextFile } from "../lib/log";
 import { readScope, reconcile } from "../lib/scope";
-import { ensurePushSigner, preparePushBranch, signUntrustedTip } from "../lib/trust";
+import { ensurePushSigner, preparePushBranch, requireTrustedRemoteTip, signReviewedTip } from "../lib/trust";
 import { confirm, hostnameSafe, iso8601 } from "../lib/util";
 
 // push:对齐 track → 手动存检查点 → 元数据签名提交 → 发布 mise 历史。
@@ -28,6 +28,56 @@ function requireMirror(): string {
 
 function remoteHasBranch(mirror: string, branch: string): boolean {
     return gitCapture(["-C", mirror, "ls-remote", "--exit-code", "--heads", "origin", branch]).ok;
+}
+
+function headTree(mirror: string): string | undefined {
+    return gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
+}
+
+/** 合并结果和已确认的树不同时,自动推送退回;手动推送必须再审一遍才允许签名。 */
+async function reviewMergedTree(mirror: string, reviewedCommit: string, reviewedTree: string, skipConfirm: boolean): Promise<string> {
+    const finalTree = headTree(mirror);
+
+    if (!finalTree) {
+        die("无法读取合并后的树");
+    }
+
+    if (finalTree === reviewedTree) {
+        return reviewedTree;
+    }
+
+    const finalDiff = gitCapture(["-C", mirror, "diff", "--color=never", reviewedTree, "HEAD"]).out;
+
+    if (skipConfirm) {
+        git(["-C", mirror, "reset", "--hard", reviewedCommit]);
+        die("合并后的树和已确认的不一样,自动推送不会签名");
+    }
+
+    if (/\S/.test(finalDiff)) {
+        mkdirSync(paths.stateDir, { recursive: true });
+
+        const reviewFile = `${paths.stateDir}/pending-push.diff`;
+
+        writeFileSync(reviewFile, `===== 合并后的最终 diff =====\n${finalDiff}\n`);
+        log.info(`合并改写了已确认的树。最终 diff 已写入 ${reviewFile}`);
+        openInEditor([reviewFile]);
+    } else {
+        log.info("合并改写了已确认的树");
+    }
+
+    if (!(await confirm("签名并发布这份合并后的树?"))) {
+        git(["-C", mirror, "reset", "--hard", reviewedCommit]);
+        die("已取消,未签名也未推送");
+    }
+
+    const accepted = headTree(mirror);
+
+    if (accepted !== finalTree) {
+        git(["-C", mirror, "reset", "--hard", reviewedCommit]);
+        die("审阅期间树又变了,未签名也未推送");
+    }
+
+    return finalTree;
 }
 
 export async function executePush(skipConfirm = false): Promise<void> {
@@ -118,14 +168,39 @@ export async function executePush(skipConfirm = false): Promise<void> {
     if (gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
         log.info("没有要提交的本地变化");
     } else {
-        git(["-C", mirror, "commit", "-S", "-m", `sync from ${hostnameSafe()} @ ${iso8601()}`]);
+        if (!git(["-C", mirror, "commit", "-S", "-m", `sync from ${hostnameSafe()} @ ${iso8601()}`])) {
+            die("本地提交签名失败,未推送");
+        }
+
         log.info("已提交本地变化");
     }
 
+    const reviewedCommit = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
+    const reviewedTree = headTree(mirror);
+
+    if (!reviewedCommit || !reviewedTree) {
+        die("无法读取已审阅的提交");
+    }
+
+    // 先取回远程尖端并验签,再变基。变基对象是刚刚验过的那个提交,而不是可能又往前走的分支名。
     if (remoteHasBranch(mirror, branch)) {
-        if (!git(["-C", mirror, "pull", "--quiet", "--rebase", "-X", "theirs", "origin", branch])) {
-            git(["-C", mirror, "rebase", "--abort"]);
-            die(`rebase 到 origin/${branch} 失败`);
+        if (!git(["-C", mirror, "fetch", "--quiet", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`])) {
+            die("fetch 失败,未合并也未签名");
+        }
+
+        const remoteTip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", `origin/${branch}`]);
+
+        if (!remoteTip) {
+            die("fetch 之后读不到远程提交,未合并也未签名");
+        }
+
+        requireTrustedRemoteTip(mirror, remoteTip);
+
+        if (!git(["-C", mirror, "merge-base", "--is-ancestor", remoteTip, "HEAD"])) {
+            if (!git(["-C", mirror, "rebase", "--quiet", "-X", "theirs", remoteTip])) {
+                git(["-C", mirror, "rebase", "--abort"]);
+                die(`rebase 到 origin/${branch} 失败,未签名`);
+            }
         }
     }
 
@@ -133,10 +208,15 @@ export async function executePush(skipConfirm = false): Promise<void> {
     discardRemoteScope(mirror);
 
     if (!gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
-        git(["-C", mirror, "commit", "-S", "-m", "drop untrusted remote scope file"]);
+        if (!git(["-C", mirror, "commit", "-S", "-m", "drop untrusted remote scope file"])) {
+            git(["-C", mirror, "reset", "--hard", reviewedCommit]);
+            die("去掉远程 scope 的签名提交失败,未推送");
+        }
     }
 
-    signUntrustedTip(mirror);
+    const treeToSign = await reviewMergedTree(mirror, reviewedCommit, reviewedTree, skipConfirm);
+
+    signReviewedTip(mirror, treeToSign);
 
     if (!git(["-C", mirror, "push", "--quiet", "-u", "origin", `HEAD:${branch}`])) {
         die("git push 失败");

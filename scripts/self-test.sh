@@ -86,5 +86,91 @@ else
   ok "命名已恢复为 Omarsync"
 fi
 
+if grep -q 'signUntrustedTip' "$ROOT/cli/src/commands/push.ts" "$ROOT/cli/src/lib/trust.ts"; then
+  bad "仍会给未审阅的尖端补签名"
+else
+  ok "不再给未审阅的尖端补签名"
+fi
+
+# 未签名的远程尖端必须在合并前被拒绝;签名函数也不能给另一棵树补签。
+trust="$TMP/trust"
+mkdir -p "$trust/home/.config/omarsync"
+ssh-keygen -q -t ed25519 -f "$trust/key" -N "" -C omarsync-test
+pub=$(awk '{print $1 " " $2}' "$trust/key.pub")
+printf '* namespaces="git" %s\n' "$pub" > "$trust/home/.config/omarsync/trusted-keys"
+git init -q -b main "$trust/mirror"
+git -C "$trust/mirror" config user.email omarsync@localhost
+git -C "$trust/mirror" config user.name omarsync
+git -C "$trust/mirror" config gpg.format ssh
+git -C "$trust/mirror" config user.signingkey "$trust/key"
+git -C "$trust/mirror" config commit.gpgsign true
+git -C "$trust/mirror" config gpg.ssh.program "$(command -v ssh-keygen)"
+echo base > "$trust/mirror/file"
+git -C "$trust/mirror" add file
+git -C "$trust/mirror" commit -q -m base
+base_commit=$(git -C "$trust/mirror" rev-parse HEAD)
+base_tree=$(git -C "$trust/mirror" rev-parse 'HEAD^{tree}')
+git init -q --bare -b main "$trust/origin.git"
+git -C "$trust/mirror" remote add origin "$trust/origin.git"
+git -C "$trust/mirror" push -q origin HEAD:main
+git clone -q -b main "$trust/origin.git" "$trust/attacker"
+git -C "$trust/attacker" config user.email attacker@example.com
+git -C "$trust/attacker" config user.name attacker
+git -C "$trust/attacker" config commit.gpgsign false
+mkdir -p "$trust/attacker/hooks/post-apply.d"
+printf 'echo pwned\n' > "$trust/attacker/hooks/post-apply.d/evil.sh"
+git -C "$trust/attacker" add hooks/post-apply.d/evil.sh
+git -C "$trust/attacker" -c commit.gpgsign=false commit -q -m 'add hook'
+git -C "$trust/attacker" push -q origin HEAD:main
+git -C "$trust/mirror" fetch -q origin '+refs/heads/main:refs/remotes/origin/main'
+remote_tip=$(git -C "$trust/mirror" rev-parse origin/main)
+set +e
+(
+  cd "$ROOT/cli"
+  HOME="$trust/home" MIRROR="$trust/mirror" SHA="$remote_tip" bun -e '
+import { requireTrustedRemoteTip } from "./src/lib/trust.ts";
+requireTrustedRemoteTip(process.env.MIRROR, process.env.SHA);
+' >/dev/null 2>&1
+)
+trust_status=$?
+set -e
+if [[ $trust_status -ne 0 && $(git -C "$trust/mirror" rev-parse HEAD) == "$base_commit" ]]; then
+  ok "未签名远程尖端被拒绝"
+else
+  bad "未签名远程尖端被拒绝"
+fi
+git -C "$trust/mirror" rebase -q "$remote_tip"
+set +e
+(
+  cd "$ROOT/cli"
+  HOME="$trust/home" MIRROR="$trust/mirror" TREE="$base_tree" bun -e '
+import { signReviewedTip } from "./src/lib/trust.ts";
+signReviewedTip(process.env.MIRROR, process.env.TREE);
+' >/dev/null 2>&1
+)
+sign_status=$?
+set -e
+if [[ $sign_status -ne 0 && $(git -C "$trust/mirror" rev-parse HEAD) == "$remote_tip" ]]; then
+  ok "变基后的树不会被补签"
+else
+  bad "变基后的树不会被补签"
+fi
+git -C "$trust/mirror" reset -q --hard "$base_commit"
+set +e
+(
+  cd "$ROOT/cli"
+  HOME="$trust/home" MIRROR="$trust/mirror" TREE="$base_tree" bun -e '
+import { signReviewedTip } from "./src/lib/trust.ts";
+signReviewedTip(process.env.MIRROR, process.env.TREE);
+' >/dev/null 2>&1
+)
+same_status=$?
+set -e
+if [[ $same_status -eq 0 && $(git -C "$trust/mirror" rev-parse HEAD) == "$base_commit" ]]; then
+  ok "已审阅且已签名的树保持原样"
+else
+  bad "已审阅且已签名的树保持原样"
+fi
+
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [[ $fail -eq 0 ]]

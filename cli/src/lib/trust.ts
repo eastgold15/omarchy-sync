@@ -527,19 +527,43 @@ export function ensurePushSigner(): void {
     recordTrustedSigner(keyType!, keyData!, priv);
 }
 
-/** 提交顶端不是可信签名时,补一个空的签名提交 */
-export function signUntrustedTip(mirror: string): void {
-    const sha = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
+/** 远程尖端必须已由可信密钥签名。没有这道检查就不能变基,也不能补签名。 */
+export function requireTrustedRemoteTip(mirror: string, sha: string): void {
+    if (!commitIsTrusted(mirror, sha)) {
+        die(`远程提交 ${sha} 不是可信签名。拒绝合并,也不会为它签名。`);
+    }
+}
 
-    if (sha) {
-        if (commitIsTrusted(mirror, sha)) {
-            return;
-        }
-
-        log.info("为快照补签名");
+/** 只为调用方已经审阅过的那棵树补签名。树不一致就拒绝,空提交也不会改树。 */
+export function signReviewedTip(mirror: string, reviewedTree: string): void {
+    if (!isFullSha(reviewedTree)) {
+        die("拒绝为未经审阅的树签名");
     }
 
-    git(["-C", mirror, "commit", "-S", "--allow-empty", "-m", `sign snapshot from ${hostnameSafe()} @ ${iso8601()}`]);
+    const tree = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
+
+    if (tree !== reviewedTree) {
+        die("拒绝为未经审阅的树签名");
+    }
+
+    const sha = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
+
+    if (sha && commitIsTrusted(mirror, sha)) {
+        return;
+    }
+
+    log.info("为已审阅的快照补签名");
+
+    if (!git(["-C", mirror, "commit", "-S", "--allow-empty", "-m", `sign snapshot from ${hostnameSafe()} @ ${iso8601()}`])) {
+        die("签名失败,未推送");
+    }
+
+    const signedTree = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
+    const signed = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
+
+    if (signedTree !== reviewedTree || !signed || !commitIsTrusted(mirror, signed)) {
+        die("签名没有覆盖已审阅的树,未推送");
+    }
 }
 
 /** trust-key 子命令 */
