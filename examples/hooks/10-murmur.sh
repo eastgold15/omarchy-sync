@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # Re-apply Doubao Murmur patches and make F9 readable on a new machine.
-# Runs from an Omarsync apply terminal, so sudo can ask for a password.
+# Runs from an omarsync apply terminal, so sudo can ask for a password.
 set -euo pipefail
 
 if [[ -x "$HOME/.local/bin/doubao-murmur-repatch" ]]; then

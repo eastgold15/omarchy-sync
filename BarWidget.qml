@@ -30,7 +30,8 @@ BarWidget {
       "PATH": "/usr/bin:/bin:/usr/sbin:/usr/share/omarchy/bin",
       "LANG": "C.UTF-8",
       "LC_ALL": "C.UTF-8",
-      "OMARCHY_PATH": "/usr/share/omarchy"
+      "OMARCHY_PATH": "/usr/share/omarchy",
+      "OMARSYNC_NOTIFY": root.settingBool("notify", true) ? "1" : "0"
     }
     var names = [
       "http_proxy", "https_proxy", "all_proxy", "no_proxy",
@@ -182,17 +183,22 @@ BarWidget {
     statusProcess.running = true
   }
 
+  // 手动 push:必须亲眼看到 diff 再确认,所以一律弹浮动终端
   function pushNow() {
+    if (root.cliPath === "")
+      return
+    root.runInTerminal(root.quotedCli() + " push")
+  }
+
+  // 自动 push(设置里开启):非交互,跳过确认
+  function autoPushNow() {
     if (pushProcess.running || root.cliPath === "")
       return
     var home = Quickshell.env("HOME") || ""
     if (home === "")
       return
-    var args = ["push", "--quiet"]
-    if (root.settingBool("notify", true))
-      args.push("--notify")
     root.armProcess(pushProcess)
-    pushProcess.command = root.trustedCommand(args)
+    pushProcess.command = root.trustedCommand(["push", "--yes"])
     pushDeadline.restart()
     pushProcess.running = true
   }
@@ -319,7 +325,7 @@ BarWidget {
     interval: Math.max(1, root.settingInt("autoPushIntervalMin", 0)) * 60000
     running: root.settingInt("autoPushIntervalMin", 0) > 0
     repeat: true
-    onTriggered: root.pushNow()
+    onTriggered: root.autoPushNow()
   }
 
   Timer {

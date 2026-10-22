@@ -110,7 +110,7 @@ var copy = {
     setupConnected: "重新检查依赖、登录，以及 dotfiles 分支的连接",
     setupNeeded: "装依赖、登录 GitHub，并连接 omarchy-config 的两条分支",
     pushRunning: "push（执行中…）",
-    pushDesc: "上传本机最新配置，自动签名",
+    pushDesc: "弹出终端，看完 diff 按 y 才上传，并自动签名",
     applyRunning: "apply（执行中…）",
     applyDesc: "把远程快照恢复到这台电脑，先预览再确认",
     scanRunning: "检查中…",
@@ -141,11 +141,11 @@ var copy = {
     language: "界面语言",
     languageDesc: "向右是英文。没拨过时跟随系统。",
     helpBody: "这台电脑（日常）:\n" +
-      "改完配置点 push，自动签名上传。中键图标 = push。\n\n" +
+      "改完配置点 push，会弹出终端展示 diff，按 y 才上传。中键图标 = push。\n\n" +
       "新电脑（恢复）:\n" +
       "1. omarchy plugin add 装本插件\n" +
       "2. 点「初始化」（装依赖、登录 GitHub、建仓库）\n" +
-      "3. 点 apply，终端里看预览后确认\n" +
+      "3. 点 apply，终端里先看到全部更改，按 y 才写入\n" +
       "4. 首次会问是否信任签名密钥，选是即可\n\n" +
       "检查更新 = 只看差异，不同步文件。\n" +
       "设置里可改自动检查间隔，自动 push 可自动上传。\n\n" +
@@ -196,7 +196,7 @@ var copy = {
     setupConnected: "Check dependencies, sign-in, and the dotfiles branch again",
     setupNeeded: "Install dependencies, sign in to GitHub, and connect both branches of omarchy-config",
     pushRunning: "push (working…)",
-    pushDesc: "Upload this machine's configuration and sign the commit",
+    pushDesc: "Open a terminal, review the diff, press y to upload, and sign the commit",
     applyRunning: "apply (working…)",
     applyDesc: "Restore the remote snapshot on this machine, after a preview",
     scanRunning: "Checking…",
@@ -227,11 +227,11 @@ var copy = {
     language: "Language",
     languageDesc: "To the right is English. Follows the system until you change it.",
     helpBody: "This machine:\n" +
-      "Push after you change configuration. The commit is signed. Middle-click the icon to push.\n\n" +
+      "Push after you change configuration. A terminal shows the diff; press y to upload. Middle-click the icon to push.\n\n" +
       "A new machine:\n" +
       "1. Install this plugin with omarchy plugin add\n" +
       "2. Choose Set up (dependencies, GitHub sign-in, repository)\n" +
-      "3. Run apply and confirm the preview in the terminal\n" +
+      "3. Run apply, read the diff in the terminal, and press y before anything is written\n" +
       "4. The first time, agree to trust the signing key\n\n" +
       "Check for updates only looks for differences.\n" +
       "Settings control the check interval. Auto push uploads on its own.\n\n" +
