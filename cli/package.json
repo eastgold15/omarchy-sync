@@ -15,7 +15,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "packem build && node scripts/wrap-help.mjs",
+    "build": "packem build && node scripts/wrap-help.mjs && node scripts/split-large.mjs",
     "typecheck": "tsc --noEmit"
   },
   "engines": {
