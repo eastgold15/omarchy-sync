@@ -37,10 +37,10 @@ omarchy plugin add https://github.com/lukebest/omarsync.git --enable
 
 插件装好后，面板第一次扫描状态时会自动创建 `~/.local/bin/omarsync` 命令（Omarchy 已把该目录加入 PATH）。
 
-缺少依赖（`lua`、`mise`、`github-cli`）可以在面板里点装，或手动：
+缺少依赖（`nodejs`、`mise`、`github-cli`）可以在面板里点装，或手动：
 
 ```sh
-omarchy pkg add lua mise github-cli
+omarchy pkg add nodejs mise github-cli
 ```
 
 ## 新机同步步骤
@@ -65,8 +65,8 @@ omarsync init
 
 初始化完成后，面板会显示远程最新提交的短 id。点 **apply**（对应 `omarsync apply --commit <sha>`）：
 
-1. 弹出终端，先显示**预览**（哪些文件会变、哪些包/插件会装）
-2. 询问确认后才真正写入
+1. 弹出终端，先用编辑器打开自上次应用以来的 diff，并显示哪些文件、包和插件会变
+2. **必须输入 y** 才真正写入；没有终端时直接拒绝
 3. 写入前自动把现有文件备份到 `~/.local/state/omarsync/backup/<时间戳>/`（保留最近 5 份）
 4. 依次执行：mise dot 拉取文件 → 恢复主题/壁纸 → 装缺失软件包 → 装插件 → 跑钩子 → 重载桌面。主题切换、`~/.config/omarchy/hooks` 和用户服务只在签名可信时发生；被排除的文件（例如 `*.bak.*`、`.env`）不会在接收端被删掉。
 
@@ -93,7 +93,7 @@ omarsync apply --commit <40位sha>
 
 ```sh
 # 路径换成你拷过来的实际位置，例如：
-omarsync trust-key ~/signing_key.pub
+omarsync trust-key --pubkey ~/signing_key.pub
 ```
 
 `apply --force` 或提交不受信任时：只写配置，**不装插件、不跑钩子、不恢复 Omarchy hooks、不切换主题、不启动用户服务**。

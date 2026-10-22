@@ -106,7 +106,9 @@ Panel {
   }
 
   function pushTooltip() {
-    var tip = "omarsync push"
+    var tip = "omarsync push\n" + (root.language === "zh"
+      ? "终端里展示这次要发布的 diff，按 y 才上传"
+      : "A terminal shows the diff. Press y to upload")
     if (lastPushTime() !== "")
       tip += "\n" + root.tr("pushOk", {
         when: lastPushTime().replace("T", " ").substring(0, 16),

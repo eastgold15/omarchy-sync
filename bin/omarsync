@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 # Sync an Omarchy setup to a private GitHub repository.
-# 薄 wrapper:清洗环境(安全边界)→ 按需持锁 → 以 /usr/bin/lua 启动 src/main.lua。
-# 业务逻辑全部在 src/*.lua(中文注释)。
+# 薄 wrapper:清洗环境(安全边界)→ 按需持锁 → 以 /usr/bin/node 启动 cli/dist/index.js。
+# 业务逻辑全部在 cli/src/*.ts,打包成单个 ESM 文件。
 
 set -euo pipefail
 
-# Drop inherited loader, shell, and PATH state before any Lua code runs.
+# Drop inherited loader, shell, and PATH state before any Node code runs.
 # Automatic callers start this through a cleared environment;
 # a direct invocation re-execs itself the same way.
 if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
@@ -46,6 +46,24 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
   )
   [[ -d $runtime ]] && vars+=("XDG_RUNTIME_DIR=${runtime}")
   [[ ${OMARSYNC_SKIP_LIVE:-} == 1 ]] && vars+=("OMARSYNC_SKIP_LIVE=1")
+  [[ ${OMARSYNC_NOTIFY:-} == 1 ]] && vars+=("OMARSYNC_NOTIFY=1")
+  # 用户的编辑器选择透传给 CLI(push/apply 审阅时打开 diff)
+  for editor_var in OMARSYNC_EDITOR VISUAL EDITOR; do
+    editor_value=${!editor_var:-}
+    if [[ -n $editor_value && $editor_value != *$'\n'* ]]; then
+      vars+=("${editor_var}=${editor_value}")
+    fi
+  done
+  # GUI 环境透传:否则 Electron 系编辑器(VS Code)在精简环境里启动会 SIGTRAP
+  for gui_var in DISPLAY WAYLAND_DISPLAY DBUS_SESSION_BUS_ADDRESS \
+    XDG_SESSION_TYPE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DESKTOP_SESSION \
+    HYPRLAND_INSTANCE_SIGNATURE QT_QPA_PLATFORM QT_WAYLAND_DISABLE_WINDOWDECORATION \
+    GDK_BACKEND ELECTRON_OZONE_PLATFORM_HINT; do
+    gui_value=${!gui_var:-}
+    if [[ -n $gui_value && $gui_value != *$'\n'* ]]; then
+      vars+=("${gui_var}=${gui_value}")
+    fi
+  done
   [[ -n $keep_origin ]] && vars+=("OMARSYNC_ORIGIN=${keep_origin}")
   [[ -n $keep_dot_origin ]] && vars+=("OMARSYNC_DOT_ORIGIN=${keep_dot_origin}")
   assignment=""
@@ -83,16 +101,16 @@ if [[ $ROOT == "$HOME/.config/omarchy/plugins/"* ]]; then
   fi
 fi
 
-# lua 必须来自不可写的系统目录;不接受用户目录里的副本
-LUA_BIN=""
-for candidate in /usr/bin/lua /bin/lua; do
+# node 必须来自不可写的系统目录;不接受用户目录里的副本
+NODE_BIN=""
+for candidate in /usr/bin/node /bin/node; do
   if [[ -x $candidate && ! -w $candidate ]]; then
-    LUA_BIN=$candidate
+    NODE_BIN=$candidate
     break
   fi
 done
-[[ -n $LUA_BIN ]] || {
-  printf 'omarsync: trusted lua not found. Run: omarchy pkg add lua\n' >&2
+[[ -n $NODE_BIN ]] || {
+  printf 'omarsync: trusted node not found. Run: omarchy pkg add nodejs\n' >&2
   exit 1
 }
 
@@ -109,4 +127,4 @@ case "${1:-status}" in
     ;;
 esac
 
-exec "$LUA_BIN" "${ROOT}/src/main.lua" "$@"
+exec "$NODE_BIN" "${ROOT}/cli/dist/index.js" "$@"
