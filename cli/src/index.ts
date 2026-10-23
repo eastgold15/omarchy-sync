@@ -22,7 +22,7 @@ import { paths } from "./lib/paths";
 
 const cli = createCerebro("omarsync", {
     packageName: "omarsync",
-    packageVersion: "2.0.0",
+    packageVersion: "2.0.1",
 });
 
 cli.addCommand({

@@ -72,7 +72,7 @@ else
 fi
 
 id=$(node -e 'const m=require(process.argv[1]); process.stdout.write(m.id+" "+m.name+" "+m.version)' "$ROOT/manifest.json")
-if [[ $id == "io.github.lukebest.omarsync Omarsync 2.0.0" ]]; then
+if [[ $id == "io.github.lukebest.omarsync Omarsync 2.0.1" ]]; then
   ok "插件身份"
 else
   bad "插件身份: $id"

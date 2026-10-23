@@ -7497,7 +7497,7 @@ function executeSetup() {
 
 const cli = a$1("omarsync", {
   packageName: "omarsync",
-  packageVersion: "2.0.0"
+  packageVersion: "2.0.1"
 });
 cli.addCommand({
   name: "status",

@@ -1,6 +1,6 @@
 {
   "name": "omarsync",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Omarchy 配置点对点同步 CLI(track 模式:推前手动存,拉后先审阅再应用,本机保留决定权)",
   "type": "module",
   "bin": {
