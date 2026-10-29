@@ -5,6 +5,7 @@ import { die, log, readTextFile } from "../lib/log";
 import * as mise from "../lib/mise";
 import { omarchy } from "../lib/omarchy";
 import { configGet, paths } from "../lib/paths";
+import { ensurePushIgnore } from "../lib/push-ignore";
 import { stdinIsTty } from "../lib/util";
 import { ensureDotfilesRepo, executeInit } from "./init";
 import { executeLogin } from "./login";
@@ -37,6 +38,8 @@ export function executeSetup(): void {
     if (!ghLoggedIn()) {
         executeLogin();
     }
+
+    ensurePushIgnore();
 
     if (!isDir(`${paths.mirrorDir}/.git`)) {
         executeInit(undefined);

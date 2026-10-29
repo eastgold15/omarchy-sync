@@ -180,10 +180,11 @@ else
   bad "apply 仍钉住签名的 miseHead"
 fi
 
-if grep -q 'requireTrustedRemoteTip(mirror, remoteTip)' "$ROOT/cli/src/commands/push.ts"; then
-  ok "push 仍在变基前验远程尖端"
+if grep -q 'requireTrustedRemoteTip(mirror, tip)' "$ROOT/cli/src/commands/push.ts" \
+  && grep -q -- '--atomic' "$ROOT/cli/src/commands/push.ts"; then
+  ok "push 仍在发布前验远程尖端"
 else
-  bad "push 仍在变基前验远程尖端"
+  bad "push 仍在发布前验远程尖端"
 fi
 
 if ! grep -q 'mise\.save()' "$ROOT/cli/src/commands/status.ts" \
@@ -462,6 +463,49 @@ if [[ $keep_yes -eq 0 && $keep_now != "$keep_base" \
   ok "确认后只签名去掉 home/ 的可信树"
 else
   bad "确认后只签名去掉 home/ 的可信树"
+fi
+
+# 选择性 push:临时 HOME + 本地 bare remote。默认 --yes 发布新增/修改,
+# 保留删除项和 push-ignore 内容,并断言 main.miseHead == dotfiles tree。
+sel_home="$TMP/selective"
+setup_key "$sel_home" "$sel_home/key"
+init_mirror "$sel_home" "$sel_home/key"
+mkdir -p "$sel_home/.config/selective" "$sel_home/.config/omarsync"
+printf 'a1\n' >"$sel_home/.config/selective/a.txt"
+printf 'del\n' >"$sel_home/.config/selective/del.txt"
+printf 'ignored1\n' >"$sel_home/.config/selective/ignored.txt"
+printf 'REPO=test/selective\nBRANCH=main\n' >"$sel_home/.config/omarsync/config"
+printf '.config/selective\n' >"$sel_home/.config/omarsync/scope"
+printf '.config/selective/ignored.txt\n' >"$sel_home/.config/omarsync/push-ignore"
+sel_origin="$sel_home/origin.git"
+git init -q --bare -b main "$sel_origin"
+git -C "$sel_home/.local/state/omarsync/repo" remote add origin "$sel_origin"
+sel_env=(HOME="$sel_home" XDG_CONFIG_HOME="$sel_home/.config" XDG_STATE_HOME="$sel_home/.local/state" XDG_DATA_HOME="$sel_home/.local/share" XDG_CACHE_HOME="$sel_home/.cache" OMARSYNC_DOT_ORIGIN="$sel_origin" OMARSYNC_EDITOR=true)
+env "${sel_env[@]}" mise dot track -y "$sel_home/.config/selective" >/dev/null 2>&1
+env "${sel_env[@]}" mise dot save >/dev/null 2>&1
+set +e
+env "${sel_env[@]}" /usr/bin/node "$ROOT/cli/dist/index.js" push --yes >"$sel_home/push1.log" 2>&1
+sel_rc1=$?
+set -e
+printf 'a2\n' >"$sel_home/.config/selective/a.txt"
+printf 'b1\n' >"$sel_home/.config/selective/b.txt"
+rm "$sel_home/.config/selective/del.txt"
+printf 'ignored2\n' >"$sel_home/.config/selective/ignored.txt"
+set +e
+env "${sel_env[@]}" /usr/bin/node "$ROOT/cli/dist/index.js" push --yes >"$sel_home/push2.log" 2>&1
+sel_rc2=$?
+set -e
+sel_main=$(git --git-dir="$sel_origin" show main:omarsync.json 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{process.stdout.write(JSON.parse(s).miseHead||"")}catch{}})')
+sel_tree=$(git --git-dir="$sel_origin" rev-parse 'dotfiles^{tree}' 2>/dev/null || true)
+if [[ $sel_rc1 -eq 0 && $sel_rc2 -eq 0 && $sel_main == "$sel_tree" \
+  && $(git --git-dir="$sel_origin" show dotfiles:home/.config/selective/a.txt 2>/dev/null) == "a2" \
+  && $(git --git-dir="$sel_origin" show dotfiles:home/.config/selective/b.txt 2>/dev/null) == "b1" \
+  && $(git --git-dir="$sel_origin" show dotfiles:home/.config/selective/del.txt 2>/dev/null) == "del" ]] \
+  && ! git --git-dir="$sel_origin" cat-file -e dotfiles:home/.config/selective/ignored.txt 2>/dev/null; then
+  ok "选择性 push:只发布选中项,保留删除和 ignored"
+else
+  bad "选择性 push:只发布选中项,保留删除和 ignored"
+  printf 'rc1=%s rc2=%s main=%s tree=%s\n%s\n' "$sel_rc1" "$sel_rc2" "$sel_main" "$sel_tree" "$(<"$sel_home/push2.log")"
 fi
 
 printf '%d passed, %d failed\n' "$pass" "$fail"

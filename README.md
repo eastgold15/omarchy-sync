@@ -34,7 +34,7 @@ omarchy pkg add nodejs mise github-cli
 ## 第一次同步
 
 1. 点状态栏云图标,点 **setup**(对应 `omarsync setup`)。它会装缺失的依赖、登录 GitHub、创建私有仓库 `omarchy-config`,并把 `mise dot` 连到该仓库的 `dotfiles` 分支。
-2. 点 **push**(对应 `omarsync push`)。会弹出浮动终端:先展示这次要发布的元数据 diff 和 `mise dot diff`,**按 y 确认才上传**。元数据提交会签名:push 优先使用无密码的 `~/.ssh/id_ed25519`;否则会创建 `~/.config/omarsync/signing_key` 并在本机信任它(私钥不出本机)。文件用 `mise dot save` 存检查点,用 `mise dot sync` 发布。自动 push 定时器使用 `push --yes`,不弹终端。
+2. 点 **push**(对应 `omarsync push`)。会弹出浮动终端，并在 VSCode 打开 `~/.local/state/omarsync/pending-push.selection`：文件、插件、包清单分组逐项列出。`[x]` 发布，改成 `[ ]` 则本次不发布；删除项默认不选。保存清单、回终端按 y，再确认最终 diff 才上传。未选和 `push-ignore` 的内容保持远程版本。元数据提交会签名:push 优先使用无密码的 `~/.ssh/id_ed25519`;否则会创建 `~/.config/omarsync/signing_key` 并在本机信任它(私钥不出本机)。自动 push 定时器使用 `push --yes`,不弹终端，默认发布新增/修改、保留删除和 ignored 内容。
 
 命令结束后状态栏立即刷新,不需要右键扫描。打开面板本身不会扫描。
 
@@ -96,7 +96,7 @@ omarsync doctor
 omarsync scope-path
 ```
 
-手动 `push` 先展示 diff 并要求按 y 确认。`push --yes` 只跳过这一次确认,供面板的自动推送使用。fetch 之后,远程尖端不是可信签名就拒绝变基,也不会补签名。确认旧远程快照确实由你生成时,用 `omarsync repair-remote --commit <40位sha>` 审阅自最近可信祖先以来的完整 diff;确认后只追加一个树不变的签名提交并推送,不检出未验证内容,也不移动本地待推送提交。变基或丢掉远程 scope 之后,树和已确认的不一样时,自动推送直接停下;手动 push 会再打开最终 diff,确认后才签名。`pull` 使用同一道门:远程提交不是可信签名就不检出。`migrate` 只有在当前提交已由可信密钥签名,并且终端里确认过删除 `home/` 后仍会留下的文件时,才会签名并推送;对不上就拒绝。桌面通知由 `OMARSYNC_NOTIFY=1` 开启,面板上的通知开关控制这个行为。
+手动 `push` 先打开选择清单，保存后按 y，再展示最终 diff 并二次确认。`push --yes` 不弹选择或编辑器，默认发布新增/修改项、保留删除项和 `push-ignore` 内容，供面板的自动推送使用。fetch 之后,远程 main 尖端不是可信签名就拒绝发布,也不会补签名。选择性发布不做自动 rebase：远程 main 或 dotfiles 在审阅期间前进就中止，重新运行即可。确认旧远程快照确实由你生成时,用 `omarsync repair-remote --commit <40位sha>` 审阅自最近可信祖先以来的完整 diff;确认后只追加一个树不变的签名提交并推送,不检出未验证内容,也不移动本地待推送提交。`pull` 使用同一道门:远程提交不是可信签名就不检出。`migrate` 只有在当前提交已由可信密钥签名,并且终端里确认过删除 `home/` 后仍会留下的文件时,才会签名并推送;对不上就拒绝。桌面通知由 `OMARSYNC_NOTIFY=1` 开启,面板上的通知开关控制这个行为。
 
 遇到同步冲突跑 `omarsync conflicts`:列出冲突文件并用编辑器打开审阅。
 
@@ -128,16 +128,32 @@ omarsync scope-path
 
 输入法也一样。轻简(Fcitx5)把 `.config/qingjian` 和 `.config/fcitx5` 放进 scope;`examples/hooks/20-qingjian.sh` 在可信 apply 之后启动服务,没装程序时会告诉你先安装。程序本身、大约 200 MB 的词典和已学习的词默认不同步。要带上学习记录,加上 `.local/share/qingjian | resources/,dicts/,install-manifest.json`;后一次 apply 获胜。任何 scope 路径下的 `.env`(应用放 API key 的地方)都不会同步。
 
+### 本机 push-ignore
+
+`~/.config/omarsync/push-ignore` 永不上传，用来永久忽略机器专属内容。它是双向忽略：本机不发布这些路径/id，apply 也不会用远程版本覆盖本机。首次 setup/push 会自动生成，默认忽略输入法插件重新生成的 `~/.config/fcitx5` 配置和 Claude Code 的本机绝对路径启动器；文件已存在时绝不覆盖。
+
+```
+# 路径或 glob，相对于 $HOME
+.config/fcitx5/**
+.local/share/applications/claude-code-url-handler.desktop
+plugin:某个插件id
+package:amd-ucode
+```
+
+普通行是路径/glob；`plugin:<id>` 不导出也不安装该插件；`package:<name>` 不发布也不安装该包。`#` 是注释。路径同时接受 `~/...`、`home/...` 和 `.config/...`。
+
+手动 push 显示的选择清单来自“远程签名快照 vs 本机快照”的真实差异，而不是只显示你刚改过的文件。未选路径保留远程版本；删除项默认不选，只有手动勾选才删除远程。包清单按组选择，选中时与远程做并集，因此不会因为本机没装某个 AUR 包就把它从远程删掉。
+
 ## apply 的行为
 
-- 先备份各 scope 路径下的现有文件,然后 `mise dot pull --take-remote-all` 写入远程版本。与旧的 rsync 镜像不同:被排除同步的文件(如 `*.bak.*`)在接收端**不会**被删除——mise 只写它跟踪的文件。
+- 先备份各 scope 路径下的现有文件,然后按签名 `miseHead` 回滚到对应 mise 检查点。快照尚未进入本机索引时,只有远程尖端与签名树一致才先导入远程版本。`push-ignore` 匹配的本机文件会在回滚前收走、回滚后恢复；远程有而本机没有的 ignored 路径不会被创建。
 - apply 不会动 `~/.config/omarchy/plugins`。该目录不在跟踪范围内,omarsync 和其他已装插件都会保留。
 - apply 只解析一次远程分支,分离(detach)检出那个完整 commit,并在改动任何东西之前对照 `~/.config/omarsync/trusted-keys` 检查签名。命令必须指定同一个 40 位 id。没有可信密钥的机器,首次 apply 可以使用未签名提交;提交已签名时则钉住该签名者。之后的 apply 要求可信签名。`--force` 强行应用该 commit,且不把签名密钥加进信任文件。
 - 签名快照里的官方软件包用 `omarchy pkg add` 安装(走 Arch 签名仓库)。用户 Flatpak 应用按记录的 remote 安装后移动到记录的 commit;缺 Flathub 用户 remote 时自动添加。没有下载地址的 remote(如被禁用的本地源)对应的应用会跳过。AUR 包只打印名字,Omarsync 不跑 `yay`。
 - 签名快照里缺失的插件会被安装:https 插件按记录的 commit 克隆检出;无远端的插件从快照复制。每个插件在移入 `~/.config/omarchy/plugins` 前都会校验。Omarsync 不安装自己的目录。`--no-exec`、未签名的首次 apply、`--force` 都会跳过这步,同时跳过主题切换、`~/.config/omarchy/hooks` 的恢复和用户服务启动。可信签名的 apply 才会做这三件事。**因机器而异的插件**:把插件 id 一行一个写进本机的 `~/.config/omarsync/plugins-skip`(`#` 为注释,文件永不上传)——名单里的插件既不导出,也不安装。
 - 合并前必须看到更改:apply 会先显示自上次应用以来的提交和 diff,再显示 `mise dot pull --dry-run` 的计划,然后**必须手动输入 y** 才继续。没有终端的非交互环境一律拒绝。
 - 两台机器改了同一个文件时,apply 以远程为准(`--take-remote-all`)。push 报 mise 冲突时,用 `omarsync conflicts`(列出冲突并用编辑器打开)或 `mise dot pull --take-remote-all` / `--keep-local` 解决后再 push。
-- `omarsync.json` 把 push 时的 mise 历史头记为 `miseHead`(仅留档取证;接收机本地历史头合法地不同,所以不做钉死校验)。
+- `omarsync.json` 把 push 时的 mise 根树记为 `miseHead`;apply 只恢复这棵已签名快照，而不是跟随可变的 dotfiles 分支尖端。接收机的本地历史头可以不同，apply 会按 `miseHead` 找到/导入对应树。
 
 ## 权限
 

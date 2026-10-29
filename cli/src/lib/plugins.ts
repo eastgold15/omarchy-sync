@@ -6,6 +6,7 @@ import { git, gitOut } from "./git";
 import { die, log, readTextFile } from "./log";
 import { MAX_FILE_SIZE, omarchy, omarchyShell, PLUGIN_ID, rsync } from "./omarchy";
 import { paths } from "./paths";
+import { loadPushIgnore } from "./push-ignore";
 import { isFullSha } from "./trust";
 
 // 第三方 Omarchy shell 插件的导出与安装。1:1 移植自 src/plugins.lua。
@@ -39,6 +40,10 @@ export function skipSet(): Set<string> {
         if (id !== "" && !id.startsWith("#")) {
             set.add(id);
         }
+    }
+
+    for (const id of loadPushIgnore().plugins) {
+        set.add(id);
     }
 
     return set;

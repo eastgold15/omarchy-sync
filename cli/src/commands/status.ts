@@ -9,6 +9,7 @@ import { log, readTextFile } from "../lib/log";
 import { mirrorDirty } from "../lib/meta";
 import * as mise from "../lib/mise";
 import { configGet, paths } from "../lib/paths";
+import { loadPushIgnore, pathIgnored } from "../lib/push-ignore";
 import { dotBranch, dotRepoName } from "../lib/omarchy";
 import { commitSignatureState, firstApplyAvailable, isFullSha, trustedKeysPresent } from "../lib/trust";
 import { displayTime, displayToken } from "../lib/util";
@@ -113,7 +114,9 @@ function miseDirty(): boolean {
     const unsaved = mise.unsavedFiles();
 
     if (unsaved !== undefined) {
-        return unsaved.length > 0;
+        const ignored = loadPushIgnore();
+
+        return unsaved.some((name) => !pathIgnored(ignored, name));
     }
 
     // 旧版 mise 没有 history.unsaved 字段时退回只读 diff。
@@ -204,9 +207,11 @@ function collect(): Status {
 
                 if (dirty) {
                     const unsaved = mise.unsavedFiles();
+                    const ignored = loadPushIgnore();
+                    const visible = (unsaved ?? []).filter((name) => !pathIgnored(ignored, name));
 
-                    st.changedFiles = unsaved && unsaved.length > 0
-                        ? unsaved.map((name) => name.replace(/^~\//, "")).slice(0, 30)
+                    st.changedFiles = visible.length > 0
+                        ? visible.map((name) => name.replace(/^~\//, "")).slice(0, 30)
                         : changedFiles();
                 }
             }

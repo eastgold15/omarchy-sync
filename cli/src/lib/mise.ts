@@ -281,8 +281,92 @@ export interface PullOptions {
     readonly takeRemoteAll?: boolean;
 }
 
-function historyRepo(): string {
+export function historyRepo(): string {
     return join(homedir(), ".local", "state", "mise", "history", "repo.git");
+}
+
+export interface SnapshotEntry {
+    readonly mode: string;
+    readonly blob: string;
+}
+
+/** 根树里一个路径的 mode/blob;路径使用 home/... 形式 */
+export function snapshotEntry(tree: string, path: string): SnapshotEntry | undefined {
+    if (!isFullSha(tree)) {
+        return undefined;
+    }
+
+    const out = gitOut(["--git-dir", historyRepo(), "ls-tree", "-z", tree, "--", path]);
+
+    if (!out) {
+        return undefined;
+    }
+
+    const match = /^(\d+) \w+ ([0-9a-f]{40})\t(.+)$/.exec(out.replace(/\0$/, ""));
+
+    if (!match || match[3] !== path) {
+        return undefined;
+    }
+
+    return { mode: match[1]!, blob: match[2]! };
+}
+
+export interface SnapshotChange {
+    readonly path: string;
+    readonly status: "A" | "M" | "D";
+}
+
+/** 两棵 mise 根树之间的文件差异;路径为 home/... */
+export function snapshotChangedPaths(baseTree: string, localTree: string): SnapshotChange[] {
+    if (!isFullSha(baseTree) || !isFullSha(localTree)) {
+        return [];
+    }
+
+    const out = gitOut([
+        "--git-dir",
+        historyRepo(),
+        "diff",
+        "--name-status",
+        "--no-renames",
+        baseTree,
+        localTree,
+        "--",
+        "home",
+    ]);
+
+    if (!out) {
+        return [];
+    }
+
+    const changes: SnapshotChange[] = [];
+
+    for (const line of out.split("\n")) {
+        const [status, path] = line.split("\t");
+
+        if (!status || !path || !path.startsWith("home/")) {
+            continue;
+        }
+
+        changes.push({ path, status: status === "A" ? "A" : status === "D" ? "D" : "M" });
+    }
+
+    return changes;
+}
+
+/** 空根树(不需要写对象;git 能直接给出哈希) */
+export function emptySnapshot(): string | undefined {
+    return gitOut(["--git-dir", historyRepo(), "hash-object", "-t", "tree", "/dev/null"]);
+}
+
+/** 根树里的全部路径(home/... 与 .mise-history/...) */
+export function snapshotPaths(tree: string): string[] {
+    if (!isFullSha(tree)) {
+        return [];
+    }
+
+    const out = gitOut(["--git-dir", historyRepo(), "ls-tree", "-r", "--name-only", tree]);
+
+    return out ? out.split("\n").filter((line) => line !== "") : [];
 }
 
 /** 签名提交里的 miseHead 是检查点的 tree。找到对应的 commit,供 rollback 钉住。 */

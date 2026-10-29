@@ -12,6 +12,7 @@ import { omarchy, omarchyShell, rsync, BACKUP_KEEP, dotBranch, dotOriginUrl } fr
 import { installMissingPackages } from "./packages";
 import { paths } from "./paths";
 import { installMissingPlugins } from "./plugins";
+import { removeRemoteIgnoredPaths, restoreIgnoredPaths, stashIgnoredPaths } from "./ignored-files";
 import { readScope } from "./scope";
 import { appliedStampFile, isFullSha } from "./trust";
 
@@ -439,8 +440,22 @@ export function applyMirror(mirror: string, withPackages: boolean, sha: string, 
 
     let failed = false;
     const hooksStash = withExec ? undefined : stashOmarchyHooks();
+    const ignoredStash = stashIgnoredPaths();
+    let filesOk = false;
 
-    const filesOk = syncDotfiles(mirror);
+    try {
+        filesOk = syncDotfiles(mirror);
+
+        if (filesOk) {
+            const snapshot = signedMiseHead(mirror);
+
+            if (snapshot) {
+                removeRemoteIgnoredPaths(ignoredStash, snapshot);
+            }
+        }
+    } finally {
+        restoreIgnoredPaths(ignoredStash);
+    }
 
     if (!filesOk) {
         failed = true;
