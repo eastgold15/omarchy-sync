@@ -130,7 +130,7 @@ omarsync scope-path
 
 ### 本机 push-ignore
 
-`~/.config/omarsync/push-ignore` 永不上传，用来永久忽略机器专属内容。它是双向忽略：本机不发布这些路径/id，apply 也不会用远程版本覆盖本机。首次 setup/push 会自动生成，默认忽略输入法插件重新生成的 `~/.config/fcitx5` 配置和 Claude Code 的本机绝对路径启动器；文件已存在时绝不覆盖。
+`~/.config/omarsync/push-ignore` 永不上传，用来永久忽略机器专属内容。它是双向忽略：本机不发布这些路径/id，apply 也不会用远程版本覆盖本机。首次 setup/push 会自动生成，默认忽略输入法插件重新生成的 `~/.config/fcitx5` 配置、插件生成的绝对符号链接、Claude Code 的本机绝对路径启动器，以及 `amd-ucode`/`intel-ucode`/`linux*` 等硬件和内核包；文件已存在时绝不覆盖。
 
 ```
 # 路径或 glob，相对于 $HOME

@@ -24,8 +24,19 @@ const DEFAULT_PUSH_IGNORE = `# Omarsync push-ignore（本机文件，永不上�
 .config/fcitx5/conf/notifications.conf
 .config/fcitx5/config
 .config/fcitx5/profile
+# 插件生成的绝对符号链接
+.local/bin/omarchy.ime
+.local/bin/ime-manager
 # 应用写入本机绝对路径的启动器
 .local/share/applications/claude-code-url-handler.desktop
+# 硬件/内核包由每台机器自己决定
+package:amd-ucode
+package:intel-ucode
+package:linux
+package:linux-headers
+package:linux-firmware
+package:linux-omarchy
+package:linux-omarchy-headers
 `;
 
 /** 首次运行时放入默认忽略项；文件存在就绝不覆盖 */
