@@ -9,6 +9,7 @@ import { executeLogin } from "./commands/login";
 import { executeMigrate } from "./commands/migrate";
 import { executePull } from "./commands/pull";
 import { executePush } from "./commands/push";
+import { executeRepairRemote } from "./commands/repair-remote";
 import { executeSetup } from "./commands/setup";
 import { executeStatus } from "./commands/status";
 import { die } from "./lib/log";
@@ -22,7 +23,7 @@ import { paths } from "./lib/paths";
 
 const cli = createCerebro("omarsync", {
     packageName: "omarsync",
-    packageVersion: "2.0.0",
+    packageVersion: "2.0.1",
 });
 
 cli.addCommand({
@@ -50,7 +51,7 @@ cli.addCommand({
 
 cli.addCommand({
     name: "pull",
-    description: "只抓取远程快照并钉住 commit,不写任何活文件(下一步用 apply 审阅)",
+    description: "只抓取远程快照;可信签名的提交才钉住,不写任何活文件(下一步用 apply 审阅)",
     execute: () => {
         executePull();
     },
@@ -65,8 +66,18 @@ cli.addCommand({
             type: Boolean,
             description: "跳过发布确认(供面板自动推送使用)",
         },
+        {
+            name: "notify",
+            type: Boolean,
+            description: "推送完成后弹出桌面通知",
+        },
     ],
     execute: async ({ options }) => {
+        // 旧面板把通知做成命令行参数。新面板改走 OMARSYNC_NOTIFY,两种都认。
+        if (options["notify"] === true) {
+            process.env["OMARSYNC_NOTIFY"] = "1";
+        }
+
         await executePush(options["yes"] === true);
     },
 });
@@ -103,10 +114,25 @@ cli.addCommand({
 });
 
 cli.addCommand({
+    name: "repair-remote",
+    description: "审阅旧的不可信远程快照,确认后补一个树不变的签名提交并推送",
+    options: [
+        {
+            name: "commit",
+            type: String,
+            description: "要审阅的当前远程尖端40位commit sha(必填)",
+        },
+    ],
+    execute: async ({ options }) => {
+        await executeRepairRemote(typeof options["commit"] === "string" ? options["commit"] : undefined);
+    },
+});
+
+cli.addCommand({
     name: "migrate",
-    description: "老格式迁移:home/ 镜像目录搬到 mise dot 历史",
-    execute: () => {
-        executeMigrate();
+    description: "老格式迁移:当前提交须已可信签名,确认剩余文件后才删除 home/ 并签名推送",
+    execute: async () => {
+        await executeMigrate();
     },
 });
 

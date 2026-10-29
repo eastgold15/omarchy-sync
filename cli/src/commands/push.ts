@@ -1,21 +1,31 @@
 import { mkdirSync, writeFileSync } from "node:fs";
+import { isDeepStrictEqual } from "node:util";
 
 import { openInEditor } from "../lib/editor";
-import { isDir } from "../lib/exec";
-import { git, gitCapture } from "../lib/git";
-import { die, log } from "../lib/log";
-import { collectInto } from "../lib/meta";
+import { isDir, mktempDir, rmrf } from "../lib/exec";
+import { git, gitCapture, gitOut } from "../lib/git";
+import { die, log, readTextFile } from "../lib/log";
+import { collectSelectedInto, exportLocalInto } from "../lib/meta";
 import * as mise from "../lib/mise";
-import { discardRemoteScope, ensureIdentity, notify } from "../lib/omarchy";
-import { ensureDotfilesRepo } from "./init";
+import { dotBranch, dotOriginUrl, ensureIdentity, notify } from "../lib/omarchy";
+import { executeStatus } from "./status";
 import { configGet, paths } from "../lib/paths";
-import { readTextFile } from "../lib/log";
+import { ensurePushIgnore, loadPushIgnore } from "../lib/push-ignore";
 import { readScope, reconcile } from "../lib/scope";
-import { ensurePushSigner, preparePushBranch, signUntrustedTip } from "../lib/trust";
-import { confirm, hostnameSafe, iso8601 } from "../lib/util";
+import {
+    assertMiseHead,
+    buildSelectedDotfiles,
+    fetchRemoteDotfiles,
+    importDotfilesCommit,
+    remoteMiseHead,
+    selectedPaths,
+} from "../lib/selective-push";
+import { createPlan, readSelectionFile, writeSelectionFile } from "../lib/selection";
+import { ensurePushSigner, isFullSha, preparePushBranch, requireTrustedRemoteTip, signReviewedTip } from "../lib/trust";
+import { confirm, hostnameSafe, iso8601, stdinIsTty } from "../lib/util";
 
-// push:对齐 track → 手动存检查点 → 元数据签名提交 → 发布 mise 历史。
-// 按 SYNC_FLOW:发布前展示 mise dot diff 预览,人工 y 确认才推。对应旧版 cmd_push。
+// push:对齐 track → 保存本地快照 → 选择要发布的文件/插件/包组 →
+// 以远程签名树为 base 构造选择性 dotfiles 树 → 原子推送 metadata + dotfiles。
 
 function requireMirror(): string {
     if (!isDir(`${paths.mirrorDir}/.git`)) {
@@ -29,134 +39,372 @@ function remoteHasBranch(mirror: string, branch: string): boolean {
     return gitCapture(["-C", mirror, "ls-remote", "--exit-code", "--heads", "origin", branch]).ok;
 }
 
+function headTree(mirror: string): string | undefined {
+    return gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
+}
+
+/** 暂存区只有 pushedAt 变化时还原元数据,避免每次 push 都制造一个提交。 */
+function discardTimestampOnlyChange(mirror: string): void {
+    const names = gitOut(["-C", mirror, "diff", "--cached", "--name-only"]);
+
+    if (names !== "omarsync.json") {
+        return;
+    }
+
+    const parse = (raw: string | undefined): Record<string, unknown> | undefined => {
+        if (!raw) {
+            return undefined;
+        }
+
+        try {
+            const data = JSON.parse(raw) as Record<string, unknown>;
+            const { pushedAt: _pushedAt, ...content } = data;
+
+            return content;
+        } catch {
+            return undefined;
+        }
+    };
+
+    const previous = parse(gitOut(["-C", mirror, "show", "HEAD:omarsync.json"]));
+    const staged = parse(gitOut(["-C", mirror, "show", ":omarsync.json"]));
+
+    if (previous && staged && isDeepStrictEqual(previous, staged)) {
+        git(["-C", mirror, "restore", "--staged", "--worktree", "--source=HEAD", "--", "omarsync.json"]);
+        log.info("仅推送时间变化,未创建新快照");
+    }
+}
+
+/** 合并结果和已确认的树不同时,自动推送退回;手动推送必须再审一遍才允许签名。 */
+async function reviewMergedTree(mirror: string, reviewedCommit: string, reviewedTree: string, skipConfirm: boolean): Promise<string> {
+    const finalTree = headTree(mirror);
+
+    if (!finalTree) {
+        die("无法读取合并后的树");
+    }
+
+    if (finalTree === reviewedTree) {
+        return reviewedTree;
+    }
+
+    const finalDiff = gitCapture(["-C", mirror, "diff", "--color=never", reviewedTree, "HEAD"]).out;
+
+    if (skipConfirm) {
+        git(["-C", mirror, "reset", "--hard", reviewedCommit]);
+        die("合并后的树和已确认的不一样,自动推送不会签名");
+    }
+
+    if (/\S/.test(finalDiff)) {
+        mkdirSync(paths.stateDir, { recursive: true });
+
+        const reviewFile = `${paths.stateDir}/pending-push.diff`;
+
+        writeFileSync(reviewFile, `===== 合并后的最终 diff =====\n${finalDiff}\n`);
+        log.info(`合并改写了已确认的树。最终 diff 已写入 ${reviewFile}`);
+        openInEditor([reviewFile]);
+    } else {
+        log.info("合并改写了已确认的树");
+    }
+
+    if (!(await confirm("签名并发布这份合并后的树?"))) {
+        git(["-C", mirror, "reset", "--hard", reviewedCommit]);
+        die("已取消,未签名也未推送");
+    }
+
+    const accepted = headTree(mirror);
+
+    if (accepted !== finalTree) {
+        git(["-C", mirror, "reset", "--hard", reviewedCommit]);
+        die("审阅期间树又变了,未签名也未推送");
+    }
+
+    return finalTree;
+}
+
+function normalizedRemote(url: string): string {
+    return url.replace(/\/+$/, "").replace(/\.git$/, "");
+}
+
+function planHasCandidates(plan: ReturnType<typeof createPlan>): boolean {
+    return (
+        plan.files.length > 0
+        || plan.plugins.length > 0
+        || plan.hooks.length > 0
+        || plan.packages.length > 0
+        || plan.current.candidate
+    );
+}
+
+function planHasSelection(plan: ReturnType<typeof createPlan>): boolean {
+    return (
+        plan.files.some((item) => item.selected)
+        || plan.plugins.some((item) => item.selected)
+        || plan.hooks.some((item) => item.selected)
+        || plan.packages.some((item) => item.selected)
+        || plan.current.selected
+    );
+}
+
+function refreshRemoteMain(mirror: string, branch: string): string | undefined {
+    if (!remoteHasBranch(mirror, branch)) {
+        return undefined;
+    }
+
+    if (!git(["-C", mirror, "fetch", "--quiet", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`])) {
+        die("fetch 远程 metadata 失败");
+    }
+
+    const tip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", `origin/${branch}`]);
+
+    if (!isFullSha(tip)) {
+        die("fetch 后读不到远程 metadata 尖端");
+    }
+
+    requireTrustedRemoteTip(mirror, tip);
+
+    return tip;
+}
+
 export async function executePush(skipConfirm = false): Promise<void> {
     const mirror = requireMirror();
     const branch = configGet("BRANCH", readTextFile) ?? "main";
 
     ensurePushSigner();
     ensureIdentity(mirror);
+
+    // 先确定远程基线;选择性发布不做自动 rebase,远程在构建期间前进就直接失败。
+    const remoteMain = refreshRemoteMain(mirror, branch);
+    const localTip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
+
+    if (remoteMain) {
+        if (localTip && localTip !== remoteMain) {
+            log.warn("丢弃本地未发布的 metadata 镜像,从远程基线重新构造");
+        }
+
+        if (!git(["-C", mirror, "reset", "--hard", remoteMain])) {
+            die("无法切到远程 metadata 基线");
+        }
+
+        // 取消过的 push 可能留下 staged 的 plugins-local;不能带进下一次发布。
+        git(["-C", mirror, "clean", "-fd"]);
+    }
+
     preparePushBranch(mirror, branch);
 
-    // 文件同步:对齐 track 集合,保存检查点,记录历史头
-    let miseHead: string | undefined;
-
-    if (mise.available()) {
-        ensureDotfilesRepo();
-
-        if (!mise.originConnected()) {
-            die("mise dot origin 未连接,所以 dotfiles 分支没有更新");
-        }
-
-        reconcile(readScope(paths.scopeFile));
-
-        const saved = mise.save();
-
-        if (saved === undefined) {
-            die("mise dot save 失败");
-        }
-
-        if (saved) {
-            log.info("mise dot 检查点已保存");
-        }
-
-        miseHead = mise.headSnapshot();
-    } else {
-        log.warn("mise 未安装;只推元数据。运行: omarchy pkg add mise");
+    if (dotOriginUrl() === "") {
+        die("dotfiles origin 未配置;先运行 omarsync setup");
     }
 
-    // 推之前先看这次要发布什么:元数据完整 diff + 文件差异,
-    // 汇总写进 pending-push.diff 并用用户的编辑器打开审阅
-    collectInto(mirror, miseHead);
-    git(["-C", mirror, "add", "-A"]);
+    const remoteHead = remoteMain ? remoteMiseHead(mirror) : undefined;
+    const dot = fetchRemoteDotfiles(dotOriginUrl(), dotBranch());
 
-    const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
-    const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
-    const miseDiff = mise.available() ? mise.diff().out : "";
-
-    if (/\S/.test(metaStat)) {
-        log.info("元数据变化:");
-
-        for (const line of metaStat.split("\n")) {
-            log.info(`  ${line}`);
-        }
-    } else {
-        log.info("元数据无变化");
+    if (remoteMain && remoteHead && dot.tree !== remoteHead) {
+        die("远程 dotfiles 尖端与签名 miseHead 不一致;先修复远程再 push");
     }
 
-    let review = "";
-
-    if (/\S/.test(metaDiff)) {
-        review += `===== 元数据 diff(omarchy-config)=====\n${metaDiff}\n`;
+    if (!remoteMain && dot.commit) {
+        die("远程已有 dotfiles 分支但没有签名的 metadata 基线;拒绝自动发布");
     }
 
-    if (/\S/.test(miseDiff)) {
-        log.info("文件差异(mise dot diff):");
+    const baseTree = remoteHead ?? dot.tree;
 
-        for (const line of miseDiff.split("\n")) {
-            log.info(`  ${line}`);
-        }
-
-        review += `===== 文件 diff(dotfiles 分支)=====\n${miseDiff}\n`;
+    if (!mise.available()) {
+        die("选择性 push 需要 mise;运行: omarchy pkg add mise");
     }
 
-    if (review !== "") {
-        mkdirSync(paths.stateDir, { recursive: true });
-
-        const reviewFile = `${paths.stateDir}/pending-push.diff`;
-
-        writeFileSync(reviewFile, review);
-        log.info(`完整 diff 已写入 ${reviewFile}`);
-        openInEditor([reviewFile]);
+    if (!mise.originConnected()) {
+        log.warn("mise dot origin 未连接;本次仍按配置 URL 选择性发布,但 pull/apply 前需要 setup");
     }
 
-    // 发布默认要人工确认;--yes 只给面板的自动推送用
-    if (!skipConfirm && !(await confirm("发布这份快照到远程仓库?"))) {
-        die("已取消,未推送");
+    ensurePushIgnore();
+    reconcile(readScope(paths.scopeFile));
+
+    const saved = mise.save();
+
+    if (saved === undefined) {
+        die("mise dot save 失败");
     }
 
-    if (gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
-        log.info("没有要提交的本地变化");
-    } else {
-        git(["-C", mirror, "commit", "-S", "-m", `sync from ${hostnameSafe()} @ ${iso8601()}`]);
-        log.info("已提交本地变化");
+    if (saved) {
+        log.info("mise dot 检查点已保存");
     }
 
-    if (remoteHasBranch(mirror, branch)) {
-        if (!git(["-C", mirror, "pull", "--quiet", "--rebase", "-X", "theirs", "origin", branch])) {
-            git(["-C", mirror, "rebase", "--abort"]);
-            die(`rebase 到 origin/${branch} 失败`);
-        }
+    const localTree = mise.headSnapshot();
+
+    if (!isFullSha(localTree)) {
+        die("读取不到本机 mise 快照");
     }
 
-    // rebase 可能把远程的 scope 文件带回来;它不是策略
-    discardRemoteScope(mirror);
+    const localTmp = mktempDir();
 
-    if (!gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
-        git(["-C", mirror, "commit", "-S", "-m", "drop untrusted remote scope file"]);
-    }
+    try {
+        exportLocalInto(localTmp);
 
-    signUntrustedTip(mirror);
+        const ignored = loadPushIgnore();
+        const plan = createPlan(mirror, baseTree, localTree, localTmp, ignored);
 
-    if (!git(["-C", mirror, "push", "--quiet", "-u", "origin", `HEAD:${branch}`])) {
-        die("git push 失败");
-    }
-
-    log.info(`已推送 ${branch}`);
-
-    // 元数据先行,然后发布 mise 历史(顺序保证签名提交记录的 miseHead 已存在)
-    if (mise.available()) {
-        const { ok, out } = mise.sync(false);
-
-        if (!ok) {
-            log.warn(`mise dot sync 失败: ${out}`);
-            log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote <path>");
-            process.exitCode = 1;
+        if (!planHasCandidates(plan)) {
+            log.info("没有需要推送的变化");
+            executeStatus(false);
 
             return;
         }
 
-        log.info("mise dot 历史已发布");
-    }
+        if (!skipConfirm && stdinIsTty()) {
+            const selectionFile = writeSelectionFile(plan);
 
-    notify("omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
+            log.info(`选择清单已写入 ${selectionFile}`);
+            openInEditor([selectionFile]);
+
+            if (!(await confirm("选择完成并继续?"))) {
+                die("已取消,未推送");
+            }
+
+            readSelectionFile(plan);
+
+            if (!planHasSelection(plan)) {
+                die("没有勾选任何内容,已取消");
+            }
+        } else if (!planHasSelection(plan)) {
+            log.info("没有需要发布的变化(删除项默认不选)");
+            executeStatus(false);
+
+            return;
+        }
+
+        const { writes, deletes } = selectedPaths(plan);
+        const built = buildSelectedDotfiles(dot, localTree, writes, deletes, ignored);
+
+        collectSelectedInto(mirror, built.tree, plan, localTmp);
+        git(["-C", mirror, "add", "-A"]);
+        discardTimestampOnlyChange(mirror);
+
+        const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
+        const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
+        const fileDiff = built.tree === baseTree ? "" : mise.snapshotDiff(baseTree, built.tree);
+        let review = "";
+
+        if (/\S/.test(metaDiff)) {
+            review += `===== 元数据 diff(omarchy-config)=====\n${metaDiff}\n`;
+        }
+
+        if (/\S/.test(fileDiff)) {
+            review += `===== 文件 diff(dotfiles 分支)=====\n${fileDiff}\n`;
+        }
+
+        if (review !== "") {
+            mkdirSync(paths.stateDir, { recursive: true });
+            const reviewFile = `${paths.stateDir}/pending-push.diff`;
+
+            writeFileSync(reviewFile, review);
+            log.info(`完整 diff 已写入 ${reviewFile}`);
+
+            if (!skipConfirm) {
+                openInEditor([reviewFile]);
+            }
+        }
+
+        if (/\S/.test(metaStat)) {
+            log.info("元数据变化:");
+
+            for (const line of metaStat.split("\n")) {
+                log.info(`  ${line}`);
+            }
+        }
+
+        if (!skipConfirm && !(await confirm("发布这份选择后的快照到远程仓库?"))) {
+            die("已取消,未推送");
+        }
+
+        const hasMetaChanges = !gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok;
+
+        if (!built.commit && built.tree === baseTree && !hasMetaChanges) {
+            log.info("没有实际变化,未推送");
+            executeStatus(false);
+
+            return;
+        }
+
+        if (hasMetaChanges) {
+            if (!git(["-C", mirror, "commit", "-S", "-m", `sync selected from ${hostnameSafe()} @ ${iso8601()}`])) {
+                die("本地提交签名失败,未推送");
+            }
+        } else {
+            log.info("没有新的元数据变化;只发布已构造的 dotfiles 提交");
+        }
+
+        const reviewedCommit = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
+        const reviewedTree = headTree(mirror);
+
+        if (!reviewedCommit || !reviewedTree) {
+            die("无法读取已审阅的提交");
+        }
+
+        // 选择发布不做 rebase;远程必须在确认后仍是同一个基线。
+        const currentMain = refreshRemoteMain(mirror, branch);
+
+        if (remoteMain !== currentMain) {
+            die("远程 metadata 在审阅期间变化;请重新运行 push");
+        }
+
+        const currentDot = fetchRemoteDotfiles(dotOriginUrl(), dotBranch());
+
+        if (currentDot.commit !== dot.commit || currentDot.tree !== dot.tree) {
+            die("远程 dotfiles 在审阅期间变化;请重新运行 push");
+        }
+
+        const treeToSign = await reviewMergedTree(mirror, reviewedCommit, reviewedTree, skipConfirm);
+
+        signReviewedTip(mirror, treeToSign);
+        assertMiseHead(mirror, built.tree);
+
+        if (built.commit) {
+            if (!importDotfilesCommit(mirror, built.commit)) {
+                die("无法把 dotfiles 提交导入 metadata 镜像");
+            }
+        }
+
+        const mirrorUrl = gitOut(["-C", mirror, "remote", "get-url", "origin"]) ?? "";
+
+        if (built.commit && normalizedRemote(mirrorUrl) !== normalizedRemote(dotOriginUrl())) {
+            die("选择性 push 目前要求 metadata 与 dotfiles 在同一个远程仓库");
+        }
+
+        const pushArgs = ["-C", mirror, "push", "--quiet", "--atomic"];
+
+        if (remoteMain) {
+            pushArgs.push(`--force-with-lease=refs/heads/${branch}:${remoteMain}`);
+        }
+
+        if (dot.commit) {
+            pushArgs.push(`--force-with-lease=refs/heads/${dotBranch()}:${dot.commit}`);
+        }
+
+        pushArgs.push("origin", `HEAD:${branch}`);
+
+        if (built.commit) {
+            pushArgs.push(`refs/omarsync/dotfiles-publish:refs/heads/${dotBranch()}`);
+        }
+
+        if (!git(pushArgs)) {
+            die("atomic push 失败;远程未改变");
+        }
+
+        log.info(`已原子推送 ${branch}${built.commit ? ` 和 ${dotBranch()}` : ""}`);
+
+        if (!mise.originConnected()) {
+            const connected = mise.connect(dotOriginUrl(), dotBranch());
+
+            if (connected.ok) {
+                log.info(`已连接 mise dot origin 分支 ${dotBranch()}`);
+            } else {
+                log.warn("dotfiles 已发布,但 mise origin 仍未连接;重新运行 setup 即可");
+            }
+        }
+
+        notify("omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
+        executeStatus(false);
+    } finally {
+        rmrf(localTmp);
+    }
 }
