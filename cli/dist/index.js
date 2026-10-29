@@ -8078,7 +8078,7 @@ function buildSelectedDotfiles(remote, localTree, selectedPaths2, selectedDelete
   if (selectedPaths2.length === 0 && selectedDeletes.length === 0) {
     return { tree: remote.tree };
   }
-  const tmp = mktempDir();
+  const tmp = mkdtempSync(join(dirname(historyRepo()), ".omarsync-index-"));
   const indexFile = join(tmp, "index");
   try {
     if (!gitCapture(history(["read-tree", `--index-output=${indexFile}`, remote.tree])).ok) {
@@ -8598,11 +8598,14 @@ async function executePush(skipConfirm = false) {
   ensureIdentity(mirror);
   const remoteMain = refreshRemoteMain(mirror, branch);
   const localTip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-  if (remoteMain && localTip && localTip !== remoteMain) {
-    log.warn("丢弃本地未发布的 metadata 镜像,从远程基线重新构造");
+  if (remoteMain) {
+    if (localTip && localTip !== remoteMain) {
+      log.warn("丢弃本地未发布的 metadata 镜像,从远程基线重新构造");
+    }
     if (!git(["-C", mirror, "reset", "--hard", remoteMain])) {
       die("无法切到远程 metadata 基线");
     }
+    git(["-C", mirror, "clean", "-fd"]);
   }
   preparePushBranch(mirror, branch);
   if (dotOriginUrl() === "") {

@@ -176,11 +176,17 @@ export async function executePush(skipConfirm = false): Promise<void> {
     const remoteMain = refreshRemoteMain(mirror, branch);
     const localTip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
 
-    if (remoteMain && localTip && localTip !== remoteMain) {
-        log.warn("丢弃本地未发布的 metadata 镜像,从远程基线重新构造");
+    if (remoteMain) {
+        if (localTip && localTip !== remoteMain) {
+            log.warn("丢弃本地未发布的 metadata 镜像,从远程基线重新构造");
+        }
+
         if (!git(["-C", mirror, "reset", "--hard", remoteMain])) {
             die("无法切到远程 metadata 基线");
         }
+
+        // 取消过的 push 可能留下 staged 的 plugins-local;不能带进下一次发布。
+        git(["-C", mirror, "clean", "-fd"]);
     }
 
     preparePushBranch(mirror, branch);

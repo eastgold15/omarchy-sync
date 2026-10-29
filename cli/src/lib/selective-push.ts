@@ -1,5 +1,5 @@
-import { mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { isDeepStrictEqual } from "node:util";
 
 import { isFullSha } from "./trust";
@@ -217,7 +217,8 @@ export function buildSelectedDotfiles(
         return { tree: remote.tree };
     }
 
-    const tmp = mktempDir();
+    // Git 在某些文件系统组合下要求 index 与仓库同文件系统;/tmp 常是 tmpfs。
+    const tmp = mkdtempSync(join(dirname(mise.historyRepo()), ".omarsync-index-"));
     const indexFile = join(tmp, "index");
 
     try {
