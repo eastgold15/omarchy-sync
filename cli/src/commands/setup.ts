@@ -8,6 +8,7 @@ import { paths } from "../lib/paths";
 import { stdinIsTty } from "../lib/util";
 import { ensureDotfilesRepo, executeInit } from "./init";
 import { executeLogin } from "./login";
+import { executeStatus } from "./status";
 
 // setup:一键装机引导——装依赖、登录 GitHub、初始化,最后提示 push 还是 apply。
 // 对应旧版 cmd_setup。
@@ -53,4 +54,7 @@ export function executeSetup(): void {
         log.info("仓库是空的");
         log.info("打开面板选择 push");
     }
+
+    // setup 在独立终端里运行,面板收不到进程退出回调;回写状态文件触发 FileView 刷新。
+    executeStatus(false);
 }

@@ -1,4 +1,5 @@
 import { mkdirSync, writeFileSync } from "node:fs";
+import { isDeepStrictEqual } from "node:util";
 
 import { openInEditor } from "../lib/editor";
 import { isDir } from "../lib/exec";
@@ -32,6 +33,60 @@ function remoteHasBranch(mirror: string, branch: string): boolean {
 
 function headTree(mirror: string): string | undefined {
     return gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
+}
+
+/** 暂存区只有 pushedAt 变化时还原元数据,避免每次 push 都制造一个提交。 */
+function discardTimestampOnlyChange(mirror: string): void {
+    const names = gitOut(["-C", mirror, "diff", "--cached", "--name-only"]);
+
+    if (names !== "omarsync.json") {
+        return;
+    }
+
+    const parse = (raw: string | undefined): Record<string, unknown> | undefined => {
+        if (!raw) {
+            return undefined;
+        }
+
+        try {
+            const data = JSON.parse(raw) as Record<string, unknown>;
+            const { pushedAt: _pushedAt, ...content } = data;
+
+            return content;
+        } catch {
+            return undefined;
+        }
+    };
+
+    const previous = parse(gitOut(["-C", mirror, "show", "HEAD:omarsync.json"]));
+    const staged = parse(gitOut(["-C", mirror, "show", ":omarsync.json"]));
+
+    if (previous && staged && isDeepStrictEqual(previous, staged)) {
+        git(["-C", mirror, "restore", "--staged", "--worktree", "--source=HEAD", "--", "omarsync.json"]);
+        log.info("仅推送时间变化,已忽略");
+    }
+}
+
+/** 发布 mise 历史;空推送也用同一条路径,避免漏掉尚未发布的检查点。 */
+function publishDotfiles(): boolean {
+    if (!mise.available()) {
+        return true;
+    }
+
+    const { ok, out } = mise.sync(false);
+
+    if (!ok) {
+        log.warn(`mise dot sync 失败: ${out}`);
+        log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote <path>");
+        process.exitCode = 1;
+        executeStatus(false);
+
+        return false;
+    }
+
+    log.info("mise dot 历史已发布");
+
+    return true;
 }
 
 /** 合并结果和已确认的树不同时,自动推送退回;手动推送必须再审一遍才允许签名。 */
@@ -119,10 +174,31 @@ export async function executePush(skipConfirm = false): Promise<void> {
     // 汇总写进 pending-push.diff 并用用户的编辑器打开审阅
     collectInto(mirror, miseHead);
     git(["-C", mirror, "add", "-A"]);
+    discardTimestampOnlyChange(mirror);
 
     const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
     const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
     const miseDiff = mise.available() ? mise.diff().out : "";
+
+    // 元数据和本地提交都已发布时,不再为时间戳弹确认或创建签名空提交。
+    if (!/\S/.test(metaStat) && remoteHasBranch(mirror, branch)) {
+        if (!git(["-C", mirror, "fetch", "--quiet", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`])) {
+            die("fetch 失败,无法确认是否已有变化");
+        }
+
+        const localTip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
+        const remoteTip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", `origin/${branch}`]);
+
+        if (localTip && localTip === remoteTip) {
+            log.info("没有需要推送的变化");
+
+            if (publishDotfiles()) {
+                executeStatus(false);
+            }
+
+            return;
+        }
+    }
 
     if (/\S/.test(metaStat)) {
         log.info("元数据变化:");
@@ -225,19 +301,8 @@ export async function executePush(skipConfirm = false): Promise<void> {
     log.info(`已推送 ${branch}`);
 
     // 元数据先行,然后发布 mise 历史(顺序保证签名提交记录的 miseHead 已存在)
-    if (mise.available()) {
-        const { ok, out } = mise.sync(false);
-
-        if (!ok) {
-            log.warn(`mise dot sync 失败: ${out}`);
-            log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote <path>");
-            process.exitCode = 1;
-            executeStatus(false);
-
-            return;
-        }
-
-        log.info("mise dot 历史已发布");
+    if (!publishDotfiles()) {
+        return;
     }
 
     notify("omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);

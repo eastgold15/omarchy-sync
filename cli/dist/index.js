@@ -7,6 +7,7 @@ import { tmpdir, homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { y as yC, W as W$3 } from './packem_shared/interact-Bvij7loV.js';
 import * as readline from 'node:readline';
+import { isDeepStrictEqual } from 'node:util';
 
 const s = 16;
 const t = 32;
@@ -7307,6 +7308,45 @@ function remoteHasBranch(mirror, branch) {
 function headTree(mirror) {
   return gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
 }
+function discardTimestampOnlyChange(mirror) {
+  const names = gitOut(["-C", mirror, "diff", "--cached", "--name-only"]);
+  if (names !== "omarsync.json") {
+    return;
+  }
+  const parse = (raw) => {
+    if (!raw) {
+      return void 0;
+    }
+    try {
+      const data = JSON.parse(raw);
+      const { pushedAt: _pushedAt, ...content } = data;
+      return content;
+    } catch {
+      return void 0;
+    }
+  };
+  const previous = parse(gitOut(["-C", mirror, "show", "HEAD:omarsync.json"]));
+  const staged = parse(gitOut(["-C", mirror, "show", ":omarsync.json"]));
+  if (previous && staged && isDeepStrictEqual(previous, staged)) {
+    git(["-C", mirror, "restore", "--staged", "--worktree", "--source=HEAD", "--", "omarsync.json"]);
+    log.info("仅推送时间变化,已忽略");
+  }
+}
+function publishDotfiles() {
+  if (!available()) {
+    return true;
+  }
+  const { ok, out } = sync(false);
+  if (!ok) {
+    log.warn(`mise dot sync 失败: ${out}`);
+    log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote <path>");
+    process.exitCode = 1;
+    executeStatus(false);
+    return false;
+  }
+  log.info("mise dot 历史已发布");
+  return true;
+}
 async function reviewMergedTree(mirror, reviewedCommit, reviewedTree, skipConfirm) {
   const finalTree = headTree(mirror);
   if (!finalTree) {
@@ -7368,9 +7408,24 @@ async function executePush(skipConfirm = false) {
   }
   collectInto(mirror, miseHead);
   git(["-C", mirror, "add", "-A"]);
+  discardTimestampOnlyChange(mirror);
   const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
   const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
   const miseDiff = available() ? diff().out : "";
+  if (!/\S/.test(metaStat) && remoteHasBranch(mirror, branch)) {
+    if (!git(["-C", mirror, "fetch", "--quiet", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`])) {
+      die("fetch 失败,无法确认是否已有变化");
+    }
+    const localTip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
+    const remoteTip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", `origin/${branch}`]);
+    if (localTip && localTip === remoteTip) {
+      log.info("没有需要推送的变化");
+      if (publishDotfiles()) {
+        executeStatus(false);
+      }
+      return;
+    }
+  }
   if (/\S/.test(metaStat)) {
     log.info("元数据变化:");
     for (const line of metaStat.split("\n")) {
@@ -7446,16 +7501,8 @@ ${miseDiff}
     die("git push 失败");
   }
   log.info(`已推送 ${branch}`);
-  if (available()) {
-    const { ok, out } = sync(false);
-    if (!ok) {
-      log.warn(`mise dot sync 失败: ${out}`);
-      log.warn("解决冲突: mise dot conflicts / mise dot pull --take-remote <path>");
-      process.exitCode = 1;
-      executeStatus(false);
-      return;
-    }
-    log.info("mise dot 历史已发布");
+  if (!publishDotfiles()) {
+    return;
   }
   notify("omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
   executeStatus(false);
@@ -7493,6 +7540,7 @@ function executeSetup() {
     log.info("仓库是空的");
     log.info("打开面板选择 push");
   }
+  executeStatus(false);
 }
 
 const cli = a$1("omarsync", {
