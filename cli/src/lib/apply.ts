@@ -77,6 +77,61 @@ export function backupTree(): string {
     return dest;
 }
 
+/** 壁纸记录里的路径都相对于主题、共享背景目录或远端绝对路径。
+ *  `abs:` 可能来自另一台机器;主机名不同的绝对路径优先回退到当前主题里的同名文件。 */
+function themeBackgroundCandidates(theme: string, rel: string): string[] {
+    if (theme === "") {
+        return [];
+    }
+
+    return [
+        `${HOME}/.local/state/omarchy/current/theme/${rel}`,
+        `${HOME}/.config/omarchy/themes/${theme}/${rel}`,
+        `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/themes/${theme}/${rel}`,
+    ];
+}
+
+/** 从外部机器的绝对路径里提取主题内相对路径,例如 backgrounds/1.jpg */
+function foreignThemeRelative(path: string): string | undefined {
+    for (const marker of ["/.local/state/omarchy/current/theme/", "/.local/share/omarchy/themes/"]) {
+        const index = path.indexOf(marker);
+
+        if (index !== -1) {
+            const rest = path.slice(index + marker.length);
+            const slash = rest.indexOf("/");
+
+            // current/theme 后面的整段就是主题相对路径;
+            // themes/<name>/ 要跳过第一段主题名。
+            return marker.includes("/current/theme/") ? rest : (slash === -1 ? undefined : rest.slice(slash + 1));
+        }
+    }
+
+    return undefined;
+}
+
+/** 按记录解析壁纸路径;优先使用本机存在的文件,失败时返回首个候选供日志展示 */
+function resolveBackgroundTarget(theme: string, background: string): string {
+    const candidates: string[] = [];
+
+    if (background.startsWith("rel:")) {
+        candidates.push(`${HOME}/.config/omarchy/backgrounds/${background.slice(5)}`);
+    } else if (background.startsWith("theme:")) {
+        candidates.push(...themeBackgroundCandidates(theme, background.slice(6)));
+    } else if (background.startsWith("abs:")) {
+        const absolute = background.slice(4);
+
+        candidates.push(absolute);
+
+        const rel = foreignThemeRelative(absolute);
+
+        if (rel !== undefined && !isFile(absolute)) {
+            candidates.push(...themeBackgroundCandidates(theme, rel));
+        }
+    }
+
+    return candidates.find((path) => isFile(path)) ?? candidates[0] ?? "";
+}
+
 /** 应用主题与壁纸(在线模式调用 omarchy;OMARSYNC_SKIP_LIVE=1 时只写状态文件)。
  *  在线的 `omarchy theme set` 会跑 ~/.config/omarchy/hooks,所以不可信的 apply 跳过它。 */
 export function applyCurrent(mirror: string, withExec: boolean): boolean {
@@ -84,13 +139,6 @@ export function applyCurrent(mirror: string, withExec: boolean): boolean {
     const background = (readTextFile(`${mirror}/current/background`) ?? "").replaceAll(/\s+/g, "");
 
     const state = `${HOME}/.local/state/omarchy/current`;
-    let target = "";
-
-    if (background.startsWith("rel:")) {
-        target = `${HOME}/.config/omarchy/backgrounds/${background.slice(4)}`;
-    } else if (background.startsWith("abs:")) {
-        target = background.slice(4);
-    }
 
     if (process.env["OMARSYNC_SKIP_LIVE"] === "1") {
         mkdirSync(state, { recursive: true });
@@ -99,7 +147,9 @@ export function applyCurrent(mirror: string, withExec: boolean): boolean {
             writeFileSync(`${state}/theme.name`, `${theme}\n`);
         }
 
-        if (target !== "" && exists(target)) {
+        const target = resolveBackgroundTarget(theme, background);
+
+        if (target !== "" && isFile(target)) {
             rmrf(`${state}/background`);
             symlinkSync(target, `${state}/background`);
         }
@@ -126,8 +176,11 @@ export function applyCurrent(mirror: string, withExec: boolean): boolean {
         }
     }
 
-    if (target !== "") {
-        if (exists(target)) {
+    // 主题设置会重建 current/theme,所以壁纸必须在这之后解析。
+    if (background !== "") {
+        const target = resolveBackgroundTarget(theme, background);
+
+        if (target !== "" && exists(target)) {
             log.info(`设置壁纸 ${target}`);
 
             if (!omarchy(["theme", "bg", "set", target])) {
@@ -135,8 +188,7 @@ export function applyCurrent(mirror: string, withExec: boolean): boolean {
                 failed = true;
             }
         } else {
-            log.warn(`壁纸文件不存在: ${target}`);
-            failed = true;
+            log.warn(`壁纸文件不存在,保留当前壁纸: ${target}`);
         }
     }
 
@@ -326,12 +378,42 @@ export function syncDotfiles(mirror: string): boolean {
         return false;
     }
 
-    const commit = mise.commitForSnapshot(snapshot);
+    let commit = mise.commitForSnapshot(snapshot);
 
     if (!commit) {
         log.warn(`已抓取的历史里没有签名的 miseHead ${snapshot};拒绝应用分支尖端`);
 
         return false;
+    }
+
+    // fetch 只会把远程提交放进 Git 对象库;mise 的 rollback 只认已导入索引的 checkpoint。
+    // 仅当远程尖端与签名快照是同一棵树时,才采用远程版本完成导入,避免写入可变尖端。
+    if (!mise.checkpointIndexed(commit)) {
+        const upstream = mise.upstreamSnapshot();
+
+        if (upstream !== snapshot) {
+            log.warn("远程 dotfiles 尖端与签名快照不一致;拒绝导入可变的远端版本");
+
+            return false;
+        }
+
+        log.info("签名快照尚未导入 mise 历史;采用远程版本并解决本机冲突");
+
+        const pulled = mise.pull({ takeRemoteAll: true });
+
+        if (!pulled.ok) {
+            log.warn(`mise pull 导入快照失败: ${pulled.out}`);
+
+            return false;
+        }
+
+        commit = mise.commitForSnapshot(snapshot);
+
+        if (!commit || !mise.checkpointIndexed(commit)) {
+            log.warn(`mise pull 后仍找不到 checkpoint ${snapshot}`);
+
+            return false;
+        }
     }
 
     log.info(`按签名的 miseHead ${snapshot} 恢复文件`);

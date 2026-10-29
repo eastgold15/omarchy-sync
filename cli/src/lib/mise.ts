@@ -1,9 +1,9 @@
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 import { capture, isDir, resolveTool } from "./exec";
 import { gitCapture, gitOut } from "./git";
-import { die, log } from "./log";
+import { die, log, readTextFile } from "./log";
 import { assignments } from "./proxy";
 import { isFullSha } from "./trust";
 
@@ -306,6 +306,50 @@ export function commitForSnapshot(snapshot: string): string | undefined {
     }
 
     return undefined;
+}
+
+/** 该提交是否已经作为 checkpoint 导入 mise 本地索引。
+ *  只 fetch 到 Git 对象库还不够,rollback 只认索引里的检查点。 */
+export function checkpointIndexed(commit: string): boolean {
+    if (!isFullSha(commit)) {
+        return false;
+    }
+
+    const { ok, out } = miseCapture(["history", "ls", "-J", "-n", "0"]);
+
+    if (!ok) {
+        return false;
+    }
+
+    try {
+        const rows = JSON.parse(out) as { commit?: unknown }[];
+
+        return Array.isArray(rows) && rows.some((row) => row.commit === commit);
+    } catch {
+        return false;
+    }
+}
+
+/** 最近一次 fetch 得到的远程 dotfiles 尖端对应的文件树 */
+export function upstreamSnapshot(): string | undefined {
+    const raw = readTextFile(`${dirname(historyRepo())}/sync.json`);
+
+    if (!raw) {
+        return undefined;
+    }
+
+    try {
+        const data = JSON.parse(raw) as { upstream_commit?: unknown };
+        const commit = typeof data.upstream_commit === "string" ? data.upstream_commit : undefined;
+
+        if (!isFullSha(commit)) {
+            return undefined;
+        }
+
+        return gitOut(["--git-dir", historyRepo(), "rev-parse", "--verify", "--quiet", `${commit}^{tree}`]);
+    } catch {
+        return undefined;
+    }
 }
 
 /** 把跟踪文件恢复成某个检查点。dryRun 只打印计划。 */

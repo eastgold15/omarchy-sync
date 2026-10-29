@@ -5446,6 +5446,37 @@ function commitForSnapshot(snapshot) {
   }
   return void 0;
 }
+function checkpointIndexed(commit) {
+  if (!isFullSha(commit)) {
+    return false;
+  }
+  const { ok, out } = miseCapture(["history", "ls", "-J", "-n", "0"]);
+  if (!ok) {
+    return false;
+  }
+  try {
+    const rows = JSON.parse(out);
+    return Array.isArray(rows) && rows.some((row) => row.commit === commit);
+  } catch {
+    return false;
+  }
+}
+function upstreamSnapshot() {
+  const raw = readTextFile(`${dirname(historyRepo())}/sync.json`);
+  if (!raw) {
+    return void 0;
+  }
+  try {
+    const data = JSON.parse(raw);
+    const commit = typeof data.upstream_commit === "string" ? data.upstream_commit : void 0;
+    if (!isFullSha(commit)) {
+      return void 0;
+    }
+    return gitOut(["--git-dir", historyRepo(), "rev-parse", "--verify", "--quiet", `${commit}^{tree}`]);
+  } catch {
+    return void 0;
+  }
+}
 function rollbackTo(commit, dryRun = false) {
   const args = ["rollback", "--to", `commit:${commit}`, "--all", "-y"];
   if (dryRun) {
@@ -5728,22 +5759,29 @@ function refreshUserServices() {
   if (!runtime || runtime === "" || !exists(`${runtime}/systemd/private`)) {
     return true;
   }
-  let okAll = true;
+  const systemdEnv = [`XDG_RUNTIME_DIR=${runtime}`];
+  if (process.env["DBUS_SESSION_BUS_ADDRESS"]) {
+    systemdEnv.push(`DBUS_SESSION_BUS_ADDRESS=${process.env["DBUS_SESSION_BUS_ADDRESS"]}`);
+  }
   if (!run(systemctl, ["--user", "daemon-reload"])) {
     log.warn("systemctl --user daemon-reload 失败");
-    okAll = false;
   }
   const find = resolveTool("find");
   const out = find ? capture(find, [`${HOME$3}/.config/systemd/user`, "-type", "l", "-path", "*.target.wants/*", "-printf", "%f\n"]).stdout : "";
   for (const unit of out.split("\n")) {
-    if (unit.endsWith(".service")) {
-      if (!run(systemctl, ["--user", "start", unit])) {
-        log.warn(`无法启动 ${unit}`);
-        okAll = false;
-      }
+    if (!unit.endsWith(".service")) {
+      continue;
+    }
+    const loadState = capture(systemctl, ["--user", "show", "-p", "LoadState", "--value", unit], systemdEnv).stdout.trim();
+    if (loadState === "not-found") {
+      log.warn(`跳过未安装的服务 ${unit}`);
+      continue;
+    }
+    if (!run(systemctl, ["--user", "start", unit])) {
+      log.warn(`无法启动 ${unit};配置已同步,可稍后手动处理`);
     }
   }
-  return okAll;
+  return true;
 }
 
 function ghInstalled() {
@@ -6198,6 +6236,10 @@ function installMissingPlugins(mirror, allowExec) {
     die("plugins.json 必须是数组");
   }
   const skip = skipSet();
+  const currentEnabled = new Set(
+    (listPlugins() ?? []).filter((row) => row.enabled === true && typeof row.id === "string").map((row) => row.id)
+  );
+  const toEnable = /* @__PURE__ */ new Set();
   let failed = false;
   let installedAny = false;
   for (const row of data) {
@@ -6223,6 +6265,9 @@ function installMissingPlugins(mirror, allowExec) {
         if (head !== rev) {
           log.warn(`插件 ${id} 当前在 ${head ?? "unknown"},快照记录 ${rev};保持不动`);
         }
+      }
+      if (enabled && !currentEnabled.has(id)) {
+        toEnable.add(id);
       }
       continue;
     }
@@ -6276,14 +6321,21 @@ function installMissingPlugins(mirror, allowExec) {
       rmrf(tmp);
       log.info(`已安装插件 ${id}`);
       installedAny = true;
-      if (enabled && process.env["OMARSYNC_SKIP_LIVE"] !== "1" && !omarchy(["plugin", "enable", id])) {
-        log.warn(`启用插件 ${id} 失败`);
+      if (enabled) {
+        toEnable.add(id);
       }
     }
   }
   if (installedAny && process.env["OMARSYNC_SKIP_LIVE"] !== "1" && resolveTool("omarchy-shell")) {
     if (!omarchyShell(["shell", "rescanPlugins"])) {
       log.warn("shell 插件重扫失败");
+    }
+  }
+  if (process.env["OMARSYNC_SKIP_LIVE"] !== "1") {
+    for (const id of toEnable) {
+      if (!omarchy(["plugin", "enable", id])) {
+        log.warn(`启用插件 ${id} 失败`);
+      }
     }
   }
   return !failed;
@@ -6330,23 +6382,55 @@ function backupTree() {
   }
   return dest;
 }
+function themeBackgroundCandidates(theme, rel) {
+  if (theme === "") {
+    return [];
+  }
+  return [
+    `${HOME$1}/.local/state/omarchy/current/theme/${rel}`,
+    `${HOME$1}/.config/omarchy/themes/${theme}/${rel}`,
+    `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/themes/${theme}/${rel}`
+  ];
+}
+function foreignThemeRelative(path) {
+  for (const marker of ["/.local/state/omarchy/current/theme/", "/.local/share/omarchy/themes/"]) {
+    const index = path.indexOf(marker);
+    if (index !== -1) {
+      const rest = path.slice(index + marker.length);
+      const slash = rest.indexOf("/");
+      return marker.includes("/current/theme/") ? rest : slash === -1 ? void 0 : rest.slice(slash + 1);
+    }
+  }
+  return void 0;
+}
+function resolveBackgroundTarget(theme, background) {
+  const candidates = [];
+  if (background.startsWith("rel:")) {
+    candidates.push(`${HOME$1}/.config/omarchy/backgrounds/${background.slice(5)}`);
+  } else if (background.startsWith("theme:")) {
+    candidates.push(...themeBackgroundCandidates(theme, background.slice(6)));
+  } else if (background.startsWith("abs:")) {
+    const absolute = background.slice(4);
+    candidates.push(absolute);
+    const rel = foreignThemeRelative(absolute);
+    if (rel !== void 0 && !isFile(absolute)) {
+      candidates.push(...themeBackgroundCandidates(theme, rel));
+    }
+  }
+  return candidates.find((path) => isFile(path)) ?? candidates[0] ?? "";
+}
 function applyCurrent(mirror, withExec) {
   const theme = (readTextFile(`${mirror}/current/theme.name`) ?? "").replaceAll(/\s+/g, "");
   const background = (readTextFile(`${mirror}/current/background`) ?? "").replaceAll(/\s+/g, "");
   const state = `${HOME$1}/.local/state/omarchy/current`;
-  let target = "";
-  if (background.startsWith("rel:")) {
-    target = `${HOME$1}/.config/omarchy/backgrounds/${background.slice(4)}`;
-  } else if (background.startsWith("abs:")) {
-    target = background.slice(4);
-  }
   if (process.env["OMARSYNC_SKIP_LIVE"] === "1") {
     mkdirSync(state, { recursive: true });
     if (theme !== "") {
       writeFileSync(`${state}/theme.name`, `${theme}
 `);
     }
-    if (target !== "" && exists(target)) {
+    const target = resolveBackgroundTarget(theme, background);
+    if (target !== "" && isFile(target)) {
       rmrf(`${state}/background`);
       symlinkSync(target, `${state}/background`);
     }
@@ -6366,16 +6450,16 @@ function applyCurrent(mirror, withExec) {
       failed = true;
     }
   }
-  if (target !== "") {
-    if (exists(target)) {
+  if (background !== "") {
+    const target = resolveBackgroundTarget(theme, background);
+    if (target !== "" && exists(target)) {
       log.info(`设置壁纸 ${target}`);
       if (!omarchy(["theme", "bg", "set", target])) {
         log.warn("设置壁纸失败");
         failed = true;
       }
     } else {
-      log.warn(`壁纸文件不存在: ${target}`);
-      failed = true;
+      log.warn(`壁纸文件不存在,保留当前壁纸: ${target}`);
     }
   }
   return !failed;
@@ -6504,10 +6588,28 @@ function syncDotfiles(mirror) {
     log.warn("签名提交没有 miseHead;拒绝应用可变的 dotfiles 分支");
     return false;
   }
-  const commit = commitForSnapshot(snapshot);
+  let commit = commitForSnapshot(snapshot);
   if (!commit) {
     log.warn(`已抓取的历史里没有签名的 miseHead ${snapshot};拒绝应用分支尖端`);
     return false;
+  }
+  if (!checkpointIndexed(commit)) {
+    const upstream = upstreamSnapshot();
+    if (upstream !== snapshot) {
+      log.warn("远程 dotfiles 尖端与签名快照不一致;拒绝导入可变的远端版本");
+      return false;
+    }
+    log.info("签名快照尚未导入 mise 历史;采用远程版本并解决本机冲突");
+    const pulled = pull({ takeRemoteAll: true });
+    if (!pulled.ok) {
+      log.warn(`mise pull 导入快照失败: ${pulled.out}`);
+      return false;
+    }
+    commit = commitForSnapshot(snapshot);
+    if (!commit || !checkpointIndexed(commit)) {
+      log.warn(`mise pull 后仍找不到 checkpoint ${snapshot}`);
+      return false;
+    }
   }
   log.info(`按签名的 miseHead ${snapshot} 恢复文件`);
   const rolled = rollbackTo(commit);
@@ -7052,13 +7154,23 @@ const HOME = homedir();
 function exportCurrent(dest) {
   const state = `${HOME}/.local/state/omarchy/current`;
   mkdirSync(`${dest}/current`, { recursive: true });
-  writeFileSync(`${dest}/current/theme.name`, readTextFile(`${state}/theme.name`) ?? "");
+  const theme = (readTextFile(`${state}/theme.name`) ?? "").replaceAll(/\s+/g, "");
+  writeFileSync(`${dest}/current/theme.name`, `${theme}
+`);
   let record = "";
   const bg = `${state}/background`;
   const target = isLink(bg) || exists(bg) ? realpath$1(bg) : void 0;
   const base = `${HOME}/.config/omarchy/backgrounds`;
+  const themeBases = [
+    `${state}/theme/`,
+    `${HOME}/.config/omarchy/themes/${theme}/`,
+    `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/themes/${theme}/`
+  ];
+  const themeBase = theme === "" ? void 0 : themeBases.find((path) => target?.startsWith(path));
   if (target?.startsWith(`${base}/`)) {
     record = `rel:${target.slice(base.length + 1)}`;
+  } else if (target && themeBase) {
+    record = `theme:${target.slice(themeBase.length)}`;
   } else if (target) {
     record = `abs:${target}`;
   }
@@ -7682,7 +7794,11 @@ function executeSetup() {
   } else {
     ensureDotfilesRepo();
   }
-  const sha = gitOut(["-C", paths.mirrorDir, "rev-parse", "--verify", "--quiet", "refs/remotes/origin/main^{commit}"]);
+  const branch = configGet("BRANCH", readTextFile) ?? "main";
+  if (isDir(`${paths.mirrorDir}/.git`) && !git(["-C", paths.mirrorDir, "fetch", "--quiet", "origin", branch])) {
+    log.warn(`无法刷新远程分支 ${branch};当前提示可能仍是旧状态`);
+  }
+  const sha = gitOut(["-C", paths.mirrorDir, "rev-parse", "--verify", "--quiet", `refs/remotes/origin/${branch}^{commit}`]);
   if (sha) {
     log.info(`仓库已有 commit ${sha}`);
     log.info("打开面板选择 apply(先审阅再应用)");

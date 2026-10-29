@@ -1,10 +1,10 @@
 import { isDir } from "../lib/exec";
 import { ghInstalled, ghLoggedIn } from "../lib/gh";
-import { gitOut } from "../lib/git";
-import { die, log } from "../lib/log";
+import { git, gitOut } from "../lib/git";
+import { die, log, readTextFile } from "../lib/log";
 import * as mise from "../lib/mise";
 import { omarchy } from "../lib/omarchy";
-import { paths } from "../lib/paths";
+import { configGet, paths } from "../lib/paths";
 import { stdinIsTty } from "../lib/util";
 import { ensureDotfilesRepo, executeInit } from "./init";
 import { executeLogin } from "./login";
@@ -44,8 +44,15 @@ export function executeSetup(): void {
         ensureDotfilesRepo();
     }
 
+    // 未登录时 init 可能建了空镜像;登录后必须重新 fetch 才能看到远程已有提交。
+    const branch = configGet("BRANCH", readTextFile) ?? "main";
+
+    if (isDir(`${paths.mirrorDir}/.git`) && !git(["-C", paths.mirrorDir, "fetch", "--quiet", "origin", branch])) {
+        log.warn(`无法刷新远程分支 ${branch};当前提示可能仍是旧状态`);
+    }
+
     // 空仓库 rev-parse 会失败,这里只探测不致命
-    const sha = gitOut(["-C", paths.mirrorDir, "rev-parse", "--verify", "--quiet", "refs/remotes/origin/main^{commit}"]);
+    const sha = gitOut(["-C", paths.mirrorDir, "rev-parse", "--verify", "--quiet", `refs/remotes/origin/${branch}^{commit}`]);
 
     if (sha) {
         log.info(`仓库已有 commit ${sha}`);

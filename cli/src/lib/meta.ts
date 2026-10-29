@@ -15,20 +15,30 @@ import { hostnameSafe, iso8601 } from "./util";
 
 const HOME = homedir();
 
-/** 导出当前主题名与壁纸记录(rel:/abs: 形式) */
+/** 导出当前主题名与壁纸记录(rel:/theme:/abs: 形式) */
 export function exportCurrent(dest: string): void {
     const state = `${HOME}/.local/state/omarchy/current`;
 
     mkdirSync(`${dest}/current`, { recursive: true });
-    writeFileSync(`${dest}/current/theme.name`, readTextFile(`${state}/theme.name`) ?? "");
+    const theme = (readTextFile(`${state}/theme.name`) ?? "").replaceAll(/\s+/g, "");
+
+    writeFileSync(`${dest}/current/theme.name`, `${theme}\n`);
 
     let record = "";
     const bg = `${state}/background`;
     const target = isLink(bg) || exists(bg) ? realpath(bg) : undefined;
     const base = `${HOME}/.config/omarchy/backgrounds`;
+    const themeBases = [
+        `${state}/theme/`,
+        `${HOME}/.config/omarchy/themes/${theme}/`,
+        `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/themes/${theme}/`,
+    ];
+    const themeBase = theme === "" ? undefined : themeBases.find((path) => target?.startsWith(path));
 
     if (target?.startsWith(`${base}/`)) {
         record = `rel:${target.slice(base.length + 1)}`;
+    } else if (target && themeBase) {
+        record = `theme:${target.slice(themeBase.length)}`;
     } else if (target) {
         record = `abs:${target}`;
     }
