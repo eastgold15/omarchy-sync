@@ -8702,20 +8702,23 @@ ${fileDiff}
     if (!skipConfirm && !await confirm("发布这份选择后的快照到远程仓库?")) {
       die("已取消,未推送");
     }
-    if (gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
-      log.info("没有新的元数据变化;需要发布 dotfiles 时仍会创建签名提交");
-    } else if (!git(["-C", mirror, "commit", "-S", "-m", `sync selected from ${hostnameSafe()} @ ${iso8601()}`])) {
-      die("本地提交签名失败,未推送");
+    const hasMetaChanges = !gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok;
+    if (!built.commit && built.tree === baseTree && !hasMetaChanges) {
+      log.info("没有实际变化,未推送");
+      executeStatus(false);
+      return;
+    }
+    if (hasMetaChanges) {
+      if (!git(["-C", mirror, "commit", "-S", "-m", `sync selected from ${hostnameSafe()} @ ${iso8601()}`])) {
+        die("本地提交签名失败,未推送");
+      }
+    } else {
+      log.info("没有新的元数据变化;只发布已构造的 dotfiles 提交");
     }
     const reviewedCommit = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
     const reviewedTree = headTree(mirror);
     if (!reviewedCommit || !reviewedTree) {
       die("无法读取已审阅的提交");
-    }
-    if (!built.commit && built.tree === baseTree && gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
-      log.info("没有实际变化,未推送");
-      executeStatus(false);
-      return;
     }
     const currentMain = refreshRemoteMain(mirror, branch);
     if (remoteMain !== currentMain) {

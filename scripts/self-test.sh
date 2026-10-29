@@ -508,5 +508,24 @@ else
   printf 'rc1=%s rc2=%s main=%s tree=%s\n%s\n' "$sel_rc1" "$sel_rc2" "$sel_main" "$sel_tree" "$(<"$sel_home/push2.log")"
 fi
 
+# 只有元数据变化、没有 dotfiles 变化时也必须真正推送 main。
+sel_old_main=$(git --git-dir="$sel_origin" rev-parse main)
+mkdir -p "$sel_home/.local/state/omarchy/current"
+printf 'test-theme\n' >"$sel_home/.local/state/omarchy/current/theme.name"
+printf 'theme:backgrounds/test.jpg\n' >"$sel_home/.local/state/omarchy/current/background"
+set +e
+env "${sel_env[@]}" /usr/bin/node "$ROOT/cli/dist/index.js" push --yes >"$sel_home/push3.log" 2>&1
+sel_rc3=$?
+set -e
+sel_new_main=$(git --git-dir="$sel_origin" rev-parse main 2>/dev/null || true)
+if [[ $sel_rc3 -eq 0 && $sel_new_main != "$sel_old_main" \
+  && $(git --git-dir="$sel_origin" rev-parse 'dotfiles^{tree}') == "$sel_tree" ]] \
+  && git --git-dir="$sel_origin" show main:current/theme.name | grep -qx 'test-theme'; then
+  ok "只有元数据变化时也会推送"
+else
+  bad "只有元数据变化时也会推送"
+  printf 'rc3=%s old=%s new=%s\n%s\n' "$sel_rc3" "$sel_old_main" "$sel_new_main" "$(<"$sel_home/push3.log")"
+fi
+
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [[ $fail -eq 0 ]]
