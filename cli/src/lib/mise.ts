@@ -2,7 +2,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 import { capture, isDir, resolveTool } from "./exec";
-import { gitOut } from "./git";
+import { gitCapture, gitOut } from "./git";
 import { die, log } from "./log";
 import { assignments } from "./proxy";
 import { isFullSha } from "./trust";
@@ -43,6 +43,7 @@ export interface MiseStatus {
             readonly origin?: unknown;
             readonly branch?: unknown;
         };
+        readonly unsaved?: unknown;
     };
     readonly [key: string]: unknown;
 }
@@ -127,6 +128,36 @@ export function save(): boolean | undefined {
     }
 
     return !out.includes("nothing changed");
+}
+
+/** 自最新检查点以来尚未保存的路径;只读,绝不创建检查点。字段不可用时返回 undefined */
+export function unsavedFiles(): string[] | undefined {
+    const unsaved = status()?.history?.unsaved;
+
+    if (!Array.isArray(unsaved)) {
+        return undefined;
+    }
+
+    const files: string[] = [];
+
+    for (const item of unsaved) {
+        if (typeof item === "string") {
+            files.push(item);
+        } else if (item && typeof item === "object" && "path" in item && typeof item.path === "string") {
+            files.push(item.path);
+        }
+    }
+
+    return files;
+}
+
+/** 两个已保存快照之间的完整文件差异;任一不是对象 id 时返回空串 */
+export function snapshotDiff(from: string, to: string): string {
+    if (!isFullSha(from) || !isFullSha(to) || !isDir(historyRepo())) {
+        return "";
+    }
+
+    return gitCapture(["--git-dir", historyRepo(), "diff", "--stat", "--patch", "--no-color", from, to]).out;
 }
 
 /** 最新检查点的 tree.snapshot(git 树哈希,跨机稳定);失败返回 undefined */

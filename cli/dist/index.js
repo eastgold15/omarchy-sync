@@ -5214,6 +5214,7 @@ function ensurePushSigner() {
 }
 function requireTrustedRemoteTip(mirror, sha) {
   if (!commitIsTrusted(mirror, sha)) {
+    log.info(`如已确认这是你的快照,可审阅后补签名: omarsync repair-remote --commit ${sha}`);
     die(`远程提交 ${sha} 不是可信签名。拒绝合并,也不会为它签名。`);
   }
 }
@@ -5327,6 +5328,27 @@ function save() {
     return void 0;
   }
   return !out.includes("nothing changed");
+}
+function unsavedFiles() {
+  const unsaved = status()?.history?.unsaved;
+  if (!Array.isArray(unsaved)) {
+    return void 0;
+  }
+  const files = [];
+  for (const item of unsaved) {
+    if (typeof item === "string") {
+      files.push(item);
+    } else if (item && typeof item === "object" && "path" in item && typeof item.path === "string") {
+      files.push(item.path);
+    }
+  }
+  return files;
+}
+function snapshotDiff(from, to) {
+  if (!isFullSha(from) || !isFullSha(to) || !isDir(historyRepo())) {
+    return "";
+  }
+  return gitCapture(["--git-dir", historyRepo(), "diff", "--stat", "--patch", "--no-color", from, to]).out;
 }
 function headSnapshot() {
   const { ok, out } = miseCapture(["history", "ls", "-J"]);
@@ -6467,8 +6489,8 @@ function signedMiseHead(mirror) {
   }
   try {
     const data = JSON.parse(raw);
-    const head = data.miseHead;
-    return isFullSha(typeof head === "string" ? head : void 0) ? head : void 0;
+    const head = typeof data.miseHead === "string" ? data.miseHead : void 0;
+    return isFullSha(head) ? head : void 0;
   } catch {
     return void 0;
   }
@@ -7137,11 +7159,19 @@ function readCounts(mirror, branch) {
   if (!sha) {
     return [0, 0, ""];
   }
+  const headTree = gitOut(["-C", mirror, "rev-parse", "--verify", `${head}^{tree}`]);
+  const remoteTree = gitOut(["-C", mirror, "rev-parse", "--verify", `${sha}^{tree}`]);
+  if (headTree && remoteTree && headTree === remoteTree) {
+    return [0, 0, sha];
+  }
   const behind = Number(gitOut(["-C", mirror, "rev-list", "--count", `HEAD..${sha}`]) ?? 0);
   const ahead = Number(gitOut(["-C", mirror, "rev-list", "--count", `${sha}..HEAD`]) ?? 0);
   return [behind, ahead, sha];
 }
 function isRunning() {
+  if (process.env["OMARSYNC_LOCK_HELD"] === "1") {
+    return false;
+  }
   const flock = resolveTool("flock");
   if (!flock) {
     return false;
@@ -7153,7 +7183,11 @@ function miseDirty() {
   if (!available() || !featureOk()) {
     return false;
   }
-  return save() === true;
+  const unsaved = unsavedFiles();
+  if (unsaved !== void 0) {
+    return unsaved.length > 0;
+  }
+  return /\S/.test(diff().out.replace(/^mise files: all files are applied\s*$/m, ""));
 }
 function changedFiles() {
   const repo = join(homedir(), ".local", "state", "mise", "history", "repo.git");
@@ -7222,7 +7256,8 @@ function collect() {
       if (!dirty) {
         dirty = miseDirty();
         if (dirty) {
-          st.changedFiles = changedFiles();
+          const unsaved = unsavedFiles();
+          st.changedFiles = unsaved && unsaved.length > 0 ? unsaved.map((name) => name.replace(/^~\//, "")).slice(0, 30) : changedFiles();
         }
       }
       st.dirty = dirty;
@@ -7308,6 +7343,19 @@ function remoteHasBranch(mirror, branch) {
 function headTree(mirror) {
   return gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
 }
+function publishedMiseHead(mirror) {
+  const raw = gitOut(["-C", mirror, "show", "HEAD:omarsync.json"]);
+  if (!raw) {
+    return void 0;
+  }
+  try {
+    const head = JSON.parse(raw).miseHead;
+    const sha = typeof head === "string" ? head : void 0;
+    return isFullSha(sha) ? sha : void 0;
+  } catch {
+    return void 0;
+  }
+}
 function discardTimestampOnlyChange(mirror) {
   const names = gitOut(["-C", mirror, "diff", "--cached", "--name-only"]);
   if (names !== "omarsync.json") {
@@ -7329,8 +7377,12 @@ function discardTimestampOnlyChange(mirror) {
   const staged = parse(gitOut(["-C", mirror, "show", ":omarsync.json"]));
   if (previous && staged && isDeepStrictEqual(previous, staged)) {
     git(["-C", mirror, "restore", "--staged", "--worktree", "--source=HEAD", "--", "omarsync.json"]);
-    log.info("仅推送时间变化,已忽略");
+    log.info("仅推送时间变化,未创建新快照");
   }
+}
+function meaningfulMiseDiff(raw) {
+  const body = raw.split("\n").filter((line) => !/^mise files: all files are applied\s*$/.test(line));
+  return /\S/.test(body.join("\n")) ? raw : "";
 }
 function publishDotfiles() {
   if (!available()) {
@@ -7388,13 +7440,17 @@ async function executePush(skipConfirm = false) {
   ensurePushSigner();
   ensureIdentity(mirror);
   preparePushBranch(mirror, branch);
+  const previousMiseHead = publishedMiseHead(mirror);
   let miseHead;
+  let unsavedMiseDiff = "";
+  let snapshotMiseDiff = "";
   if (available()) {
     ensureDotfilesRepo();
     if (!originConnected()) {
       die("mise dot origin 未连接,所以 dotfiles 分支没有更新");
     }
     reconcile(readScope(paths.scopeFile));
+    unsavedMiseDiff = meaningfulMiseDiff(diff().out);
     const saved = save();
     if (saved === void 0) {
       die("mise dot save 失败");
@@ -7403,6 +7459,9 @@ async function executePush(skipConfirm = false) {
       log.info("mise dot 检查点已保存");
     }
     miseHead = headSnapshot();
+    if (previousMiseHead && miseHead && previousMiseHead !== miseHead) {
+      snapshotMiseDiff = snapshotDiff(previousMiseHead, miseHead);
+    }
   } else {
     log.warn("mise 未安装;只推元数据。运行: omarchy pkg add mise");
   }
@@ -7411,7 +7470,7 @@ async function executePush(skipConfirm = false) {
   discardTimestampOnlyChange(mirror);
   const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
   const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
-  const miseDiff = available() ? diff().out : "";
+  const miseDiff = meaningfulMiseDiff(snapshotMiseDiff) || unsavedMiseDiff;
   if (!/\S/.test(metaStat) && remoteHasBranch(mirror, branch)) {
     if (!git(["-C", mirror, "fetch", "--quiet", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`])) {
       die("fetch 失败,无法确认是否已有变化");
@@ -7441,7 +7500,7 @@ ${metaDiff}
 `;
   }
   if (/\S/.test(miseDiff)) {
-    log.info("文件差异(mise dot diff):");
+    log.info("文件差异(自上次已发布快照):");
     for (const line of miseDiff.split("\n")) {
       log.info(`  ${line}`);
     }
@@ -7455,12 +7514,14 @@ ${miseDiff}
     writeFileSync(reviewFile, review);
     log.info(`完整 diff 已写入 ${reviewFile}`);
     openInEditor([reviewFile]);
+  } else {
+    log.info("没有新的元数据或文件变化;将推送已提交的本地快照");
   }
-  if (!skipConfirm && !await confirm("发布这份快照到远程仓库?")) {
+  if (!skipConfirm && !await confirm(review === "" ? "推送已有的本地提交到远程仓库?" : "发布这份快照到远程仓库?")) {
     die("已取消,未推送");
   }
   if (gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
-    log.info("没有要提交的本地变化");
+    log.info("没有新的元数据变化;推送已有本地提交");
   } else {
     if (!git(["-C", mirror, "commit", "-S", "-m", `sync from ${hostnameSafe()} @ ${iso8601()}`])) {
       die("本地提交签名失败,未推送");
@@ -7505,6 +7566,95 @@ ${miseDiff}
     return;
   }
   notify("omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
+  executeStatus(false);
+}
+
+const EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
+function fetchRemoteTip(mirror, branch) {
+  if (!git(["-C", mirror, "fetch", "--quiet", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`])) {
+    die("fetch 失败,未签名也未推送");
+  }
+  const tip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", `origin/${branch}^{commit}`]);
+  if (!isFullSha(tip)) {
+    die("远程分支没有完整提交,未签名也未推送");
+  }
+  return tip;
+}
+function reviewSnapshot(mirror, sha) {
+  const history = gitOut(["-C", mirror, "rev-list", sha]);
+  if (history === void 0) {
+    die("读不到远程历史,未签名也未推送");
+  }
+  const ancestors = history.split("\n").filter((line) => line !== "");
+  const base = ancestors.find((commit) => commitIsTrusted(mirror, commit)) ?? EMPTY_TREE;
+  const range = base === EMPTY_TREE ? sha : `${base}..${sha}`;
+  const commits = gitCapture(["-C", mirror, "log", "--format=%H %s", range]);
+  const diff = gitCapture(["-C", mirror, "diff", "--full-index", "--stat", "--patch", "--no-color", base, sha]);
+  if (!commits.ok || !diff.ok) {
+    die("无法生成远程快照审阅 diff,未签名也未推送");
+  }
+  mkdirSync(paths.stateDir, { recursive: true });
+  const reviewFile = `${paths.stateDir}/repair-remote.diff`;
+  const origin = base === EMPTY_TREE ? "没有可信祖先;以下 diff 覆盖完整快照" : `可信祖先: ${base}`;
+  writeFileSync(reviewFile, `===== 待审阅的远程提交 =====
+${commits.out}
+
+===== ${origin} =====
+${diff.out}`);
+  log.info(`完整远程快照 diff 已写入 ${reviewFile}`);
+  openInEditor([reviewFile]);
+}
+async function executeRepairRemote(commit) {
+  if (!isDir(`${paths.mirrorDir}/.git`)) {
+    die("未初始化。运行: omarsync init");
+  }
+  if (!isFullSha(commit)) {
+    die("用法: omarsync repair-remote --commit <远程尖端的40位sha>");
+  }
+  const mirror = paths.mirrorDir;
+  const branch = configGet("BRANCH", readTextFile) ?? "main";
+  const remoteTip = fetchRemoteTip(mirror, branch);
+  if (commit !== remoteTip) {
+    die(`指定提交不是当前远程尖端 ${remoteTip};拒绝为旧提交或其他提交签名`);
+  }
+  if (commitIsTrusted(mirror, commit)) {
+    log.info("远程尖端已是可信签名,无需修复");
+    return;
+  }
+  reviewSnapshot(mirror, commit);
+  if (!await confirm("确认你已审阅这份完整远程快照,用本机密钥补签名并推送?")) {
+    die("已取消,未签名也未推送");
+  }
+  if (fetchRemoteTip(mirror, branch) !== commit) {
+    die("审阅期间远程尖端变了,未签名也未推送");
+  }
+  ensurePushSigner();
+  const tree = gitOut(["-C", mirror, "rev-parse", "--verify", `${commit}^{tree}`]);
+  if (!isFullSha(tree)) {
+    die("读不到已审阅的树,未签名也未推送");
+  }
+  const signed = gitOut([
+    "-C",
+    mirror,
+    "commit-tree",
+    "-S",
+    tree,
+    "-p",
+    commit,
+    "-m",
+    `trust reviewed remote snapshot from ${hostnameSafe()} @ ${iso8601()}`
+  ]);
+  if (!isFullSha(signed) || !commitIsTrusted(mirror, signed)) {
+    die("签名提交创建或校验失败,未推送");
+  }
+  if (gitOut(["-C", mirror, "rev-parse", "--verify", `${signed}^{tree}`]) !== tree || gitOut(["-C", mirror, "rev-parse", "--verify", `${signed}^`]) !== commit) {
+    die("签名没有覆盖已审阅的远程快照,未推送");
+  }
+  if (!git(["-C", mirror, "push", "--quiet", "origin", `${signed}:refs/heads/${branch}`])) {
+    die("git push 失败,远程可能已变化;未覆盖远程");
+  }
+  fetchRemoteTip(mirror, branch);
+  log.info("已为审阅过的远程快照补签名;现在运行 omarsync push 发布本地提交");
   executeStatus(false);
 }
 
@@ -7623,6 +7773,20 @@ cli.addCommand({
   description: "一键装机引导:装依赖、登录 GitHub、初始化仓库",
   execute: () => {
     executeSetup();
+  }
+});
+cli.addCommand({
+  name: "repair-remote",
+  description: "审阅旧的不可信远程快照,确认后补一个树不变的签名提交并推送",
+  options: [
+    {
+      name: "commit",
+      type: String,
+      description: "要审阅的当前远程尖端40位commit sha(必填)"
+    }
+  ],
+  execute: async ({ options }) => {
+    await executeRepairRemote(typeof options["commit"] === "string" ? options["commit"] : void 0);
   }
 });
 cli.addCommand({

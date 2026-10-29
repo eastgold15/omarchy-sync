@@ -13,7 +13,7 @@ import { executeStatus } from "./status";
 import { configGet, paths } from "../lib/paths";
 import { readTextFile } from "../lib/log";
 import { readScope, reconcile } from "../lib/scope";
-import { ensurePushSigner, preparePushBranch, requireTrustedRemoteTip, signReviewedTip } from "../lib/trust";
+import { ensurePushSigner, isFullSha, preparePushBranch, requireTrustedRemoteTip, signReviewedTip } from "../lib/trust";
 import { confirm, hostnameSafe, iso8601 } from "../lib/util";
 
 // push:对齐 track → 手动存检查点 → 元数据签名提交 → 发布 mise 历史。
@@ -33,6 +33,24 @@ function remoteHasBranch(mirror: string, branch: string): boolean {
 
 function headTree(mirror: string): string | undefined {
     return gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
+}
+
+/** 已提交元数据记录的 mise 快照;用于展示自上次快照以来的真实文件变化。 */
+function publishedMiseHead(mirror: string): string | undefined {
+    const raw = gitOut(["-C", mirror, "show", "HEAD:omarsync.json"]);
+
+    if (!raw) {
+        return undefined;
+    }
+
+    try {
+        const head = (JSON.parse(raw) as { miseHead?: unknown }).miseHead;
+        const sha = typeof head === "string" ? head : undefined;
+
+        return isFullSha(sha) ? sha : undefined;
+    } catch {
+        return undefined;
+    }
 }
 
 /** 暂存区只有 pushedAt 变化时还原元数据,避免每次 push 都制造一个提交。 */
@@ -63,8 +81,15 @@ function discardTimestampOnlyChange(mirror: string): void {
 
     if (previous && staged && isDeepStrictEqual(previous, staged)) {
         git(["-C", mirror, "restore", "--staged", "--worktree", "--source=HEAD", "--", "omarsync.json"]);
-        log.info("仅推送时间变化,已忽略");
+        log.info("仅推送时间变化,未创建新快照");
     }
+}
+
+/** mise diff 在无变化时只打印固定占位行;不要因此弹出空审阅。 */
+function meaningfulMiseDiff(raw: string): string {
+    const body = raw.split("\n").filter((line) => !/^mise files: all files are applied\s*$/.test(line));
+
+    return /\S/.test(body.join("\n")) ? raw : "";
 }
 
 /** 发布 mise 历史;空推送也用同一条路径,避免漏掉尚未发布的检查点。 */
@@ -143,8 +168,12 @@ export async function executePush(skipConfirm = false): Promise<void> {
     ensureIdentity(mirror);
     preparePushBranch(mirror, branch);
 
+    const previousMiseHead = publishedMiseHead(mirror);
+
     // 文件同步:对齐 track 集合,保存检查点,记录历史头
     let miseHead: string | undefined;
+    let unsavedMiseDiff = "";
+    let snapshotMiseDiff = "";
 
     if (mise.available()) {
         ensureDotfilesRepo();
@@ -154,6 +183,7 @@ export async function executePush(skipConfirm = false): Promise<void> {
         }
 
         reconcile(readScope(paths.scopeFile));
+        unsavedMiseDiff = meaningfulMiseDiff(mise.diff().out);
 
         const saved = mise.save();
 
@@ -166,6 +196,10 @@ export async function executePush(skipConfirm = false): Promise<void> {
         }
 
         miseHead = mise.headSnapshot();
+
+        if (previousMiseHead && miseHead && previousMiseHead !== miseHead) {
+            snapshotMiseDiff = mise.snapshotDiff(previousMiseHead, miseHead);
+        }
     } else {
         log.warn("mise 未安装;只推元数据。运行: omarchy pkg add mise");
     }
@@ -178,7 +212,8 @@ export async function executePush(skipConfirm = false): Promise<void> {
 
     const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
     const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
-    const miseDiff = mise.available() ? mise.diff().out : "";
+    // save 之后 mise diff 必然为空;优先展示上次已发布快照到本次新快照的完整差异。
+    const miseDiff = meaningfulMiseDiff(snapshotMiseDiff) || unsavedMiseDiff;
 
     // 元数据和本地提交都已发布时,不再为时间戳弹确认或创建签名空提交。
     if (!/\S/.test(metaStat) && remoteHasBranch(mirror, branch)) {
@@ -217,7 +252,7 @@ export async function executePush(skipConfirm = false): Promise<void> {
     }
 
     if (/\S/.test(miseDiff)) {
-        log.info("文件差异(mise dot diff):");
+        log.info("文件差异(自上次已发布快照):");
 
         for (const line of miseDiff.split("\n")) {
             log.info(`  ${line}`);
@@ -234,15 +269,17 @@ export async function executePush(skipConfirm = false): Promise<void> {
         writeFileSync(reviewFile, review);
         log.info(`完整 diff 已写入 ${reviewFile}`);
         openInEditor([reviewFile]);
+    } else {
+        log.info("没有新的元数据或文件变化;将推送已提交的本地快照");
     }
 
     // 发布默认要人工确认;--yes 只给面板的自动推送用
-    if (!skipConfirm && !(await confirm("发布这份快照到远程仓库?"))) {
+    if (!skipConfirm && !(await confirm(review === "" ? "推送已有的本地提交到远程仓库?" : "发布这份快照到远程仓库?"))) {
         die("已取消,未推送");
     }
 
     if (gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok) {
-        log.info("没有要提交的本地变化");
+        log.info("没有新的元数据变化;推送已有本地提交");
     } else {
         if (!git(["-C", mirror, "commit", "-S", "-m", `sync from ${hostnameSafe()} @ ${iso8601()}`])) {
             die("本地提交签名失败,未推送");

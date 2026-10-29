@@ -116,7 +116,7 @@ done
 
 # 写操作命令在执行前持锁(整个进程生命周期);status 等只读命令不取锁
 case "${1:-status}" in
-  push|pull|apply|sync|migrate)
+  push|pull|apply|sync|migrate|repair-remote)
     state="${HOME}/.local/state/omarsync"
     /usr/bin/mkdir -p "$state"
     exec 9>"${state}/omarsync.lock"
@@ -124,6 +124,7 @@ case "${1:-status}" in
       printf 'omarsync: another omarsync operation is running\n' >&2
       exit 1
     fi
+    export OMARSYNC_LOCK_HELD=1
     ;;
 esac
 

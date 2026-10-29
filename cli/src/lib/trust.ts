@@ -530,6 +530,7 @@ export function ensurePushSigner(): void {
 /** 远程尖端必须已由可信密钥签名。没有这道检查就不能变基,也不能补签名。 */
 export function requireTrustedRemoteTip(mirror: string, sha: string): void {
     if (!commitIsTrusted(mirror, sha)) {
+        log.info(`如已确认这是你的快照,可审阅后补签名: omarsync repair-remote --commit ${sha}`);
         die(`远程提交 ${sha} 不是可信签名。拒绝合并,也不会为它签名。`);
     }
 }

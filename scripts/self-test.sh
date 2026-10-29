@@ -186,6 +186,13 @@ else
   bad "push 仍在变基前验远程尖端"
 fi
 
+if ! grep -q 'mise\.save()' "$ROOT/cli/src/commands/status.ts" \
+  && grep -q 'unsavedFiles()' "$ROOT/cli/src/commands/status.ts"; then
+  ok "status 只读探测 mise 改动,不创建检查点"
+else
+  bad "status 只读探测 mise 改动,不创建检查点"
+fi
+
 if grep -q '签名并发布去掉 home/ 之后的这棵树' "$ROOT/cli/dist/index.js" \
   && grep -q '镜像有未提交的改动,拒绝在迁移时签名' "$ROOT/cli/dist/index.js"; then
   ok "dist 带上迁移签名门"
@@ -234,6 +241,59 @@ run_cli() {
   local rc=$?
   set -e
   printf '%s' "$rc"
+}
+
+run_confirmed_cli() {
+  local home=$1 log=$2
+  shift 2
+  set +e
+  python3 - "$CLI" "$home" "$log" "$@" <<'PY'
+import os, pty, select, subprocess, sys, time
+
+cli, home, log_path, *args = sys.argv[1:]
+master, slave = pty.openpty()
+env = os.environ.copy()
+env["HOME"] = home
+env["OMARSYNC_EDITOR"] = "true"
+proc = subprocess.Popen([cli, *args], stdin=slave, stdout=slave, stderr=slave, env=env, close_fds=True)
+os.close(slave)
+buf = b""
+sent = False
+end = time.monotonic() + 25
+while time.monotonic() < end:
+    if proc.poll() is not None:
+        while select.select([master], [], [], 0)[0]:
+            try:
+                chunk = os.read(master, 4096)
+            except OSError:
+                chunk = b""
+            if not chunk:
+                break
+            buf += chunk
+        break
+    ready, _, _ = select.select([master], [], [], 0.2)
+    if not ready:
+        continue
+    try:
+        chunk = os.read(master, 4096)
+    except OSError:
+        break
+    if not chunk:
+        continue
+    buf += chunk
+    if not sent and b"[y/N]" in buf:
+        os.write(master, b"y\n")
+        sent = True
+else:
+    proc.kill()
+proc.wait(timeout=5)
+with open(log_path, "wb") as handle:
+    handle.write(buf)
+sys.exit(0 if sent and proc.returncode == 0 else proc.returncode or 1)
+PY
+  local rc=$?
+  set -e
+  return "$rc"
 }
 
 pull_home="$TMP/pull"
@@ -285,6 +345,32 @@ if [[ $migrate_rc -ne 0 && $(git -C "$pull_mirror" rev-parse HEAD) == "$unsigned
   ok "migrate 拒绝签名未验证的 home/ 树"
 else
   bad "migrate 拒绝签名未验证的 home/ 树"
+fi
+
+repair_rc=$(run_cli "$pull_home" repair-remote --commit "$unsigned_tip")
+if [[ $repair_rc -ne 0 && $(git -C "$pull_home/origin.git" rev-parse main) == "$unsigned_tip" ]]; then
+  ok "repair-remote 非交互时拒绝补签名"
+else
+  bad "repair-remote 非交互时拒绝补签名"
+fi
+repair_rc=0
+run_confirmed_cli "$pull_home" "$TMP/repair.log" repair-remote --commit "$unsigned_tip" || repair_rc=$?
+repaired_tip=$(git -C "$pull_home/origin.git" rev-parse main)
+if [[ $repair_rc -ne 0 ]] \
+  || [[ $(git -C "$pull_mirror" rev-parse "$repaired_tip^") != "$unsigned_tip" ]] \
+  || [[ $(git -C "$pull_mirror" rev-parse "$repaired_tip^{tree}") != $(git -C "$pull_mirror" rev-parse "$unsigned_tip^{tree}") ]] \
+  || [[ $(git -C "$pull_mirror" rev-parse HEAD) != "$unsigned_tip" ]] \
+  || ! git -C "$pull_mirror" -c "gpg.ssh.allowedSignersFile=$pull_home/.config/omarsync/trusted-keys" verify-commit "$repaired_tip" >/dev/null 2>&1; then
+  bad "repair-remote 审阅后签同一棵树且不动本地 HEAD"
+  printf 'repair rc=%s\n%s\n' "$repair_rc" "$(<"$TMP/repair.log")"
+else
+  ok "repair-remote 审阅后签同一棵树且不动本地 HEAD"
+fi
+repair_status=$(HOME="$pull_home" "$CLI" status --json 2>/dev/null) || repair_status=""
+if [[ $repair_status == *'"behind":0,"ahead":0'* && $repair_status == *'"remoteSignature":"trusted"'* ]]; then
+  ok "仅签名变化的提交不显示为待同步"
+else
+  bad "仅签名变化的提交不显示为待同步"
 fi
 
 other_home="$TMP/other"
@@ -361,52 +447,8 @@ else
   bad "migrate 不把工作区里多出来的钩子签进去"
 fi
 rm -f "$keep_mirror/hooks/post-apply.d/evil.sh"
-set +e
-python3 - "$CLI" "$keep_home" "$TMP/keep-migrate.log" <<'PY'
-import os, pty, select, subprocess, sys, time
-
-cli, home, log_path = sys.argv[1:]
-master, slave = pty.openpty()
-env = os.environ.copy()
-env["HOME"] = home
-proc = subprocess.Popen([cli, "migrate"], stdin=slave, stdout=slave, stderr=slave, env=env, close_fds=True)
-os.close(slave)
-buf = b""
-sent = False
-end = time.monotonic() + 25
-while time.monotonic() < end:
-    if proc.poll() is not None:
-        while select.select([master], [], [], 0)[0]:
-            try:
-                chunk = os.read(master, 4096)
-            except OSError:
-                chunk = b""
-            if not chunk:
-                break
-            buf += chunk
-        break
-    ready, _, _ = select.select([master], [], [], 0.2)
-    if not ready:
-        continue
-    try:
-        chunk = os.read(master, 4096)
-    except OSError:
-        break
-    if not chunk:
-        continue
-    buf += chunk
-    if not sent and b"[y/N]" in buf:
-        os.write(master, b"y\n")
-        sent = True
-else:
-    proc.kill()
-proc.wait(timeout=5)
-with open(log_path, "wb") as handle:
-    handle.write(buf)
-sys.exit(0 if sent and proc.returncode == 0 else proc.returncode or 1)
-PY
-keep_yes=$?
-set -e
+keep_yes=0
+run_confirmed_cli "$keep_home" "$TMP/keep-migrate.log" migrate || keep_yes=$?
 keep_now=$(git -C "$keep_mirror" rev-parse HEAD)
 keep_diff=$(git -C "$keep_mirror" diff --name-only --no-renames "$keep_base" HEAD)
 keep_mode=$(git -C "$keep_mirror" ls-tree HEAD hooks/post-apply.d/kept.sh | awk '{print $1}')

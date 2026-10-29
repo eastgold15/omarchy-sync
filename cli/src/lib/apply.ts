@@ -301,9 +301,9 @@ function signedMiseHead(mirror: string): string | undefined {
 
     try {
         const data = JSON.parse(raw) as { miseHead?: unknown };
-        const head = data.miseHead;
+        const head = typeof data.miseHead === "string" ? data.miseHead : undefined;
 
-        return isFullSha(typeof head === "string" ? head : undefined) ? head : undefined;
+        return isFullSha(head) ? head : undefined;
     } catch {
         return undefined;
     }

@@ -9,6 +9,7 @@ import { executeLogin } from "./commands/login";
 import { executeMigrate } from "./commands/migrate";
 import { executePull } from "./commands/pull";
 import { executePush } from "./commands/push";
+import { executeRepairRemote } from "./commands/repair-remote";
 import { executeSetup } from "./commands/setup";
 import { executeStatus } from "./commands/status";
 import { die } from "./lib/log";
@@ -109,6 +110,21 @@ cli.addCommand({
     description: "一键装机引导:装依赖、登录 GitHub、初始化仓库",
     execute: () => {
         executeSetup();
+    },
+});
+
+cli.addCommand({
+    name: "repair-remote",
+    description: "审阅旧的不可信远程快照,确认后补一个树不变的签名提交并推送",
+    options: [
+        {
+            name: "commit",
+            type: String,
+            description: "要审阅的当前远程尖端40位commit sha(必填)",
+        },
+    ],
+    execute: async ({ options }) => {
+        await executeRepairRemote(typeof options["commit"] === "string" ? options["commit"] : undefined);
     },
 });
 
