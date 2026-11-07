@@ -10163,7 +10163,7 @@ function collectRepoState() {
   const porcelain = gitOut(repo, ["status", "--porcelain=v1", "-uall"]) ?? "";
   const lines = porcelain === "" ? [] : porcelain.split("\n");
   state.dirty = lines.length > 0;
-  state.changedFiles = lines.slice(0, 30).map(porcelainPath);
+  state.changedFiles = lines.slice(0, 30).map((line) => join(repo, porcelainPath(line)));
   const upstream = gitOut(repo, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"]);
   if (!upstream) {
     state.behind = 0;

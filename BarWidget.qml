@@ -244,15 +244,15 @@ BarWidget {
     return files.length ? files : []
   }
 
+  // changedFiles 由 CLI 输出为配置仓库内的绝对路径,直接交给 code
   function openChanges() {
-    var home = Quickshell.env("HOME") || ""
     var files = root.changedFiles()
-    if (!root.bar || typeof root.bar.run !== "function" || home === "" || files.length === 0)
+    if (!root.bar || typeof root.bar.run !== "function" || files.length === 0)
       return
     var parts = []
     var limit = Math.min(files.length, 10)
     for (var i = 0; i < limit; i++)
-      parts.push(Model.shellQuote(home + "/" + String(files[i])))
+      parts.push(Model.shellQuote(String(files[i])))
     root.bar.run("code " + parts.join(" "))
   }
 

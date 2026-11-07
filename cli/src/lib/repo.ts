@@ -1,3 +1,5 @@
+import { join } from "node:path";
+
 import { isDir } from "./exec";
 import { gitCapture, gitOut } from "./git";
 import { hostnameSafe } from "./util";
@@ -79,7 +81,8 @@ export function collectRepoState(): RepoState {
     const lines = porcelain === "" ? [] : porcelain.split("\n");
 
     state.dirty = lines.length > 0;
-    state.changedFiles = lines.slice(0, 30).map(porcelainPath);
+    // 输出绝对路径:面板"查看改动"直接拿路径调 code,不再拼 HOME
+    state.changedFiles = lines.slice(0, 30).map((line) => join(repo, porcelainPath(line)));
 
     // upstream 未配置(全新本地仓库)时不算错误,计数为 0
     const upstream = gitOut(repo, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"]);

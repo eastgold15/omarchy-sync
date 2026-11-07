@@ -138,7 +138,8 @@ json=$(HOME="$THOME" "$CLI" status --json 2>/dev/null)
 echo "$json" | node -e '
 let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => {
   const st = JSON.parse(s);
-  if (st.dirty !== true || !st.changedFiles.includes("local-change.txt")) process.exit(1);
+  if (st.dirty !== true || !st.changedFiles.some((f) => f.endsWith("/local-change.txt"))) process.exit(1);
+  if (st.changedFiles.some((f) => !f.startsWith("/"))) process.exit(1);
 });'
 if [[ $? -eq 0 ]]; then
   ok "dirty 与 changedFiles 探测"
