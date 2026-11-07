@@ -33,16 +33,8 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
     "GH_PROMPT_DISABLED=1"
   )
   [[ -d $runtime ]] && vars+=("XDG_RUNTIME_DIR=${runtime}")
-  [[ ${OMARSYNC_SKIP_LIVE:-} == 1 ]] && vars+=("OMARSYNC_SKIP_LIVE=1")
   [[ ${OMARSYNC_NOTIFY:-} == 1 ]] && vars+=("OMARSYNC_NOTIFY=1")
-  # 用户的编辑器选择透传给 CLI
-  for editor_var in OMARSYNC_EDITOR VISUAL EDITOR; do
-    editor_value=${!editor_var:-}
-    if [[ -n $editor_value && $editor_value != *$'\n'* ]]; then
-      vars+=("${editor_var}=${editor_value}")
-    fi
-  done
-  # GUI 环境透传:否则 Electron 系编辑器(VS Code)在精简环境里启动会 SIGTRAP
+  # GUI 环境透传:notify-send 与浮动终端依赖 DBUS/显示套接字
   for gui_var in DISPLAY WAYLAND_DISPLAY DBUS_SESSION_BUS_ADDRESS \
     XDG_SESSION_TYPE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP DESKTOP_SESSION \
     HYPRLAND_INSTANCE_SIGNATURE QT_QPA_PLATFORM QT_WAYLAND_DISABLE_WINDOWDECORATION \
