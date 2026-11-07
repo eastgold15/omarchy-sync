@@ -1,45 +1,30 @@
-import { capture, resolveTool, run } from "./exec";
-import { die } from "./log";
-import { assignments } from "./proxy";
+import { capture, resolveTool } from "./exec";
 
-// GitHub CLI 封装(gh 是可选工具,未登录/未安装只影响 GitHub 流程)。
+// GitHub CLI 封装(可选工具:未安装/未登录只影响面板的登录态展示)。
 
 export function ghInstalled(): boolean {
     return resolveTool("gh") !== undefined;
 }
 
-function ghBin(): string {
+export function ghLoggedIn(): boolean {
     const bin = resolveTool("gh");
 
     if (!bin) {
-        die("GitHub CLI 未安装。运行: omarchy pkg add github-cli");
+        return false;
     }
 
-    return bin;
-}
-
-export function gh(args: readonly string[]): boolean {
-    return run(ghBin(), args, assignments());
-}
-
-export function ghCapture(args: readonly string[]): { ok: boolean; out: string } {
-    const result = capture(ghBin(), args, assignments());
-
-    return { ok: result.code === 0, out: result.stdout };
-}
-
-export function ghLoggedIn(): boolean {
-    return ghInstalled() && ghCapture(["auth", "status"]).ok;
+    return capture(bin, ["auth", "status"]).code === 0;
 }
 
 export function githubUser(): string | undefined {
-    if (!ghLoggedIn()) {
+    const bin = resolveTool("gh");
+
+    if (!bin) {
         return undefined;
     }
 
-    const { ok, out } = ghCapture(["api", "user", "--jq", ".login"]);
+    const result = capture(bin, ["api", "user", "--jq", ".login"]);
+    const user = result.stdout.trim();
 
-    const user = out.trim();
-
-    return ok && user !== "" ? user : undefined;
+    return result.code === 0 && user !== "" ? user : undefined;
 }

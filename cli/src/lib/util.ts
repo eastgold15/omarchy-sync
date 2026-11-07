@@ -1,29 +1,7 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import * as readline from "node:readline";
 
-import { paths } from "./paths";
-
-// 小工具:主机名、时间戳、tty 确认、配置写入。
-
-/** 面板会画出这些字段。只留普通记号,丢掉远程元数据里的标记。 */
-export function displayToken(value: unknown): string {
-    if (typeof value !== "string") {
-        return "";
-    }
-
-    const cleaned = value.replaceAll(/[^A-Za-z0-9._-]/g, "");
-
-    return cleaned.length > 64 ? cleaned.slice(0, 64) : cleaned;
-}
-
-/** 只接受常见 ISO-8601 时间,避免把远程字符串直接画进面板。 */
-export function displayTime(value: unknown): string {
-    if (typeof value !== "string") {
-        return "";
-    }
-
-    return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$/.test(value) ? value : "";
-}
+// 小工具:主机名、时间戳、tty 确认。
 
 /** 主机名(只留安全字符) */
 export function hostnameSafe(): string {
@@ -71,20 +49,4 @@ export async function confirm(prompt: string): Promise<boolean> {
             resolve(answer === "y" || answer === "Y");
         });
     });
-}
-
-/** 写配置项(KEY=VALUE,替换同名行,与旧版一致) */
-export function configSet(key: string, value: string): void {
-    let lines: string[] = [];
-
-    try {
-        lines = readFileSync(paths.configFile, "utf8")
-            .split("\n")
-            .filter((line) => line !== "" && !line.startsWith(`${key}=`));
-    } catch {
-        // 文件不存在,从空开始
-    }
-
-    lines.push(`${key}=${value}`);
-    writeFileSync(paths.configFile, `${lines.join("\n")}\n`);
 }

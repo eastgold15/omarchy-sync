@@ -1,7 +1,7 @@
 {
   "name": "omarsync",
-  "version": "2.0.1",
-  "description": "Omarchy 配置点对点同步 CLI(track 模式:推前手动存,拉后先审阅再应用,本机保留决定权)",
+  "version": "3.0.0",
+  "description": "Omarchy 配置同步薄壳:git 负责同步,mise dot 负责部署,Quickshell 面板负责展示",
   "type": "module",
   "bin": {
     "omarsync": "./dist/index.js"
@@ -23,12 +23,7 @@
   },
   "dependencies": {
     "@visulima/cerebro": "^3.1.3",
-    "@visulima/command-line-args": "^2.0.1",
-    "@visulima/error": "^6.1.0",
-    "@visulima/fs": "^6.1.0",
-    "@visulima/pail": "^5.0.1",
-    "@visulima/path": "^4.0.0",
-    "@visulima/tabular": "^4.1.0"
+    "@visulima/pail": "^5.0.1"
   },
   "devDependencies": {
     "@visulima/packem": "^3.0.0",

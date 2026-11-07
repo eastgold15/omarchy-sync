@@ -2,17 +2,17 @@
   "schemaVersion": 1,
   "id": "io.github.lukebest.omarsync",
   "name": "Omarsync",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "author": "lukeliu",
   "license": "MIT",
-  "description": "Sync this Omarchy setup — config, wallpapers, packages, and plugins — to a private GitHub repo.",
+  "description": "Sync dotfiles to a private GitHub repo and deploy them with mise dot (plain git + dotfile_groups).",
   "kinds": ["bar-widget"],
   "entryPoints": {
     "barWidget": "BarWidget.qml"
   },
   "barWidget": {
     "displayName": "Omarsync",
-    "description": "Push and pull this machine's Omarchy setup through GitHub.",
+    "description": "Push and pull dotfiles through GitHub, deployed by mise dot.",
     "category": "System",
     "aliases": ["sync", "backup", "github", "dotfiles"],
     "allowMultiple": false,

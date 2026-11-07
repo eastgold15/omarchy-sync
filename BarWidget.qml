@@ -213,16 +213,8 @@ BarWidget {
     return Model.shellQuote(root.cliPath)
   }
 
-  function installGh() {
-    root.runInTerminal("omarchy pkg add github-cli")
-  }
-
-  function login() {
-    root.runInTerminal(root.quotedCli() + " login")
-  }
-
-  function setup() {
-    root.runInTerminal(root.quotedCli() + " setup")
+  function doctor() {
+    root.runInTerminal(root.quotedCli() + " doctor")
   }
 
   function viewLog() {
@@ -232,19 +224,9 @@ BarWidget {
     root.bar.run("omarchy-launch-editor " + Model.shellQuote(home + "/.local/state/omarsync/last.log"))
   }
 
+  // 新架构:git 快进拉取 + mise dot apply,无需钉 sha、无签名门
   function pullAndApply() {
-    var sha = Model.fullCommit(root.status.remoteCommit)
-    if (sha === "")
-      return
-    root.runInTerminal(root.quotedCli() + " apply --commit " + sha)
-  }
-
-  // 信任远程提交的签名者:公钥从提交自带的 gpgsig 里提取,终端里核对指纹确认即可
-  function trustRemoteSigner() {
-    var sha = Model.fullCommit(root.status.remoteCommit)
-    if (sha === "")
-      return
-    root.runInTerminal(root.quotedCli() + " trust-signer --commit " + sha)
+    root.runInTerminal(root.quotedCli() + " apply")
   }
 
   function openGitHubRepo(repo) {
@@ -255,16 +237,6 @@ BarWidget {
 
   function openRepo() {
     root.openGitHubRepo(root.status.repo)
-  }
-
-  function openDotRepo() {
-    var repo = root.status.dotRepo
-    var branch = String(root.status.dotBranch || "dotfiles")
-    if (!Model.safeRepo(repo) || !/^[A-Za-z0-9._-]+$/.test(branch))
-      return
-    if (!root.bar || typeof root.bar.run !== "function")
-      return
-    root.bar.run("xdg-open " + Model.shellQuote("https://github.com/" + repo + "/tree/" + branch))
   }
 
   function changedFiles() {
@@ -282,13 +254,6 @@ BarWidget {
     for (var i = 0; i < limit; i++)
       parts.push(Model.shellQuote(home + "/" + String(files[i])))
     root.bar.run("code " + parts.join(" "))
-  }
-
-  function editScope() {
-    var home = Quickshell.env("HOME") || ""
-    if (!root.bar || typeof root.bar.run !== "function")
-      return
-    root.bar.run("omarchy-launch-editor " + Model.shellQuote(home + "/.config/omarsync/scope"))
   }
 
   function toggleAutoPush() {

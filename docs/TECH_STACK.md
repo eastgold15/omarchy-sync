@@ -1,79 +1,69 @@
-# omarsync CLI 重构技术栈
+# 技术栈(3.x 纯 mise deploy 架构)
 
-目标：把现有 `src/*.lua`（约 3400 行）+ `bin/omarsync`（bash wrapper）重构为
-TypeScript CLI，全面使用 [Visulima 生态](https://visulima.com/llms.txt)。
-同步内核仍交给 **mise dot**（子进程调用，不重新实现）；QML 面板接口
-（`status --json`、子命令名）保持不变。
+Omarsync 是 TypeScript 写的薄 CLI,外面包一层 bash wrapper。同步内核完全交给普通 git 与 `mise dot`,本项目不重新实现任何同步逻辑。
 
-## 运行时
+## 运行时与打包
 
-| 选项 | 说明 | 结论 |
+| 项 | 选择 | 说明 |
 |---|---|---|
-| Node.js ≥ 22 | 最普遍，Omarchy 机器基本都有；`#!/usr/bin/env node` | **推荐** |
+| 语言 | TypeScript(纯 ESM) | 禁止 CJS 语法 |
+| 运行时 | 系统 Node.js ≥ 22 | 只接受 `/usr/bin/node` 等不可写系统目录里的副本 |
+| 包管理 | bun | 仅开发期需要 |
+| 打包 | `@visulima/packem` | 单文件 `cli/dist/index.js`,依赖全部内联,插件目录不需要 node_modules |
+| 分发 | 随插件仓库真实复制 | Omarchy 插件目录不允许符号链接 |
 
+## 运行期依赖
 
+只保留两个 Visulima 包,旧的 tabular/interactive 等已随功能裁剪移除:
 
+| 包 | 职责 |
+|---|---|
+| `@visulima/cerebro` | CLI 框架:子命令注册、参数解析、help |
+| `@visulima/pail` | 结构化日志(log/warn/die) |
 
-打包：使用 bun 管理依赖,不构建二进制。`@visulima/packem` 打成单个 ESM 文件（`cli/dist/index.js`，已提交到仓库），
-插件安装时复制进插件目录，不依赖用户机器装 npm 包。
+外部命令(全部经可信 PATH 解析为子进程调用):
 
-## 依赖映射（Lua 模块 → visulima 包）
+| 命令 | 用途 |
+|---|---|
+| `git` | 配置仓库的全部同步语义:status/fetch/pull --ff-only/add/commit/push |
+| `mise` | `dot apply` 部署、`dot add --changed` 回收 copy 改动、`dot status` 体检 |
+| `gh` | 登录态与 GitHub 用户信息(面板展示用) |
+| `flock` | push/apply 的进程互斥锁 |
+| `notify-send` | 可选的桌面通知 |
 
-| 现有模块 | 职责 | 替换为 |
-|---|---|---|
-| `main.lua` / `cmds.lua` | 子命令分发、参数解析 | `@visulima/cerebro`（CLI 框架，自带 options/env/logger） |
-| `common.lua` 日志 | log/warn/die、last.log | `@visulima/pail`（日志）+ `@visulima/colorize`（着色） |
-| `common.lua` 文件/路径 | 读写、mkdirp、realpath | `@visulima/fs` + `@visulima/path` |
-| `json.lua` | JSON 编解码 | `@visulima/fs` 的 readJson/writeJson（或原生 JSON） |
-| `exec.lua` | 子进程、可信 PATH 解析 | `node:child_process`（visulima 无对应包）自写薄封装 |
-| `apply.lua` 确认提示 | y/N 交互 | cerebro logger + `node:readline`（按 colorize 示例封装 confirm） |
-| 错误输出 | 堆栈美化 | `@visulima/error` + `@visulima/ono`（致命错误渲染） |
-| 状态/预览表格输出 | status、apply 预览 | `@visulima/tabular` / `@visulima/boxen`（可选，二期） |
-| 长操作反馈 | push/pull 等待 | `@visulima/spinner`（可选，二期） |
-| 日志脱敏 | 路径/令牌入日志 | `@visulima/redact`（可选） |
-
-## 保持不变的部分
-
-- **mise dot**：文件同步、历史、冲突解决全部仍是 `mise` 子进程
-- **git/gh/omarchy 子进程**：可信目录解析逻辑（`/usr/bin` 等）原样移植
-- **QML 面板**：`Panel.qml` / `BarWidget.qml` 只调 CLI，接口不变
-- **安全模型**：签名提交、trusted-keys、plugins-skip、apply 前强制审查
-- `scripts/self-test.sh`：端到端测试不变，只换 CLI 入口路径
-
-
-- 即使这里保持不变 但这mise 要改为  track 模式,  做点对点配置同步，每台电脑推之前手动存，拉之后先审阅再应用，本机保留决定权。”
-
-## 目录结构（草案）
+## 目录结构
 
 ```
-cli/
-  package.json          # @visulima/* 依赖
-  tsconfig.json
-  packem.config.ts
-  src/
-    index.ts            # createCerebro 入口
-    commands/           # init/push/pull/apply/status/login/doctor/...
-    lib/
-      exec.ts           # 可信子进程封装
-      scope.ts          # scope 解析与安全校验
-      mise.ts           # mise dot 封装
-      trust.ts          # 签名/信任
-      plugins.ts        # 插件导出/安装/plugins-skip
-      meta.ts           # 元数据采集
-      apply.ts          # apply 编排 + 审查 diff
-    types.ts
+cli/src/
+  index.ts              # createCerebro 入口,4 个命令:status/push/apply/doctor
+  commands/
+    status.ts           # 聚合 git+mise 状态,落盘 status.json(面板 FileView 监听)
+    push.ts             # adopt --changed → git add → diff 审阅 → commit → push
+    apply.ts            # 脏仓拒绝 → pull --ff-only → mise dot apply
+    doctor.ts           # 依赖与仓库体检,退出码 0/1
+  lib/
+    paths.ts            # 路径常量;OMARSYNC_REPO 可覆盖配置仓库位置
+    repo.ts             # collectRepoState:纯 git 采集(porcelain/rev-list/parseRemote)
+    mise.ts             # mise dot 薄封装,不含业务判断
+    git.ts              # git 子进程封装,统一 -C 仓库与 core.hooksPath=/dev/null
+    gh.ts               # gh 登录态探测
+    exec.ts             # 可信 PATH 下的子进程解析与执行
+    log.ts              # pail 实例与 die
+    util.ts             # hostname/时间/TTY 确认等纯函数
+bin/omarsync            # bash wrapper:环境清洗、shim 自愈、flock、系统 node 检查
+BarWidget.qml           # 状态栏图标与 Process 调用
+Panel.qml               # 弹出面板(薄壳,所有动作映射到 CLI 子命令)
+Model.js                # 状态解析、图标态、中英双语文案
 ```
 
-## 阶段划分
+## 与 2.x 的根本差异
 
-1. **脚手架**：`cli/` 初始化、packem 构建出可运行的空 CLI（status 只读版）
-2. **核心移植**：common/exec/mise/scopemap/trust → status/push/pull 可用
-3. **apply 链路**：meta/packages/plugins/hooks/apply 编排 + 审查 diff
-4. **面板对接**：bin/omarsync 改为调 dist 产物，self-test 全绿
-5. spinner/tabular/boxen 美化
-
-- cli命令描述注释都使用中文
-
-1. 运行时定  Bun
-2. `cli/` 放本仓库
-3. 直接做 tabular/boxen 的输出美化
+| 维度 | 2.x(track 架构) | 3.x(deploy 架构) |
+|---|---|---|
+| 真相源 | mise 私有 history + main 元数据分支 | 一个普通 git 仓库的 main 分支 |
+| 文件部署 | `mise dot track` 原地跟踪 | `dotfile_groups` symlink-each + copy 条目 |
+| 冲突模型 | manifest 整字段三方合并(enrollment conflict 频发) | git 行级合并,冲突语义与普通仓库一致 |
+| 机器差异 | scope/push-ignore 条件排除 | `machines/<hostname>/` 组 + bootstrap 选组 |
+| 安全门 | SSH 签名 + trusted-keys + 钉 sha | 私有仓库 + wrapper 环境清洗,无签名门 |
+| CLI 命令面 | 12 个(setup/login/migrate/trust-key/...) | 4 个(status/push/apply/doctor) |
+| 依赖数量 | 10+ Visulima 包 | 2 个(cerebro/pail) |

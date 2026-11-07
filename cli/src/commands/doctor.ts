@@ -1,58 +1,62 @@
-import { isDir, resolveTool } from "../lib/exec";
-import { ghInstalled, ghLoggedIn, githubUser } from "../lib/gh";
-import { log } from "../lib/log";
+import { resolveTool } from "../lib/exec";
+import { gitOut } from "../lib/git";
 import * as mise from "../lib/mise";
-import { configGet, paths } from "../lib/paths";
-import { readTextFile } from "../lib/log";
+import { paths } from "../lib/paths";
+import { collectRepoState } from "../lib/repo";
 
-// doctor:依赖体检。对应旧版 cmds.lua 的 cmd_doctor。
+// 依赖与仓库体检。纯只读,退出码:0 健康,1 有问题。
+
+interface Check {
+    name: string;
+    ok: boolean;
+    detail: string;
+}
 
 export function executeDoctor(): number {
-    let missing = false;
+    const checks: Check[] = [];
 
-    for (const tool of ["git", "rsync", "node", "mise"]) {
-        if (resolveTool(tool)) {
-            log.info(`ok  ${tool}`);
-        } else {
-            log.warn(`missing ${tool}${tool === "mise" ? "。运行: omarchy pkg add mise" : ""}`);
-            missing = true;
+    for (const tool of ["git", "node", "mise", "gh", "flock"] as const) {
+        const bin = resolveTool(tool);
+
+        checks.push({ name: tool, ok: bin !== undefined, detail: bin ?? "未在可信目录中找到" });
+    }
+
+    const state = collectRepoState();
+
+    checks.push({
+        name: "config repo",
+        ok: state.initialized,
+        detail: state.initialized ? paths.configRepo : "仓库不存在",
+    });
+
+    if (state.initialized) {
+        checks.push({ name: "origin", ok: state.remote !== "", detail: state.remote || "未配置 origin" });
+        checks.push({
+            name: "upstream",
+            ok: (gitOut(paths.configRepo, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"]) ?? "") !== "",
+            detail: state.branch || "(detached)",
+        });
+
+        const miseStatus = mise.dotStatus();
+
+        checks.push({
+            name: "mise trust",
+            ok: miseStatus.ok,
+            detail: miseStatus.ok ? "配置受信任" : miseStatus.stderr.trim() || "mise dot status 失败,试试 mise trust",
+        });
+    }
+
+    let failed = 0;
+
+    for (const check of checks) {
+        const mark = check.ok ? "✓" : "✗";
+
+        process.stdout.write(`${mark} ${check.name.padEnd(12)} ${check.detail}\n`);
+
+        if (!check.ok) {
+            failed += 1;
         }
     }
 
-    if (ghInstalled()) {
-        if (ghLoggedIn()) {
-            log.info(`ok  gh (${githubUser() ?? "?"})`);
-        } else {
-            log.warn("gh 已安装但未登录。运行: omarsync login");
-        }
-    } else {
-        log.warn("missing gh。运行: omarchy pkg add github-cli");
-        missing = true;
-    }
-
-    if (mise.available()) {
-        if (mise.featureOk()) {
-            log.info("ok  mise dot");
-        } else {
-            log.warn("mise dot 不工作;检查 `mise dot status`");
-            missing = true;
-        }
-
-        if (mise.originConnected()) {
-            log.info("ok  mise dot origin 已连接");
-        } else {
-            log.warn("mise dot origin 未连接。运行: omarsync init");
-        }
-    }
-
-    if (isDir(`${paths.mirrorDir}/.git`)) {
-        const repo = configGet("REPO", readTextFile) ?? "";
-        const branch = configGet("BRANCH", readTextFile) ?? "main";
-
-        log.info(`ok  镜像 ${paths.mirrorDir}(${repo} ${branch})`);
-    } else {
-        log.warn("镜像未初始化。运行: omarsync init");
-    }
-
-    return missing ? 1 : 0;
+    return failed === 0 ? 0 : 1;
 }

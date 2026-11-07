@@ -1,7 +1,7 @@
 #!/usr/bin/bash
-# Sync an Omarchy setup to a private GitHub repository.
-# 薄 wrapper:清洗环境(安全边界)→ 按需持锁 → 以 /usr/bin/node 启动 cli/dist/index.js。
+# omarsync 薄 wrapper:清洗环境(安全边界)→ 按需持锁 → 以系统 node 启动 cli/dist/index.js。
 # 业务逻辑全部在 cli/src/*.ts,打包成单个 ESM 文件。
+# 新架构:同步走 git,部署走 mise dot,本 wrapper 只负责干净的进程环境。
 
 set -euo pipefail
 
@@ -17,19 +17,7 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
   user=$(/usr/bin/id -un)
   uid=$(/usr/bin/id -u)
   runtime="/run/user/${uid}"
-  origin=${OMARSYNC_ORIGIN:-}
-  dot_origin=${OMARSYNC_DOT_ORIGIN:-}
-  keep_origin=""
-  keep_dot_origin=""
-  if [[ $origin == /* && $origin != *..* && $origin != *[[:space:]]* ]]; then
-    keep_origin=$origin
-  fi
-  if [[ $dot_origin == /* && $dot_origin != *..* && $dot_origin != *[[:space:]]* ]]; then
-    keep_dot_origin=$dot_origin
-  fi
   root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-  # shellcheck disable=SC1091
-  source "$root/lib/proxy.sh"
   vars=(
     "HOME=${home}"
     "USER=${user}"
@@ -47,7 +35,7 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
   [[ -d $runtime ]] && vars+=("XDG_RUNTIME_DIR=${runtime}")
   [[ ${OMARSYNC_SKIP_LIVE:-} == 1 ]] && vars+=("OMARSYNC_SKIP_LIVE=1")
   [[ ${OMARSYNC_NOTIFY:-} == 1 ]] && vars+=("OMARSYNC_NOTIFY=1")
-  # 用户的编辑器选择透传给 CLI(push/apply 审阅时打开 diff)
+  # 用户的编辑器选择透传给 CLI
   for editor_var in OMARSYNC_EDITOR VISUAL EDITOR; do
     editor_value=${!editor_var:-}
     if [[ -n $editor_value && $editor_value != *$'\n'* ]]; then
@@ -64,13 +52,14 @@ if [[ ${OMARSYNC_SANITIZED:-} != 1 ]]; then
       vars+=("${gui_var}=${gui_value}")
     fi
   done
-  [[ -n $keep_origin ]] && vars+=("OMARSYNC_ORIGIN=${keep_origin}")
-  [[ -n $keep_dot_origin ]] && vars+=("OMARSYNC_DOT_ORIGIN=${keep_dot_origin}")
-  assignment=""
-  while IFS= read -r assignment; do
-    [[ -n $assignment ]] || continue
-    vars+=("$assignment")
-  done < <(proxy_assignments)
+  # 代理变量透传(面板的 trustedEnvironment 已清洗过一次)
+  for proxy_var in http_proxy https_proxy all_proxy no_proxy \
+    HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY; do
+    proxy_value=${!proxy_var:-}
+    if [[ -n $proxy_value && $proxy_value != *$'\n'* ]]; then
+      vars+=("${proxy_var}=${proxy_value}")
+    fi
+  done
   exec /usr/bin/env -i "${vars[@]}" /usr/bin/bash "$0" "$@"
 fi
 
@@ -87,7 +76,6 @@ ROOT=${OMARSYNC_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 # 自愈 shim:Omarchy 插件系统不会把插件的 bin/ 放进 PATH,
 # 但面板每次状态扫描都会跑到这里——趁机把 ~/.local/bin/omarsync 补上。
 # 只在自己创建的文件上更新,绝不覆盖用户已有的同名文件。
-# 接受任意 Omarchy 插件目录的旧 shim,这样插件改名或跨机器同步后也能自愈。
 shim="${HOME}/.local/bin/omarsync"
 plugin_root=${ROOT#"$HOME"/.config/omarchy/plugins/}
 shim_body="#!/bin/sh
@@ -116,9 +104,9 @@ done
   exit 1
 }
 
-# 写操作命令在执行前持锁(整个进程生命周期);status 等只读命令不取锁
+# 写操作命令在执行前持锁(整个进程生命周期);status/doctor 等只读命令不取锁
 case "${1:-status}" in
-  push|pull|apply|sync|migrate|repair-remote)
+  push|apply)
     state="${HOME}/.local/state/omarsync"
     /usr/bin/mkdir -p "$state"
     exec 9>"${state}/omarsync.lock"

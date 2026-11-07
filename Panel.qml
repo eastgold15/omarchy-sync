@@ -17,9 +17,8 @@ Panel {
     var sha = String(sync.remoteCommit || "")
     return /^[0-9a-f]{40}$/.test(sha) ? sha : ""
   }
-  readonly property bool firstApply: sync.firstApply === true
-  readonly property bool firstTrust: sync.remoteSignature === "untrusted" && sync.hasTrustedKeys !== true
-  readonly property bool canApply: ready && trustedCommit !== "" && (sync.remoteSigned === true || firstTrust || firstApply)
+  // 新架构无签名门:远程是私有仓库的普通 git 分支,upstream 有新提交即可 apply
+  readonly property bool canApply: ready && trustedCommit !== ""
   readonly property bool working: hostWidget ? hostWidget.busy === true : false
   readonly property color dim: Qt.darker(root.barForeground, 1.35)
   readonly property string fontFamily: root.bar ? root.bar.fontFamily : Style.font.family
@@ -74,18 +73,6 @@ Panel {
       root.hostWidget[name]()
   }
 
-  function primaryLabel() {
-    if (!root.hostWidget || root.hostWidget.statusReady !== true)
-      return ""
-    if (root.sync.ghInstalled !== true || root.sync.loggedIn !== true || root.sync.initialized !== true)
-      return "setup"
-    return ""
-  }
-
-  function runPrimary() {
-    root.callHost("setup")
-  }
-
   function lastPushTime() {
     var push = sync.lastPush || ({})
     return push.time ? String(push.time) : ""
@@ -120,14 +107,7 @@ Panel {
   }
 
   function applyTooltip() {
-    var tip = "omarsync apply --commit " + root.trustedCommit.substring(0, 7)
-    if (root.sync.remoteSigned === true)
-      tip += "\n" + root.tr("signedOk")
-    else if (root.sync.remoteSignature === "untrusted")
-      tip += "\n" + root.tr("untrustedKey")
-    else
-      tip += "\n" + root.tr("unsigned")
-    return tip
+    return "omarsync apply\n" + root.tr("applyTip")
   }
 
   function autoPushDescription() {
@@ -188,19 +168,7 @@ Panel {
     var sha = root.trustedCommit
     if (sha === "")
       return ""
-    var shortSha = sha.substring(0, 7)
-    var fp = root.sync.signerFingerprint ? (" " + root.sync.signerFingerprint) : ""
-    if (root.sync.remoteSigned === true)
-      return root.tr("signed", shortSha) + fp
-    if (root.sync.firstApply === true && root.sync.remoteSignature === "untrusted")
-      return root.tr("signed", shortSha) + fp
-    if (root.sync.firstApply === true)
-      return root.tr("firstApply", shortSha)
-    if (root.sync.remoteSignature === "untrusted" && root.sync.hasTrustedKeys === true)
-      return root.tr("otherKey", shortSha) + fp
-    if (root.sync.remoteSignature === "untrusted")
-      return root.tr("signed", shortSha) + fp
-    return root.tr("unsignedCommit", shortSha)
+    return root.tr("remoteCommit", sha.substring(0, 7))
   }
 
   property bool settingsOpen: false
@@ -362,14 +330,11 @@ Panel {
         }
 
         ActionRow {
-          name: root.tr("setup")
-          desc: root.sync.miseConnected === true
-                ? root.tr("setupConnected")
-                : root.tr("setupNeeded")
-          tooltip: "omarsync setup"
+          name: root.tr("doctor")
+          desc: root.tr("doctorDesc")
+          tooltip: "omarsync doctor"
           rowVisible: root.hostWidget && root.hostWidget.statusReady === true
-          recommended: root.primaryLabel() !== "" || root.sync.miseConnected !== true
-          onTriggered: root.runPrimary()
+          onTriggered: root.callHost("doctor")
         }
 
         ActionRow {
@@ -383,25 +348,10 @@ Panel {
         }
 
         ActionRow {
-          name: root.tr("trustSigner")
-          desc: root.tr("trustSignerDesc", root.sync.signerFingerprint)
-          tooltip: "omarsync trust-signer --commit " + root.trustedCommit.substring(0, 7)
-            + "\n" + root.tr("trustSignerTip")
-          // 已有信任密钥却遇到陌生签名者时,apply 会被信任链挡住;先显式信任再 apply。
-          // 没有任何信任密钥的新机器走 firstTrust 的 TOFU,不重复显示入口。
-          rowVisible: root.ready && root.trustedCommit !== ""
-            && root.sync.remoteSignature === "untrusted"
-            && root.sync.hasTrustedKeys === true
-          rowEnabled: !root.working
-          recommended: true
-          onTriggered: root.callHost("trustRemoteSigner")
-        }
-
-        ActionRow {
-          name: root.working ? root.tr("applyRunning") : ((root.firstApply && root.sync.remoteSigned !== true) ? "apply this commit" : "apply")
+          name: root.working ? root.tr("applyRunning") : "apply"
           desc: root.tr("applyDesc")
           tooltip: root.applyTooltip()
-          rowVisible: root.canApply && ((root.sync.behind || 0) > 0 || root.firstApply || root.sync.remoteSigned !== true)
+          rowVisible: root.canApply && (root.sync.behind || 0) > 0
           rowEnabled: !root.working
           recommended: true
           onTriggered: root.callHost("pullAndApply")
@@ -423,22 +373,6 @@ Panel {
           tooltip: root.sync.repo ? ("github.com/" + root.sync.repo) : ""
           rowEnabled: root.sync.repo !== "" && root.sync.repo !== undefined
           onTriggered: root.callHost("openRepo")
-        }
-
-        ActionRow {
-          name: root.tr("openFiles")
-          desc: root.tr("openFilesDesc")
-          tooltip: root.sync.dotRepo ? ("github.com/" + root.sync.dotRepo + "/tree/dotfiles") : ""
-          rowEnabled: root.sync.dotRepo !== "" && root.sync.dotRepo !== undefined
-          onTriggered: root.callHost("openDotRepo")
-        }
-
-        ActionRow {
-          name: root.tr("editScope")
-          desc: root.tr("editScopeDesc")
-          tooltip: "~/.config/omarsync/scope"
-          rowEnabled: root.sync.initialized === true
-          onTriggered: root.callHost("editScope")
         }
 
         ActionRow {

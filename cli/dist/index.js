@@ -1,21 +1,19 @@
-#!/usr/bin/env node
+import { Ud, ru, Ql, QY, GY, xY, PY, KY, AY, OY, EY, qY, UY, ik, ek, ak, gk, tk, hk, lk, yk, bk, wk, mk, Ck, Hk, Qk, Gk, xk, Pk, Kk, Ak, Ok, Ek, qk, Uk, iL, eL, aL, gL, tL, hL, lL, yL, bL, wL, mL, YL, LL, SL, CL, HL, TL, QL, GL, xL, PL, KL, AL, OL, EL, qL, UL, iZ, eZ, aZ, gZ, tZ, hZ, lZ, yZ, bZ, wZ, mZ, YZ, LZ, SZ, CZ, HZ, TZ, QZ, GZ, xZ, PZ, KZ, AZ, OZ, EZ, qZ, UZ, i1, e1, a1, g1, t1, h1, l1, y1, b1, w1, m1, Y1, L1, S1, C1, H1, T1, Q1, G1, x1, P1, K1, A1, O1, E1, q1, U1, iS, eS, aS, gS, tS, hS, lS, yS, bS, wS, mS, YS, LS, SS, CS, HS, TS, QS, GS, xS, PS, KS, AS, OS, ES, qS, US, iJ, eJ, aJ, gJ, tJ, hJ, lJ, yJ, bJ, wJ, mJ, YJ, LJ, SJ, CJ, HJ, TJ, QJ, GJ, xJ, PJ, KJ, AJ, OJ, EJ, qJ, UJ, Jn } from "./index.parts.js";
 import { createRequire } from 'node:module';
-import { a as a$2, u, b as b$2, h as h$1, i as i$1, c as c$1, g, l, d, o, A as A$1, r as r$1, e as c$2, f as g$1, j as b$3, S as S$1, R as R$4, z as z$2, k as h$2, y, m, B as B$3, F as F$1, n as a$3, s as s$1, E as E$2, x as x$1, p as l$1, q as d$1, L as L$2, O as O$1, H as H$1, K as K$4, T, G as G$2, t as f, M as M$1, w, v as k$1, C as j$2, D as t$1 } from './packem_shared/index.server-iAND-ZxX.js';
-import { spawnSync, spawn } from 'node:child_process';
-import { statSync, accessSync, constants, mkdtempSync, rmSync, existsSync, lstatSync, realpathSync, readFileSync, mkdirSync, appendFileSync, writeFileSync, chmodSync, unlinkSync, copyFileSync, readdirSync, symlinkSync, readlinkSync, cpSync } from 'node:fs';
-import { tmpdir, homedir } from 'node:os';
-import { join, dirname, matchesGlob } from 'node:path';
-import { y as yC, W as W$3 } from './packem_shared/interact-Bvij7loV.js';
+import { a as a$3, u as u$1, b as b$3, h as h$2, i as i$1, c as c$1, g as g$1, l as l$1, d as d$2, o, A as A$3, r as r$1, e as c$2, f as g$2, j as b$4, S as S$3, R as R$5, z as z$3, k as h$3, y, m as m$2, B as B$5, F as F$3, n as a$4, s as s$2, E as E$4, x as x$3, p as l$2, q as d$3, L as L$3, O as O$2, H as H$3, K as K$5, T as T$2, G as G$4, t as f$1, M as M$3, w as w$2, v as k$3, C as j$3, D as t$1 } from './packem_shared/index.server-iAND-ZxX.js';
+import { spawnSync } from 'node:child_process';
+import { statSync, accessSync, constants, mkdirSync, appendFileSync, readFileSync, writeFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { homedir } from 'node:os';
 import * as readline from 'node:readline';
-import { isDeepStrictEqual } from 'node:util';
 
-const s = 16;
+const s$1 = 16;
 const t = 32;
 const n$2 = 64;
-const E$1 = 128;
+const E$3 = 128;
 const c = "positionals";
 
-class h extends Error {
+let h$1 = class h extends Error {
   loc;
   title;
   hint;
@@ -35,9 +33,9 @@ class h extends Error {
   setHint(t) {
     this.hint = t;
   }
-}
+};
 
-let n$1 = class n extends h {
+let n$1 = class n extends h$1 {
   code;
   context;
   constructor(r, e, o) {
@@ -70,13 +68,13 @@ class i extends n$1 {
   }
 }
 
-const N$2 = { COMMAND_NOT_FOUND: "COMMAND_NOT_FOUND", COMMAND_VALIDATION_ERROR: "COMMAND_VALIDATION_ERROR", CONFLICTING_OPTIONS: "CONFLICTING_OPTIONS", INVALID_ARGUMENT: "INVALID_ARGUMENT", INVALID_CHOICE: "INVALID_CHOICE", INVALID_INPUT: "INVALID_INPUT", MISSING_ARGUMENT: "MISSING_ARGUMENT", SURPLUS_ARGUMENT: "SURPLUS_ARGUMENT", UNKNOWN_OPTION: "UNKNOWN_OPTION" };
-const U$3 = /* @__PURE__ */ new Set([N$2.COMMAND_NOT_FOUND, N$2.COMMAND_VALIDATION_ERROR, N$2.CONFLICTING_OPTIONS, N$2.INVALID_ARGUMENT, N$2.INVALID_CHOICE, N$2.INVALID_INPUT, N$2.MISSING_ARGUMENT, N$2.SURPLUS_ARGUMENT, N$2.UNKNOWN_OPTION]);
+const N$4 = { COMMAND_NOT_FOUND: "COMMAND_NOT_FOUND", COMMAND_VALIDATION_ERROR: "COMMAND_VALIDATION_ERROR", CONFLICTING_OPTIONS: "CONFLICTING_OPTIONS", INVALID_ARGUMENT: "INVALID_ARGUMENT", INVALID_CHOICE: "INVALID_CHOICE", INVALID_INPUT: "INVALID_INPUT", MISSING_ARGUMENT: "MISSING_ARGUMENT", SURPLUS_ARGUMENT: "SURPLUS_ARGUMENT", UNKNOWN_OPTION: "UNKNOWN_OPTION" };
+const U$5 = /* @__PURE__ */ new Set([N$4.COMMAND_NOT_FOUND, N$4.COMMAND_VALIDATION_ERROR, N$4.CONFLICTING_OPTIONS, N$4.INVALID_ARGUMENT, N$4.INVALID_CHOICE, N$4.INVALID_INPUT, N$4.MISSING_ARGUMENT, N$4.SURPLUS_ARGUMENT, N$4.UNKNOWN_OPTION]);
 const r = (O) => {
   const I = O?.code;
-  return typeof I == "string" && U$3.has(I);
+  return typeof I == "string" && U$5.has(I);
 };
-const R$3 = (O) => {
+const R$4 = (O) => {
   if (!r(O)) return;
   const { hint: I, message: _ } = O, A = (Array.isArray(I) ? I : [I]).filter((T) => typeof T == "string" && T.length > 0);
   return A.length > 0 ? [_, ...A].join(`
@@ -209,46 +207,46 @@ const distance = (a, b) => {
   return myers_x(a, b);
 };
 
-let ht$2;
-const ut$2 = (t) => (ht$2 ??= createRequire(import.meta.url))(t);
-const Z$1 = typeof globalThis < "u" && typeof globalThis.process < "u" ? globalThis.process : process;
-const pt$2 = (t) => {
-  if (typeof Z$1 < "u" && Z$1.versions && Z$1.versions.node) {
-    const [e, n] = Z$1.versions.node.split(".").map(Number);
-    if (e > 22 || e === 22 && n >= 3 || e === 20 && n >= 16) return Z$1.getBuiltinModule(t);
+let ht$3;
+const ut$3 = (t) => (ht$3 ??= createRequire(import.meta.url))(t);
+const Z$3 = typeof globalThis < "u" && typeof globalThis.process < "u" ? globalThis.process : process;
+const pt$3 = (t) => {
+  if (typeof Z$3 < "u" && Z$3.versions && Z$3.versions.node) {
+    const [e, n] = Z$3.versions.node.split(".").map(Number);
+    if (e > 22 || e === 22 && n >= 3 || e === 20 && n >= 16) return Z$3.getBuiltinModule(t);
   }
-  return ut$2(t);
+  return ut$3(t);
 };
-const { writeFile: ft$2, stat: dt$2, rm: gt$2, readFile: Ce$1, readdir: mt$2, mkdir: wt$2, access: yt$1 } = pt$2("node:fs/promises");
-const te$3 = [{ alias: "v", description: "Turn on verbose output", group: "global", name: "verbose", type: Boolean }, { description: "Turn on debugging output", group: "global", name: "debug", type: Boolean }, { alias: "h", description: "Print out helpful usage information", group: "global", name: "help", type: Boolean }, { alias: "q", description: "Silence output", group: "global", name: "quiet", type: Boolean }, { alias: "V", description: "Print version info", group: "global", name: "version", type: Boolean }, { description: "Turn off colored output", group: "global", name: "no-color", type: Boolean }, { description: "Force colored output", group: "global", name: "color", type: Boolean }];
-let B$2 = class B extends n$1 {
+const { writeFile: ft$3, stat: dt$3, rm: gt$3, readFile: Ce$2, readdir: mt$3, mkdir: wt$3, access: yt$2 } = pt$3("node:fs/promises");
+const te$4 = [{ alias: "v", description: "Turn on verbose output", group: "global", name: "verbose", type: Boolean }, { description: "Turn on debugging output", group: "global", name: "debug", type: Boolean }, { alias: "h", description: "Print out helpful usage information", group: "global", name: "help", type: Boolean }, { alias: "q", description: "Silence output", group: "global", name: "quiet", type: Boolean }, { alias: "V", description: "Print version info", group: "global", name: "version", type: Boolean }, { description: "Turn off colored output", group: "global", name: "no-color", type: Boolean }, { description: "Force colored output", group: "global", name: "color", type: Boolean }];
+let B$4 = class B extends n$1 {
   commandName;
   constructor(e, n = []) {
     const s = `Command "${e}" not found${n.length > 0 ? `. Did you mean: ${n.join(", ")}?` : ""}`;
     super(s, "COMMAND_NOT_FOUND", { commandName: e, suggestions: n }), this.name = "CommandNotFoundError", this.commandName = e, n.length > 0 && (this.hint = `Try one of these commands: ${n.join(", ")}`);
   }
 };
-let Ge$2 = class Ge extends n$1 {
+let Ge$3 = class Ge extends n$1 {
   option1;
   option2;
   constructor(e, n) {
     super(`Options "${e}" and "${n}" cannot be used together`, "CONFLICTING_OPTIONS", { option1: e, option2: n }), this.name = "ConflictingOptionsError", this.option1 = e, this.option2 = n, this.hint = `Remove either --${e} or --${n}`;
   }
 };
-let Zt$1 = class Zt extends n$1 {
+let Zt$2 = class Zt extends n$1 {
   unknownOptions;
   constructor(e, n) {
     const s = e.join(", "), i = `Found unknown ${e.length === 1 ? "option" : "options"}: ${s}`;
     super(i, "UNKNOWN_OPTION", { suggestions: n, unknownOptions: e }), this.name = "UnknownOptionError", this.unknownOptions = e, n && n.length > 0 && (this.hint = `Did you mean: ${n.join(", ")}?`);
   }
 };
-let Qt$1 = class Qt extends n$1 {
+let Qt$2 = class Qt extends n$1 {
   pluginName;
   constructor(e, n, s) {
     super(`Plugin "${e}" error: ${n}`, "PLUGIN_ERROR", { originalError: s, pluginName: e }), this.name = "PluginError", this.pluginName = e, s && (this.cause = s);
   }
 };
-let en$1 = class en {
+let en$2 = class en {
   logger;
   plugins = /* @__PURE__ */ new Map();
   initialized = false;
@@ -262,7 +260,7 @@ let en$1 = class en {
   register(e) {
     if (this.initialized) throw new Error(`Cannot register plugin "${e.name}" after initialization`);
     if (this.plugins.has(e.name)) throw new Error(`Plugin "${e.name}" is already registered`);
-    a$2().CEREBRO_OUTPUT_LEVEL === String(E$1) && this.logger.debug(`registering plugin: ${e.name}`), this.plugins.set(e.name, e), this.cachedDependencyOrder = void 0;
+    a$3().CEREBRO_OUTPUT_LEVEL === String(E$3) && this.logger.debug(`registering plugin: ${e.name}`), this.plugins.set(e.name, e), this.cachedDependencyOrder = void 0;
   }
   async init(e) {
     if (this.initialized) throw new Error("PluginManager already initialized");
@@ -278,7 +276,7 @@ let en$1 = class en {
       try {
         await s.init(e);
       } catch (i) {
-        const o = new Qt$1(s.name, `Failed to initialize: ${i instanceof Error ? i.message : String(i)}`, i instanceof Error ? i : void 0);
+        const o = new Qt$2(s.name, `Failed to initialize: ${i instanceof Error ? i.message : String(i)}`, i instanceof Error ? i : void 0);
         throw this.logger.error(o.message), o;
       }
     }
@@ -331,79 +329,79 @@ let en$1 = class en {
     }
   }
 };
-const Q$2 = (t) => t.type?.name === "Boolean";
-const tn$1 = (t) => {
+const Q$3 = (t) => t.type?.name === "Boolean";
+const tn$2 = (t) => {
   let e = t.type ? t.type.name.toLowerCase() : "string";
   const n = t.multiple ?? t.lazyMultiple ? "[]" : "";
   return e && (e = e === "boolean" ? "" : `{underline ${e}${n}}`), e;
 };
-const Ie$1 = (t) => (Q$2(t) || (t.typeLabel = t.typeLabel ?? tn$1(t), t.defaultOption && (t.typeLabel = `${t.typeLabel} (D)`), t.required && (t.typeLabel = `${t.typeLabel} (R)`)), t);
-const nn$1 = new RegExp(/^-([^\d-])$/);
-const sn$1 = new RegExp(/^--(\S+)/);
-const on$1 = new RegExp(/^-([^\d-]{2,})$/);
-const rn$1 = (t) => nn$1.test(t) || sn$1.test(t) || on$1.test(t);
-const an$1 = (t, e) => {
-  const n = e[0] && rn$1(e[0]) || e.length === 0 ? null : e.shift() ?? null;
+const Ie$2 = (t) => (Q$3(t) || (t.typeLabel = t.typeLabel ?? tn$2(t), t.defaultOption && (t.typeLabel = `${t.typeLabel} (D)`), t.required && (t.typeLabel = `${t.typeLabel} (R)`)), t);
+const nn$2 = new RegExp(/^-([^\d-])$/);
+const sn$2 = new RegExp(/^--(\S+)/);
+const on$2 = new RegExp(/^-([^\d-]{2,})$/);
+const rn$2 = (t) => nn$2.test(t) || sn$2.test(t) || on$2.test(t);
+const an$2 = (t, e) => {
+  const n = e[0] && rn$2(e[0]) || e.length === 0 ? null : e.shift() ?? null;
   if (!t.includes(n)) {
     const s = new Error(`Command not recognised: ${String(n)}`);
     throw s.command = n, s.name = "INVALID_COMMAND", s;
   }
   return { argv: e, command: n };
 };
-let ln$1 = class Ke extends h {
+let ln$2 = class Ke extends h$1 {
   optionName;
   value;
   constructor(e, n, s) {
     super({ hint: `Pass a valid ${s} value for '${e}'.`, message: `Invalid ${s} value '${n}' for option '${e}'`, name: "INVALID_VALUE", title: "Invalid Value" }), this.optionName = e, this.value = n, Object.setPrototypeOf(this, Ke.prototype);
   }
 };
-let cn$1 = class He extends h {
+let cn$2 = class He extends h$1 {
   optionName;
   constructor(e) {
     super({ cause: void 0, hint: `Remove the duplicate option '${e}' from your command line arguments.`, location: void 0, message: `Option '${e}' is already set`, name: "ALREADY_SET", stack: void 0, title: "Option Already Set" }), this.optionName = e, Object.setPrototypeOf(this, He.prototype);
   }
 };
-let Pe = class Xe extends h {
+let Pe$1 = class Xe extends h$1 {
   optionName;
   constructor(e) {
     super({ cause: void 0, hint: `Check your option definitions or remove the unknown option '${e}' from your command line arguments.`, location: void 0, message: `Unknown option: --${e}`, name: "UNKNOWN_OPTION", stack: void 0, title: "Unknown Option" }), this.optionName = `--${e}`, Object.setPrototypeOf(this, Xe.prototype);
   }
 };
-let Ae$1 = class Ae extends h {
+let Ae$2 = class Ae extends h$1 {
   value;
   constructor(e) {
     super({ hint: "Use a defined option or add a defaultOption to capture this value.", message: `Unknown value: ${e}`, name: "UNKNOWN_VALUE", title: "Unknown Value" }), this.value = e, Object.setPrototypeOf(this, Ae.prototype);
   }
 };
-let L$1 = class Ye extends h {
+let L$2 = class Ye extends h$1 {
   constructor(e, n) {
     super({ cause: void 0, hint: n, location: void 0, message: e, name: "INVALID_DEFINITIONS", stack: void 0, title: "Invalid Option Definition" }), Object.setPrototypeOf(this, Ye.prototype);
   }
 };
-const G$1 = (t) => t === Boolean || typeof t == "function" && t.name === "Boolean";
-const ye$1 = (t) => t === Number || typeof t == "function" && t.name === "Number";
-const $e$2 = (t) => t === String || typeof t == "function" && t.name === "String";
-const Le$2 = (t, e, n) => {
+const G$3 = (t) => t === Boolean || typeof t == "function" && t.name === "Boolean";
+const ye$2 = (t) => t === Number || typeof t == "function" && t.name === "Number";
+const $e$3 = (t) => t === String || typeof t == "function" && t.name === "String";
+const Le$3 = (t, e, n) => {
   const s = Number(t);
-  if (e && Number.isNaN(s) && String(t).trim().toLowerCase() !== "nan") throw new ln$1(n ?? "", String(t), "Number");
+  if (e && Number.isNaN(s) && String(t).trim().toLowerCase() !== "nan") throw new ln$2(n ?? "", String(t), "Number");
   return s;
 };
-const hn$1 = (t, e, n = {}) => {
+const hn$2 = (t, e, n = {}) => {
   const { optionName: s, strictTypes: i } = n;
-  return Array.isArray(t) ? G$1(e) ? t.map(Boolean) : ye$1(e) ? t.map((o) => Le$2(o, i, s)) : $e$2(e) ? t.map(String) : t.map((o) => e(String(o))) : t === null ? null : G$1(e) ? !!t : ye$1(e) ? Le$2(t, i, s) : $e$2(e) ? typeof t == "string" ? t : String(t) : e(typeof t == "string" ? t : String(t));
+  return Array.isArray(t) ? G$3(e) ? t.map(Boolean) : ye$2(e) ? t.map((o) => Le$3(o, i, s)) : $e$3(e) ? t.map(String) : t.map((o) => e(String(o))) : t === null ? null : G$3(e) ? !!t : ye$2(e) ? Le$3(t, i, s) : $e$3(e) ? typeof t == "string" ? t : String(t) : e(typeof t == "string" ? t : String(t));
 };
-const x = (t, e, n, ...s) => {
+const x$2 = (t, e, n, ...s) => {
   t && console.debug(`[command-line-args:${n}] ${e}`, ...s);
 };
-const un$1 = /-([a-z])/g;
-const pn$1 = /^\d+$/;
-const fn$1 = (t) => t.codePointAt(0) === 95;
-const Me$2 = (t, e) => Array.isArray(t) ? [...t, ...e] : [t, ...e];
-const Ue$2 = (t) => t === "__proto__" || t === "constructor" || t === "prototype";
-const he$2 = (t, e, n, s = false) => {
+const un$2 = /-([a-z])/g;
+const pn$2 = /^\d+$/;
+const fn$2 = (t) => t.codePointAt(0) === 95;
+const Me$3 = (t, e) => Array.isArray(t) ? [...t, ...e] : [t, ...e];
+const Ue$3 = (t) => t === "__proto__" || t === "constructor" || t === "prototype";
+const he$3 = (t, e, n, s = false) => {
   t[e] === void 0 ? t[e] = s ? [n] : n : s && Array.isArray(t[e]) ? t[e].push(n) : t[e] = [t[e], n];
 };
-const Se$2 = (t, e, n, s, i) => {
+const Se$3 = (t, e, n, s, i) => {
   let o = e.get(t) ?? n.get(t);
   if (!o && s) {
     const l = t.toLowerCase();
@@ -411,17 +409,17 @@ const Se$2 = (t, e, n, s, i) => {
   }
   return o;
 };
-const dn$1 = (t, e, n, s) => {
+const dn$2 = (t, e, n, s) => {
   const i = n.debug ?? false;
-  x(i, "resolveArgs called with options:", "resolver", { partial: n.partial, stopAtFirstUnknown: n.stopAtFirstUnknown }), x(i, "Starting argument resolution", "resolver"), x(i, "Tokens:", "resolver", t), x(i, "Definitions:", "resolver", e), x(i, "Processing tokens...", "resolver");
+  x$2(i, "resolveArgs called with options:", "resolver", { partial: n.partial, stopAtFirstUnknown: n.stopAtFirstUnknown }), x$2(i, "Starting argument resolution", "resolver"), x$2(i, "Tokens:", "resolver", t), x$2(i, "Definitions:", "resolver", e), x$2(i, "Processing tokens...", "resolver");
   const o = /* @__PURE__ */ new Map(), l = /* @__PURE__ */ new Map(), a = n.caseInsensitive ? /* @__PURE__ */ new Map() : void 0, u = n.caseInsensitive ? /* @__PURE__ */ new Map() : void 0, r = n.camelCase ? /* @__PURE__ */ new Map() : void 0, c = n.camelCase ? /* @__PURE__ */ new Map() : void 0;
   for (const f of e) if (o.set(f.name, f), f.alias && l.set(f.alias, f), n.caseInsensitive && a && (a.set(f.name.toLowerCase(), f), f.alias && u && u.set(f.alias.toLowerCase(), f)), n.camelCase && r && c) {
-    const w = f.name.replaceAll(un$1, (v, I) => I.toUpperCase());
+    const w = f.name.replaceAll(un$2, (v, I) => I.toUpperCase());
     r.set(f.name, w), c.set(w, f.name);
   }
   const p = /* @__PURE__ */ Object.create(null), h = /* @__PURE__ */ Object.create(null), m = [], g = [], y = /* @__PURE__ */ new Set();
   let A = false;
-  const d = e.find((f) => f.defaultOption), C = e.some((f) => f.group), O = e.find((f) => ye$1(f.type));
+  const d = e.find((f) => f.defaultOption), C = e.some((f) => f.group), O = e.find((f) => ye$2(f.type));
   for (let f = 0; f < t.length; f++) {
     const w = t[f];
     if (w.kind === "option-terminator") {
@@ -429,15 +427,15 @@ const dn$1 = (t, e, n, s) => {
       break;
     }
     if (w.kind === "option" && w.name) {
-      let v = Se$2(w.name, o, l, a, u);
-      !v && w.value === void 0 && O && pn$1.test(w.name) && (v = O, w.value = w.name, w.name = O.name);
+      let v = Se$3(w.name, o, l, a, u);
+      !v && w.value === void 0 && O && pn$2.test(w.name) && (v = O, w.value = w.name, w.name = O.name);
       let I = false;
       if (!v && n.negation && w.value === void 0 && w.name.startsWith("no-")) {
-        const _ = w.name.slice(3), U = Se$2(_, o, l, a, u);
-        U?.type && G$1(U.type) && (v = U, I = true);
+        const _ = w.name.slice(3), U = Se$3(_, o, l, a, u);
+        U?.type && G$3(U.type) && (v = U, I = true);
       }
       const N = v ? v.name : w.name, P = v?.multiple, M = v?.lazyMultiple;
-      if (Object.hasOwn(h, N) && h[N] !== void 0 && !P && !M && !n.partial) throw new cn$1(N);
+      if (Object.hasOwn(h, N) && h[N] !== void 0 && !P && !M && !n.partial) throw new cn$2(N);
       if (!v && n.partial) {
         const _ = w.rawName ?? `--${w.name}${w.value !== void 0 && w.inlineValue ? `=${w.value}` : ""}`;
         m.push({ index: w.index, value: _ });
@@ -447,24 +445,24 @@ const dn$1 = (t, e, n, s) => {
         p._unknown = s.slice(w.index);
         break;
       }
-      if (!v && !n.partial) throw new Pe(w.name);
+      if (!v && !n.partial) throw new Pe$1(w.name);
       if (w.value === void 0) {
-        const _ = t[f + 1], U = _?.kind === "option" && !("name" in _) && _.value !== void 0, T = _ && v && !(v.type && G$1(v.type)) && (_.kind === "positional" || U), lt = v && v.defaultOption && !v.multiple && !v.lazyMultiple;
+        const _ = t[f + 1], U = _?.kind === "option" && !("name" in _) && _.value !== void 0, T = _ && v && !(v.type && G$3(v.type)) && (_.kind === "positional" || U), lt = v && v.defaultOption && !v.multiple && !v.lazyMultiple;
         if (T && (!v?.defaultOption || lt)) if (P) {
           let D = f + 1;
           const ae = [];
           for (; D < t.length && (t[D].kind === "positional" || t[D].kind === "option" && !("name" in t[D]) && t[D].value !== void 0); ) ae.push(t[D].value), y.add(t[D].index), D++;
-          h[N] = h[N] === void 0 ? ae : Me$2(h[N], ae), f = D - 1;
-        } else M ? (he$2(h, N, _.value, true), y.add(_.index), f++) : (h[N] = _.value, y.add(_.index), f++);
-        else v?.type && G$1(v.type) ? he$2(h, N, !I, P) : (P || M) && h[N] !== void 0 ? he$2(h, N, null, true) : h[N] = P ? [] : null;
+          h[N] = h[N] === void 0 ? ae : Me$3(h[N], ae), f = D - 1;
+        } else M ? (he$3(h, N, _.value, true), y.add(_.index), f++) : (h[N] = _.value, y.add(_.index), f++);
+        else v?.type && G$3(v.type) ? he$3(h, N, !I, P) : (P || M) && h[N] !== void 0 ? he$3(h, N, null, true) : h[N] = P ? [] : null;
       } else {
         let { value: _ } = w;
-        if (v?.type && G$1(v.type)) switch (_) {
+        if (v?.type && G$3(v.type)) switch (_) {
           case "": {
             if (n.partial) {
               const T = `${w.rawName ?? `--${w.name}`}${w.value ? `=${w.value}` : ""}`;
               g.push({ index: w.index, value: T }), _ = true;
-            } else throw new Pe(w.name);
+            } else throw new Pe$1(w.name);
             break;
           }
           case "false": {
@@ -484,10 +482,10 @@ const dn$1 = (t, e, n, s) => {
           for (; T < t.length && t[T].kind === "positional"; ) U.push(t[T].value), y.add(t[T].index), T++;
           f = T - 1;
         }
-        h[N] === void 0 ? h[N] = P || M ? U : _ : P || M ? h[N] = Me$2(h[N], U) : h[N] = _;
+        h[N] === void 0 ? h[N] = P || M ? U : _ : P || M ? h[N] = Me$3(h[N], U) : h[N] = _;
       }
     } else if (w.kind === "positional" && n.stopAtFirstUnknown && !y.has(w.index) && !d) {
-      x(i, `Found unconsumed positional token at index ${String(w.index)}, stopping processing`, "resolver"), p._unknown = s.slice(w.index);
+      x$2(i, `Found unconsumed positional token at index ${String(w.index)}, stopping processing`, "resolver"), p._unknown = s.slice(w.index);
       break;
     }
   }
@@ -506,7 +504,7 @@ const dn$1 = (t, e, n, s) => {
     }
   }
   if (!n.partial) {
-    for (const f of t) if (f.kind === "positional" && !y.has(f.index)) throw new Ae$1(s[f.index]);
+    for (const f of t) if (f.kind === "positional" && !y.has(f.index)) throw new Ae$2(s[f.index]);
   }
   if (n.partial && !n.stopAtFirstUnknown) {
     const f = [...m];
@@ -524,7 +522,7 @@ const dn$1 = (t, e, n, s) => {
   }
   for (const [f, w] of Object.entries(h)) {
     const v = n.camelCase ? r?.get(f) ?? f : f, I = o.get(f);
-    I?.type ? p[v] = hn$1(w, I.type, { optionName: I.name, strictTypes: n.strictTypes }) : p[v] = w === void 0 ? null : w;
+    I?.type ? p[v] = hn$2(w, I.type, { optionName: I.name, strictTypes: n.strictTypes }) : p[v] = w === void 0 ? null : w;
   }
   for (const f of e) {
     const w = n.camelCase ? r?.get(f.name) ?? f.name : f.name;
@@ -534,16 +532,16 @@ const dn$1 = (t, e, n, s) => {
     const f = {}, w = {}, v = {};
     for (const N of e) if (N.group) {
       const P = Array.isArray(N.group) ? N.group : [N.group];
-      for (const M of P) Ue$2(M) || (f[M] ??= {});
+      for (const M of P) Ue$3(M) || (f[M] ??= {});
     }
-    for (const N of Object.keys(p)) if (!fn$1(N)) {
+    for (const N of Object.keys(p)) if (!fn$2(N)) {
       w[N] = p[N];
       let P = N;
       n.camelCase && (P = c?.get(N) ?? N);
       const M = o.get(P);
       if (M?.group) {
         const _ = Array.isArray(M.group) ? M.group : [M.group];
-        for (const U of _) Ue$2(U) || f[U] && (f[U][N] = p[N]);
+        for (const U of _) Ue$3(U) || f[U] && (f[U][N] = p[N]);
       } else v[N] = p[N];
     }
     const I = { _all: w };
@@ -551,50 +549,50 @@ const dn$1 = (t, e, n, s) => {
     Object.keys(v).length > 0 && (I._none = v), p._unknown && (I._unknown = p._unknown), Object.keys(p).forEach((N) => delete p[N]), Object.assign(p, I);
   }
   const S = Object.defineProperties({}, Object.getOwnPropertyDescriptors(p));
-  return x(i, "Final parsed result:", "resolver", S), S;
+  return x$2(i, "Final parsed result:", "resolver", S), S;
 };
-const Je$2 = "-";
-const J$2 = Je$2.codePointAt(0);
-const K$3 = "=";
-const gn$1 = K$3.codePointAt(0);
-const mn$1 = "--";
-const wn$1 = Je$2;
-const yn$1 = "--";
-const Ze$2 = (t) => t.length > 2 && t.startsWith(yn$1);
-const vn$1 = (t) => Ze$2(t) && !t.includes(K$3, 3);
-const An$1 = (t) => Ze$2(t) && t.includes(K$3, 3);
-const Cn$1 = (t) => {
-  if (t.length !== 2 || t.codePointAt(0) !== J$2 || t.codePointAt(1) === J$2) return false;
+const Je$3 = "-";
+const J$4 = Je$3.codePointAt(0);
+const K$4 = "=";
+const gn$2 = K$4.codePointAt(0);
+const mn$2 = "--";
+const wn$2 = Je$3;
+const yn$2 = "--";
+const Ze$3 = (t) => t.length > 2 && t.startsWith(yn$2);
+const vn$2 = (t) => Ze$3(t) && !t.includes(K$4, 3);
+const An$2 = (t) => Ze$3(t) && t.includes(K$4, 3);
+const Cn$2 = (t) => {
+  if (t.length !== 2 || t.codePointAt(0) !== J$4 || t.codePointAt(1) === J$4) return false;
   const e = t.codePointAt(1);
   return e !== void 0 && (e < 48 || e > 57);
 };
-const Nn$1 = (t) => {
-  if (t.length <= 2 || t.codePointAt(0) !== J$2 || t.codePointAt(1) === J$2) return false;
+const Nn$2 = (t) => {
+  if (t.length <= 2 || t.codePointAt(0) !== J$4 || t.codePointAt(1) === J$4) return false;
   const e = t.codePointAt(1);
   return !(e !== void 0 && e >= 48 && e <= 57);
 };
-const bn$1 = (t) => {
+const bn$2 = (t) => {
   const e = [];
   let n = 0, s = [], i = 0, o = -1, l = 0;
   for (; i < s.length || n < t.length; ) {
     let a;
-    if (i < s.length ? (a = s[i], i++) : (a = t[n], n++), l > 0 ? l-- : o++, a === mn$1) {
+    if (i < s.length ? (a = s[i], i++) : (a = t[n], n++), l > 0 ? l-- : o++, a === mn$2) {
       e.push({ index: o, kind: "option-terminator" });
       const u = [...s.slice(i), ...t.slice(n)], r = u.map((c, p) => ({ index: o + p + 1, kind: "positional", value: c }));
       e.push(...r), o += u.length;
       break;
     }
-    if (Cn$1(a)) {
+    if (Cn$2(a)) {
       const u = a.charAt(1);
       e.push({ index: o, kind: "option", name: u, rawName: a });
       continue;
     }
-    if (Nn$1(a) && !a.includes(K$3)) {
+    if (Nn$2(a) && !a.includes(K$4)) {
       const u = [];
       let r = "", c = false;
       for (let p = 1; p < a.length; p++) {
         const h = a.charAt(p);
-        c ? r += h : h.codePointAt(0) === gn$1 ? c = true : u.push(`${wn$1}${h}`);
+        c ? r += h : h.codePointAt(0) === gn$2 ? c = true : u.push(`${wn$2}${h}`);
       }
       if (c) if (u.length > 0) {
         const p = u.pop();
@@ -603,18 +601,18 @@ const bn$1 = (t) => {
       s = i < s.length ? [...u, ...s.slice(i)] : u, i = 0, l = u.length;
       continue;
     }
-    if (vn$1(a)) {
+    if (vn$2(a)) {
       const u = a.slice(2);
       e.push({ index: o, kind: "option", name: u, rawName: a });
       continue;
     }
-    if (An$1(a)) {
-      const u = a.indexOf(K$3), r = a.slice(2, u), c = a.slice(u + 1);
+    if (An$2(a)) {
+      const u = a.indexOf(K$4), r = a.slice(2, u), c = a.slice(u + 1);
       e.push({ index: o, inlineValue: true, kind: "option", name: r, rawName: a, value: c });
       continue;
     }
-    if (a.length > 2 && a.codePointAt(0) === J$2 && a.codePointAt(1) !== J$2 && a.includes(K$3)) {
-      const u = a.indexOf(K$3), r = a.charAt(1), c = a.slice(u + 1);
+    if (a.length > 2 && a.codePointAt(0) === J$4 && a.codePointAt(1) !== J$4 && a.includes(K$4)) {
+      const u = a.indexOf(K$4), r = a.charAt(1), c = a.slice(u + 1);
       e.push({ index: o, inlineValue: true, kind: "option", name: r, rawName: a, value: c });
       continue;
     }
@@ -622,45 +620,45 @@ const bn$1 = (t) => {
   }
   return e;
 };
-const On$1 = /\d/;
-const _n$1 = (t) => typeof t == "function";
+const On$2 = /\d/;
+const _n$2 = (t) => typeof t == "function";
 const En$1 = (t, e, n) => {
   const s = n?.debug ?? false;
-  x(s, "Validating definitions:", "validation", t, "caseInsensitive:", e);
+  x$2(s, "Validating definitions:", "validation", t, "caseInsensitive:", e);
   const i = /* @__PURE__ */ new Set(), o = /* @__PURE__ */ new Set(), l = /* @__PURE__ */ new Set(), a = /* @__PURE__ */ new Set();
   let u = 0;
   for (const r of t) {
-    if (x(s, "Checking definition:", "validation", r), !r.name) throw x(s, "Validation failed: name is required", "validation"), new L$1("Invalid option definition: name is required");
-    if (typeof r.name != "string") throw new L$1("Invalid option definition: name must be a string");
-    if (r.name.trim() === "") throw new L$1("Invalid option definition: name cannot be empty");
+    if (x$2(s, "Checking definition:", "validation", r), !r.name) throw x$2(s, "Validation failed: name is required", "validation"), new L$2("Invalid option definition: name is required");
+    if (typeof r.name != "string") throw new L$2("Invalid option definition: name must be a string");
+    if (r.name.trim() === "") throw new L$2("Invalid option definition: name cannot be empty");
     const c = e ? r.name.toLowerCase() : "";
-    if (i.has(r.name) || e && l.has(c)) throw new L$1(`Invalid option definition: duplicate name '${r.name}'`);
-    if (o.has(r.name) || e && a.has(c)) throw new L$1(`Invalid option definition: name '${r.name}' conflicts with an existing alias`);
+    if (i.has(r.name) || e && l.has(c)) throw new L$2(`Invalid option definition: duplicate name '${r.name}'`);
+    if (o.has(r.name) || e && a.has(c)) throw new L$2(`Invalid option definition: name '${r.name}' conflicts with an existing alias`);
     if (i.add(r.name), e && l.add(c), r.alias !== void 0) {
-      if (typeof r.alias != "string") throw new L$1("Invalid option definition: alias must be a string");
-      if (r.alias.length !== 1) throw new L$1("Invalid option definition: alias must be a single character");
-      if (On$1.test(r.alias)) throw new L$1("Invalid option definition: alias cannot be numeric");
-      if (r.alias === "-") throw new L$1('Invalid option definition: alias cannot be "-"');
+      if (typeof r.alias != "string") throw new L$2("Invalid option definition: alias must be a string");
+      if (r.alias.length !== 1) throw new L$2("Invalid option definition: alias must be a single character");
+      if (On$2.test(r.alias)) throw new L$2("Invalid option definition: alias cannot be numeric");
+      if (r.alias === "-") throw new L$2('Invalid option definition: alias cannot be "-"');
       const p = e ? r.alias.toLowerCase() : "";
-      if (o.has(r.alias) || e && a.has(p)) throw new L$1(`Invalid option definition: duplicate alias '${r.alias}'`);
-      if (i.has(r.alias) || e && l.has(p)) throw new L$1(`Invalid option definition: alias '${r.alias}' conflicts with an existing option name`);
+      if (o.has(r.alias) || e && a.has(p)) throw new L$2(`Invalid option definition: duplicate alias '${r.alias}'`);
+      if (i.has(r.alias) || e && l.has(p)) throw new L$2(`Invalid option definition: alias '${r.alias}' conflicts with an existing option name`);
       o.add(r.alias), e && a.add(p);
     }
-    if (r.defaultOption && (u++, r.type !== void 0 && G$1(r.type))) throw new L$1("Invalid option definition: defaultOption cannot be Boolean type");
-    if (r.type !== void 0 && !(r.type === Boolean || r.type === Number || r.type === String || typeof r.type == "function" && _n$1(r.type))) throw new L$1("Invalid option definition: invalid type");
+    if (r.defaultOption && (u++, r.type !== void 0 && G$3(r.type))) throw new L$2("Invalid option definition: defaultOption cannot be Boolean type");
+    if (r.type !== void 0 && !(r.type === Boolean || r.type === Number || r.type === String || typeof r.type == "function" && _n$2(r.type))) throw new L$2("Invalid option definition: invalid type");
   }
-  if (u > 1) throw x(s, "Validation failed: multiple defaultOptions not allowed", "validation"), new L$1("Invalid option definition: multiple defaultOptions not allowed");
-  x(s, "Validation completed successfully", "validation");
+  if (u > 1) throw x$2(s, "Validation failed: multiple defaultOptions not allowed", "validation"), new L$2("Invalid option definition: multiple defaultOptions not allowed");
+  x$2(s, "Validation completed successfully", "validation");
 };
-function xn$1(t, e = {}) {
+function xn$2(t, e = {}) {
   const n = e.debug ?? false;
-  x(n, "Starting command-line-args parsing", "index"), x(n, "Options:", "index", e);
+  x$2(n, "Starting command-line-args parsing", "index"), x$2(n, "Options:", "index", e);
   const s = { ...e };
   s.stopAtFirstUnknown && (s.partial = true);
   const i = Array.isArray(t) ? t : [t];
-  x(n, "Normalized definitions:", "index", i), En$1(i, s.caseInsensitive, n ? s : void 0);
+  x$2(n, "Normalized definitions:", "index", i), En$1(i, s.caseInsensitive, n ? s : void 0);
   let { argv: o } = s;
-  o ??= process.argv.slice(2), x(n, "Using argv:", "index", o);
+  o ??= process.argv.slice(2), x$2(n, "Using argv:", "index", o);
   let l = o;
   s.caseInsensitive && (l = o.map((r) => {
     if (r.startsWith("--")) {
@@ -675,12 +673,12 @@ function xn$1(t, e = {}) {
     }
     return r;
   }));
-  const a = bn$1(l.map(String));
-  x(n, "Tokenized arguments:", "index", a);
-  const u = dn$1(a, i, s, o);
-  return x(n, "Command-line-args parsing completed", "index"), u;
+  const a = bn$2(l.map(String));
+  x$2(n, "Tokenized arguments:", "index", a);
+  const u = dn$2(a, i, s, o);
+  return x$2(n, "Command-line-args parsing completed", "index"), u;
 }
-let kn$1 = class kn {
+let kn$2 = class kn {
   result;
   argv;
   options;
@@ -700,22 +698,22 @@ let kn$1 = class kn {
     this.commandName = e, this.command = n;
   }
 };
-let ue$1 = class ue extends n$1 {
+let ue$2 = class ue extends n$1 {
   commandName;
   constructor(e, n, s) {
     super(`Failed to load command "${e}": ${n}`, "COMMAND_LOADER_ERROR", { commandName: e, reason: n }), this.name = "CommandLoaderError", this.commandName = e, this.hint = "Ensure the loader resolves to a module with a default export that is the command handler function.", s !== void 0 && (this.cause = s);
   }
 };
-const In$1 = /^-{1,2}(\w+)(=(.+))?$/;
-const Qe$2 = (t, e, n, s) => {
-  const i = In$1.exec(t);
+const In$2 = /^-{1,2}(\w+)(=(.+))?$/;
+const Qe$3 = (t, e, n, s) => {
+  const i = In$2.exec(t);
   if (i === null) return {};
   const o = i[1];
   if (!o) return {};
   const l = n && s ? n.get(o) ?? s.get(o) : e.find((a) => a.name === o || a.alias === o);
   return l !== void 0 ? { argName: l.name, argValue: i[3], option: l } : {};
 };
-const Te$2 = (t, e) => {
+const Te$3 = (t, e) => {
   if (e.type === void 0) return t;
   if (e.type.name === "Boolean") {
     if (t === "true" || t === "1") return e.type(true);
@@ -723,29 +721,29 @@ const Te$2 = (t, e) => {
   }
   return e.type(t);
 };
-const Pn$1 = /* @__PURE__ */ new Set(["0", "1", "false", "true"]);
-const $n$1 = (t, e, n, s) => {
+const Pn$2 = /* @__PURE__ */ new Set(["0", "1", "false", "true"]);
+const $n$2 = (t, e, n, s) => {
   if (e.length === 0 || t.length === 0) return {};
   const i = (o, l) => {
-    const { argName: a, argValue: u, option: r } = Qe$2(l, e, n, s), { lastOption: c } = o;
-    return r && Q$2(r) && u && a ? o.partial[a] = Te$2(u, r) : o.lastName && c && Q$2(c) && Pn$1.has(l) && (o.partial[o.lastName] = Te$2(l, c)), { lastName: a, lastOption: r, partial: o.partial };
+    const { argName: a, argValue: u, option: r } = Qe$3(l, e, n, s), { lastOption: c } = o;
+    return r && Q$3(r) && u && a ? o.partial[a] = Te$3(u, r) : o.lastName && c && Q$3(c) && Pn$2.has(l) && (o.partial[o.lastName] = Te$3(l, c)), { lastName: a, lastOption: r, partial: o.partial };
   };
   return t.reduce(i, { partial: {} }).partial;
 };
-const Ln$1 = /* @__PURE__ */ new Set(["0", "1", "false", "true"]);
-const Mn$1 = (t, e, n, s) => {
+const Ln$2 = /* @__PURE__ */ new Set(["0", "1", "false", "true"]);
+const Mn$2 = (t, e, n, s) => {
   if (e.length === 0 || t.length === 0) return t;
   const i = (o, l) => {
-    const { argValue: a, option: u } = Qe$2(l, e, n, s), { lastOption: r } = o;
-    if (r && Q$2(r) && Ln$1.has(l)) {
+    const { argValue: a, option: u } = Qe$3(l, e, n, s), { lastOption: r } = o;
+    if (r && Q$3(r) && Ln$2.has(l)) {
       const { args: p } = o;
       return { args: p.slice(0, -1) };
     }
-    return u && Q$2(u) && a ? { args: o.args } : { args: [...o.args, l], lastOption: u };
+    return u && Q$3(u) && a ? { args: o.args } : { args: [...o.args, l], lastOption: u };
   };
   return t.reduce(i, { args: [] }).args;
 };
-const De$1 = (t) => {
+const De$2 = (t) => {
   const e = /* @__PURE__ */ new Map();
   for (const n of t) {
     const s = e.get(n.name);
@@ -753,58 +751,58 @@ const De$1 = (t) => {
   }
   return [...e.values()];
 };
-const Un$1 = (t) => {
+const Un$2 = (t) => {
   if (t === void 0) return;
   const e = t.toLowerCase().trim();
   return e === "true" || e === "1" || e === "yes" || e === "on";
 };
-const Sn$1 = (t, e) => {
+const Sn$2 = (t, e) => {
   if (!t.type) return e;
   if (e === void 0) return;
-  if (t.type === Boolean || typeof t.type == "function" && t.type.name === "Boolean") return Un$1(e);
+  if (t.type === Boolean || typeof t.type == "function" && t.type.name === "Boolean") return Un$2(e);
   if (t.type === Number || typeof t.type == "function" && t.type.name === "Number") {
     const o = Number.parseFloat(e);
     return Number.isNaN(o) ? void 0 : o;
   }
   return t.type === String || typeof t.type == "function" && t.type.name === "String" ? e : t.type(e);
 };
-const Tn$1 = /_./g;
-const Dn$1 = /^[A-Z]/;
-const Vn$1 = (t) => t.toLowerCase().replaceAll(Tn$1, (e) => e[1]?.toUpperCase() ?? e).replace(Dn$1, (e) => e.toLowerCase());
-const jn$1 = (t, e = a$2()) => {
+const Tn$2 = /_./g;
+const Dn$2 = /^[A-Z]/;
+const Vn$2 = (t) => t.toLowerCase().replaceAll(Tn$2, (e) => e[1]?.toUpperCase() ?? e).replace(Dn$2, (e) => e.toLowerCase());
+const jn$2 = (t, e = a$3()) => {
   if (!t || t.length === 0) return {};
   const n = {};
   for (const s of t) {
-    const i = e[s.name], o = Sn$1(s, i), l = o === void 0 ? s.defaultValue : o, a = Vn$1(s.name);
+    const i = e[s.name], o = Sn$2(s, i), l = o === void 0 ? s.defaultValue : o, a = Vn$2(s.name);
     n[a] = l;
   }
   return n;
 };
-const Rn$1 = /-([a-z])/g;
-const et$2 = (t) => t.replaceAll(Rn$1, (e, n) => n.toUpperCase());
-const Ve$1 = (t, e) => t.type === void 0 ? e : t.type(e);
-const Bn$1 = (t, e) => {
+const Rn$2 = /-([a-z])/g;
+const et$4 = (t) => t.replaceAll(Rn$2, (e, n) => n.toUpperCase());
+const Ve$2 = (t, e) => t.type === void 0 ? e : t.type(e);
+const Bn$2 = (t, e) => {
   const { choices: n } = t;
   if (!n || n.length === 0) return [];
   const s = [];
   for (const i of e) n.includes(i) || s.push({ choices: n, name: t.name, value: i });
   return s;
 };
-const zn$1 = (t, e) => e && t.defaultValue !== void 0 && !Array.isArray(t.defaultValue) ? [t.defaultValue] : t.defaultValue;
-const Fn$1 = (t, e) => {
+const zn$2 = (t, e) => e && t.defaultValue !== void 0 && !Array.isArray(t.defaultValue) ? [t.defaultValue] : t.defaultValue;
+const Fn$2 = (t, e) => {
   const n = {}, s = [], i = [], o = t.length - 1;
   let l = 0;
   for (const [a, u] of t.entries()) {
-    const r = et$2(u.name), c = a === o && u.multiple === true, p = c ? e.slice(a) : e.slice(a, a + 1);
+    const r = et$4(u.name), c = a === o && u.multiple === true, p = c ? e.slice(a) : e.slice(a, a + 1);
     if (p.length === 0) {
-      u.required === true && s.push(u.name), n[r] = zn$1(u, c);
+      u.required === true && s.push(u.name), n[r] = zn$2(u, c);
       continue;
     }
-    i.push(...Bn$1(u, p)), l = a + p.length, n[r] = c ? p.map((h) => Ve$1(u, h)) : Ve$1(u, p[0]);
+    i.push(...Bn$2(u, p)), l = a + p.length, n[r] = c ? p.map((h) => Ve$2(u, h)) : Ve$2(u, p[0]);
   }
   return { invalid: i, missing: s, resolved: n, surplus: e.slice(l) };
 };
-const Wn$1 = (t) => {
+const Wn$2 = (t) => {
   const e = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map();
   for (const s of t) if (e.set(s.name, s), s.alias) {
     const i = Array.isArray(s.alias) ? s.alias : [s.alias];
@@ -812,28 +810,28 @@ const Wn$1 = (t) => {
   }
   return { optionMapByAlias: n, optionMapByName: e };
 };
-const tt$2 = async (t) => {
+const tt$4 = async (t) => {
   if (typeof t.__resolvedExecute__ == "function") return t.__resolvedExecute__;
-  if (typeof t.loader != "function") throw new ue$1(t.name, "no execute or loader defined");
+  if (typeof t.loader != "function") throw new ue$2(t.name, "no execute or loader defined");
   let e;
   try {
     e = await t.loader();
   } catch (s) {
-    throw new ue$1(t.name, s instanceof Error ? s.message : String(s), s);
+    throw new ue$2(t.name, s instanceof Error ? s.message : String(s), s);
   }
   const n = e.default;
-  if (typeof n != "function") throw new ue$1(t.name, "loader did not return a module with a default-exported handler function");
+  if (typeof n != "function") throw new ue$2(t.name, "loader did not return a module with a default-exported handler function");
   return t.__resolvedExecute__ = n, n;
 };
-const qn$1 = (t, e, n, s, i, o = []) => {
-  const l = new kn$1(t.name, t), { _all: a, _unknown: u, positionals: r } = e, p = Object.keys(n).length > 0 ? { ...a, ...n } : a;
+const qn$2 = (t, e, n, s, i, o = []) => {
+  const l = new kn$2(t.name, t), { _all: a, _unknown: u, positionals: r } = e, p = Object.keys(n).length > 0 ? { ...a, ...n } : a;
   c in p && delete p[c], l.argument = r?.[c] ?? [], l.args = {}, l.rawUnknown = [...u ?? []], l.rawArgv = [...o];
   const h = Object.keys(s).length > 0;
-  return l.options = h ? { ...p, ...s } : p, l.env = jn$1(t.env, i), l;
+  return l.options = h ? { ...p, ...s } : p, l.env = jn$2(t.env, i), l;
 };
-const Gn$1 = (t, e, n) => {
+const Gn$2 = (t, e, n) => {
   const s = t.options ?? [], i = s.length > 0;
-  let o = De$1(i ? [...s, ...n] : n);
+  let o = De$2(i ? [...s, ...n] : n);
   if (o.length > 0) {
     for (const c of o) if (c.multiple && c.lazyMultiple) throw new Error(`Argument "${c.name}" cannot have both multiple and lazyMultiple options, please choose one.`);
   }
@@ -841,22 +839,22 @@ const Gn$1 = (t, e, n) => {
   (t.argument || l) && (o = [{ defaultOption: true, description: t.argument?.description, group: "positionals", multiple: true, name: c, type: t.argument?.type ?? String, typeLabel: t.argument?.typeLabel }, ...o]);
   let a, u;
   if (i) {
-    const { optionMapByAlias: c, optionMapByName: p } = Wn$1(s);
-    a = Mn$1(e, s, p, c), u = $n$1(e, s, p, c);
+    const { optionMapByAlias: c, optionMapByName: p } = Wn$2(s);
+    a = Mn$2(e, s, p, c), u = $n$2(e, s, p, c);
   } else a = e, u = {};
-  const r = xn$1(o, { argv: a, camelCase: true, partial: true, stopAtFirstUnknown: true });
+  const r = xn$2(o, { argv: a, camelCase: true, partial: true, stopAtFirstUnknown: true });
   return { arguments_: o, booleanValues: u, parsedArgs: r };
 };
-const pe$2 = async (t, e, n) => typeof t.execute == "function" ? t.execute(e) : (await tt$2(t))(e);
-const Kn$1 = (t, e$1) => {
+const pe$3 = async (t, e, n) => typeof t.execute == "function" ? t.execute(e) : (await tt$4(t))(e);
+const Kn$2 = (t, e$1) => {
   if (!t.arguments || t.arguments.length === 0) return;
-  const n$1 = e$1.rawUnknown.indexOf("--"), s = n$1 === -1 ? [] : e$1.rawUnknown.slice(n$1 + 1), i$1 = s.length === 0 ? e$1.argument : e$1.argument.slice(0, Math.max(0, e$1.argument.length - s.length)), o = Fn$1(t.arguments, i$1);
+  const n$1 = e$1.rawUnknown.indexOf("--"), s = n$1 === -1 ? [] : e$1.rawUnknown.slice(n$1 + 1), i$1 = s.length === 0 ? e$1.argument : e$1.argument.slice(0, Math.max(0, e$1.argument.length - s.length)), o = Fn$2(t.arguments, i$1);
   if (e$1.args = o.resolved, o.missing.length > 0) throw new e(t.name, o.missing);
   const [l] = o.invalid;
   if (l) throw new n(l.name, l.value, l.choices);
   if (o.surplus.length > 0) throw new i(t.name, o.surplus, t.arguments.length);
 };
-let Hn$1 = class Hn {
+let Hn$2 = class Hn {
   capacity;
   cache;
   constructor(e) {
@@ -888,38 +886,38 @@ let Hn$1 = class Hn {
     return this.cache.size;
   }
 };
-const Xn$1 = (t, e) => typeof t != "string" || t === "" ? "" : t[0].toLowerCase() + t.slice(1);
-const Yn$1 = new RegExp("[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d/#&.:=?%@~_]*)*)?(?:\\u0007|\\u001B\\u005C|\\u009C))|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))", "g");
-const Jn$1 = (t) => {
+const Xn$2 = (t, e) => typeof t != "string" || t === "" ? "" : t[0].toLowerCase() + t.slice(1);
+const Yn$2 = new RegExp("[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d/#&.:=?%@~_]*)*)?(?:\\u0007|\\u001B\\u005C|\\u009C))|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))", "g");
+const Jn$2 = (t) => {
   if (typeof t != "string") throw new TypeError(`The "value" argument must be of type string. Received ${typeof t}`);
-  return t.replaceAll(Yn$1, "");
+  return t.replaceAll(Yn$2, "");
 };
-const fe$1 = new Hn$1(1e3);
-const Zn$1 = /[.*+?^${}()|[\]\\]/g;
-const Qn$1 = (t) => {
+const fe$2 = new Hn$2(1e3);
+const Zn$2 = /[.*+?^${}()|[\]\\]/g;
+const Qn$2 = (t) => {
   const e = t.join("");
-  if (fe$1.has(e)) {
-    const i = fe$1.get(e);
+  if (fe$2.has(e)) {
+    const i = fe$2.get(e);
     return i.lastIndex = 0, i;
   }
-  const n = t.map((i) => i.replaceAll(Zn$1, String.raw`\$&`)).join("|"), s = new RegExp(n, "g");
-  return fe$1.set(e, s), s;
+  const n = t.map((i) => i.replaceAll(Zn$2, String.raw`\$&`)).join("|"), s = new RegExp(n, "g");
+  return fe$2.set(e, s), s;
 };
-const es = (t) => {
+const es$1 = (t) => {
   const e = [];
   let n = 0, s;
   for (c$2.lastIndex = 0; (s = c$2.exec(t)) !== null; ) s.index > n && e.push(t.slice(n, s.index)), e.push(s[0]), n = c$2.lastIndex;
   return n < t.length && e.push(t.slice(n)), e.filter(Boolean);
 };
-const ts = /[ČŠŽĐ]/i;
-const nt$2 = new Uint8Array(128);
-const st$2 = new Uint8Array(128);
-const ot$2 = new Uint8Array(128);
-for (let t = 0; t < 128; t++) nt$2[t] = t >= 65 && t <= 90 ? 1 : 0, st$2[t] = t >= 97 && t <= 122 ? 1 : 0, ot$2[t] = t >= 48 && t <= 57 ? 1 : 0;
-const de$2 = (t) => nt$2[t];
-const je$1 = (t) => st$2[t];
-const ge$2 = (t) => ot$2[t];
-const j$1 = (t, e, n, s, i) => {
+const ts$1 = /[ČŠŽĐ]/i;
+const nt$4 = new Uint8Array(128);
+const st$4 = new Uint8Array(128);
+const ot$4 = new Uint8Array(128);
+for (let t = 0; t < 128; t++) nt$4[t] = t >= 65 && t <= 90 ? 1 : 0, st$4[t] = t >= 97 && t <= 122 ? 1 : 0, ot$4[t] = t >= 48 && t <= 57 ? 1 : 0;
+const de$3 = (t) => nt$4[t];
+const je$2 = (t) => st$4[t];
+const ge$3 = (t) => ot$4[t];
+const j$2 = (t, e, n, s, i) => {
   if (t.length === 0) return [];
   let o = false;
   const l = Object.values(e);
@@ -955,23 +953,23 @@ const j$1 = (t, e, n, s, i) => {
   }
   return r && r.length > 0 && u.push(r), u.length > 0 ? u : [t];
 };
-const ns = (t, e, n, s) => {
+const ns$1 = (t, e, n, s) => {
   if (n.size === 0) return e;
   for (const i of n) if (t.startsWith(i, e)) return s.push(i), e + i.length;
   return e;
 };
-const it$2 = (t, e = /* @__PURE__ */ new Set()) => {
+const it$4 = (t, e = /* @__PURE__ */ new Set()) => {
   if (t.length === 0) return [];
   if (t.toUpperCase() === t) return [t];
   let n = 0;
   const s = [], i = t.length;
   for (let o = 1; o < i; o++) {
-    const l = ns(t, n, e, s);
+    const l = ns$1(t, n, e, s);
     if (l !== n) {
       n = l, o = n - 1;
       continue;
     }
-    const a = t.codePointAt(o - 1), u = t.codePointAt(o), r = a && a < 128 && de$2(a), c = u && u < 128 && de$2(u), p = a && a < 128 && je$1(a), h = a && a < 128 && ge$2(a), m = u && u < 128 && ge$2(u);
+    const a = t.codePointAt(o - 1), u = t.codePointAt(o), r = a && a < 128 && de$3(a), c = u && u < 128 && de$3(u), p = a && a < 128 && je$2(a), h = a && a < 128 && ge$3(a), m = u && u < 128 && ge$3(u);
     if (p && c) {
       s.push(t.slice(n, o)), n = o;
       continue;
@@ -984,7 +982,7 @@ const it$2 = (t, e = /* @__PURE__ */ new Set()) => {
       let g = false, y = false;
       if (o + 1 < i) {
         const A = t.codePointAt(o + 1);
-        g = A && A < 128 && de$2(A), y = A && A < 128 && ge$2(A);
+        g = A && A < 128 && de$3(A), y = A && A < 128 && ge$3(A);
       }
       if (!y && g) {
         s.push(t.slice(n, o), t.slice(o, o + 1)), n = o + 1;
@@ -992,7 +990,7 @@ const it$2 = (t, e = /* @__PURE__ */ new Set()) => {
       }
     }
     if (o + 1 < i) {
-      const g = t.codePointAt(o + 1), y = g && g < 128 && je$1(g);
+      const g = t.codePointAt(o + 1), y = g && g < 128 && je$2(g);
       if (r && c && y) {
         const A = t.slice(n, o + 1);
         e.has(A) || (s.push(t.slice(n, o)), n = o);
@@ -1001,7 +999,7 @@ const it$2 = (t, e = /* @__PURE__ */ new Set()) => {
   }
   return n < i && s.push(t.slice(n)), s.filter((o) => o !== "");
 };
-const rt$2 = (t, e, n) => {
+const rt$4 = (t, e, n) => {
   if (t.length === 0) return [];
   const s = t === t.toLocaleUpperCase(e);
   if (e.startsWith("de")) {
@@ -1024,40 +1022,40 @@ const rt$2 = (t, e, n) => {
     return h && h.length > 0 && p.push(h), p;
   }
   if (e.startsWith("uk") || e.startsWith("ru") || e.startsWith("bg") || e.startsWith("sr") || e.startsWith("mk") || e.startsWith("be")) {
-    if (!g$1.test(t) && !b$3.test(t)) return [t];
+    if (!g$2.test(t) && !b$4.test(t)) return [t];
     const r = [...t], c = r.length, p = [];
     let h = r[0];
     const m = r[0];
     let g;
-    g$1.test(m) ? g = 1 : b$3.test(m) ? g = 2 : g = 0;
+    g$2.test(m) ? g = 1 : b$4.test(m) ? g = 2 : g = 0;
     let y = m === m.toLocaleUpperCase(e);
     for (let d = 1; d < c; d++) {
       const C = r[d];
       let O;
-      g$1.test(C) ? O = 1 : b$3.test(C) ? O = 2 : O = 0;
+      g$2.test(C) ? O = 1 : b$4.test(C) ? O = 2 : O = 0;
       const k = C === C.toLocaleUpperCase(e);
       g !== O && (g === 1 || g === 2) && (O === 1 || O === 2) || O === g && !y && k ? (p.push(h), h = C) : h += C, g = O, y = k;
     }
     h && h.length > 0 && p.push(h);
     const A = [];
-    for (let d = 0; d < p.length; d++) d < p.length - 1 && p[d].length === 1 && b$3.test(p[d]) && g$1.test(p[d + 1][0]) ? (A.push(p[d] + p[d + 1]), d += 1) : A.push(p[d]);
+    for (let d = 0; d < p.length; d++) d < p.length - 1 && p[d].length === 1 && b$4.test(p[d]) && g$2.test(p[d + 1][0]) ? (A.push(p[d] + p[d + 1]), d += 1) : A.push(p[d]);
     return A;
   }
   if (e.startsWith("el")) {
-    if (!S$1.test(t) && !b$3.test(t)) return [t];
+    if (!S$3.test(t) && !b$4.test(t)) return [t];
     const r = [];
-    R$4.lastIndex = 0;
+    R$5.lastIndex = 0;
     let c;
-    for (; (c = R$4.exec(t)) !== null; ) r.push(c[0]);
+    for (; (c = R$5.exec(t)) !== null; ) r.push(c[0]);
     r.length === 0 && r.push(t);
     const p = [];
     if (r.length === 1) {
       const h = r[0];
-      if (!h || !S$1.test(h[0]) || h.length === 1) return [h ?? t];
+      if (!h || !S$3.test(h[0]) || h.length === 1) return [h ?? t];
     }
     for (const h of r) {
       if (!h) continue;
-      if (!S$1.test(h[0]) || h.length === 1) {
+      if (!S$3.test(h[0]) || h.length === 1) {
         p.push(h);
         continue;
       }
@@ -1072,45 +1070,45 @@ const rt$2 = (t, e, n) => {
     return p;
   }
   if (e.startsWith("ja") || e.startsWith("ko")) {
-    const r = e.startsWith("ja"), c = r ? { hiragana: (h) => m.test(h), kanji: (h) => y.test(h), katakana: (h) => h$2.test(h), latin: (h) => b$3.test(h) } : { hangul: (h) => B$3.test(h), latin: (h) => b$3.test(h) }, p = /* @__PURE__ */ new Set(["が", "で", "と", "に", "の", "は", "へ", "も", "や", "を"]);
+    const r = e.startsWith("ja"), c = r ? { hiragana: (h) => m$2.test(h), kanji: (h) => y.test(h), katakana: (h) => h$3.test(h), latin: (h) => b$4.test(h) } : { hangul: (h) => B$5.test(h), latin: (h) => b$4.test(h) }, p = /* @__PURE__ */ new Set(["が", "で", "と", "に", "の", "は", "へ", "も", "や", "を"]);
     if (r) {
-      const h = j$1(t, c, false, e, (g, y) => g === "hiragana" && y === "katakana" || g === "katakana" && y === "hiragana" || g === "hiragana" && y === "latin" || g === "katakana" && y === "latin" || g === "kanji" && y === "latin" || g === "latin" && (y === "hiragana" || y === "katakana" || y === "kanji")), m = [];
+      const h = j$2(t, c, false, e, (g, y) => g === "hiragana" && y === "katakana" || g === "katakana" && y === "hiragana" || g === "hiragana" && y === "latin" || g === "katakana" && y === "latin" || g === "kanji" && y === "latin" || g === "latin" && (y === "hiragana" || y === "katakana" || y === "kanji")), m = [];
       for (const g of h) {
         const y = g;
         y.length === 1 && p.has(y) && m.length > 0 ? m[m.length - 1] = m.at(-1) + y : m.push(y);
       }
       return m.length > 0 ? m : [t];
     }
-    return j$1(t, c, false, e, (h, m) => h === "hangul" && m === "latin" || h === "latin" && m === "hangul");
+    return j$2(t, c, false, e, (h, m) => h === "hangul" && m === "latin" || h === "latin" && m === "hangul");
   }
   if (e.startsWith("sl")) {
     const r = [...t], c = r.length, p = [];
     let h = r[0], m = r[0] === r[0].toLocaleUpperCase(e);
     for (let g = 1; g < c; g++) {
-      const y = r[g], A = y === y.toLocaleUpperCase(e), d = ts.test(y), C = g < c - 1 && r[g + 1] === r[g + 1].toLocaleUpperCase(e);
+      const y = r[g], A = y === y.toLocaleUpperCase(e), d = ts$1.test(y), C = g < c - 1 && r[g + 1] === r[g + 1].toLocaleUpperCase(e);
       !m && A || d && C ? (p.push(h), h = y, d && C && (p.push(h), h = "")) : h += y, m = A;
     }
     return h && h.length > 0 && p.push(h), p;
   }
-  if (e.startsWith("zh")) return j$1(t, { han: (r) => y.test(r), latin: (r) => b$3.test(r) }, false, e);
+  if (e.startsWith("zh")) return j$2(t, { han: (r) => y.test(r), latin: (r) => b$4.test(r) }, false, e);
   if (["ar", "fa", "he", "ur"].includes(e.split("-")[0])) {
-    const r = (c) => F$1.test(c) || a$3.test(c);
-    return j$1(t, { latin: (c) => b$3.test(c), rtl: (c) => r(c) }, false, e);
+    const r = (c) => F$3.test(c) || a$4.test(c);
+    return j$2(t, { latin: (c) => b$4.test(c), rtl: (c) => r(c) }, false, e);
   }
   if (["am", "bn", "gu", "hi", "km", "kn", "lo", "ml", "mr", "ne", "or", "pa", "si", "ta", "te", "th"].includes(e.split("-")[0])) {
-    const r = (c) => s$1.test(c) || E$2.test(c) || x$1.test(c) || l$1.test(c) || d$1.test(c) || L$2.test(c) || O$1.test(c) || H$1.test(c) || K$4.test(c) || T.test(c) || G$2.test(c) || f.test(c) || M$1.test(c) || w.test(c) || k$1.test(c) || j$2.test(c);
-    return j$1(t, { indic: (c) => r(c), latin: (c) => b$3.test(c) }, false, e);
+    const r = (c) => s$2.test(c) || E$4.test(c) || x$3.test(c) || l$2.test(c) || d$3.test(c) || L$3.test(c) || O$2.test(c) || H$3.test(c) || K$5.test(c) || T$2.test(c) || G$4.test(c) || f$1.test(c) || M$3.test(c) || w$2.test(c) || k$3.test(c) || j$3.test(c);
+    return j$2(t, { indic: (c) => r(c), latin: (c) => b$4.test(c) }, false, e);
   }
-  if (["be", "bg", "ru", "sr", "uk"].includes(e)) return j$1(t, { cyrillic: (r) => g$1.test(r), latin: (r) => b$3.test(r) }, true, e);
-  if (["ar", "fa", "he"].includes(e)) return j$1(t, { latin: (r) => b$3.test(r), rtl: (r) => F$1.test(r) || a$3.test(r) }, false, e);
-  if (e.startsWith("ko")) return j$1(t, { hangul: (r) => B$3.test(r), latin: (r) => b$3.test(r) }, false, e);
+  if (["be", "bg", "ru", "sr", "uk"].includes(e)) return j$2(t, { cyrillic: (r) => g$2.test(r), latin: (r) => b$4.test(r) }, true, e);
+  if (["ar", "fa", "he"].includes(e)) return j$2(t, { latin: (r) => b$4.test(r), rtl: (r) => F$3.test(r) || a$4.test(r) }, false, e);
+  if (e.startsWith("ko")) return j$2(t, { hangul: (r) => B$5.test(r), latin: (r) => b$4.test(r) }, false, e);
   if (e.startsWith("uz")) {
-    if (!g$1.test(t) && !b$3.test(t)) return [t];
+    if (!g$2.test(t) && !b$4.test(t)) return [t];
     const r = [...t], c = r.length, p = [];
     let h = r[0], m = r[0] === r[0].toLocaleUpperCase(e);
     for (let g = 1; g < c; g++) {
       const y = r[g], A = y === y.toLocaleUpperCase(e);
-      if (z$2.test(y) || z$2.test(r[g - 1])) {
+      if (z$3.test(y) || z$3.test(r[g - 1])) {
         h += y;
         continue;
       }
@@ -1141,30 +1139,30 @@ const rt$2 = (t, e, n) => {
   }
   return a && l.push(a), l;
 };
-const ss = (t, e, n) => {
+const ss$1 = (t, e, n) => {
   const s = [], i = o.test(t) ? t.split(o).filter(Boolean) : [t];
   for (const o$1 of i) {
     const l = o$1;
     if (o.test(l)) s.push(l);
     else {
       c$2.lastIndex = 0;
-      const a = c$2.test(l) ? es(l).filter(Boolean) : [l];
+      const a = c$2.test(l) ? es$1(l).filter(Boolean) : [l];
       for (const u of a) if (c$2.lastIndex = 0, c$2.test(u)) s.push(u);
       else if (e) {
         const r = e.toLowerCase().split("-")[0];
-        s.push(...rt$2(u, r, n));
-      } else s.push(...it$2(u, n));
+        s.push(...rt$4(u, r, n));
+      } else s.push(...it$4(u, n));
     }
   }
   return s;
 };
-const os = (t, e = {}) => {
+const os$1 = (t, e = {}) => {
   if (!t || typeof t != "string") return [];
   const { handleAnsi: n = false, handleEmoji: s = false, knownAcronyms: i = [], locale: o, normalize: l = false, separators: a, stripAnsi: u = false, stripEmoji: r = false } = e, c = new Set([...i].toSorted((d, C) => C.length - d.length));
   let p = t;
-  u && (p = Jn$1(p)), r && (p = A$1(p));
+  u && (p = Jn$2(p)), r && (p = A$3(p));
   let h;
-  Array.isArray(a) ? h = Qn$1(a) : a instanceof RegExp ? h = a : h = r$1;
+  Array.isArray(a) ? h = Qn$2(a) : a instanceof RegExp ? h = a : h = r$1;
   const m = [];
   let g = p;
   const y = h.flags.includes("g") ? h : new RegExp(h.source, `${h.flags}g`);
@@ -1202,11 +1200,11 @@ const os = (t, e = {}) => {
     m.push(...d);
   }
   let A = [];
-  for (const d of m) n || s ? A.push(...ss(d, o, c)) : o ? A.push(...rt$2(d, o, c)) : A.push(...it$2(d, c));
+  for (const d of m) n || s ? A.push(...ss$1(d, o, c)) : o ? A.push(...rt$4(d, o, c)) : A.push(...it$4(d, c));
   return l && (A = A.map((d) => c.has(d) ? d : o && d === d.toLocaleUpperCase(o) ? d[0] + d.slice(1).toLocaleLowerCase(o) : d.toUpperCase() === d && !c.has(d) ? d.slice(0, 1) + d.slice(1).toLowerCase() : d)), A;
 };
-const is = (t, e) => typeof t != "string" || t === "" ? "" : t[0].toUpperCase() + t.slice(1);
-const rs = (t, e) => {
+const is$1 = (t, e) => typeof t != "string" || t === "" ? "" : t[0].toUpperCase() + t.slice(1);
+const rs$1 = (t, e) => {
   const { length: n } = t;
   if (n === 0) return "";
   if (n === 1) return t[0];
@@ -1222,30 +1220,30 @@ const rs = (t, e) => {
   }
   return s.join("");
 };
-const Y$1 = (t, e) => {
+const Y$3 = (t, e) => {
   if (typeof t != "string" || !t) return "";
   let n = true;
-  return rs(os(t, { handleAnsi: e?.handleAnsi, handleEmoji: e?.handleEmoji, knownAcronyms: e?.knownAcronyms, locale: e?.locale, normalize: e?.normalize, separators: void 0, stripAnsi: e?.stripAnsi, stripEmoji: e?.stripEmoji }).map((i) => {
+  return rs$1(os$1(t, { handleAnsi: e?.handleAnsi, handleEmoji: e?.handleEmoji, knownAcronyms: e?.knownAcronyms, locale: e?.locale, normalize: e?.normalize, separators: void 0, stripAnsi: e?.stripAnsi, stripEmoji: e?.stripEmoji }).map((i) => {
     const o = i, l = o.toLowerCase();
-    return n ? (n = false, Xn$1(l)) : is(l);
+    return n ? (n = false, Xn$2(l)) : is$1(l);
   }), "");
 };
-class as extends n$1 {
+let as$1 = class as extends n$1 {
   commandName;
   missingOptions;
   constructor(e, n) {
     super(`Command "${e}" is missing required options: ${n.join(", ")}`, "COMMAND_VALIDATION_ERROR", { commandName: e, missingOptions: n }), this.name = "CommandValidationError", this.commandName = e, this.missingOptions = n, this.hint = `Provide the following required options: ${n.join(", ")}`;
   }
-}
-class ls extends n$1 {
+};
+let ls$1 = class ls extends n$1 {
   choices;
   option;
   value;
   constructor(e, n, s) {
     super(`Invalid value "${n}" for option "${e}". Allowed values: ${s.join(", ")}`, "INVALID_CHOICE", { choices: s, option: e, value: n }), this.name = "InvalidChoiceError", this.option = e, this.value = n, this.choices = s, this.hint = `Use one of: ${s.map((i) => `--${e} ${i}`).join(", ")}`;
   }
-}
-const Re$2 = (t, e, n = false) => {
+};
+const Re$3 = (t, e, n = false) => {
   const s = [], i = e._all ?? e;
   for (const o of t) {
     if (!n && !o.required) continue;
@@ -1260,18 +1258,18 @@ const Re$2 = (t, e, n = false) => {
   }
   return s;
 };
-const cs = (t, e) => e.includes(t) ? true : Math.abs(t.length - e.length) > t.length / 2 ? false : distance(t, e) <= t.length / 3;
-const R$2 = (t, e) => {
+const cs$1 = (t, e) => e.includes(t) ? true : Math.abs(t.length - e.length) > t.length / 2 ? false : distance(t, e) <= t.length / 3;
+const R$3 = (t, e) => {
   const n = t.toLowerCase();
-  return e.filter((s) => cs(s.toLowerCase(), n));
+  return e.filter((s) => cs$1(s.toLowerCase(), n));
 };
-const hs = (t, e) => {
+const hs$1 = (t, e) => {
   const n = [];
   if (t._unknown && t._unknown.forEach((s) => {
     const i = s.startsWith("--");
     let o = `Found unknown ${i ? "option" : "argument"} "${s}"`;
     if (i) {
-      const l = R$2(s.replace("--", ""), (e.options ?? []).map((a) => a.name));
+      const l = R$3(s.replace("--", ""), (e.options ?? []).map((a) => a.name));
       if (l.length > 0) {
         const [a, ...u] = l.map((r) => `--${r}`);
         o += u.length > 0 ? `, did you mean ${a ?? ""} or ${u.join(", ")}?` : `, did you mean ${a ?? ""}?`;
@@ -1279,52 +1277,52 @@ const hs = (t, e) => {
     }
     n.push(o);
   }), n.length > 0) throw new n$1(n.join(`
-`), N$2.UNKNOWN_OPTION, { unknownOptions: [...t._unknown ?? []] });
+`), N$4.UNKNOWN_OPTION, { unknownOptions: [...t._unknown ?? []] });
 };
-const W$2 = (t, e) => new n$1(`Command "${t}" ${e}`, "INVALID_COMMAND", { commandName: t });
-const us = (t, e) => {
+const W$4 = (t, e) => new n$1(`Command "${t}" ${e}`, "INVALID_COMMAND", { commandName: t });
+const us$1 = (t, e) => {
   const n = /* @__PURE__ */ new Set();
   for (const [s, i] of t.entries()) {
-    if (typeof i != "object" || i === null) throw W$2(e, `has a positional argument at index ${String(s)} that is not an object`);
+    if (typeof i != "object" || i === null) throw W$4(e, `has a positional argument at index ${String(s)} that is not an object`);
     const { name: o } = i;
-    if (typeof o != "string" || o.length === 0) throw W$2(e, `has a positional argument at index ${String(s)} without a name`);
-    const l = et$2(o);
-    if (n.has(l)) throw W$2(e, `declares duplicate positional argument "${o}"`);
+    if (typeof o != "string" || o.length === 0) throw W$4(e, `has a positional argument at index ${String(s)} without a name`);
+    const l = et$4(o);
+    if (n.has(l)) throw W$4(e, `declares duplicate positional argument "${o}"`);
     n.add(l);
     const a = s === 0 ? void 0 : t[s - 1];
-    if (i.required === true && a !== void 0 && a.required !== true) throw W$2(e, `declares required positional "${o}" after an optional one, which can never be satisfied`);
-    if (i.multiple === true && s !== t.length - 1) throw W$2(e, `declares a variadic positional "${o}" that is not the last one`);
+    if (i.required === true && a !== void 0 && a.required !== true) throw W$4(e, `declares required positional "${o}" after an optional one, which can never be satisfied`);
+    if (i.multiple === true && s !== t.length - 1) throw W$4(e, `declares a variadic positional "${o}" that is not the last one`);
   }
 };
-const ps = (t, e, n) => {
-  const s = n.__requiredOptions__, i = s ? Re$2(s, e, true) : Re$2(t, e, false);
-  if (i.length > 0) throw new as(n.name, i.map((o) => o.name));
-  e._unknown && e._unknown.length > 0 && !n.argument && !n.arguments?.length && hs(e, n);
+const ps$1 = (t, e, n) => {
+  const s = n.__requiredOptions__, i = s ? Re$3(s, e, true) : Re$3(t, e, false);
+  if (i.length > 0) throw new as$1(n.name, i.map((o) => o.name));
+  e._unknown && e._unknown.length > 0 && !n.argument && !n.arguments?.length && hs$1(e, n);
 };
-const fs = (t, e, n) => {
+const fs$1 = (t, e, n) => {
   const s = n.__conflictingOptions__ ?? t.filter((i) => i.conflicts !== void 0);
   if (s.length > 0) {
     const i = s.find((o) => {
-      const l = o.__camelCaseName__ ?? Y$1(o.name);
-      return Array.isArray(o.conflicts) ? o.conflicts.some((a) => e[Y$1(a)] !== void 0) && e[l] !== void 0 : e[Y$1(o.conflicts)] !== void 0 && e[l] !== void 0;
+      const l = o.__camelCaseName__ ?? Y$3(o.name);
+      return Array.isArray(o.conflicts) ? o.conflicts.some((a) => e[Y$3(a)] !== void 0) && e[l] !== void 0 : e[Y$3(o.conflicts)] !== void 0 && e[l] !== void 0;
     });
-    if (i) throw new Ge$2(i.name, typeof i.conflicts == "string" ? i.conflicts : i.conflicts?.[0] ?? "unknown");
+    if (i) throw new Ge$3(i.name, typeof i.conflicts == "string" ? i.conflicts : i.conflicts?.[0] ?? "unknown");
   }
 };
-const ds = (t, e) => {
+const ds$1 = (t, e) => {
   const n = e.options;
   if (n) for (const s of n) {
     if (!s.choices || s.choices.length === 0) continue;
-    const i = s.__camelCaseName__ ?? Y$1(s.name), o = t[i];
+    const i = s.__camelCaseName__ ?? Y$3(s.name), o = t[i];
     if (o == null) continue;
     const l = Array.isArray(o) ? o : [o];
     for (const a of l) {
       const u = String(a);
-      if (!s.choices.includes(u)) throw new ls(s.name, u, s.choices);
+      if (!s.choices.includes(u)) throw new ls$1(s.name, u, s.choices);
     }
   }
 };
-const gs = (t) => {
+const gs$1 = (t) => {
   if (!Array.isArray(t.options)) return;
   const e = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map();
   for (const i of t.options) {
@@ -1348,15 +1346,15 @@ const gs = (t) => {
   if (s.length > 0) throw new Error(s.join(`
 `));
 };
-const ms = (t) => {
+const ms$1 = (t) => {
   const { arguments: e } = t;
   if (e !== void 0) {
-    if (!Array.isArray(e)) throw W$2(t.name, 'must declare "arguments" as an array — slot order is significant, so a record cannot express it');
-    if (t.argument !== void 0) throw W$2(t.name, 'cannot define both "argument" and "arguments" — choose one');
-    us(e, t.name);
+    if (!Array.isArray(e)) throw W$4(t.name, 'must declare "arguments" as an array — slot order is significant, so a record cannot express it');
+    if (t.argument !== void 0) throw W$4(t.name, 'cannot define both "argument" and "arguments" — choose one');
+    us$1(e, t.name);
   }
 };
-const ws = (t, e) => {
+const ws$1 = (t, e) => {
   if (e.length === 0) return { argv: [], commandPath: void 0 };
   const n = [];
   let s;
@@ -1369,26 +1367,26 @@ const ws = (t, e) => {
   }
   return s ? { argv: e.slice(s.depth), commandPath: s.commandPath } : { argv: e, commandPath: void 0 };
 };
-const z$1 = (t) => t.join(" ");
-const Be$2 = (t, e) => e && e.length > 0 ? [...e, t] : [t];
-const ze$1 = (t) => t === void 0 || Array.isArray(t) ? t : Object.entries(t).map(([e, n]) => ({ ...n, name: e }));
-const ys = (t) => {
-  const e = ze$1(t.options), n = ze$1(t.env);
+const z$2 = (t) => t.join(" ");
+const Be$3 = (t, e) => e && e.length > 0 ? [...e, t] : [t];
+const ze$2 = (t) => t === void 0 || Array.isArray(t) ? t : Object.entries(t).map(([e, n]) => ({ ...n, name: e }));
+const ys$1 = (t) => {
+  const e = ze$2(t.options), n = ze$2(t.env);
   return e === t.options && n === t.env ? t : Object.assign(Object.create(Object.getPrototypeOf(t)), t, { env: n, options: e });
 };
-const vs = /^no-/;
-const As = (t) => {
+const vs$1 = /^no-/;
+const As$1 = (t) => {
   t.options?.forEach((e) => {
-    e.__camelCaseName__ = Y$1(e.name);
+    e.__camelCaseName__ = Y$3(e.name);
   });
 };
-const Cs = (t) => {
+const Cs$1 = (t) => {
   if (!Array.isArray(t.options) || t.options.length === 0) return;
   const e = /* @__PURE__ */ new Set();
   for (const s of t.options) e.add(s.name);
   const n = [];
   for (const s of t.options) if (s.name.startsWith("no-")) {
-    const i = s.name.replace(vs, "");
+    const i = s.name.replace(vs$1, "");
     if (!e.has(i)) {
       if (s.type !== Boolean) throw new Error(`Cannot add negated option "${s.name}" to command "${t.name}" because it is not a boolean.`);
       const o = { ...s, alias: void 0, defaultValue: s.defaultValue === void 0 ? true : !s.defaultValue, description: `Inverse of --${s.name}.`, name: i };
@@ -1397,11 +1395,11 @@ const Cs = (t) => {
   }
   n.length > 0 && t.options.push(...n);
 };
-const Ns = (t, e) => {
+const Ns$1 = (t, e) => {
   if (!e.options || e.options.length === 0) return;
   const { options: n } = t, s = /* @__PURE__ */ new Map();
   for (const o of e.options) if (o.name.startsWith("no-")) {
-    const l = Y$1(o.name);
+    const l = Y$3(o.name);
     s.set(l, o);
   }
   const i = Object.keys(n).filter((o) => s.has(o));
@@ -1412,7 +1410,7 @@ const Ns = (t, e) => {
     u && (u.__negated__ = true), n[a] = !n[o], Reflect.deleteProperty(n, o);
   }
 };
-const bs = (t, e) => {
+const bs$1 = (t, e) => {
   if (!e.options || e.options.length === 0) return;
   const n = /* @__PURE__ */ new Map();
   for (const i of e.options) i.__camelCaseName__ && i.__negated__ === void 0 && i.implies !== void 0 && n.set(i.__camelCaseName__, i);
@@ -1426,20 +1424,20 @@ const bs = (t, e) => {
     }
   }
 };
-const Os = () => !!process.versions.electron;
-const _s = () => Os() && !process.defaultApp;
-const Es = () => _s() ? 0 : 1;
-const xs = (t) => t.slice(Es() + 1);
-const ks = " ";
-const Is = (t, e) => t === e ? true : t.length !== e.length ? false : t.every((n, s) => n === e[s]);
-const Ps = (t) => {
-  if (typeof t == "string") return t.split(ks);
+const Os$1 = () => !!process.versions.electron;
+const _s$1 = () => Os$1() && !process.defaultApp;
+const Es$1 = () => _s$1() ? 0 : 1;
+const xs$1 = (t) => t.slice(Es$1() + 1);
+const ks$1 = " ";
+const Is$1 = (t, e) => t === e ? true : t.length !== e.length ? false : t.every((n, s) => n === e[s]);
+const Ps$1 = (t) => {
+  if (typeof t == "string") return t.split(ks$1);
   const e = i$1();
-  return Is(t, e) ? xs(t) : t;
+  return Is$1(t, e) ? xs$1(t) : t;
 };
-const $s = (t) => {
+const $s$1 = (t) => {
   const e = (o) => {
-    t.error(`Uncaught exception: ${o.message || o}`), o.stack && t.error(o.stack), b$2(1);
+    t.error(`Uncaught exception: ${o.message || o}`), o.stack && t.error(o.stack), b$3(1);
   }, n = (o, l) => {
     if (o instanceof Error) t.error(`Promise rejection: ${o.message || o}`), o.stack && t.error(o.stack);
     else {
@@ -1452,64 +1450,64 @@ const $s = (t) => {
       }
       t.error(`Promise rejection: ${a}`);
     }
-    b$2(1);
-  }, s = d("uncaughtException", e), i = d("unhandledRejection", n);
+    b$3(1);
+  }, s = d$2("uncaughtException", e), i = d$2("unhandledRejection", n);
   return () => {
     s(), i();
   };
 };
-const Fe$1 = 100;
-const Ls = /^[a-z][\w-]*$/i;
-const ve$1 = (t, e) => {
+const Fe$2 = 100;
+const Ls$1 = /^[a-z][\w-]*$/i;
+const ve$2 = (t, e) => {
   if (typeof t != "string" || t.trim().length === 0) throw new n$1(`${e} must be a non-empty string`, "INVALID_INPUT", { fieldName: e, value: t });
   return t.trim();
 };
-const We$2 = (t, e) => {
+const We$3 = (t, e) => {
   if (!Array.isArray(t) || !t.every((n) => typeof n == "string")) throw new n$1(`${e} must be an array of strings`, "INVALID_INPUT", { fieldName: e, value: t });
   return t;
 };
-const ne$3 = (t, e) => {
+const ne$4 = (t, e) => {
   if (typeof t != "object" || t === null) throw new n$1(`${e} must be an object`, "INVALID_INPUT", { fieldName: e, value: t });
   return t;
 };
-const se$2 = (t) => {
-  const e = ve$1(t, "Command name");
-  if (e.length > Fe$1) throw new n$1(`Command name is too long (maximum ${String(Fe$1)} characters)`, "INVALID_COMMAND_NAME", { commandName: e, length: e.length });
+const se$3 = (t) => {
+  const e = ve$2(t, "Command name");
+  if (e.length > Fe$2) throw new n$1(`Command name is too long (maximum ${String(Fe$2)} characters)`, "INVALID_COMMAND_NAME", { commandName: e, length: e.length });
   if (e.includes("..") || e.includes("/") || e.includes("\\") || e.includes(";") || e.includes("|") || e.includes("&")) throw new n$1(`Command name "${e}" contains invalid characters`, "INVALID_COMMAND_NAME", { commandName: e });
-  if (!Ls.test(e)) throw new n$1(`Command name "${e}" must start with a letter and contain only letters, numbers, hyphens, and underscores`, "INVALID_COMMAND_NAME", { commandName: e });
+  if (!Ls$1.test(e)) throw new n$1(`Command name "${e}" must start with a letter and contain only letters, numbers, hyphens, and underscores`, "INVALID_COMMAND_NAME", { commandName: e });
   return e;
 };
-const Ms = 1e6;
-const Us = 1e5;
-const Ss = /* @__PURE__ */ new Set([`
+const Ms$1 = 1e6;
+const Us$1 = 1e5;
+const Ss$1 = /* @__PURE__ */ new Set([`
 `, "\r", "	", "\0", '"', "$", "&", "'", "(", ")", ";", "<", ">", "[", "\\", "]", "`", "{", "|", "}"]);
-const Ts = (t, e = {}) => {
+const Ts$1 = (t, e = {}) => {
   if (typeof t != "string") throw new TypeError("Argument must be a string");
-  const n = typeof e == "boolean" ? { checkDangerousChars: e } : e, s = n.maxArgumentLength ?? Ms;
+  const n = typeof e == "boolean" ? { checkDangerousChars: e } : e, s = n.maxArgumentLength ?? Ms$1;
   if (Number.isFinite(s) && s > 0 && t.length > s) throw new Error(`Argument is too long (maximum ${String(s)} characters)`);
   if (n.checkDangerousChars) {
-    for (const i of t) if (Ss.has(i)) throw new Error(`Argument contains dangerous character: ${i}`);
+    for (const i of t) if (Ss$1.has(i)) throw new Error(`Argument contains dangerous character: ${i}`);
   }
   return n.trim ? t.trim() : t;
 };
-const qe$1 = (t, e = {}) => {
+const qe$2 = (t, e = {}) => {
   if (!Array.isArray(t)) throw new TypeError("Arguments must be an array");
-  const n = typeof e == "boolean" ? { checkDangerousChars: e } : e, s = n.maxArguments ?? Us;
+  const n = typeof e == "boolean" ? { checkDangerousChars: e } : e, s = n.maxArguments ?? Us$1;
   if (Number.isFinite(s) && s > 0 && t.length > s) throw new Error(`Too many arguments (maximum ${String(s)})`);
-  return t.map((i) => Ts(i, n));
+  return t.map((i) => Ts$1(i, n));
 };
-const Ds = /^-([^\d-])$/;
-const Vs = /^--(\S+)/;
-const js = /^-([^\d-]{2,})$/;
-const me$2 = (t) => Ds.test(t) || Vs.test(t) || js.test(t);
-const Rs = { access: (t, e) => yt$1(t, e), mkdir: (t, e) => wt$2(t, e), readdir: (t) => mt$2(t), readFile: (async (t, e) => e === void 0 ? Ce$1(t) : Ce$1(t, e)), rm: (t, e) => gt$2(t, e), stat: (t) => dt$2(t), writeFile: (t, e, n) => ft$2(t, e, n) };
-const Bs = (t, e, n) => {
+const Ds$1 = /^-([^\d-])$/;
+const Vs$1 = /^--(\S+)/;
+const js$1 = /^-([^\d-]{2,})$/;
+const me$3 = (t) => Ds$1.test(t) || Vs$1.test(t) || js$1.test(t);
+const Rs$1 = { access: (t, e) => yt$2(t, e), mkdir: (t, e) => wt$3(t, e), readdir: (t) => mt$3(t), readFile: (async (t, e) => e === void 0 ? Ce$2(t) : Ce$2(t, e)), rm: (t, e) => gt$3(t, e), stat: (t) => dt$3(t), writeFile: (t, e, n) => ft$3(t, e, n) };
+const Bs$1 = (t, e, n) => {
   const s = e.indexOf("--"), i = s === -1 ? /* @__PURE__ */ new Set() : new Set(e.slice(s + 1)), o = n.filter((u) => u.startsWith("--") && u !== "--" && !i.has(u));
   if (o.length === 0) return;
-  const l = (t.options ?? []).map((u) => u.name), a = o.flatMap((u) => R$2(u.slice(2), l).map((r) => `--${r}`));
-  throw new Zt$1(o, a);
+  const l = (t.options ?? []).map((u) => u.name), a = o.flatMap((u) => R$3(u.slice(2), l).map((r) => `--${r}`));
+  throw new Zt$2(o, a);
 };
-let at$2 = class at {
+let at$4 = class at {
   #t;
   #e;
   #h;
@@ -1547,20 +1545,20 @@ let at$2 = class at {
     return this.#w === void 0 && (this.#w = [...this.#D(), ...this.#L()]), this.#w;
   }
   #M() {
-    return this.#l.length === 0 ? te$3 : [...te$3, ...this.#l];
+    return this.#l.length === 0 ? te$4 : [...te$4, ...this.#l];
   }
   #U() {
     this.#g = void 0, this.#m = void 0, this.#w = void 0;
   }
   #b() {
     if (this.#h === void 0) {
-      const e = Ps(this.#e.argv);
-      this.#h = qe$1(e, { maxArguments: this.#C }), this.#V();
+      const e = Ps$1(this.#e.argv);
+      this.#h = qe$2(e, { maxArguments: this.#C }), this.#V();
     }
     return this.#h;
   }
   #y() {
-    return this.#A ?? a$2();
+    return this.#A ?? a$3();
   }
   #v(e) {
     this.#N = e, this.#y().CEREBRO_OUTPUT_LEVEL = String(e);
@@ -1573,7 +1571,7 @@ let at$2 = class at {
     let e = false;
     for (const n of this.#h) {
       if (n === "--quiet" || n === "-q") {
-        this.#v(s), e = true;
+        this.#v(s$1), e = true;
         break;
       }
       if (n === "--verbose" || n === "-v") {
@@ -1581,34 +1579,34 @@ let at$2 = class at {
         break;
       }
       if (n === "--debug") {
-        this.#v(E$1), e = true;
+        this.#v(E$3), e = true;
         break;
       }
     }
-    e || this.#v(Object.hasOwn(this.#y(), "DEBUG") ? E$1 : t);
+    e || this.#v(Object.hasOwn(this.#y(), "DEBUG") ? E$3 : t);
   }
   #j() {
-    this.#$ || (this.#P = $s(this.#t), this.#$ = true);
+    this.#$ || (this.#P = $s$1(this.#t), this.#$ = true);
   }
   #R() {
-    return { arch: h$1(), argv: this.#b(), cwd: this.#p, env: this.#A ?? a$2(), exit: this.#E ?? ((e) => b$2(e ?? 0)), platform: u(), stdin: this.#x };
+    return { arch: h$2(), argv: this.#b(), cwd: this.#p, env: this.#A ?? a$3(), exit: this.#E ?? ((e) => b$3(e ?? 0)), platform: u$1(), stdin: this.#x };
   }
   #S(e, n, s, i) {
-    this.#c() === E$1 && this.#t.debug(`command '${i}' found, parsing command args: ${n.join(", ")}`);
-    const { arguments_: o, booleanValues: l, parsedArgs: a } = Gn$1(e, n, this.#M()), u = Object.keys(l).length > 0;
+    this.#c() === E$3 && this.#t.debug(`command '${i}' found, parsing command args: ${n.join(", ")}`);
+    const { arguments_: o, booleanValues: l, parsedArgs: a } = Gn$2(e, n, this.#M()), u = Object.keys(l).length > 0;
     let r = a;
-    u && (r = { ...a, _all: { ...a._all, ...l } }), ps(o, r, e);
-    const c = qn$1(e, a, l, s, this.#y(), n);
-    c.runtime = this, c.argv = this.#b(), c.fs = this.#_ ?? Rs, c.process = this.#R(), c.console = this.#t, Kn$1(e, c);
+    u && (r = { ...a, _all: { ...a._all, ...l } }), ps$1(o, r, e);
+    const c = qn$2(e, a, l, s, this.#y(), n);
+    c.runtime = this, c.argv = this.#b(), c.fs = this.#_ ?? Rs$1, c.process = this.#R(), c.console = this.#t, Kn$2(e, c);
     const p = e.options && e.options.length > 0;
     if (p && e.options) {
       const h = e.options.filter((m) => m.name.startsWith("no-"));
       for (const m of h) {
         const g = m.name.slice(3), y = `--${m.name}`, A = `--${g}`, d = n.includes(y), C = n.includes(A);
-        if (d && C) throw new Ge$2(g, m.name);
+        if (d && C) throw new Ge$3(g, m.name);
       }
     }
-    return p && (Ns(c, e), bs(c, e)), fs(o, c.options, e), ds(c.options, e), this.#k && Bs(e, n, c.rawUnknown), this.#c() === E$1 && (this.#t.debug("command options parsed from options:"), this.#t.debug(JSON.stringify(c.options, null, 2)), this.#t.debug("command argument parsed from argument:"), this.#t.debug(JSON.stringify(c.argument, null, 2))), { arguments_: o, booleanValues: l, commandArgs: r, parsedArgs: a, toolbox: c };
+    return p && (Ns$1(c, e), bs$1(c, e)), fs$1(o, c.options, e), ds$1(c.options, e), this.#k && Bs$1(e, n, c.rawUnknown), this.#c() === E$3 && (this.#t.debug("command options parsed from options:"), this.#t.debug(JSON.stringify(c.options, null, 2)), this.#t.debug("command argument parsed from argument:"), this.#t.debug(JSON.stringify(c.argument, null, 2))), { arguments_: o, booleanValues: l, commandArgs: r, parsedArgs: a, toolbox: c };
   }
   async #T(e, n, s) {
     const i = this.getPluginManager();
@@ -1619,12 +1617,12 @@ let at$2 = class at {
       if (l?.help) {
         const a = this.#n.get("help");
         if (!a) throw new n$1("Help command not found", "COMMAND_NOT_FOUND");
-        o = await pe$2(a, n, s);
+        o = await pe$3(a, n, s);
       } else if (l?.version ?? l?.V) {
         const a = this.#n.get("version");
         if (!a) throw new n$1("Version command not found", "COMMAND_NOT_FOUND");
-        o = await pe$2(a, n, s);
-      } else o = await pe$2(e, n, s);
+        o = await pe$3(a, n, s);
+      } else o = await pe$3(e, n, s);
       return await i.executeLifecycle("afterCommand", n, o), o;
     } catch (o) {
       throw await i.executeErrorHandlers(o, n), o;
@@ -1644,7 +1642,7 @@ let at$2 = class at {
       if (h.length > 0) throw new n$1(`Logger object is missing required methods: ${h.join(", ")}`, "INVALID_INPUT", { logger: this.#e.logger, missingMethods: h });
       this.#t = this.#e.logger;
     } else this.#t = { ...console, debug: (...p) => {
-      this.#c() === E$1 && console.debug(...p);
+      this.#c() === E$3 && console.debug(...p);
     } };
     this.#d = this.#e.packageVersion, this.#O = this.#e.packageName, this.#p = this.#e.cwd, this.#i = "help", this.#r = {};
     const o = n.fs;
@@ -1672,41 +1670,41 @@ let at$2 = class at {
     return this.#i;
   }
   addCommand(e) {
-    ne$3(e, "Command"), se$2(e.name), e.options !== void 0 && ne$3(e.options, "Command options"), e.env !== void 0 && ne$3(e.env, "Command env"), ms(e);
-    const n = ys(e), s = typeof n.execute == "function", i = typeof n.loader == "function";
+    ne$4(e, "Command"), se$3(e.name), e.options !== void 0 && ne$4(e.options, "Command options"), e.env !== void 0 && ne$4(e.env, "Command env"), ms$1(e);
+    const n = ys$1(e), s = typeof n.execute == "function", i = typeof n.loader == "function";
     if (s && i) throw new n$1(`Command "${n.name}" cannot define both "execute" and "loader" — choose one`, "INVALID_COMMAND", { commandName: n.name });
     if (!s && !i) throw new n$1(`Command "${n.name}" must define either "execute" or "loader"`, "INVALID_COMMAND", { commandName: n.name });
-    n.alias && (typeof n.alias == "string" ? se$2(n.alias) : We$2(n.alias, "Command alias").forEach((c) => se$2(c))), n.argument && ne$3(n.argument, "Command argument"), n.commandPath && (We$2(n.commandPath, "Command commandPath"), n.commandPath.forEach((c) => {
-      se$2(c);
+    n.alias && (typeof n.alias == "string" ? se$3(n.alias) : We$3(n.alias, "Command alias").forEach((c) => se$3(c))), n.argument && ne$4(n.argument, "Command argument"), n.commandPath && (We$3(n.commandPath, "Command commandPath"), n.commandPath.forEach((c) => {
+      se$3(c);
     }));
-    const o = Be$2(n.name, n.commandPath), l = z$1(o);
+    const o = Be$3(n.name, n.commandPath), l = z$2(o);
     if (this.#s.has(l)) throw new n$1(`Command with path "${l}" already exists`, "DUPLICATE_COMMAND", { commandName: n.name, commandPath: n.commandPath });
     const a = Array.isArray(n.commandPath) && n.commandPath.length > 0, u = this.#n.get(n.name), r = u !== void 0 && (u.commandPath === void 0 || u.commandPath.length === 0);
     if (!a && r) throw new n$1(`Command with name "${n.name}" already exists`, "DUPLICATE_COMMAND", { commandName: n.name });
-    if (n.options) for (const c of n.options) Ie$1(c);
-    if (gs(n), Cs(n), As(n), n.options && (n.__conflictingOptions__ = n.options.filter((c) => c.conflicts !== void 0), n.__requiredOptions__ = n.options.filter((c) => c.required === true)), a && u !== void 0) this.#n.set(l, n);
+    if (n.options) for (const c of n.options) Ie$2(c);
+    if (gs$1(n), Cs$1(n), As$1(n), n.options && (n.__conflictingOptions__ = n.options.filter((c) => c.conflicts !== void 0), n.__requiredOptions__ = n.options.filter((c) => c.required === true)), a && u !== void 0) this.#n.set(l, n);
     else {
       if (!a && u !== void 0 && !r) {
-        const c = Be$2(u.name, u.commandPath);
-        this.#n.set(z$1(c), u);
+        const c = Be$3(u.name, u.commandPath);
+        this.#n.set(z$2(c), u);
       }
       this.#n.set(n.name, n);
     }
     if (this.#s.set(l, o), this.#o.set(l, n), this.#U(), n.alias !== void 0) {
       const c = typeof n.alias == "string" ? [n.alias] : n.alias;
       for (const p of c) {
-        if (this.#c() === E$1 && this.#t.debug("adding alias", p), this.#n.has(p)) throw new n$1(`Command alias "${p}" conflicts with existing command`, "DUPLICATE_COMMAND", { alias: p, commandName: n.name });
+        if (this.#c() === E$3 && this.#t.debug("adding alias", p), this.#n.has(p)) throw new n$1(`Command alias "${p}" conflicts with existing command`, "DUPLICATE_COMMAND", { alias: p, commandName: n.name });
         this.#n.set(p, n);
       }
     }
     return this;
   }
   addGlobalOption(e) {
-    const n = e, s = new Set(te$3.map((l) => l.name)), i = new Set(te$3.map((l) => l.alias).filter(Boolean));
+    const n = e, s = new Set(te$4.map((l) => l.name)), i = new Set(te$4.map((l) => l.alias).filter(Boolean));
     if (s.has(n.name)) throw new n$1(`Cannot add global option "--${n.name}": it conflicts with a built-in global option`, "DUPLICATE_OPTION", { optionName: n.name });
     if (n.alias && i.has(n.alias)) throw new n$1(`Cannot add global option with alias "-${n.alias}": it conflicts with a built-in global option alias`, "DUPLICATE_OPTION", { alias: n.alias, optionName: n.name });
     if (new Set(this.#l.map((l) => l.name)).has(n.name)) throw new n$1(`Global option "--${n.name}" has already been added`, "DUPLICATE_OPTION", { optionName: n.name });
-    return n.group = "global", Ie$1(n), this.#l.push(n), this;
+    return n.group = "global", Ie$2(n), this.#l.push(n), this;
   }
   getGlobalOptions() {
     return this.#M();
@@ -1715,7 +1713,7 @@ let at$2 = class at {
     return this.getPluginManager().register(e), this;
   }
   getPluginManager() {
-    return this.#u ? this.#u : (this.#u = new en$1(this.#t), this.#u.register({ description: "Attaches the logger to the toolbox", execute: (e) => {
+    return this.#u ? this.#u : (this.#u = new en$2(this.#t), this.#u.register({ description: "Attaches the logger to the toolbox", execute: (e) => {
       e.logger = this.#t, e.console = e.logger;
     }, name: "logger" }), this.#u);
   }
@@ -1743,35 +1741,35 @@ let at$2 = class at {
       const { default: d } = await import('./packem_chunks/help-command.js');
       this.addCommand(new d(this.#n));
     }
-    const o = this.#L(), l$1 = this.#s;
+    const o = this.#L(), l = this.#s;
     this.#j();
     const a = this.#b();
     let u, r = [...a];
-    this.#c() === E$1 && (this.#t.debug(`process.execPath: ${g()}`), this.#t.debug(`process.execArgv: ${l().join(" ")}`), this.#t.debug(`process.argv: ${i$1().join(" ")}`));
-    const c = ws(l$1, [...a]);
+    this.#c() === E$3 && (this.#t.debug(`process.execPath: ${g$1()}`), this.#t.debug(`process.execArgv: ${l$1().join(" ")}`), this.#t.debug(`process.argv: ${i$1().join(" ")}`));
+    const c = ws$1(l, [...a]);
     if (c.commandPath) u = c.commandPath, r = c.argv;
     else {
-      if (a.length > 1 && a[0] && a[1] && !me$2(a[0]) && !me$2(a[1])) {
+      if (a.length > 1 && a[0] && a[1] && !me$3(a[0]) && !me$3(a[1])) {
         const C = [];
         let O = 0;
         for (; O < a.length; ) {
           const E = a[O];
-          if (!E || me$2(E)) break;
+          if (!E || me$3(E)) break;
           C.push(E), O += 1;
         }
-        const k = z$1(C);
+        const k = z$2(C);
         if (C[0] && !o.includes(C[0])) {
-          const E = this.#a(), H = R$2(k, E);
-          throw new B$2(k, H);
+          const E = this.#a(), H = R$3(k, E);
+          throw new B$4(k, H);
         }
       }
       let d;
       try {
-        d = an$1([null, ...o], [...a]);
+        d = an$2([null, ...o], [...a]);
       } catch (C) {
         if (C instanceof Error && C.name === "INVALID_COMMAND" && "command" in C) {
-          const O = C.command, k = this.#a(), E = R$2(O, k);
-          throw new B$2(O, E);
+          const O = C.command, k = this.#a(), E = R$3(O, k);
+          throw new B$4(O, E);
         }
         throw C;
       }
@@ -1780,36 +1778,36 @@ let at$2 = class at {
     if (!u) if (this.#i) u = [this.#i];
     else {
       const d = this.#a();
-      throw new B$2("", d);
+      throw new B$4("", d);
     }
-    const p = z$1(u), h = this.#s.get(p);
+    const p = z$2(u), h = this.#s.get(p);
     let m;
     if (h) {
-      if (m = this.#o.get(p), !m || z$1(h) !== p) {
-        const d = this.#a(), C = R$2(p, d);
-        throw new B$2(p, C);
+      if (m = this.#o.get(p), !m || z$2(h) !== p) {
+        const d = this.#a(), C = R$3(p, d);
+        throw new B$4(p, C);
       }
     } else {
       const d = u.at(-1);
       if (m = d ? this.#n.get(d) : void 0, !m) {
-        const C = this.#a(), O = R$2(p, C);
-        throw new B$2(p, O);
+        const C = this.#a(), O = R$3(p, C);
+        throw new B$4(p, O);
       }
     }
-    if (typeof m.execute != "function" && typeof m.loader != "function") return this.#t.error(`Command "${m.name}" has no function to execute.`), s ? b$2(1) : void 0;
-    const g$1 = r;
+    if (typeof m.execute != "function" && typeof m.loader != "function") return this.#t.error(`Command "${m.name}" has no function to execute.`), s ? b$3(1) : void 0;
+    const g = r;
     let y, A;
     try {
-      ({ commandArgs: y, toolbox: A } = this.#S(m, g$1, i, p));
+      ({ commandArgs: y, toolbox: A } = this.#S(m, g, i, p));
     } catch (d) {
-      const C = R$3(d);
-      if (this.#t.error(C ?? d), s) return b$2(1);
+      const C = R$4(d);
+      if (this.#t.error(C ?? d), s) return b$3(1);
       throw d;
     }
     try {
-      return await this.#T(m, A, y), s ? b$2(0) : void 0;
+      return await this.#T(m, A, y), s ? b$3(0) : void 0;
     } catch (d) {
-      if (s) return this.#t.error(d), b$2(1);
+      if (s) return this.#t.error(d), b$3(1);
       throw d;
     } finally {
       n && this.dispose();
@@ -1817,15 +1815,15 @@ let at$2 = class at {
   }
   async runCommand(e, n = {}) {
     const { argv: s = [], ...i } = n;
-    ve$1(e, "Command name");
-    const o = e.split(" ").filter(Boolean), l = z$1(o), u = this.#s.get(l) ? this.#o.get(l) : this.#n.get(e);
+    ve$2(e, "Command name");
+    const o = e.split(" ").filter(Boolean), l = z$2(o), u = this.#s.get(l) ? this.#o.get(l) : this.#n.get(e);
     if (!u) {
-      const m = this.#a(), g = R$2(l || e, m);
-      throw new B$2(e, g);
+      const m = this.#a(), g = R$3(l || e, m);
+      throw new B$4(e, g);
     }
     if (typeof u.execute != "function" && typeof u.loader != "function") throw new n$1(`Command "${u.name}" has no function to execute`, "INVALID_COMMAND", { commandName: u.name });
-    const c = [...qe$1(s, { maxArguments: this.#C })];
-    this.#c() === E$1 && this.#t.debug(`running command '${e}' programmatically with args: ${c.join(", ")}`);
+    const c = [...qe$2(s, { maxArguments: this.#C })];
+    this.#c() === E$3 && this.#t.debug(`running command '${e}' programmatically with args: ${c.join(", ")}`);
     const { commandArgs: p, toolbox: h } = this.#S(u, c, i, l || e);
     return this.#T(u, h, p);
   }
@@ -1838,19 +1836,19 @@ let at$2 = class at {
     return s.#i = this.#i, s.#r = { ...this.#r }, s.#U(), s;
   }
   async getAction(e) {
-    ve$1(e, "Command name");
-    const n = e.split(" ").filter(Boolean), s = z$1(n), o = this.#s.get(s) ? this.#o.get(s) : this.#n.get(e);
+    ve$2(e, "Command name");
+    const n = e.split(" ").filter(Boolean), s = z$2(n), o = this.#s.get(s) ? this.#o.get(s) : this.#n.get(e);
     if (!o) {
-      const l = this.#a(), a = R$2(s || e, l);
-      throw new B$2(e, a);
+      const l = this.#a(), a = R$3(s || e, l);
+      throw new B$4(e, a);
     }
     if (typeof o.execute == "function") return o.execute;
-    if (typeof o.loader == "function") return tt$2(o);
+    if (typeof o.loader == "function") return tt$4(o);
     throw new n$1(`Command "${o.name}" has no execute or loader defined`, "INVALID_COMMAND", { commandName: o.name });
   }
 };
 
-const a$1 = (r, e) => new at$2(r, e);
+const a$2 = (r, e) => new at$4(r, e);
 
 const TRUSTED_DIRS = ["/usr/bin", "/bin", "/usr/sbin", "/usr/share/omarchy/bin"];
 function resolveTool(name) {
@@ -1912,16 +1910,9 @@ function commandEnv(extra) {
 function run(binary, args, extra) {
   const result = spawnSync(binary, [...args], {
     stdio: "inherit",
-    env: extra === void 0 ? process.env : commandEnv(extra)
+    env: process.env 
   });
   return result.status === 0;
-}
-function isFile(path) {
-  try {
-    return statSync(path).isFile();
-  } catch {
-    return false;
-  }
 }
 function isDir(path) {
   try {
@@ -1930,32 +1921,5414 @@ function isDir(path) {
     return false;
   }
 }
-function exists(path) {
-  return existsSync(path);
+
+let Ed;
+const $d = (i) => (Ed ??= createRequire(import.meta.url))(i);
+const $i = typeof globalThis < "u" && typeof globalThis.process < "u" ? globalThis.process : process;
+const qe$1 = (i) => {
+  if (typeof $i < "u" && $i.versions && $i.versions.node) {
+    const [o, e] = $i.versions.node.split(".").map(Number);
+    if (o > 22 || o === 22 && e >= 3 || o === 20 && e >= 16) return $i.getBuiltinModule(i);
+  }
+  return $d(i);
+};
+const Pi = $i;
+const { execFileSync: qd } = qe$1("node:child_process");
+const co = qe$1("node:fs");
+const Id = qe$1("node:tty");
+const Vd = 12288;
+const it$3 = 65510;
+const ot$3 = [12288, 12288, 65281, 65376, 65504, 65510];
+const et$3 = 8361;
+const nt$3 = 65518;
+const at$3 = [8361, 8361, 65377, 65470, 65474, 65479, 65482, 65487, 65490, 65495, 65498, 65500, 65512, 65518];
+const ut$2 = 32;
+const gt$2 = 10630;
+const dt$2 = [32, 126, 162, 163, 165, 166, 172, 172, 175, 175, 10214, 10221, 10629, 10630];
+const tt$3 = 4352;
+const st$3 = 262141;
+const Lo = (i, o) => {
+  let e = 0, n = Math.floor(i.length / 2) - 1;
+  for (; e <= n; ) {
+    const a = Math.floor((e + n) / 2), u = a * 2;
+    if (o < i[u]) n = a - 1;
+    else if (o > i[u + 1]) e = a + 1;
+    else return true;
+  }
+  return false;
+};
+const $n$1 = 19968;
+const [ht$2, rt$3] = lt$3(ru);
+function lt$3(i) {
+  let o = i[0], e = i[1];
+  for (let n = 0; n < i.length; n += 2) {
+    const a = i[n], u = i[n + 1];
+    if ($n$1 >= a && $n$1 <= u) return [a, u];
+    u - a > e - o && (o = a, e = u);
+  }
+  return [o, e];
 }
-function isLink(path) {
+const vt$2 = (i) => i < 161 || i > 1114109 ? false : Lo(Ud, i);
+const yt$1 = (i) => i < Vd || i > it$3 ? false : Lo(ot$3, i);
+const ct$3 = (i) => i < et$3 || i > nt$3 ? false : Lo(at$3, i);
+const bt$2 = (i) => i < ut$2 || i > gt$2 ? false : Lo(dt$2, i);
+const pt$2 = (i) => i >= ht$2 && i <= rt$3 ? true : i < tt$3 || i > st$3 ? false : Lo(ru, i);
+function wt$2(i) {
+  return vt$2(i) ? "ambiguous" : yt$1(i) ? "fullwidth" : ct$3(i) ? "halfwidth" : bt$2(i) ? "narrow" : pt$2(i) ? "wide" : "neutral";
+}
+function jt$2(i) {
+  if (!Number.isSafeInteger(i)) throw new TypeError(`Expected a code point, got \`${typeof i}\`.`);
+}
+function lu(i) {
+  return jt$2(i), wt$2(i);
+}
+const vu = String.raw;
+const qn$1 = vu`\p{Emoji}(?:\p{EMod}|[\u{E0020}-\u{E007E}]+\u{E007F}|\uFE0F?\u20E3?)`;
+const mt$2 = () => new RegExp(vu`\p{RI}{2}|(?![#*\d](?!\uFE0F?\u20E3))${qn$1}(?:\u200D${qn$1})*`, "gu");
+const eo$1 = /* @__PURE__ */ new Set(["\x1B", ""]);
+const Oo = "\x07";
+const yu = "[";
+const Ie$1 = "m";
+const wo = "]8;;";
+const ft$2 = 39;
+const Yt$1 = /[\u200B\uFEFF\u2060-\u2064]/g;
+const kt$2 = new RegExp(`(?:\\${yu}(?<code>\\d+)m|\\${wo}(?<uri>.*)${Oo})`);
+const Lt$2 = Object.freeze(/* @__PURE__ */ new Map([[0, 0], [1, 22], [2, 22], [3, 23], [4, 24], [7, 27], [8, 28], [9, 29], [30, 39], [31, 39], [32, 39], [33, 39], [34, 39], [35, 39], [36, 39], [37, 39], [40, 49], [41, 49], [42, 49], [43, 49], [44, 49], [45, 49], [46, 49], [47, 49], [90, 39]]));
+const Zt$1 = /^[ \t]*(?:\r\n|\r|\n)/;
+const St$2 = /(?:\r\n|\r|\n)[ \t]*$/;
+const Jt$1 = /^(?:[\r\n]|$)/;
+const Ct$1 = /(?:\r\n|\r|\n)([ \t]*)(?:[^ \t\r\n]|$)/;
+const Xt$1 = /^[ \t]*[\r\n][ \t\r\n]*$/;
+const Ht$1 = /\r\n|\n|\r/g;
+const cu = /[\u001B\u009B](?:[[()#;?]{0,10}(?:\d{1,4}(?:;\d{0,4})*)?[0-9A-ORZcf-nqry=><]|\]8;;[^\u0007\u001B]{0,100}(?:\u0007|\u001B\\))/g;
+const To = /[\u0000-\u0008\n-\u001F\u007F-\u009F]{1,1000}/y;
+const Dt$1 = mt$2();
+const In$1 = /* @__PURE__ */ new Map();
+const Tt$2 = (i) => [i.ambiguousIsNarrow ? 1 : 0, i.control, i.fullWidth, i.regular, i.wide].join("|");
+const Bt$2 = (i) => {
+  const o = Tt$2(i.width);
+  let e = In$1.get(o);
+  return e || (e = /* @__PURE__ */ new Map(), In$1.set(o, e)), e;
+};
+const Bo = new RegExp(cu.source, "y");
+const we$2 = new RegExp(Dt$1.source, "uy");
+const Qo = /(?:[\u0020-\u007E\u00A0-\u00FF](?!\uFE0F)){1,1000}/y;
+const bu = (i) => i >= 32 && i <= 126 ? "latin" : i === 8203 || i === 8204 || i === 8205 || i === 8288 ? "zero" : i <= 31 || i >= 127 && i <= 159 ? "control" : i >= 160 && i <= 255 || i >= 9472 && i <= 9599 ? "latin" : i >= 4352 && i <= 4607 || i >= 11904 && i <= 40959 || i >= 44032 && i <= 55215 || i >= 63744 && i <= 64255 || i >= 65280 && i <= 65519 && !(i >= 65377 && i <= 65439) || i >= 12352 && i <= 12543 ? "wide" : i === 8230 ? "latin" : "other";
+const Qt$1 = (i, o) => {
+  const e = Bt$2(o), n = Math.floor(i / 65536), a = i % 65536;
+  let u = e.get(n);
+  if (u || (u = /* @__PURE__ */ new Map(), e.set(n, u)), u.has(a)) return u.get(a);
+  let g;
+  switch (bu(i)) {
+    case "control": {
+      g = o.width.control;
+      break;
+    }
+    case "latin": {
+      g = o.width.regular;
+      break;
+    }
+    case "wide": {
+      g = o.width.wide;
+      break;
+    }
+    case "zero": {
+      g = 0;
+      break;
+    }
+    default:
+      switch (lu(i)) {
+        case "ambiguous": {
+          g = o.width.ambiguousIsNarrow ? o.width.regular : o.width.wide;
+          break;
+        }
+        case "fullwidth": {
+          g = o.width.fullWidth;
+          break;
+        }
+        case "wide": {
+          g = o.width.wide;
+          break;
+        }
+        default:
+          g = o.width.regular;
+      }
+  }
+  return u.set(a, g), g;
+};
+const Mt$2 = (i) => i >= 768 && i <= 879 || i >= 6832 && i <= 6911 || i >= 7616 && i <= 7679 || i >= 8400 && i <= 8447 || i >= 65056 && i <= 65071 || i >= 917760 && i <= 917999 || i >= 65024 && i <= 65039 || i >= 3633 && i <= 3642 || i >= 3655 && i <= 3662 || i >= 3761 && i <= 3769 || i >= 3771 && i <= 3772 || i >= 3784 && i <= 3789 || i >= 2304 && i <= 2307 || i >= 2362 && i <= 2383 || i >= 2385 && i <= 2391 || i >= 2402 && i <= 2403 || i >= 2433 && i <= 2435 || i >= 2492 && i <= 2500 || i >= 2509 && i <= 2509 || i >= 2561 && i <= 2563 || i >= 2620 && i <= 2637 || i >= 1611 && i <= 1631 || i >= 1648 && i <= 1648 || i >= 1750 && i <= 1773 || i >= 2276 && i <= 2302 || i >= 1425 && i <= 1469 || i >= 1471 && i <= 1471 || i >= 1473 && i <= 1474 || i >= 1476 && i <= 1477 || i >= 1479 && i <= 1479 || i >= 3893 && i <= 3893 || i >= 3895 && i <= 3895 || i >= 3897 && i <= 3897 || i >= 3953 && i <= 3966 || i >= 3968 && i <= 3972 || i >= 3974 && i <= 3975 ? true : i >= 768 && i <= 777 || i >= 803 && i <= 803;
+const Qe$2 = (i, o = {}) => {
+  if (!i || i.length === 0) return { ellipsed: false, index: 0, truncated: false, width: 0 };
+  const e = { truncation: { countAnsiEscapeCodes: o.countAnsiEscapeCodes ?? false, ellipsis: o.ellipsis ?? "", ellipsisWidth: o.ellipsisWidth ?? (o.ellipsis ? Qe$2(o.ellipsis, { ...o, ellipsis: "", ellipsisWidth: 0, limit: Number.POSITIVE_INFINITY }).width : 0), limit: o.limit ?? Number.POSITIVE_INFINITY }, width: { ambiguousIsNarrow: o.ambiguousIsNarrow ?? false, ansi: o.ansiWidth ?? 0, control: o.controlWidth ?? 0, emoji: o.emojiWidth ?? 2, fullWidth: o.fullWidth ?? 2, halfWidth: o.halfWidth ?? 1, regular: o.regularWidth ?? 1, tab: o.tabWidth ?? 8, wide: o.wideWidth ?? 2 } }, n = Math.max(0, e.truncation.limit - e.truncation.ellipsisWidth), { length: a } = i, u = a > 1e4;
+  let g = 0, t = 0, s = a, h = false;
+  const r = i.includes("\x1B") || i.includes("");
+  for (; g < a; ) {
+    if (r && (i[g] === "\x1B" || i[g] === "")) {
+      if (i.startsWith("\x1B]8;;", g)) {
+        const p = "\x1B]8;;\x07", j = p.length, L = i.indexOf("\x07", g + 5);
+        if (L !== -1) {
+          const K = i.indexOf(p, L + 1);
+          if (K !== -1) {
+            const R = K + j, O = i.slice(L + 1, K).replace(cu, ""), Q = Qe$2(O, { ambiguousIsNarrow: e.width.ambiguousIsNarrow, ansiWidth: e.width.ansi, controlWidth: e.width.control, countAnsiEscapeCodes: false, ellipsis: e.truncation.ellipsis, ellipsisWidth: e.truncation.ellipsisWidth, emojiWidth: e.width.emoji, fullWidth: e.width.fullWidth, halfWidth: e.width.halfWidth, limit: Math.max(0, n - t), regularWidth: e.width.regular, tabWidth: e.width.tab, wideWidth: e.width.wide }), z = Q.width;
+            if (Q.truncated) h = true, s = Math.min(s, g);
+            else if (t + z > n && (s = Math.min(s, g), h = true, t + z > e.truncation.limit)) break;
+            if (t += z, g = R, h && t >= e.truncation.limit) break;
+            continue;
+          }
+        }
+      }
+      if (Bo.lastIndex = g, Bo.test(i)) {
+        const p = Bo.lastIndex - g, j = e.truncation.countAnsiEscapeCodes ? p : e.width.ansi;
+        if (t + j > n && (s = Math.min(s, g), t + j > e.truncation.limit)) {
+          h = true;
+          break;
+        }
+        t += j, g = Bo.lastIndex;
+        continue;
+      }
+    }
+    const y = i.codePointAt(g);
+    if (y === 8203 || y === 65279 || y >= 8288 && y <= 8292) {
+      g += 1;
+      continue;
+    }
+    if (y === 9) {
+      if (t + e.width.tab > n && (s = Math.min(s, g), t + e.width.tab > e.truncation.limit)) {
+        h = true;
+        break;
+      }
+      t += e.width.tab, g += 1;
+      continue;
+    }
+    if (Qo.lastIndex = g, Qo.test(i)) {
+      const p = (Qo.lastIndex - g) * e.width.regular;
+      if (t + p > n) {
+        const j = e.width.regular > 0 ? Math.floor((n - t) / e.width.regular) : 0;
+        if (s = Math.min(s, g + j), t + p > e.truncation.limit) {
+          h = true;
+          break;
+        }
+      }
+      t += p, g = Qo.lastIndex;
+      continue;
+    }
+    if ((y <= 31 || y >= 127 && y <= 159) && (To.lastIndex = g, To.test(i))) {
+      const p = (To.lastIndex - g) * e.width.control;
+      if (t + p > n) {
+        const j = e.width.control > 0 ? Math.floor((n - t) / e.width.control) : 0;
+        if (s = Math.min(s, g + j), t + p > e.truncation.limit) {
+          h = true;
+          break;
+        }
+      }
+      t += p, g = To.lastIndex;
+      continue;
+    }
+    if (we$2.lastIndex = g, we$2.test(i)) {
+      if (t + e.width.emoji > n && (s = Math.min(s, g), t + e.width.emoji > e.truncation.limit)) {
+        h = true;
+        break;
+      }
+      t += e.width.emoji, g = we$2.lastIndex;
+      continue;
+    }
+    const c = i.codePointAt(g) ?? 0;
+    if (Mt$2(c)) {
+      g += c > 65535 ? 2 : 1;
+      continue;
+    }
+    let b;
+    if (u) b = Qt$1(c, e);
+    else switch (bu(c)) {
+      case "control": {
+        b = e.width.control;
+        break;
+      }
+      case "latin": {
+        b = e.width.regular;
+        break;
+      }
+      case "wide": {
+        b = e.width.wide;
+        break;
+      }
+      case "zero": {
+        b = 0;
+        break;
+      }
+      default:
+        switch (lu(c)) {
+          case "ambiguous": {
+            b = e.width.ambiguousIsNarrow ? e.width.regular : e.width.wide;
+            break;
+          }
+          case "fullwidth": {
+            b = e.width.fullWidth;
+            break;
+          }
+          case "wide": {
+            b = e.width.wide;
+            break;
+          }
+          default:
+            b = e.width.regular;
+        }
+    }
+    if (t + b > n && (s = Math.min(s, g), t + b > e.truncation.limit)) {
+      h = true;
+      break;
+    }
+    t += b, g += c > 65535 ? 2 : 1;
+  }
+  let l = t, v = false;
+  return h && e.truncation.limit >= e.truncation.ellipsisWidth && (l = e.truncation.limit, v = true), { ellipsed: v, index: h ? s : a, truncated: h, width: l };
+};
+const Hi = (i, o = {}) => Qe$2(i, { ...o, ellipsis: "", ellipsisWidth: 0, limit: Number.POSITIVE_INFINITY }).width;
+const Gt$1 = new Uint8Array(128);
+const Nt$2 = new Uint8Array(128);
+const xt$2 = new Uint8Array(128);
+for (let i = 0; i < 128; i++) Gt$1[i] = i >= 65 && i <= 90 ? 1 : 0, Nt$2[i] = i >= 97 && i <= 122 ? 1 : 0, xt$2[i] = i >= 48 && i <= 57 ? 1 : 0;
+function Wt$1(i) {
+  return i && i.__esModule && Object.prototype.hasOwnProperty.call(i, "default") ? i.default : i;
+}
+var je$1;
+var Un$1;
+function Pt$1() {
+  if (Un$1) return je$1;
+  Un$1 = 1, je$1 = o;
+  function i(n) {
+    return n instanceof Buffer ? Buffer.from(n) : new n.constructor(n.buffer.slice(), n.byteOffset, n.length);
+  }
+  function o(n) {
+    if (n = n || {}, n.circles) return e(n);
+    const a = /* @__PURE__ */ new Map();
+    if (a.set(Date, (h) => new Date(h)), a.set(Map, (h, r) => new Map(g(Array.from(h), r))), a.set(Set, (h, r) => new Set(g(Array.from(h), r))), n.constructorHandlers) for (const h of n.constructorHandlers) a.set(h[0], h[1]);
+    let u = null;
+    return n.proto ? s : t;
+    function g(h, r) {
+      const l = Object.keys(h), v = new Array(l.length);
+      for (let y = 0; y < l.length; y++) {
+        const c = l[y], b = h[c];
+        typeof b != "object" || b === null ? v[c] = b : b.constructor !== Object && (u = a.get(b.constructor)) ? v[c] = u(b, r) : ArrayBuffer.isView(b) ? v[c] = i(b) : v[c] = r(b);
+      }
+      return v;
+    }
+    function t(h) {
+      if (typeof h != "object" || h === null) return h;
+      if (Array.isArray(h)) return g(h, t);
+      if (h.constructor !== Object && (u = a.get(h.constructor))) return u(h, t);
+      const r = {};
+      for (const l in h) {
+        if (Object.hasOwnProperty.call(h, l) === false) continue;
+        const v = h[l];
+        typeof v != "object" || v === null ? r[l] = v : v.constructor !== Object && (u = a.get(v.constructor)) ? r[l] = u(v, t) : ArrayBuffer.isView(v) ? r[l] = i(v) : r[l] = t(v);
+      }
+      return r;
+    }
+    function s(h) {
+      if (typeof h != "object" || h === null) return h;
+      if (Array.isArray(h)) return g(h, s);
+      if (h.constructor !== Object && (u = a.get(h.constructor))) return u(h, s);
+      const r = {};
+      for (const l in h) {
+        const v = h[l];
+        typeof v != "object" || v === null ? r[l] = v : v.constructor !== Object && (u = a.get(v.constructor)) ? r[l] = u(v, s) : ArrayBuffer.isView(v) ? r[l] = i(v) : r[l] = s(v);
+      }
+      return r;
+    }
+  }
+  function e(n) {
+    const a = [], u = [], g = /* @__PURE__ */ new Map();
+    if (g.set(Date, (l) => new Date(l)), g.set(Map, (l, v) => new Map(s(Array.from(l), v))), g.set(Set, (l, v) => new Set(s(Array.from(l), v))), n.constructorHandlers) for (const l of n.constructorHandlers) g.set(l[0], l[1]);
+    let t = null;
+    return n.proto ? r : h;
+    function s(l, v) {
+      const y = Object.keys(l), c = new Array(y.length);
+      for (let b = 0; b < y.length; b++) {
+        const p = y[b], j = l[p];
+        if (typeof j != "object" || j === null) c[p] = j;
+        else if (j.constructor !== Object && (t = g.get(j.constructor))) c[p] = t(j, v);
+        else if (ArrayBuffer.isView(j)) c[p] = i(j);
+        else {
+          const L = a.indexOf(j);
+          L !== -1 ? c[p] = u[L] : c[p] = v(j);
+        }
+      }
+      return c;
+    }
+    function h(l) {
+      if (typeof l != "object" || l === null) return l;
+      if (Array.isArray(l)) return s(l, h);
+      if (l.constructor !== Object && (t = g.get(l.constructor))) return t(l, h);
+      const v = {};
+      a.push(l), u.push(v);
+      for (const y in l) {
+        if (Object.hasOwnProperty.call(l, y) === false) continue;
+        const c = l[y];
+        if (typeof c != "object" || c === null) v[y] = c;
+        else if (c.constructor !== Object && (t = g.get(c.constructor))) v[y] = t(c, h);
+        else if (ArrayBuffer.isView(c)) v[y] = i(c);
+        else {
+          const b = a.indexOf(c);
+          b !== -1 ? v[y] = u[b] : v[y] = h(c);
+        }
+      }
+      return a.pop(), u.pop(), v;
+    }
+    function r(l) {
+      if (typeof l != "object" || l === null) return l;
+      if (Array.isArray(l)) return s(l, r);
+      if (l.constructor !== Object && (t = g.get(l.constructor))) return t(l, r);
+      const v = {};
+      a.push(l), u.push(v);
+      for (const y in l) {
+        const c = l[y];
+        if (typeof c != "object" || c === null) v[y] = c;
+        else if (c.constructor !== Object && (t = g.get(c.constructor))) v[y] = t(c, r);
+        else if (ArrayBuffer.isView(c)) v[y] = i(c);
+        else {
+          const b = a.indexOf(c);
+          b !== -1 ? v[y] = u[b] : v[y] = r(c);
+        }
+      }
+      return a.pop(), u.pop(), v;
+    }
+  }
+  return je$1;
+}
+var Ft$1 = Pt$1();
+const pu = Wt$1(Ft$1);
+pu();
+var wu = typeof global == "object" && global && global.Object === Object && global;
+var Kt$1 = typeof self == "object" && self && self.Object === Object && self;
+var P$3 = wu || Kt$1 || Function("return this")();
+var _$2 = P$3.Symbol;
+var ju = Object.prototype;
+var Rt$2 = ju.hasOwnProperty;
+var At$2 = ju.toString;
+var vo = _$2 ? _$2.toStringTag : void 0;
+function _t$1(i) {
+  var o = Rt$2.call(i, vo), e = i[vo];
   try {
-    return lstatSync(path).isSymbolicLink();
+    i[vo] = void 0;
+    var n = true;
+  } catch {
+  }
+  var a = At$2.call(i);
+  return n && (o ? i[vo] = e : delete i[vo]), a;
+}
+var Ot$2 = Object.prototype;
+var zt$1 = Ot$2.toString;
+function Et$2(i) {
+  return zt$1.call(i);
+}
+var $t$2 = "[object Null]";
+var qt$1 = "[object Undefined]";
+var Vn$1 = _$2 ? _$2.toStringTag : void 0;
+function $$1(i) {
+  return i == null ? i === void 0 ? qt$1 : $t$2 : Vn$1 && Vn$1 in Object(i) ? _t$1(i) : Et$2(i);
+}
+function N$3(i) {
+  return i != null && typeof i == "object";
+}
+var It$1 = "[object Symbol]";
+function oi(i) {
+  return typeof i == "symbol" || N$3(i) && $$1(i) == It$1;
+}
+var Ut$1 = NaN;
+function ia(i) {
+  return typeof i == "number" ? i : oi(i) ? Ut$1 : +i;
+}
+function M$2(i, o) {
+  for (var e = -1, n = i == null ? 0 : i.length, a = Array(n); ++e < n; ) a[e] = o(i[e], e, i);
+  return a;
+}
+var k$2 = Array.isArray;
+var oa = _$2 ? _$2.prototype : void 0;
+var ea = oa ? oa.toString : void 0;
+function ei(i) {
+  if (typeof i == "string") return i;
+  if (k$2(i)) return M$2(i, ei) + "";
+  if (oi(i)) return ea ? ea.call(i) : "";
+  var o = i + "";
+  return o == "0" && 1 / i == -1 / 0 ? "-0" : o;
+}
+function zo(i, o) {
+  return function(e, n) {
+    var a;
+    if (e === void 0 && n === void 0) return o;
+    if (e !== void 0 && (a = e), n !== void 0) {
+      if (a === void 0) return n;
+      typeof e == "string" || typeof n == "string" ? (e = ei(e), n = ei(n)) : (e = ia(e), n = ia(n)), a = i(e, n);
+    }
+    return a;
+  };
+}
+var Vt$1 = zo(function(i, o) {
+  return i + o;
+}, 0);
+var is = /\s/;
+function mu(i) {
+  for (var o = i.length; o-- && is.test(i.charAt(o)); ) ;
+  return o;
+}
+var os = /^\s+/;
+function fu(i) {
+  return i && i.slice(0, mu(i) + 1).replace(os, "");
+}
+function G$2(i) {
+  var o = typeof i;
+  return i != null && (o == "object" || o == "function");
+}
+var na = NaN;
+var es = /^[-+]0x[0-9a-f]+$/i;
+var ns = /^0b[01]+$/i;
+var as = /^0o[0-7]+$/i;
+var us = parseInt;
+function gi(i) {
+  if (typeof i == "number") return i;
+  if (oi(i)) return na;
+  if (G$2(i)) {
+    var o = typeof i.valueOf == "function" ? i.valueOf() : i;
+    i = G$2(o) ? o + "" : o;
+  }
+  if (typeof i != "string") return i === 0 ? i : +i;
+  i = fu(i);
+  var e = ns.test(i);
+  return e || as.test(i) ? us(i.slice(2), e ? 2 : 8) : es.test(i) ? na : +i;
+}
+var aa = 1 / 0;
+var gs = 17976931348623157e292;
+function ki(i) {
+  if (!i) return i === 0 ? i : 0;
+  if (i = gi(i), i === aa || i === -aa) {
+    var o = i < 0 ? -1 : 1;
+    return o * gs;
+  }
+  return i === i ? i : 0;
+}
+function Z$2(i) {
+  var o = ki(i), e = o % 1;
+  return o === o ? e ? o - e : o : 0;
+}
+var ds = "Expected a function";
+function ts(i, o) {
+  if (typeof o != "function") throw new TypeError(ds);
+  return i = Z$2(i), function() {
+    if (--i < 1) return o.apply(this, arguments);
+  };
+}
+function U$4(i) {
+  return i;
+}
+var ss = "[object AsyncFunction]";
+var hs = "[object Function]";
+var rs = "[object GeneratorFunction]";
+var ls = "[object Proxy]";
+function Li(i) {
+  if (!G$2(i)) return false;
+  var o = $$1(i);
+  return o == hs || o == rs || o == ss || o == ls;
+}
+var No = P$3["__core-js_shared__"];
+var ua = (function() {
+  var i = /[^.]+$/.exec(No && No.keys && No.keys.IE_PROTO || "");
+  return i ? "Symbol(src)_1." + i : "";
+})();
+function vs(i) {
+  return !!ua && ua in i;
+}
+var ys = Function.prototype;
+var cs = ys.toString;
+function _i(i) {
+  if (i != null) {
+    try {
+      return cs.call(i);
+    } catch {
+    }
+    try {
+      return i + "";
+    } catch {
+    }
+  }
+  return "";
+}
+var bs = /[\\^$.*+?()[\]{}|]/g;
+var ps = /^\[object .+?Constructor\]$/;
+var ws = Function.prototype;
+var js = Object.prototype;
+var ms = ws.toString;
+var fs = js.hasOwnProperty;
+var Ys = RegExp("^" + ms.call(fs).replace(bs, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$");
+function Yu(i) {
+  if (!G$2(i) || vs(i)) return false;
+  var o = Li(i) ? Ys : ps;
+  return o.test(_i(i));
+}
+function ks(i, o) {
+  return i?.[o];
+}
+function Oi(i, o) {
+  var e = ks(i, o);
+  return Yu(e) ? e : void 0;
+}
+var jo = Oi(P$3, "WeakMap");
+var Ko = jo && new jo();
+var ku = Ko ? function(i, o) {
+  return Ko.set(i, o), i;
+} : U$4;
+var ga = Object.create;
+var no$1 = /* @__PURE__ */ (function() {
+  function i() {
+  }
+  return function(o) {
+    if (!G$2(o)) return {};
+    if (ga) return ga(o);
+    i.prototype = o;
+    var e = new i();
+    return i.prototype = void 0, e;
+  };
+})();
+function mo(i) {
+  return function() {
+    var o = arguments;
+    switch (o.length) {
+      case 0:
+        return new i();
+      case 1:
+        return new i(o[0]);
+      case 2:
+        return new i(o[0], o[1]);
+      case 3:
+        return new i(o[0], o[1], o[2]);
+      case 4:
+        return new i(o[0], o[1], o[2], o[3]);
+      case 5:
+        return new i(o[0], o[1], o[2], o[3], o[4]);
+      case 6:
+        return new i(o[0], o[1], o[2], o[3], o[4], o[5]);
+      case 7:
+        return new i(o[0], o[1], o[2], o[3], o[4], o[5], o[6]);
+    }
+    var e = no$1(i.prototype), n = i.apply(e, o);
+    return G$2(n) ? n : e;
+  };
+}
+var Ls = 1;
+function Zs(i, o, e) {
+  var n = o & Ls, a = mo(i);
+  function u() {
+    var g = this && this !== P$3 && this instanceof u ? a : i;
+    return g.apply(n ? e : this, arguments);
+  }
+  return u;
+}
+function ni(i, o, e) {
+  switch (e.length) {
+    case 0:
+      return i.call(o);
+    case 1:
+      return i.call(o, e[0]);
+    case 2:
+      return i.call(o, e[0], e[1]);
+    case 3:
+      return i.call(o, e[0], e[1], e[2]);
+  }
+  return i.apply(o, e);
+}
+var Ss = Math.max;
+function Lu(i, o, e, n) {
+  for (var a = -1, u = i.length, g = e.length, t = -1, s = o.length, h = Ss(u - g, 0), r = Array(s + h), l = !n; ++t < s; ) r[t] = o[t];
+  for (; ++a < g; ) (l || a < u) && (r[e[a]] = i[a]);
+  for (; h--; ) r[t++] = i[a++];
+  return r;
+}
+var Js = Math.max;
+function Zu(i, o, e, n) {
+  for (var a = -1, u = i.length, g = -1, t = e.length, s = -1, h = o.length, r = Js(u - t, 0), l = Array(r + h), v = !n; ++a < r; ) l[a] = i[a];
+  for (var y = a; ++s < h; ) l[y + s] = o[s];
+  for (; ++g < t; ) (v || a < u) && (l[y + e[g]] = i[a++]);
+  return l;
+}
+function Cs(i, o) {
+  for (var e = i.length, n = 0; e--; ) i[e] === o && ++n;
+  return n;
+}
+function Eo() {
+}
+var Xs = 4294967295;
+function J$3(i) {
+  this.__wrapped__ = i, this.__actions__ = [], this.__dir__ = 1, this.__filtered__ = false, this.__iteratees__ = [], this.__takeCount__ = Xs, this.__views__ = [];
+}
+J$3.prototype = no$1(Eo.prototype);
+J$3.prototype.constructor = J$3;
+function Ue$2() {
+}
+var Ve$1 = Ko ? function(i) {
+  return Ko.get(i);
+} : Ue$2;
+var Ui = {};
+var Hs = Object.prototype;
+var Ds = Hs.hasOwnProperty;
+function xo(i) {
+  for (var o = i.name + "", e = Ui[o], n = Ds.call(Ui, o) ? e.length : 0; n--; ) {
+    var a = e[n], u = a.func;
+    if (u == null || u == i) return a.name;
+  }
+  return o;
+}
+function ti(i, o) {
+  this.__wrapped__ = i, this.__actions__ = [], this.__chain__ = !!o, this.__index__ = 0, this.__values__ = void 0;
+}
+ti.prototype = no$1(Eo.prototype);
+ti.prototype.constructor = ti;
+function I$2(i, o) {
+  var e = -1, n = i.length;
+  for (o || (o = Array(n)); ++e < n; ) o[e] = i[e];
+  return o;
+}
+function Su(i) {
+  if (i instanceof J$3) return i.clone();
+  var o = new ti(i.__wrapped__, i.__chain__);
+  return o.__actions__ = I$2(i.__actions__), o.__index__ = i.__index__, o.__values__ = i.__values__, o;
+}
+var Ts = Object.prototype;
+var Bs = Ts.hasOwnProperty;
+function d$1(i) {
+  if (N$3(i) && !k$2(i) && !(i instanceof J$3)) {
+    if (i instanceof ti) return i;
+    if (Bs.call(i, "__wrapped__")) return Su(i);
+  }
+  return new ti(i);
+}
+d$1.prototype = Eo.prototype;
+d$1.prototype.constructor = d$1;
+function Me$2(i) {
+  var o = xo(i), e = d$1[o];
+  if (typeof e != "function" || !(o in J$3.prototype)) return false;
+  if (i === e) return true;
+  var n = Ve$1(e);
+  return !!n && i === n[0];
+}
+var Qs = 800;
+var Ms = 16;
+var Gs = Date.now;
+function Ju(i) {
+  var o = 0, e = 0;
+  return function() {
+    var n = Gs(), a = Ms - (n - e);
+    if (e = n, a > 0) {
+      if (++o >= Qs) return arguments[0];
+    } else o = 0;
+    return i.apply(void 0, arguments);
+  };
+}
+var Cu = Ju(ku);
+var Ns = /\{\n\/\* \[wrapped with (.+)\] \*/;
+var xs = /,? & /;
+function Ws(i) {
+  var o = i.match(Ns);
+  return o ? o[1].split(xs) : [];
+}
+var Ps = /\{(?:\n\/\* \[wrapped with .+\] \*\/)?\n?/;
+function Fs(i, o) {
+  var e = o.length;
+  if (!e) return i;
+  var n = e - 1;
+  return o[n] = (e > 1 ? "& " : "") + o[n], o = o.join(e > 2 ? ", " : " "), i.replace(Ps, `{
+/* [wrapped with ` + o + `] */
+`);
+}
+function on$1(i) {
+  return function() {
+    return i;
+  };
+}
+var Ro = (function() {
+  try {
+    var i = Oi(Object, "defineProperty");
+    return i({}, "", {}), i;
+  } catch {
+  }
+})();
+var Ks = Ro ? function(i, o) {
+  return Ro(i, "toString", { configurable: true, enumerable: false, value: on$1(o), writable: true });
+} : U$4;
+var en$1 = Ju(Ks);
+function ui(i, o) {
+  for (var e = -1, n = i == null ? 0 : i.length; ++e < n && o(i[e], e, i) !== false; ) ;
+  return i;
+}
+function $o(i, o, e, n) {
+  for (var a = i.length, u = e + (n ? 1 : -1); n ? u-- : ++u < a; ) if (o(i[u], u, i)) return u;
+  return -1;
+}
+function Xu(i) {
+  return i !== i;
+}
+function Rs(i, o, e) {
+  for (var n = e - 1, a = i.length; ++n < a; ) if (i[n] === o) return n;
+  return -1;
+}
+function ao(i, o, e) {
+  return o === o ? Rs(i, o, e) : $o(i, Xu, e);
+}
+function qo(i, o) {
+  var e = i == null ? 0 : i.length;
+  return !!e && ao(i, o, 0) > -1;
+}
+var As = 1;
+var _s = 2;
+var Os = 8;
+var zs = 16;
+var Es = 32;
+var $s = 64;
+var qs = 128;
+var Is = 256;
+var Us = 512;
+var Vs = [["ary", qs], ["bind", As], ["bindKey", _s], ["curry", Os], ["curryRight", zs], ["flip", Us], ["partial", Es], ["partialRight", $s], ["rearg", Is]];
+function ih(i, o) {
+  return ui(Vs, function(e) {
+    var n = "_." + e[0];
+    o & e[1] && !qo(i, n) && i.push(n);
+  }), i.sort();
+}
+function Hu(i, o, e) {
+  var n = o + "";
+  return en$1(i, Fs(n, ih(Ws(n), e)));
+}
+var oh = 4;
+var eh = 8;
+var da = 32;
+var ta = 64;
+function Du(i, o, e, n, a, u, g, t, s, h) {
+  var r = o & eh, l = r ? g : void 0, v = r ? void 0 : g, y = r ? u : void 0, c = r ? void 0 : u;
+  o |= r ? da : ta, o &= ~(r ? ta : da), o & oh || (o &= -4);
+  var b = [i, o, a, y, l, c, v, t, s, h], p = e.apply(void 0, b);
+  return Me$2(i) && Cu(p, b), p.placeholder = n, Hu(p, i, o);
+}
+function uo(i) {
+  var o = i;
+  return o.placeholder;
+}
+var nh = 9007199254740991;
+var ah = /^(?:0|[1-9]\d*)$/;
+function Zi(i, o) {
+  var e = typeof i;
+  return o = o ?? nh, !!o && (e == "number" || e != "symbol" && ah.test(i)) && i > -1 && i % 1 == 0 && i < o;
+}
+var uh = Math.min;
+function gh(i, o) {
+  for (var e = i.length, n = uh(o.length, e), a = I$2(i); n--; ) {
+    var u = o[n];
+    i[n] = Zi(u, e) ? a[u] : void 0;
+  }
+  return i;
+}
+var sa = "__lodash_placeholder__";
+function Di(i, o) {
+  for (var e = -1, n = i.length, a = 0, u = []; ++e < n; ) {
+    var g = i[e];
+    (g === o || g === sa) && (i[e] = sa, u[a++] = e);
+  }
+  return u;
+}
+var dh = 1;
+var th = 2;
+var sh = 8;
+var hh = 16;
+var rh = 128;
+var lh = 512;
+function Io(i, o, e, n, a, u, g, t, s, h) {
+  var r = o & rh, l = o & dh, v = o & th, y = o & (sh | hh), c = o & lh, b = v ? void 0 : mo(i);
+  function p() {
+    for (var j = arguments.length, L = Array(j), K = j; K--; ) L[K] = arguments[K];
+    if (y) var R = uo(p), O = Cs(L, R);
+    if (n && (L = Lu(L, n, a, y)), u && (L = Zu(L, u, g, y)), j -= O, y && j < h) {
+      var Q = Di(L, R);
+      return Du(i, o, Io, p.placeholder, e, L, Q, t, s, h - j);
+    }
+    var z = l ? e : this, Yi = v ? z[i] : i;
+    return j = L.length, t ? L = gh(L, t) : c && j > 1 && L.reverse(), r && s < j && (L.length = s), this && this !== P$3 && this instanceof p && (Yi = b || mo(Yi)), Yi.apply(z, L);
+  }
+  return p;
+}
+function vh(i, o, e) {
+  var n = mo(i);
+  function a() {
+    for (var u = arguments.length, g = Array(u), t = u, s = uo(a); t--; ) g[t] = arguments[t];
+    var h = u < 3 && g[0] !== s && g[u - 1] !== s ? [] : Di(g, s);
+    if (u -= h.length, u < e) return Du(i, o, Io, a.placeholder, void 0, g, h, void 0, void 0, e - u);
+    var r = this && this !== P$3 && this instanceof a ? n : i;
+    return ni(r, this, g);
+  }
+  return a;
+}
+var yh = 1;
+function ch(i, o, e, n) {
+  var a = o & yh, u = mo(i);
+  function g() {
+    for (var t = -1, s = arguments.length, h = -1, r = n.length, l = Array(r + s), v = this && this !== P$3 && this instanceof g ? u : i; ++h < r; ) l[h] = n[h];
+    for (; s--; ) l[h++] = arguments[++t];
+    return ni(v, a ? e : this, l);
+  }
+  return g;
+}
+var ha = "__lodash_placeholder__";
+var me$2 = 1;
+var bh = 2;
+var ph = 4;
+var ra = 8;
+var yo = 128;
+var la = 256;
+var wh = Math.min;
+function jh(i, o) {
+  var e = i[1], n = o[1], a = e | n, u = a < (me$2 | bh | yo), g = n == yo && e == ra || n == yo && e == la && i[7].length <= o[8] || n == (yo | la) && o[7].length <= o[8] && e == ra;
+  if (!(u || g)) return i;
+  n & me$2 && (i[2] = o[2], a |= e & me$2 ? 0 : ph);
+  var t = o[3];
+  if (t) {
+    var s = i[3];
+    i[3] = s ? Lu(s, t, o[4]) : t, i[4] = s ? Di(i[3], ha) : o[4];
+  }
+  return t = o[5], t && (s = i[5], i[5] = s ? Zu(s, t, o[6]) : t, i[6] = s ? Di(i[5], ha) : o[6]), t = o[7], t && (i[7] = t), n & yo && (i[8] = i[8] == null ? o[8] : wh(i[8], o[8])), i[9] == null && (i[9] = o[9]), i[0] = o[0], i[1] = a, i;
+}
+var mh = "Expected a function";
+var va = 1;
+var fh = 2;
+var ya = 8;
+var ca = 16;
+var ba = 32;
+var Yh = 64;
+var pa = Math.max;
+function Si(i, o, e, n, a, u, g, t) {
+  var s = o & fh;
+  if (!s && typeof i != "function") throw new TypeError(mh);
+  var h = n ? n.length : 0;
+  if (h || (o &= -97, n = a = void 0), g = g === void 0 ? g : pa(Z$2(g), 0), t = t === void 0 ? t : Z$2(t), h -= a ? a.length : 0, o & Yh) {
+    var r = n, l = a;
+    n = a = void 0;
+  }
+  var v = s ? void 0 : Ve$1(i), y = [i, o, e, n, a, r, l, u, g, t];
+  if (v && jh(y, v), i = y[0], o = y[1], e = y[2], n = y[3], a = y[4], t = y[9] = y[9] === void 0 ? s ? 0 : i.length : pa(y[9] - h, 0), !t && o & (ya | ca) && (o &= -25), !o || o == va) var c = Zs(i, o, e);
+  else o == ya || o == ca ? c = vh(i, o, t) : (o == ba || o == (va | ba)) && !a.length ? c = ch(i, o, e, n) : c = Io.apply(void 0, y);
+  var b = v ? ku : Cu;
+  return Hu(b(c, y), i, o);
+}
+var kh = 128;
+function Tu(i, o, e) {
+  return o = e ? void 0 : o, o = i && o == null ? i.length : o, Si(i, kh, void 0, void 0, void 0, void 0, o);
+}
+function pi(i, o, e) {
+  o == "__proto__" && Ro ? Ro(i, o, { configurable: true, enumerable: true, value: e, writable: true }) : i[o] = e;
+}
+function ci(i, o) {
+  return i === o || i !== i && o !== o;
+}
+var Lh = Object.prototype;
+var Zh = Lh.hasOwnProperty;
+function Zo(i, o, e) {
+  var n = i[o];
+  (!(Zh.call(i, o) && ci(n, e)) || e === void 0 && !(o in i)) && pi(i, o, e);
+}
+function wi(i, o, e, n) {
+  var a = !e;
+  e || (e = {});
+  for (var u = -1, g = o.length; ++u < g; ) {
+    var t = o[u], s = n ? n(e[t], i[t], t, e, i) : void 0;
+    s === void 0 && (s = i[t]), a ? pi(e, t, s) : Zo(e, t, s);
+  }
+  return e;
+}
+var wa = Math.max;
+function Bu(i, o, e) {
+  return o = wa(o === void 0 ? i.length - 1 : o, 0), function() {
+    for (var n = arguments, a = -1, u = wa(n.length - o, 0), g = Array(u); ++a < u; ) g[a] = n[o + a];
+    a = -1;
+    for (var t = Array(o + 1); ++a < o; ) t[a] = n[a];
+    return t[o] = e(g), ni(i, this, t);
+  };
+}
+function S$2(i, o) {
+  return en$1(Bu(i, o, U$4), i + "");
+}
+var Sh = 9007199254740991;
+function Uo(i) {
+  return typeof i == "number" && i > -1 && i % 1 == 0 && i <= Sh;
+}
+function V$4(i) {
+  return i != null && Uo(i.length) && !Li(i);
+}
+function E$2(i, o, e) {
+  if (!G$2(e)) return false;
+  var n = typeof o;
+  return (n == "number" ? V$4(e) && Zi(o, e.length) : n == "string" && o in e) ? ci(e[o], i) : false;
+}
+function go(i) {
+  return S$2(function(o, e) {
+    var n = -1, a = e.length, u = a > 1 ? e[a - 1] : void 0, g = a > 2 ? e[2] : void 0;
+    for (u = i.length > 3 && typeof u == "function" ? (a--, u) : void 0, g && E$2(e[0], e[1], g) && (u = a < 3 ? void 0 : u, a = 1), o = Object(o); ++n < a; ) {
+      var t = e[n];
+      t && i(o, t, n, u);
+    }
+    return o;
+  });
+}
+var Jh = Object.prototype;
+function So(i) {
+  var o = i && i.constructor, e = typeof o == "function" && o.prototype || Jh;
+  return i === e;
+}
+function nn$1(i, o) {
+  for (var e = -1, n = Array(i); ++e < i; ) n[e] = o(e);
+  return n;
+}
+var Ch = "[object Arguments]";
+function ja(i) {
+  return N$3(i) && $$1(i) == Ch;
+}
+var Qu = Object.prototype;
+var Xh = Qu.hasOwnProperty;
+var Hh = Qu.propertyIsEnumerable;
+var Ki = ja(/* @__PURE__ */ (function() {
+  return arguments;
+})()) ? ja : function(i) {
+  return N$3(i) && Xh.call(i, "callee") && !Hh.call(i, "callee");
+};
+function an$1() {
+  return false;
+}
+var Mu = typeof exports == "object" && exports && !exports.nodeType && exports;
+var ma = Mu && typeof module == "object" && module && !module.nodeType && module;
+var Dh = ma && ma.exports === Mu;
+var fa = Dh ? P$3.Buffer : void 0;
+var Th = fa ? fa.isBuffer : void 0;
+var Ti = Th || an$1;
+var Bh = "[object Arguments]";
+var Qh = "[object Array]";
+var Mh = "[object Boolean]";
+var Gh = "[object Date]";
+var Nh = "[object Error]";
+var xh = "[object Function]";
+var Wh = "[object Map]";
+var Ph = "[object Number]";
+var Fh = "[object Object]";
+var Kh = "[object RegExp]";
+var Rh = "[object Set]";
+var Ah = "[object String]";
+var _h = "[object WeakMap]";
+var Oh = "[object ArrayBuffer]";
+var zh = "[object DataView]";
+var Eh = "[object Float32Array]";
+var $h = "[object Float64Array]";
+var qh = "[object Int8Array]";
+var Ih = "[object Int16Array]";
+var Uh = "[object Int32Array]";
+var Vh = "[object Uint8Array]";
+var ir$1 = "[object Uint8ClampedArray]";
+var or$1 = "[object Uint16Array]";
+var er$1 = "[object Uint32Array]";
+var B$3 = {};
+B$3[Eh] = B$3[$h] = B$3[qh] = B$3[Ih] = B$3[Uh] = B$3[Vh] = B$3[ir$1] = B$3[or$1] = B$3[er$1] = true;
+B$3[Bh] = B$3[Qh] = B$3[Oh] = B$3[Mh] = B$3[zh] = B$3[Gh] = B$3[Nh] = B$3[xh] = B$3[Wh] = B$3[Ph] = B$3[Fh] = B$3[Kh] = B$3[Rh] = B$3[Ah] = B$3[_h] = false;
+function nr$1(i) {
+  return N$3(i) && Uo(i.length) && !!B$3[$$1(i)];
+}
+function ai(i) {
+  return function(o) {
+    return i(o);
+  };
+}
+var Gu = typeof exports == "object" && exports && !exports.nodeType && exports;
+var po = Gu && typeof module == "object" && module && !module.nodeType && module;
+var ar$1 = po && po.exports === Gu;
+var fe$1 = ar$1 && wu.process;
+var si = (function() {
+  try {
+    var i = po && po.require && po.require("util").types;
+    return i || fe$1 && fe$1.binding && fe$1.binding("util");
+  } catch {
+  }
+})();
+var Ya = si && si.isTypedArray;
+var to$1 = Ya ? ai(Ya) : nr$1;
+var ur$1 = Object.prototype;
+var gr$1 = ur$1.hasOwnProperty;
+function Nu(i, o) {
+  var e = k$2(i), n = !e && Ki(i), a = !e && !n && Ti(i), u = !e && !n && !a && to$1(i), g = e || n || a || u, t = g ? nn$1(i.length, String) : [], s = t.length;
+  for (var h in i) (o || gr$1.call(i, h)) && !(g && (h == "length" || a && (h == "offset" || h == "parent") || u && (h == "buffer" || h == "byteLength" || h == "byteOffset") || Zi(h, s))) && t.push(h);
+  return t;
+}
+function xu(i, o) {
+  return function(e) {
+    return i(o(e));
+  };
+}
+var dr$1 = xu(Object.keys, Object);
+var tr$1 = Object.prototype;
+var sr$1 = tr$1.hasOwnProperty;
+function un$1(i) {
+  if (!So(i)) return dr$1(i);
+  var o = [];
+  for (var e in Object(i)) sr$1.call(i, e) && e != "constructor" && o.push(e);
+  return o;
+}
+function F$2(i) {
+  return V$4(i) ? Nu(i) : un$1(i);
+}
+var hr$1 = Object.prototype;
+var rr$1 = hr$1.hasOwnProperty;
+var lr$1 = go(function(i, o) {
+  if (So(o) || V$4(o)) {
+    wi(o, F$2(o), i);
+    return;
+  }
+  for (var e in o) rr$1.call(o, e) && Zo(i, e, o[e]);
+});
+function vr$1(i) {
+  var o = [];
+  if (i != null) for (var e in Object(i)) o.push(e);
+  return o;
+}
+var yr$1 = Object.prototype;
+var cr$1 = yr$1.hasOwnProperty;
+function br$1(i) {
+  if (!G$2(i)) return vr$1(i);
+  var o = So(i), e = [];
+  for (var n in i) n == "constructor" && (o || !cr$1.call(i, n)) || e.push(n);
+  return e;
+}
+function ii(i) {
+  return V$4(i) ? Nu(i, true) : br$1(i);
+}
+var pr$1 = go(function(i, o) {
+  wi(o, ii(o), i);
+});
+var wr$1 = go(function(i, o, e, n) {
+  wi(o, ii(o), i, n);
+});
+var Ge$2 = go(function(i, o, e, n) {
+  wi(o, F$2(o), i, n);
+});
+var jr$1 = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
+var mr$1 = /^\w*$/;
+function gn$1(i, o) {
+  if (k$2(i)) return false;
+  var e = typeof i;
+  return e == "number" || e == "symbol" || e == "boolean" || i == null || oi(i) ? true : mr$1.test(i) || !jr$1.test(i) || o != null && i in Object(o);
+}
+var fo = Oi(Object, "create");
+function fr$1() {
+  this.__data__ = fo ? fo(null) : {}, this.size = 0;
+}
+function Yr$1(i) {
+  var o = this.has(i) && delete this.__data__[i];
+  return this.size -= o ? 1 : 0, o;
+}
+var kr$1 = "__lodash_hash_undefined__";
+var Lr$1 = Object.prototype;
+var Zr$1 = Lr$1.hasOwnProperty;
+function Sr$1(i) {
+  var o = this.__data__;
+  if (fo) {
+    var e = o[i];
+    return e === kr$1 ? void 0 : e;
+  }
+  return Zr$1.call(o, i) ? o[i] : void 0;
+}
+var Jr$1 = Object.prototype;
+var Cr$1 = Jr$1.hasOwnProperty;
+function Xr$1(i) {
+  var o = this.__data__;
+  return fo ? o[i] !== void 0 : Cr$1.call(o, i);
+}
+var Hr = "__lodash_hash_undefined__";
+function Dr$1(i, o) {
+  var e = this.__data__;
+  return this.size += this.has(i) ? 0 : 1, e[i] = fo && o === void 0 ? Hr : o, this;
+}
+function Ri(i) {
+  var o = -1, e = i == null ? 0 : i.length;
+  for (this.clear(); ++o < e; ) {
+    var n = i[o];
+    this.set(n[0], n[1]);
+  }
+}
+Ri.prototype.clear = fr$1;
+Ri.prototype.delete = Yr$1;
+Ri.prototype.get = Sr$1;
+Ri.prototype.has = Xr$1;
+Ri.prototype.set = Dr$1;
+function Tr$1() {
+  this.__data__ = [], this.size = 0;
+}
+function Vo(i, o) {
+  for (var e = i.length; e--; ) if (ci(i[e][0], o)) return e;
+  return -1;
+}
+var Br$1 = Array.prototype;
+var Qr$1 = Br$1.splice;
+function Mr$1(i) {
+  var o = this.__data__, e = Vo(o, i);
+  if (e < 0) return false;
+  var n = o.length - 1;
+  return e == n ? o.pop() : Qr$1.call(o, e, 1), --this.size, true;
+}
+function Gr$1(i) {
+  var o = this.__data__, e = Vo(o, i);
+  return e < 0 ? void 0 : o[e][1];
+}
+function Nr$1(i) {
+  return Vo(this.__data__, i) > -1;
+}
+function xr$1(i, o) {
+  var e = this.__data__, n = Vo(e, i);
+  return n < 0 ? (++this.size, e.push([i, o])) : e[n][1] = o, this;
+}
+function Ji(i) {
+  var o = -1, e = i == null ? 0 : i.length;
+  for (this.clear(); ++o < e; ) {
+    var n = i[o];
+    this.set(n[0], n[1]);
+  }
+}
+Ji.prototype.clear = Tr$1;
+Ji.prototype.delete = Mr$1;
+Ji.prototype.get = Gr$1;
+Ji.prototype.has = Nr$1;
+Ji.prototype.set = xr$1;
+var Yo = Oi(P$3, "Map");
+function Wr$1() {
+  this.size = 0, this.__data__ = { hash: new Ri(), map: new (Yo || Ji)(), string: new Ri() };
+}
+function Pr$1(i) {
+  var o = typeof i;
+  return o == "string" || o == "number" || o == "symbol" || o == "boolean" ? i !== "__proto__" : i === null;
+}
+function ie$1(i, o) {
+  var e = i.__data__;
+  return Pr$1(o) ? e[typeof o == "string" ? "string" : "hash"] : e.map;
+}
+function Fr$1(i) {
+  var o = ie$1(this, i).delete(i);
+  return this.size -= o ? 1 : 0, o;
+}
+function Kr$1(i) {
+  return ie$1(this, i).get(i);
+}
+function Rr$1(i) {
+  return ie$1(this, i).has(i);
+}
+function Ar$1(i, o) {
+  var e = ie$1(this, i), n = e.size;
+  return e.set(i, o), this.size += e.size == n ? 0 : 1, this;
+}
+function Ci(i) {
+  var o = -1, e = i == null ? 0 : i.length;
+  for (this.clear(); ++o < e; ) {
+    var n = i[o];
+    this.set(n[0], n[1]);
+  }
+}
+Ci.prototype.clear = Wr$1;
+Ci.prototype.delete = Fr$1;
+Ci.prototype.get = Kr$1;
+Ci.prototype.has = Rr$1;
+Ci.prototype.set = Ar$1;
+var _r$1 = "Expected a function";
+function oe$2(i, o) {
+  if (typeof i != "function" || o != null && typeof o != "function") throw new TypeError(_r$1);
+  var e = function() {
+    var n = arguments, a = o ? o.apply(this, n) : n[0], u = e.cache;
+    if (u.has(a)) return u.get(a);
+    var g = i.apply(this, n);
+    return e.cache = u.set(a, g) || u, g;
+  };
+  return e.cache = new (oe$2.Cache || Ci)(), e;
+}
+oe$2.Cache = Ci;
+var Or$1 = 500;
+function zr$1(i) {
+  var o = oe$2(i, function(n) {
+    return e.size === Or$1 && e.clear(), n;
+  }), e = o.cache;
+  return o;
+}
+var Er$1 = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+var $r$1 = /\\(\\)?/g;
+var Wu = zr$1(function(i) {
+  var o = [];
+  return i.charCodeAt(0) === 46 && o.push(""), i.replace(Er$1, function(e, n, a, u) {
+    o.push(a ? u.replace($r$1, "$1") : n || e);
+  }), o;
+});
+function X$2(i) {
+  return i == null ? "" : ei(i);
+}
+function Qi(i, o) {
+  return k$2(i) ? i : gn$1(i, o) ? [i] : Wu(X$2(i));
+}
+function vi(i) {
+  if (typeof i == "string" || oi(i)) return i;
+  var o = i + "";
+  return o == "0" && 1 / i == -1 / 0 ? "-0" : o;
+}
+function zi(i, o) {
+  o = Qi(o, i);
+  for (var e = 0, n = o.length; i != null && e < n; ) i = i[vi(o[e++])];
+  return e && e == n ? i : void 0;
+}
+function dn$1(i, o, e) {
+  var n = i == null ? void 0 : zi(i, o);
+  return n === void 0 ? e : n;
+}
+function tn$1(i, o) {
+  for (var e = -1, n = o.length, a = Array(n), u = i == null; ++e < n; ) a[e] = u ? void 0 : dn$1(i, o[e]);
+  return a;
+}
+function Mi(i, o) {
+  for (var e = -1, n = o.length, a = i.length; ++e < n; ) i[a + e] = o[e];
+  return i;
+}
+var ka = _$2 ? _$2.isConcatSpreadable : void 0;
+function qr$1(i) {
+  return k$2(i) || Ki(i) || !!(ka && i && i[ka]);
+}
+function A$2(i, o, e, n, a) {
+  var u = -1, g = i.length;
+  for (e || (e = qr$1), a || (a = []); ++u < g; ) {
+    var t = i[u];
+    o > 0 && e(t) ? o > 1 ? A$2(t, o - 1, e, n, a) : Mi(a, t) : n || (a[a.length] = t);
+  }
+  return a;
+}
+function Pu(i) {
+  var o = i == null ? 0 : i.length;
+  return o ? A$2(i, 1) : [];
+}
+function Xi(i) {
+  return en$1(Bu(i, void 0, Pu), i + "");
+}
+var Ir$1 = Xi(tn$1);
+var ee$2 = xu(Object.getPrototypeOf, Object);
+var Ur = "[object Object]";
+var Vr$1 = Function.prototype;
+var il = Object.prototype;
+var Fu = Vr$1.toString;
+var ol = il.hasOwnProperty;
+var el = Fu.call(Object);
+function Jo(i) {
+  if (!N$3(i) || $$1(i) != Ur) return false;
+  var o = ee$2(i);
+  if (o === null) return true;
+  var e = ol.call(o, "constructor") && o.constructor;
+  return typeof e == "function" && e instanceof e && Fu.call(e) == el;
+}
+var nl = "[object DOMException]";
+var al = "[object Error]";
+function sn$1(i) {
+  if (!N$3(i)) return false;
+  var o = $$1(i);
+  return o == al || o == nl || typeof i.message == "string" && typeof i.name == "string" && !Jo(i);
+}
+var Ku = S$2(function(i, o) {
+  try {
+    return ni(i, void 0, o);
+  } catch (e) {
+    return sn$1(e) ? e : new Error(e);
+  }
+});
+var ul = "Expected a function";
+function Ru(i, o) {
+  var e;
+  if (typeof o != "function") throw new TypeError(ul);
+  return i = Z$2(i), function() {
+    return --i > 0 && (e = o.apply(this, arguments)), i <= 1 && (o = void 0), e;
+  };
+}
+var gl = 1;
+var dl = 32;
+var ne$3 = S$2(function(i, o, e) {
+  var n = gl;
+  if (e.length) {
+    var a = Di(e, uo(ne$3));
+    n |= dl;
+  }
+  return Si(i, n, o, e, a);
+});
+ne$3.placeholder = {};
+var tl = Xi(function(i, o) {
+  return ui(o, function(e) {
+    e = vi(e), pi(i, e, ne$3(i[e], i));
+  }), i;
+});
+var sl = 1;
+var hl = 2;
+var rl = 32;
+var hn$1 = S$2(function(i, o, e) {
+  var n = sl | hl;
+  if (e.length) {
+    var a = Di(e, uo(hn$1));
+    n |= rl;
+  }
+  return Si(o, n, i, e, a);
+});
+hn$1.placeholder = {};
+function hi(i, o, e) {
+  var n = -1, a = i.length;
+  o < 0 && (o = -o > a ? 0 : a + o), e = e > a ? a : e, e < 0 && (e += a), a = o > e ? 0 : e - o >>> 0, o >>>= 0;
+  for (var u = Array(a); ++n < a; ) u[n] = i[n + o];
+  return u;
+}
+function Gi(i, o, e) {
+  var n = i.length;
+  return e = e === void 0 ? n : e, !o && e >= n ? i : hi(i, o, e);
+}
+var ll = "\\ud800-\\udfff";
+var vl = "\\u0300-\\u036f";
+var yl = "\\ufe20-\\ufe2f";
+var cl = "\\u20d0-\\u20ff";
+var bl = vl + yl + cl;
+var pl = "\\ufe0e\\ufe0f";
+var wl = "\\u200d";
+var jl = RegExp("[" + wl + ll + bl + pl + "]");
+function so$1(i) {
+  return jl.test(i);
+}
+function ml(i) {
+  return i.split("");
+}
+var Au = "\\ud800-\\udfff";
+var fl = "\\u0300-\\u036f";
+var Yl = "\\ufe20-\\ufe2f";
+var kl = "\\u20d0-\\u20ff";
+var Ll = fl + Yl + kl;
+var Zl = "\\ufe0e\\ufe0f";
+var Sl = "[" + Au + "]";
+var Ne$1 = "[" + Ll + "]";
+var xe$2 = "\\ud83c[\\udffb-\\udfff]";
+var Jl = "(?:" + Ne$1 + "|" + xe$2 + ")";
+var _u = "[^" + Au + "]";
+var Ou = "(?:\\ud83c[\\udde6-\\uddff]){2}";
+var zu = "[\\ud800-\\udbff][\\udc00-\\udfff]";
+var Cl = "\\u200d";
+var Eu = Jl + "?";
+var $u = "[" + Zl + "]?";
+var Xl = "(?:" + Cl + "(?:" + [_u, Ou, zu].join("|") + ")" + $u + Eu + ")*";
+var Hl = $u + Eu + Xl;
+var Dl = "(?:" + [_u + Ne$1 + "?", Ne$1, Ou, zu, Sl].join("|") + ")";
+var Tl = RegExp(xe$2 + "(?=" + xe$2 + ")|" + Dl + Hl, "g");
+function Bl(i) {
+  return i.match(Tl) || [];
+}
+function yi(i) {
+  return so$1(i) ? Bl(i) : ml(i);
+}
+function qu(i) {
+  return function(o) {
+    o = X$2(o);
+    var e = so$1(o) ? yi(o) : void 0, n = e ? e[0] : o.charAt(0), a = e ? Gi(e, 1).join("") : o.slice(1);
+    return n[i]() + a;
+  };
+}
+var rn$1 = qu("toUpperCase");
+function Iu(i) {
+  return rn$1(X$2(i).toLowerCase());
+}
+function ln$1(i, o, e, n) {
+  var a = -1, u = i == null ? 0 : i.length;
+  for (n && u && (e = i[++a]); ++a < u; ) e = o(e, i[a], a, i);
+  return e;
+}
+function vn$1(i) {
+  return function(o) {
+    return i?.[o];
+  };
+}
+var Ml = vn$1(Ql);
+var Gl = /[\xc0-\xd6\xd8-\xf6\xf8-\xff\u0100-\u017f]/g;
+var Nl = "\\u0300-\\u036f";
+var xl = "\\ufe20-\\ufe2f";
+var Wl = "\\u20d0-\\u20ff";
+var Pl = Nl + xl + Wl;
+var Fl = "[" + Pl + "]";
+var Kl = RegExp(Fl, "g");
+function Uu(i) {
+  return i = X$2(i), i && i.replace(Gl, Ml).replace(Kl, "");
+}
+var Rl = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
+function Al(i) {
+  return i.match(Rl) || [];
+}
+var _l = /[a-z][A-Z]|[A-Z]{2}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+function Ol(i) {
+  return _l.test(i);
+}
+var Vu = "\\ud800-\\udfff";
+var zl = "\\u0300-\\u036f";
+var El = "\\ufe20-\\ufe2f";
+var $l = "\\u20d0-\\u20ff";
+var ql = zl + El + $l;
+var ig = "\\u2700-\\u27bf";
+var og = "a-z\\xdf-\\xf6\\xf8-\\xff";
+var Il = "\\xac\\xb1\\xd7\\xf7";
+var Ul = "\\x00-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\xbf";
+var Vl = "\\u2000-\\u206f";
+var iv = " \\t\\x0b\\f\\xa0\\ufeff\\n\\r\\u2028\\u2029\\u1680\\u180e\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200a\\u202f\\u205f\\u3000";
+var eg = "A-Z\\xc0-\\xd6\\xd8-\\xde";
+var ov = "\\ufe0e\\ufe0f";
+var ng = Il + Ul + Vl + iv;
+var ag = "['’]";
+var La = "[" + ng + "]";
+var ev = "[" + ql + "]";
+var ug = "\\d+";
+var nv = "[" + ig + "]";
+var gg = "[" + og + "]";
+var dg = "[^" + Vu + ng + ug + ig + og + eg + "]";
+var av = "\\ud83c[\\udffb-\\udfff]";
+var uv = "(?:" + ev + "|" + av + ")";
+var gv = "[^" + Vu + "]";
+var tg = "(?:\\ud83c[\\udde6-\\uddff]){2}";
+var sg = "[\\ud800-\\udbff][\\udc00-\\udfff]";
+var qi = "[" + eg + "]";
+var dv = "\\u200d";
+var Za = "(?:" + gg + "|" + dg + ")";
+var tv = "(?:" + qi + "|" + dg + ")";
+var Sa = "(?:" + ag + "(?:d|ll|m|re|s|t|ve))?";
+var Ja = "(?:" + ag + "(?:D|LL|M|RE|S|T|VE))?";
+var hg = uv + "?";
+var rg = "[" + ov + "]?";
+var sv = "(?:" + dv + "(?:" + [gv, tg, sg].join("|") + ")" + rg + hg + ")*";
+var hv = "\\d*(?:1st|2nd|3rd|(?![123])\\dth)(?=\\b|[A-Z_])";
+var rv = "\\d*(?:1ST|2ND|3RD|(?![123])\\dTH)(?=\\b|[a-z_])";
+var lv = rg + hg + sv;
+var vv = "(?:" + [nv, tg, sg].join("|") + ")" + lv;
+var yv = RegExp([qi + "?" + gg + "+" + Sa + "(?=" + [La, qi, "$"].join("|") + ")", tv + "+" + Ja + "(?=" + [La, qi + Za, "$"].join("|") + ")", qi + "?" + Za + "+" + Sa, qi + "+" + Ja, rv, hv, ug, vv].join("|"), "g");
+function cv(i) {
+  return i.match(yv) || [];
+}
+function lg(i, o, e) {
+  return i = X$2(i), o = e ? void 0 : o, o === void 0 ? Ol(i) ? cv(i) : Al(i) : i.match(o) || [];
+}
+var bv = "['’]";
+var pv = RegExp(bv, "g");
+function ho(i) {
+  return function(o) {
+    return ln$1(lg(Uu(o).replace(pv, "")), i, "");
+  };
+}
+var wv = ho(function(i, o, e) {
+  return o = o.toLowerCase(), i + (e ? Iu(o) : o);
+});
+function jv() {
+  if (!arguments.length) return [];
+  var i = arguments[0];
+  return k$2(i) ? i : [i];
+}
+var mv = P$3.isFinite;
+var fv = Math.min;
+function yn$1(i) {
+  var o = Math[i];
+  return function(e, n) {
+    if (e = gi(e), n = n == null ? 0 : fv(Z$2(n), 292), n && mv(e)) {
+      var a = (X$2(e) + "e").split("e"), u = o(a[0] + "e" + (+a[1] + n));
+      return a = (X$2(u) + "e").split("e"), +(a[0] + "e" + (+a[1] - n));
+    }
+    return o(e);
+  };
+}
+var Yv = yn$1("ceil");
+function vg(i) {
+  var o = d$1(i);
+  return o.__chain__ = true, o;
+}
+var kv = Math.ceil;
+var Lv = Math.max;
+function Zv(i, o, e) {
+  (e ? E$2(i, o, e) : o === void 0) ? o = 1 : o = Lv(Z$2(o), 0);
+  var n = i == null ? 0 : i.length;
+  if (!n || o < 1) return [];
+  for (var a = 0, u = 0, g = Array(kv(n / o)); a < n; ) g[u++] = hi(i, a, a += o);
+  return g;
+}
+function Ei(i, o, e) {
+  return i === i && (e !== void 0 && (i = i <= e ? i : e), o !== void 0 && (i = i >= o ? i : o)), i;
+}
+function Sv(i, o, e) {
+  return e === void 0 && (e = o, o = void 0), e !== void 0 && (e = gi(e), e = e === e ? e : 0), o !== void 0 && (o = gi(o), o = o === o ? o : 0), Ei(gi(i), o, e);
+}
+function Jv() {
+  this.__data__ = new Ji(), this.size = 0;
+}
+function Cv(i) {
+  var o = this.__data__, e = o.delete(i);
+  return this.size = o.size, e;
+}
+function Xv(i) {
+  return this.__data__.get(i);
+}
+function Hv(i) {
+  return this.__data__.has(i);
+}
+var Dv = 200;
+function Tv(i, o) {
+  var e = this.__data__;
+  if (e instanceof Ji) {
+    var n = e.__data__;
+    if (!Yo || n.length < Dv - 1) return n.push([i, o]), this.size = ++e.size, this;
+    e = this.__data__ = new Ci(n);
+  }
+  return e.set(i, o), this.size = e.size, this;
+}
+function li(i) {
+  var o = this.__data__ = new Ji(i);
+  this.size = o.size;
+}
+li.prototype.clear = Jv;
+li.prototype.delete = Cv;
+li.prototype.get = Xv;
+li.prototype.has = Hv;
+li.prototype.set = Tv;
+function yg(i, o) {
+  return i && wi(o, F$2(o), i);
+}
+function Bv(i, o) {
+  return i && wi(o, ii(o), i);
+}
+var cg = typeof exports == "object" && exports && !exports.nodeType && exports;
+var Ca = cg && typeof module == "object" && module && !module.nodeType && module;
+var Qv = Ca && Ca.exports === cg;
+var Xa = Qv ? P$3.Buffer : void 0;
+var Ha = Xa ? Xa.allocUnsafe : void 0;
+function bg(i, o) {
+  if (o) return i.slice();
+  var e = i.length, n = Ha ? Ha(e) : new i.constructor(e);
+  return i.copy(n), n;
+}
+function Ni(i, o) {
+  for (var e = -1, n = i == null ? 0 : i.length, a = 0, u = []; ++e < n; ) {
+    var g = i[e];
+    o(g, e, i) && (u[a++] = g);
+  }
+  return u;
+}
+function cn$1() {
+  return [];
+}
+var Mv = Object.prototype;
+var Gv = Mv.propertyIsEnumerable;
+var Da = Object.getOwnPropertySymbols;
+var bn$1 = Da ? function(i) {
+  return i == null ? [] : (i = Object(i), Ni(Da(i), function(o) {
+    return Gv.call(i, o);
+  }));
+} : cn$1;
+function Nv(i, o) {
+  return wi(i, bn$1(i), o);
+}
+var xv = Object.getOwnPropertySymbols;
+var pg = xv ? function(i) {
+  for (var o = []; i; ) Mi(o, bn$1(i)), i = ee$2(i);
+  return o;
+} : cn$1;
+function Wv(i, o) {
+  return wi(i, pg(i), o);
+}
+function wg(i, o, e) {
+  var n = o(i);
+  return k$2(i) ? n : Mi(n, e(i));
+}
+function We$2(i) {
+  return wg(i, F$2, bn$1);
+}
+function pn$1(i) {
+  return wg(i, ii, pg);
+}
+var Pe = Oi(P$3, "DataView");
+var Fe$1 = Oi(P$3, "Promise");
+var Vi = Oi(P$3, "Set");
+var Ta = "[object Map]";
+var Pv = "[object Object]";
+var Ba = "[object Promise]";
+var Qa = "[object Set]";
+var Ma = "[object WeakMap]";
+var Ga = "[object DataView]";
+var Fv = _i(Pe);
+var Kv = _i(Yo);
+var Rv = _i(Fe$1);
+var Av = _i(Vi);
+var _v = _i(jo);
+var Wi = $$1;
+(Pe && Wi(new Pe(new ArrayBuffer(1))) != Ga || Yo && Wi(new Yo()) != Ta || Fe$1 && Wi(Fe$1.resolve()) != Ba || Vi && Wi(new Vi()) != Qa || jo && Wi(new jo()) != Ma) && (Wi = function(i) {
+  var o = $$1(i), e = o == Pv ? i.constructor : void 0, n = e ? _i(e) : "";
+  if (n) switch (n) {
+    case Fv:
+      return Ga;
+    case Kv:
+      return Ta;
+    case Rv:
+      return Ba;
+    case Av:
+      return Qa;
+    case _v:
+      return Ma;
+  }
+  return o;
+});
+const bi = Wi;
+var Ov = Object.prototype;
+var zv = Ov.hasOwnProperty;
+function Ev(i) {
+  var o = i.length, e = new i.constructor(o);
+  return o && typeof i[0] == "string" && zv.call(i, "index") && (e.index = i.index, e.input = i.input), e;
+}
+var Ao = P$3.Uint8Array;
+function wn$1(i) {
+  var o = new i.constructor(i.byteLength);
+  return new Ao(o).set(new Ao(i)), o;
+}
+function $v(i, o) {
+  var e = o ? wn$1(i.buffer) : i.buffer;
+  return new i.constructor(e, i.byteOffset, i.byteLength);
+}
+var qv = /\w*$/;
+function Iv(i) {
+  var o = new i.constructor(i.source, qv.exec(i));
+  return o.lastIndex = i.lastIndex, o;
+}
+var Na = _$2 ? _$2.prototype : void 0;
+var xa = Na ? Na.valueOf : void 0;
+function Uv(i) {
+  return xa ? Object(xa.call(i)) : {};
+}
+function jg(i, o) {
+  var e = o ? wn$1(i.buffer) : i.buffer;
+  return new i.constructor(e, i.byteOffset, i.length);
+}
+var Vv = "[object Boolean]";
+var i0 = "[object Date]";
+var o0 = "[object Map]";
+var e0 = "[object Number]";
+var n0 = "[object RegExp]";
+var a0 = "[object Set]";
+var u0 = "[object String]";
+var g0 = "[object Symbol]";
+var d0 = "[object ArrayBuffer]";
+var t0 = "[object DataView]";
+var s0 = "[object Float32Array]";
+var h0 = "[object Float64Array]";
+var r0 = "[object Int8Array]";
+var l0 = "[object Int16Array]";
+var v0 = "[object Int32Array]";
+var y0 = "[object Uint8Array]";
+var c0 = "[object Uint8ClampedArray]";
+var b0 = "[object Uint16Array]";
+var p0 = "[object Uint32Array]";
+function w0(i, o, e) {
+  var n = i.constructor;
+  switch (o) {
+    case d0:
+      return wn$1(i);
+    case Vv:
+    case i0:
+      return new n(+i);
+    case t0:
+      return $v(i, e);
+    case s0:
+    case h0:
+    case r0:
+    case l0:
+    case v0:
+    case y0:
+    case c0:
+    case b0:
+    case p0:
+      return jg(i, e);
+    case o0:
+      return new n();
+    case e0:
+    case u0:
+      return new n(i);
+    case n0:
+      return Iv(i);
+    case a0:
+      return new n();
+    case g0:
+      return Uv(i);
+  }
+}
+function mg(i) {
+  return typeof i.constructor == "function" && !So(i) ? no$1(ee$2(i)) : {};
+}
+var j0 = "[object Map]";
+function m0(i) {
+  return N$3(i) && bi(i) == j0;
+}
+var Wa = si && si.isMap;
+var fg = Wa ? ai(Wa) : m0;
+var f0 = "[object Set]";
+function Y0(i) {
+  return N$3(i) && bi(i) == f0;
+}
+var Pa = si && si.isSet;
+var Yg = Pa ? ai(Pa) : Y0;
+var k0 = 1;
+var L0 = 2;
+var Z0 = 4;
+var kg = "[object Arguments]";
+var S0 = "[object Array]";
+var J0 = "[object Boolean]";
+var C0 = "[object Date]";
+var X0 = "[object Error]";
+var Lg = "[object Function]";
+var H0 = "[object GeneratorFunction]";
+var D0 = "[object Map]";
+var T0 = "[object Number]";
+var Zg = "[object Object]";
+var B0 = "[object RegExp]";
+var Q0 = "[object Set]";
+var M0 = "[object String]";
+var G0 = "[object Symbol]";
+var N0 = "[object WeakMap]";
+var x0 = "[object ArrayBuffer]";
+var W0 = "[object DataView]";
+var P0 = "[object Float32Array]";
+var F0 = "[object Float64Array]";
+var K0 = "[object Int8Array]";
+var R0 = "[object Int16Array]";
+var A0 = "[object Int32Array]";
+var _0 = "[object Uint8Array]";
+var O0 = "[object Uint8ClampedArray]";
+var z0 = "[object Uint16Array]";
+var E0 = "[object Uint32Array]";
+var T$1 = {};
+T$1[kg] = T$1[S0] = T$1[x0] = T$1[W0] = T$1[J0] = T$1[C0] = T$1[P0] = T$1[F0] = T$1[K0] = T$1[R0] = T$1[A0] = T$1[D0] = T$1[T0] = T$1[Zg] = T$1[B0] = T$1[Q0] = T$1[M0] = T$1[G0] = T$1[_0] = T$1[O0] = T$1[z0] = T$1[E0] = true;
+T$1[X0] = T$1[Lg] = T$1[N0] = false;
+function di(i, o, e, n, a, u) {
+  var g, t = o & k0, s = o & L0, h = o & Z0;
+  if (e && (g = a ? e(i, n, a, u) : e(i)), g !== void 0) return g;
+  if (!G$2(i)) return i;
+  var r = k$2(i);
+  if (r) {
+    if (g = Ev(i), !t) return I$2(i, g);
+  } else {
+    var l = bi(i), v = l == Lg || l == H0;
+    if (Ti(i)) return bg(i, t);
+    if (l == Zg || l == kg || v && !a) {
+      if (g = s || v ? {} : mg(i), !t) return s ? Wv(i, Bv(g, i)) : Nv(i, yg(g, i));
+    } else {
+      if (!T$1[l]) return a ? i : {};
+      g = w0(i, l, t);
+    }
+  }
+  u || (u = new li());
+  var y = u.get(i);
+  if (y) return y;
+  u.set(i, g), Yg(i) ? i.forEach(function(p) {
+    g.add(di(p, o, e, p, i, u));
+  }) : fg(i) && i.forEach(function(p, j) {
+    g.set(j, di(p, o, e, j, i, u));
+  });
+  var c = h ? s ? pn$1 : We$2 : s ? ii : F$2, b = r ? void 0 : c(i);
+  return ui(b || i, function(p, j) {
+    b && (j = p, p = i[j]), Zo(g, j, di(p, o, e, j, i, u));
+  }), g;
+}
+var $0 = 4;
+function q0(i) {
+  return di(i, $0);
+}
+var I0 = 1;
+var U0 = 4;
+function V0(i) {
+  return di(i, I0 | U0);
+}
+var iy = 1;
+var oy = 4;
+function ey(i, o) {
+  return o = typeof o == "function" ? o : void 0, di(i, iy | oy, o);
+}
+var ny = 4;
+function ay(i, o) {
+  return o = typeof o == "function" ? o : void 0, di(i, ny, o);
+}
+function uy() {
+  return new ti(this.value(), this.__chain__);
+}
+function gy(i) {
+  for (var o = -1, e = i == null ? 0 : i.length, n = 0, a = []; ++o < e; ) {
+    var u = i[o];
+    u && (a[n++] = u);
+  }
+  return a;
+}
+function dy() {
+  var i = arguments.length;
+  if (!i) return [];
+  for (var o = Array(i - 1), e = arguments[0], n = i; n--; ) o[n - 1] = arguments[n];
+  return Mi(k$2(e) ? I$2(e) : [e], A$2(o, 1));
+}
+var ty = "__lodash_hash_undefined__";
+function sy(i) {
+  return this.__data__.set(i, ty), this;
+}
+function hy(i) {
+  return this.__data__.has(i);
+}
+function Ai(i) {
+  var o = -1, e = i == null ? 0 : i.length;
+  for (this.__data__ = new Ci(); ++o < e; ) this.add(i[o]);
+}
+Ai.prototype.add = Ai.prototype.push = sy;
+Ai.prototype.has = hy;
+function jn$1(i, o) {
+  for (var e = -1, n = i == null ? 0 : i.length; ++e < n; ) if (o(i[e], e, i)) return true;
+  return false;
+}
+function ko(i, o) {
+  return i.has(o);
+}
+var ry = 1;
+var ly = 2;
+function Sg(i, o, e, n, a, u) {
+  var g = e & ry, t = i.length, s = o.length;
+  if (t != s && !(g && s > t)) return false;
+  var h = u.get(i), r = u.get(o);
+  if (h && r) return h == o && r == i;
+  var l = -1, v = true, y = e & ly ? new Ai() : void 0;
+  for (u.set(i, o), u.set(o, i); ++l < t; ) {
+    var c = i[l], b = o[l];
+    if (n) var p = g ? n(b, c, l, o, i, u) : n(c, b, l, i, o, u);
+    if (p !== void 0) {
+      if (p) continue;
+      v = false;
+      break;
+    }
+    if (y) {
+      if (!jn$1(o, function(j, L) {
+        if (!ko(y, L) && (c === j || a(c, j, e, n, u))) return y.push(L);
+      })) {
+        v = false;
+        break;
+      }
+    } else if (!(c === b || a(c, b, e, n, u))) {
+      v = false;
+      break;
+    }
+  }
+  return u.delete(i), u.delete(o), v;
+}
+function mn$1(i) {
+  var o = -1, e = Array(i.size);
+  return i.forEach(function(n, a) {
+    e[++o] = [a, n];
+  }), e;
+}
+function ae$2(i) {
+  var o = -1, e = Array(i.size);
+  return i.forEach(function(n) {
+    e[++o] = n;
+  }), e;
+}
+var vy = 1;
+var yy = 2;
+var cy = "[object Boolean]";
+var by = "[object Date]";
+var py = "[object Error]";
+var wy = "[object Map]";
+var jy = "[object Number]";
+var my = "[object RegExp]";
+var fy = "[object Set]";
+var Yy = "[object String]";
+var ky = "[object Symbol]";
+var Ly = "[object ArrayBuffer]";
+var Zy = "[object DataView]";
+var Fa = _$2 ? _$2.prototype : void 0;
+var Ye$2 = Fa ? Fa.valueOf : void 0;
+function Sy(i, o, e, n, a, u, g) {
+  switch (e) {
+    case Zy:
+      if (i.byteLength != o.byteLength || i.byteOffset != o.byteOffset) return false;
+      i = i.buffer, o = o.buffer;
+    case Ly:
+      return !(i.byteLength != o.byteLength || !u(new Ao(i), new Ao(o)));
+    case cy:
+    case by:
+    case jy:
+      return ci(+i, +o);
+    case py:
+      return i.name == o.name && i.message == o.message;
+    case my:
+    case Yy:
+      return i == o + "";
+    case wy:
+      var t = mn$1;
+    case fy:
+      var s = n & vy;
+      if (t || (t = ae$2), i.size != o.size && !s) return false;
+      var h = g.get(i);
+      if (h) return h == o;
+      n |= yy, g.set(i, o);
+      var r = Sg(t(i), t(o), n, a, u, g);
+      return g.delete(i), r;
+    case ky:
+      if (Ye$2) return Ye$2.call(i) == Ye$2.call(o);
+  }
+  return false;
+}
+var Jy = 1;
+var Cy = Object.prototype;
+var Xy = Cy.hasOwnProperty;
+function Hy(i, o, e, n, a, u) {
+  var g = e & Jy, t = We$2(i), s = t.length, h = We$2(o), r = h.length;
+  if (s != r && !g) return false;
+  for (var l = s; l--; ) {
+    var v = t[l];
+    if (!(g ? v in o : Xy.call(o, v))) return false;
+  }
+  var y = u.get(i), c = u.get(o);
+  if (y && c) return y == o && c == i;
+  var b = true;
+  u.set(i, o), u.set(o, i);
+  for (var p = g; ++l < s; ) {
+    v = t[l];
+    var j = i[v], L = o[v];
+    if (n) var K = g ? n(L, j, v, o, i, u) : n(j, L, v, i, o, u);
+    if (!(K === void 0 ? j === L || a(j, L, e, n, u) : K)) {
+      b = false;
+      break;
+    }
+    p || (p = v == "constructor");
+  }
+  if (b && !p) {
+    var R = i.constructor, O = o.constructor;
+    R != O && "constructor" in i && "constructor" in o && !(typeof R == "function" && R instanceof R && typeof O == "function" && O instanceof O) && (b = false);
+  }
+  return u.delete(i), u.delete(o), b;
+}
+var Dy = 1;
+var Ka = "[object Arguments]";
+var Ra = "[object Array]";
+var Mo = "[object Object]";
+var Ty = Object.prototype;
+var Aa = Ty.hasOwnProperty;
+function By(i, o, e, n, a, u) {
+  var g = k$2(i), t = k$2(o), s = g ? Ra : bi(i), h = t ? Ra : bi(o);
+  s = s == Ka ? Mo : s, h = h == Ka ? Mo : h;
+  var r = s == Mo, l = h == Mo, v = s == h;
+  if (v && Ti(i)) {
+    if (!Ti(o)) return false;
+    g = true, r = false;
+  }
+  if (v && !r) return u || (u = new li()), g || to$1(i) ? Sg(i, o, e, n, a, u) : Sy(i, o, s, e, n, a, u);
+  if (!(e & Dy)) {
+    var y = r && Aa.call(i, "__wrapped__"), c = l && Aa.call(o, "__wrapped__");
+    if (y || c) {
+      var b = y ? i.value() : i, p = c ? o.value() : o;
+      return u || (u = new li()), a(b, p, e, n, u);
+    }
+  }
+  return v ? (u || (u = new li()), Hy(i, o, e, n, a, u)) : false;
+}
+function Co(i, o, e, n, a) {
+  return i === o ? true : i == null || o == null || !N$3(i) && !N$3(o) ? i !== i && o !== o : By(i, o, e, n, Co, a);
+}
+var Qy = 1;
+var My = 2;
+function fn$1(i, o, e, n) {
+  var a = e.length, u = a, g = !n;
+  if (i == null) return !u;
+  for (i = Object(i); a--; ) {
+    var t = e[a];
+    if (g && t[2] ? t[1] !== i[t[0]] : !(t[0] in i)) return false;
+  }
+  for (; ++a < u; ) {
+    t = e[a];
+    var s = t[0], h = i[s], r = t[1];
+    if (g && t[2]) {
+      if (h === void 0 && !(s in i)) return false;
+    } else {
+      var l = new li();
+      if (n) var v = n(h, r, s, i, o, l);
+      if (!(v === void 0 ? Co(r, h, Qy | My, n, l) : v)) return false;
+    }
+  }
+  return true;
+}
+function Jg(i) {
+  return i === i && !G$2(i);
+}
+function Yn$1(i) {
+  for (var o = F$2(i), e = o.length; e--; ) {
+    var n = o[e], a = i[n];
+    o[e] = [n, a, Jg(a)];
+  }
+  return o;
+}
+function Cg(i, o) {
+  return function(e) {
+    return e == null ? false : e[i] === o && (o !== void 0 || i in Object(e));
+  };
+}
+function Xg(i) {
+  var o = Yn$1(i);
+  return o.length == 1 && o[0][2] ? Cg(o[0][0], o[0][1]) : function(e) {
+    return e === i || fn$1(e, i, o);
+  };
+}
+function Gy(i, o) {
+  return i != null && o in Object(i);
+}
+function Hg(i, o, e) {
+  o = Qi(o, i);
+  for (var n = -1, a = o.length, u = false; ++n < a; ) {
+    var g = vi(o[n]);
+    if (!(u = i != null && e(i, g))) break;
+    i = i[g];
+  }
+  return u || ++n != a ? u : (a = i == null ? 0 : i.length, !!a && Uo(a) && Zi(g, a) && (k$2(i) || Ki(i)));
+}
+function kn$1(i, o) {
+  return i != null && Hg(i, o, Gy);
+}
+var Ny = 1;
+var xy = 2;
+function Dg(i, o) {
+  return gn$1(i) && Jg(o) ? Cg(vi(i), o) : function(e) {
+    var n = dn$1(e, i);
+    return n === void 0 && n === o ? kn$1(e, i) : Co(o, n, Ny | xy);
+  };
+}
+function Ln$1(i) {
+  return function(o) {
+    return o?.[i];
+  };
+}
+function Wy(i) {
+  return function(o) {
+    return zi(o, i);
+  };
+}
+function Tg(i) {
+  return gn$1(i) ? Ln$1(vi(i)) : Wy(i);
+}
+function Y$2(i) {
+  return typeof i == "function" ? i : i == null ? U$4 : typeof i == "object" ? k$2(i) ? Dg(i[0], i[1]) : Xg(i) : Tg(i);
+}
+var Py = "Expected a function";
+function Fy(i) {
+  var o = i == null ? 0 : i.length, e = Y$2;
+  return i = o ? M$2(i, function(n) {
+    if (typeof n[1] != "function") throw new TypeError(Py);
+    return [e(n[0]), n[1]];
+  }) : [], S$2(function(n) {
+    for (var a = -1; ++a < o; ) {
+      var u = i[a];
+      if (ni(u[0], this, n)) return ni(u[1], this, n);
+    }
+  });
+}
+function Bg(i, o, e) {
+  var n = e.length;
+  if (i == null) return !n;
+  for (i = Object(i); n--; ) {
+    var a = e[n], u = o[a], g = i[a];
+    if (g === void 0 && !(a in i) || !u(g)) return false;
+  }
+  return true;
+}
+function Ky(i) {
+  var o = F$2(i);
+  return function(e) {
+    return Bg(e, i, o);
+  };
+}
+var Ry = 1;
+function Ay(i) {
+  return Ky(di(i, Ry));
+}
+function _y(i, o) {
+  return o == null || Bg(i, o, F$2(o));
+}
+function Oy(i, o, e, n) {
+  for (var a = -1, u = i == null ? 0 : i.length; ++a < u; ) {
+    var g = i[a];
+    o(n, g, e(g), i);
+  }
+  return n;
+}
+function Qg(i) {
+  return function(o, e, n) {
+    for (var a = -1, u = Object(o), g = n(o), t = g.length; t--; ) {
+      var s = g[i ? t : ++a];
+      if (e(u[s], s, u) === false) break;
+    }
+    return o;
+  };
+}
+var Zn$1 = Qg();
+function ji(i, o) {
+  return i && Zn$1(i, o, F$2);
+}
+function Mg(i, o) {
+  return function(e, n) {
+    if (e == null) return e;
+    if (!V$4(e)) return i(e, n);
+    for (var a = e.length, u = o ? a : -1, g = Object(e); (o ? u-- : ++u < a) && n(g[u], u, g) !== false; ) ;
+    return e;
+  };
+}
+var xi = Mg(ji);
+function zy(i, o, e, n) {
+  return xi(i, function(a, u, g) {
+    o(n, a, e(a), g);
+  }), n;
+}
+function ue$1(i, o) {
+  return function(e, n) {
+    var a = k$2(e) ? Oy : zy, u = o ? o() : {};
+    return a(e, i, Y$2(n), u);
+  };
+}
+var Ey = Object.prototype;
+var $y = Ey.hasOwnProperty;
+var qy = ue$1(function(i, o, e) {
+  $y.call(i, e) ? ++i[e] : pi(i, e, 1);
+});
+function Iy(i, o) {
+  var e = no$1(i);
+  return o == null ? e : yg(e, o);
+}
+var Uy = 8;
+function Sn$1(i, o, e) {
+  o = e ? void 0 : o;
+  var n = Si(i, Uy, void 0, void 0, void 0, void 0, void 0, o);
+  return n.placeholder = Sn$1.placeholder, n;
+}
+Sn$1.placeholder = {};
+var Vy = 16;
+function Jn$1(i, o, e) {
+  o = e ? void 0 : o;
+  var n = Si(i, Vy, void 0, void 0, void 0, void 0, void 0, o);
+  return n.placeholder = Jn$1.placeholder, n;
+}
+Jn$1.placeholder = {};
+var Wo = function() {
+  return P$3.Date.now();
+};
+var ic = "Expected a function";
+var oc = Math.max;
+var ec = Math.min;
+function Gg(i, o, e) {
+  var n, a, u, g, t, s, h = 0, r = false, l = false, v = true;
+  if (typeof i != "function") throw new TypeError(ic);
+  o = gi(o) || 0, G$2(e) && (r = !!e.leading, l = "maxWait" in e, u = l ? oc(gi(e.maxWait) || 0, o) : u, v = "trailing" in e ? !!e.trailing : v);
+  function y(Q) {
+    var z = n, Yi = a;
+    return n = a = void 0, h = Q, g = i.apply(Yi, z), g;
+  }
+  function c(Q) {
+    return h = Q, t = setTimeout(j, o), r ? y(Q) : g;
+  }
+  function b(Q) {
+    var z = Q - s, Yi = Q - h, En = o - z;
+    return l ? ec(En, u - Yi) : En;
+  }
+  function p(Q) {
+    var z = Q - s, Yi = Q - h;
+    return s === void 0 || z >= o || z < 0 || l && Yi >= u;
+  }
+  function j() {
+    var Q = Wo();
+    if (p(Q)) return L(Q);
+    t = setTimeout(j, b(Q));
+  }
+  function L(Q) {
+    return t = void 0, v && n ? y(Q) : (n = a = void 0, g);
+  }
+  function K() {
+    t !== void 0 && clearTimeout(t), h = 0, n = s = a = t = void 0;
+  }
+  function R() {
+    return t === void 0 ? g : L(Wo());
+  }
+  function O() {
+    var Q = Wo(), z = p(Q);
+    if (n = arguments, a = this, s = Q, z) {
+      if (t === void 0) return c(s);
+      if (l) return clearTimeout(t), t = setTimeout(j, o), y(s);
+    }
+    return t === void 0 && (t = setTimeout(j, o)), g;
+  }
+  return O.cancel = K, O.flush = R, O;
+}
+function nc(i, o) {
+  return i == null || i !== i ? o : i;
+}
+var Ng = Object.prototype;
+var ac = Ng.hasOwnProperty;
+var uc = S$2(function(i, o) {
+  i = Object(i);
+  var e = -1, n = o.length, a = n > 2 ? o[2] : void 0;
+  for (a && E$2(o[0], o[1], a) && (n = 1); ++e < n; ) for (var u = o[e], g = ii(u), t = -1, s = g.length; ++t < s; ) {
+    var h = g[t], r = i[h];
+    (r === void 0 || ci(r, Ng[h]) && !ac.call(i, h)) && (i[h] = u[h]);
+  }
+  return i;
+});
+function Ke$2(i, o, e) {
+  (e !== void 0 && !ci(i[o], e) || e === void 0 && !(o in i)) && pi(i, o, e);
+}
+function W$3(i) {
+  return N$3(i) && V$4(i);
+}
+function Re$2(i, o) {
+  if (!(o === "constructor" && typeof i[o] == "function") && o != "__proto__") return i[o];
+}
+function xg(i) {
+  return wi(i, ii(i));
+}
+function gc(i, o, e, n, a, u, g) {
+  var t = Re$2(i, e), s = Re$2(o, e), h = g.get(s);
+  if (h) {
+    Ke$2(i, e, h);
+    return;
+  }
+  var r = u ? u(t, s, e + "", i, o, g) : void 0, l = r === void 0;
+  if (l) {
+    var v = k$2(s), y = !v && Ti(s), c = !v && !y && to$1(s);
+    r = s, v || y || c ? k$2(t) ? r = t : W$3(t) ? r = I$2(t) : y ? (l = false, r = bg(s, true)) : c ? (l = false, r = jg(s, true)) : r = [] : Jo(s) || Ki(s) ? (r = t, Ki(t) ? r = xg(t) : (!G$2(t) || Li(t)) && (r = mg(s))) : l = false;
+  }
+  l && (g.set(s, r), a(r, s, n, u, g), g.delete(s)), Ke$2(i, e, r);
+}
+function ge$2(i, o, e, n, a) {
+  i !== o && Zn$1(o, function(u, g) {
+    if (a || (a = new li()), G$2(u)) gc(i, o, g, e, ge$2, n, a);
+    else {
+      var t = n ? n(Re$2(i, g), u, g + "", i, o, a) : void 0;
+      t === void 0 && (t = u), Ke$2(i, g, t);
+    }
+  }, ii);
+}
+function Wg(i, o, e, n, a, u) {
+  return G$2(i) && G$2(o) && (u.set(o, i), ge$2(i, o, void 0, Wg, u), u.delete(o)), i;
+}
+var Pg = go(function(i, o, e, n) {
+  ge$2(i, o, e, n);
+});
+var dc = S$2(function(i) {
+  return i.push(void 0, Wg), ni(Pg, void 0, i);
+});
+var tc = "Expected a function";
+function Fg(i, o, e) {
+  if (typeof i != "function") throw new TypeError(tc);
+  return setTimeout(function() {
+    i.apply(void 0, e);
+  }, o);
+}
+var sc = S$2(function(i, o) {
+  return Fg(i, 1, o);
+});
+var hc = S$2(function(i, o, e) {
+  return Fg(i, gi(o) || 0, e);
+});
+function Cn$1(i, o, e) {
+  for (var n = -1, a = i == null ? 0 : i.length; ++n < a; ) if (e(o, i[n])) return true;
+  return false;
+}
+var rc = 200;
+function Xo(i, o, e, n) {
+  var a = -1, u = qo, g = true, t = i.length, s = [], h = o.length;
+  if (!t) return s;
+  e && (o = M$2(o, ai(e))), n ? (u = Cn$1, g = false) : o.length >= rc && (u = ko, g = false, o = new Ai(o));
+  i: for (; ++a < t; ) {
+    var r = i[a], l = e == null ? r : e(r);
+    if (r = n || r !== 0 ? r : 0, g && l === l) {
+      for (var v = h; v--; ) if (o[v] === l) continue i;
+      s.push(r);
+    } else u(o, l, n) || s.push(r);
+  }
+  return s;
+}
+var lc = S$2(function(i, o) {
+  return W$3(i) ? Xo(i, A$2(o, 1, W$3, true)) : [];
+});
+function ri(i) {
+  var o = i == null ? 0 : i.length;
+  return o ? i[o - 1] : void 0;
+}
+var vc = S$2(function(i, o) {
+  var e = ri(o);
+  return W$3(e) && (e = void 0), W$3(i) ? Xo(i, A$2(o, 1, W$3, true), Y$2(e)) : [];
+});
+var yc = S$2(function(i, o) {
+  var e = ri(o);
+  return W$3(e) && (e = void 0), W$3(i) ? Xo(i, A$2(o, 1, W$3, true), void 0, e) : [];
+});
+var cc = zo(function(i, o) {
+  return i / o;
+}, 1);
+function bc(i, o, e) {
+  var n = i == null ? 0 : i.length;
+  return n ? (o = e || o === void 0 ? 1 : Z$2(o), hi(i, o < 0 ? 0 : o, n)) : [];
+}
+function pc(i, o, e) {
+  var n = i == null ? 0 : i.length;
+  return n ? (o = e || o === void 0 ? 1 : Z$2(o), o = n - o, hi(i, 0, o < 0 ? 0 : o)) : [];
+}
+function de$2(i, o, e, n) {
+  for (var a = i.length, u = n ? a : -1; (n ? u-- : ++u < a) && o(i[u], u, i); ) ;
+  return e ? hi(i, n ? 0 : u, n ? u + 1 : a) : hi(i, n ? u + 1 : 0, n ? a : u);
+}
+function wc(i, o) {
+  return i && i.length ? de$2(i, Y$2(o), true, true) : [];
+}
+function jc(i, o) {
+  return i && i.length ? de$2(i, Y$2(o), true) : [];
+}
+function mi(i) {
+  return typeof i == "function" ? i : U$4;
+}
+function mc(i, o) {
+  var e = k$2(i) ? ui : xi;
+  return e(i, mi(o));
+}
+function fc(i, o) {
+  for (var e = i == null ? 0 : i.length; e-- && o(i[e], e, i) !== false; ) ;
+  return i;
+}
+var Kg = Qg(true);
+function Xn$1(i, o) {
+  return i && Kg(i, o, F$2);
+}
+var Rg = Mg(Xn$1, true);
+function Yc(i, o) {
+  var e = k$2(i) ? fc : Rg;
+  return e(i, mi(o));
+}
+function kc(i, o, e) {
+  i = X$2(i), o = ei(o);
+  var n = i.length;
+  e = e === void 0 ? n : Ei(Z$2(e), 0, n);
+  var a = e;
+  return e -= o.length, e >= 0 && i.slice(e, a) == o;
+}
+function Lc(i, o) {
+  return M$2(o, function(e) {
+    return [e, i[e]];
+  });
+}
+function Zc(i) {
+  var o = -1, e = Array(i.size);
+  return i.forEach(function(n) {
+    e[++o] = [n, n];
+  }), e;
+}
+var Sc = "[object Map]";
+var Jc = "[object Set]";
+function Ag(i) {
+  return function(o) {
+    var e = bi(o);
+    return e == Sc ? mn$1(o) : e == Jc ? Zc(o) : Lc(o, i(o));
+  };
+}
+var Cc = Ag(F$2);
+var Xc = Ag(ii);
+var Hc = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+var Dc = vn$1(Hc);
+var _g = /[&<>"']/g;
+var Tc = RegExp(_g.source);
+function Og(i) {
+  return i = X$2(i), i && Tc.test(i) ? i.replace(_g, Dc) : i;
+}
+var zg = /[\\^$.*+?()[\]{}|]/g;
+var Bc = RegExp(zg.source);
+function Qc(i) {
+  return i = X$2(i), i && Bc.test(i) ? i.replace(zg, "\\$&") : i;
+}
+function Eg(i, o) {
+  for (var e = -1, n = i == null ? 0 : i.length; ++e < n; ) if (!o(i[e], e, i)) return false;
+  return true;
+}
+function Mc(i, o) {
+  var e = true;
+  return xi(i, function(n, a, u) {
+    return e = !!o(n, a, u), e;
+  }), e;
+}
+function Gc(i, o, e) {
+  var n = k$2(i) ? Eg : Mc;
+  return e && E$2(i, o, e) && (o = void 0), n(i, Y$2(o));
+}
+var Nc = 4294967295;
+function $g(i) {
+  return i ? Ei(Z$2(i), 0, Nc) : 0;
+}
+function xc(i, o, e, n) {
+  var a = i.length;
+  for (e = Z$2(e), e < 0 && (e = -e > a ? 0 : a + e), n = n === void 0 || n > a ? a : Z$2(n), n < 0 && (n += a), n = e > n ? 0 : $g(n); e < n; ) i[e++] = o;
+  return i;
+}
+function Wc(i, o, e, n) {
+  var a = i == null ? 0 : i.length;
+  return a ? (e && typeof e != "number" && E$2(i, o, e) && (e = 0, n = a), xc(i, o, e, n)) : [];
+}
+function qg(i, o) {
+  var e = [];
+  return xi(i, function(n, a, u) {
+    o(n, a, u) && e.push(n);
+  }), e;
+}
+function Pc(i, o) {
+  var e = k$2(i) ? Ni : qg;
+  return e(i, Y$2(o));
+}
+function Ig(i) {
+  return function(o, e, n) {
+    var a = Object(o);
+    if (!V$4(o)) {
+      var u = Y$2(e);
+      o = F$2(o), e = function(t) {
+        return u(a[t], t, a);
+      };
+    }
+    var g = i(o, e, n);
+    return g > -1 ? a[u ? o[g] : g] : void 0;
+  };
+}
+var Fc = Math.max;
+function Ug(i, o, e) {
+  var n = i == null ? 0 : i.length;
+  if (!n) return -1;
+  var a = e == null ? 0 : Z$2(e);
+  return a < 0 && (a = Fc(n + a, 0)), $o(i, Y$2(o), a);
+}
+var Kc = Ig(Ug);
+function Vg(i, o, e) {
+  var n;
+  return e(i, function(a, u, g) {
+    if (o(a, u, g)) return n = u, false;
+  }), n;
+}
+function Rc(i, o) {
+  return Vg(i, Y$2(o), ji);
+}
+var Ac = Math.max;
+var _c = Math.min;
+function id(i, o, e) {
+  var n = i == null ? 0 : i.length;
+  if (!n) return -1;
+  var a = n - 1;
+  return e !== void 0 && (a = Z$2(e), a = e < 0 ? Ac(n + a, 0) : _c(a, n - 1)), $o(i, Y$2(o), a, true);
+}
+var Oc = Ig(id);
+function zc(i, o) {
+  return Vg(i, Y$2(o), Xn$1);
+}
+function Ec(i) {
+  return i && i.length ? i[0] : void 0;
+}
+function od(i, o) {
+  var e = -1, n = V$4(i) ? Array(i.length) : [];
+  return xi(i, function(a, u, g) {
+    n[++e] = o(a, u, g);
+  }), n;
+}
+function te$3(i, o) {
+  var e = k$2(i) ? M$2 : od;
+  return e(i, Y$2(o));
+}
+function $c(i, o) {
+  return A$2(te$3(i, o), 1);
+}
+var qc = 1 / 0;
+function Ic(i, o) {
+  return A$2(te$3(i, o), qc);
+}
+function Uc(i, o, e) {
+  return e = e === void 0 ? 1 : Z$2(e), A$2(te$3(i, o), e);
+}
+var Vc = 1 / 0;
+function ib(i) {
+  var o = i == null ? 0 : i.length;
+  return o ? A$2(i, Vc) : [];
+}
+function ob(i, o) {
+  var e = i == null ? 0 : i.length;
+  return e ? (o = o === void 0 ? 1 : Z$2(o), A$2(i, o)) : [];
+}
+var eb = 512;
+function nb(i) {
+  return Si(i, eb);
+}
+var ab = yn$1("floor");
+var ub = "Expected a function";
+var gb = 8;
+var db = 32;
+var tb = 128;
+var sb = 256;
+function ed(i) {
+  return Xi(function(o) {
+    var e = o.length, n = e, a = ti.prototype.thru;
+    for (i && o.reverse(); n--; ) {
+      var u = o[n];
+      if (typeof u != "function") throw new TypeError(ub);
+      if (a && !g && xo(u) == "wrapper") var g = new ti([], true);
+    }
+    for (n = g ? n : e; ++n < e; ) {
+      u = o[n];
+      var t = xo(u), s = t == "wrapper" ? Ve$1(u) : void 0;
+      s && Me$2(s[0]) && s[1] == (tb | gb | db | sb) && !s[4].length && s[9] == 1 ? g = g[xo(s[0])].apply(g, s[3]) : g = u.length == 1 && Me$2(u) ? g[t]() : g.thru(u);
+    }
+    return function() {
+      var h = arguments, r = h[0];
+      if (g && h.length == 1 && k$2(r)) return g.plant(r).value();
+      for (var l = 0, v = e ? o[l].apply(this, h) : r; ++l < e; ) v = o[l].call(this, v);
+      return v;
+    };
+  });
+}
+var hb = ed();
+var rb = ed(true);
+function lb(i, o) {
+  return i == null ? i : Zn$1(i, mi(o), ii);
+}
+function vb(i, o) {
+  return i == null ? i : Kg(i, mi(o), ii);
+}
+function yb(i, o) {
+  return i && ji(i, mi(o));
+}
+function cb(i, o) {
+  return i && Xn$1(i, mi(o));
+}
+function bb(i) {
+  for (var o = -1, e = i == null ? 0 : i.length, n = {}; ++o < e; ) {
+    var a = i[o];
+    pi(n, a[0], a[1]);
+  }
+  return n;
+}
+function se$2(i, o) {
+  return Ni(o, function(e) {
+    return Li(i[e]);
+  });
+}
+function pb(i) {
+  return i == null ? [] : se$2(i, F$2(i));
+}
+function wb(i) {
+  return i == null ? [] : se$2(i, ii(i));
+}
+var jb = Object.prototype;
+var mb = jb.hasOwnProperty;
+var fb = ue$1(function(i, o, e) {
+  mb.call(i, e) ? i[e].push(o) : pi(i, e, [o]);
+});
+function Hn$1(i, o) {
+  return i > o;
+}
+function he$2(i) {
+  return function(o, e) {
+    return typeof o == "string" && typeof e == "string" || (o = gi(o), e = gi(e)), i(o, e);
+  };
+}
+var Yb = he$2(Hn$1);
+var kb = he$2(function(i, o) {
+  return i >= o;
+});
+var Lb = Object.prototype;
+var Zb = Lb.hasOwnProperty;
+function Sb(i, o) {
+  return i != null && Zb.call(i, o);
+}
+function Jb(i, o) {
+  return i != null && Hg(i, o, Sb);
+}
+var Cb = Math.max;
+var Xb = Math.min;
+function Hb(i, o, e) {
+  return i >= Xb(o, e) && i < Cb(o, e);
+}
+function Db(i, o, e) {
+  return o = ki(o), e === void 0 ? (e = o, o = 0) : e = ki(e), i = gi(i), Hb(i, o, e);
+}
+var Tb = "[object String]";
+function re$1(i) {
+  return typeof i == "string" || !k$2(i) && N$3(i) && $$1(i) == Tb;
+}
+function Dn$1(i, o) {
+  return M$2(o, function(e) {
+    return i[e];
+  });
+}
+function ro$1(i) {
+  return i == null ? [] : Dn$1(i, F$2(i));
+}
+var Bb = Math.max;
+function Qb(i, o, e, n) {
+  i = V$4(i) ? i : ro$1(i), e = e && !n ? Z$2(e) : 0;
+  var a = i.length;
+  return e < 0 && (e = Bb(a + e, 0)), re$1(i) ? e <= a && i.indexOf(o, e) > -1 : !!a && ao(i, o, e) > -1;
+}
+var Mb = Math.max;
+function Gb(i, o, e) {
+  var n = i == null ? 0 : i.length;
+  if (!n) return -1;
+  var a = e == null ? 0 : Z$2(e);
+  return a < 0 && (a = Mb(n + a, 0)), ao(i, o, a);
+}
+function Nb(i) {
+  var o = i == null ? 0 : i.length;
+  return o ? hi(i, 0, -1) : [];
+}
+var xb = Math.min;
+function Tn$1(i, o, e) {
+  for (var n = e ? Cn$1 : qo, a = i[0].length, u = i.length, g = u, t = Array(u), s = 1 / 0, h = []; g--; ) {
+    var r = i[g];
+    g && o && (r = M$2(r, ai(o))), s = xb(r.length, s), t[g] = !e && (o || a >= 120 && r.length >= 120) ? new Ai(g && r) : void 0;
+  }
+  r = i[0];
+  var l = -1, v = t[0];
+  i: for (; ++l < a && h.length < s; ) {
+    var y = r[l], c = o ? o(y) : y;
+    if (y = e || y !== 0 ? y : 0, !(v ? ko(v, c) : n(h, c, e))) {
+      for (g = u; --g; ) {
+        var b = t[g];
+        if (!(b ? ko(b, c) : n(i[g], c, e))) continue i;
+      }
+      v && v.push(c), h.push(y);
+    }
+  }
+  return h;
+}
+function Bn$1(i) {
+  return W$3(i) ? i : [];
+}
+var Wb = S$2(function(i) {
+  var o = M$2(i, Bn$1);
+  return o.length && o[0] === i[0] ? Tn$1(o) : [];
+});
+var Pb = S$2(function(i) {
+  var o = ri(i), e = M$2(i, Bn$1);
+  return o === ri(e) ? o = void 0 : e.pop(), e.length && e[0] === i[0] ? Tn$1(e, Y$2(o)) : [];
+});
+var Fb = S$2(function(i) {
+  var o = ri(i), e = M$2(i, Bn$1);
+  return o = typeof o == "function" ? o : void 0, o && e.pop(), e.length && e[0] === i[0] ? Tn$1(e, void 0, o) : [];
+});
+function Kb(i, o, e, n) {
+  return ji(i, function(a, u, g) {
+    o(n, e(a), u, g);
+  }), n;
+}
+function nd(i, o) {
+  return function(e, n) {
+    return Kb(e, i, o(n), {});
+  };
+}
+var Rb = Object.prototype;
+var Ab = Rb.toString;
+var _b = nd(function(i, o, e) {
+  o != null && typeof o.toString != "function" && (o = Ab.call(o)), i[o] = e;
+}, on$1(U$4));
+var ad = Object.prototype;
+var Ob = ad.hasOwnProperty;
+var zb = ad.toString;
+var Eb = nd(function(i, o, e) {
+  o != null && typeof o.toString != "function" && (o = zb.call(o)), Ob.call(i, o) ? i[o].push(e) : i[o] = [e];
+}, Y$2);
+function ud(i, o) {
+  return o.length < 2 ? i : zi(i, hi(o, 0, -1));
+}
+function Ho(i, o, e) {
+  o = Qi(o, i), i = ud(i, o);
+  var n = i == null ? i : i[vi(ri(o))];
+  return n == null ? void 0 : ni(n, i, e);
+}
+var $b = S$2(Ho);
+var qb = S$2(function(i, o, e) {
+  var n = -1, a = typeof o == "function", u = V$4(i) ? Array(i.length) : [];
+  return xi(i, function(g) {
+    u[++n] = a ? ni(o, g, e) : Ho(g, o, e);
+  }), u;
+});
+var Ib = "[object ArrayBuffer]";
+function Ub(i) {
+  return N$3(i) && $$1(i) == Ib;
+}
+var _a = si && si.isArrayBuffer;
+var Vb = _a ? ai(_a) : Ub;
+var ip = "[object Boolean]";
+function op(i) {
+  return i === true || i === false || N$3(i) && $$1(i) == ip;
+}
+var ep = "[object Date]";
+function np(i) {
+  return N$3(i) && $$1(i) == ep;
+}
+var Oa = si && si.isDate;
+var ap = Oa ? ai(Oa) : np;
+function up(i) {
+  return N$3(i) && i.nodeType === 1 && !Jo(i);
+}
+var gp = "[object Map]";
+var dp = "[object Set]";
+var tp = Object.prototype;
+var sp = tp.hasOwnProperty;
+function hp(i) {
+  if (i == null) return true;
+  if (V$4(i) && (k$2(i) || typeof i == "string" || typeof i.splice == "function" || Ti(i) || to$1(i) || Ki(i))) return !i.length;
+  var o = bi(i);
+  if (o == gp || o == dp) return !i.size;
+  if (So(i)) return !un$1(i).length;
+  for (var e in i) if (sp.call(i, e)) return false;
+  return true;
+}
+function rp(i, o) {
+  return Co(i, o);
+}
+function lp(i, o, e) {
+  e = typeof e == "function" ? e : void 0;
+  var n = e ? e(i, o) : void 0;
+  return n === void 0 ? Co(i, o, void 0, e) : !!n;
+}
+var vp = P$3.isFinite;
+function yp(i) {
+  return typeof i == "number" && vp(i);
+}
+function gd(i) {
+  return typeof i == "number" && i == Z$2(i);
+}
+function cp(i, o) {
+  return i === o || fn$1(i, o, Yn$1(o));
+}
+function bp(i, o, e) {
+  return e = typeof e == "function" ? e : void 0, fn$1(i, o, Yn$1(o), e);
+}
+var pp = "[object Number]";
+function dd(i) {
+  return typeof i == "number" || N$3(i) && $$1(i) == pp;
+}
+function wp(i) {
+  return dd(i) && i != +i;
+}
+var jp = No ? Li : an$1;
+var mp = "Unsupported core-js use. Try https://npms.io/search?q=ponyfill.";
+function fp(i) {
+  if (jp(i)) throw new Error(mp);
+  return Yu(i);
+}
+function Yp(i) {
+  return i == null;
+}
+function kp(i) {
+  return i === null;
+}
+var Lp = "[object RegExp]";
+function Zp(i) {
+  return N$3(i) && $$1(i) == Lp;
+}
+var za = si && si.isRegExp;
+var Qn$1 = za ? ai(za) : Zp;
+var Ea = 9007199254740991;
+function Sp(i) {
+  return gd(i) && i >= -Ea && i <= Ea;
+}
+function Jp(i) {
+  return i === void 0;
+}
+var Cp = "[object WeakMap]";
+function Xp(i) {
+  return N$3(i) && bi(i) == Cp;
+}
+var Hp = "[object WeakSet]";
+function Dp(i) {
+  return N$3(i) && $$1(i) == Hp;
+}
+var Tp = 1;
+function Bp(i) {
+  return Y$2(typeof i == "function" ? i : di(i, Tp));
+}
+var Qp = Array.prototype;
+var Mp = Qp.join;
+function Gp(i, o) {
+  return i == null ? "" : Mp.call(i, o);
+}
+var Np = ho(function(i, o, e) {
+  return i + (e ? "-" : "") + o.toLowerCase();
+});
+var xp = ue$1(function(i, o, e) {
+  pi(i, e, o);
+});
+function Wp(i, o, e) {
+  for (var n = e + 1; n--; ) if (i[n] === o) return n;
+  return n;
+}
+var Pp = Math.max;
+var Fp = Math.min;
+function Kp(i, o, e) {
+  var n = i == null ? 0 : i.length;
+  if (!n) return -1;
+  var a = n;
+  return e !== void 0 && (a = Z$2(e), a = a < 0 ? Pp(n + a, 0) : Fp(a, n - 1)), o === o ? Wp(i, o, a) : $o(i, Xu, a, true);
+}
+var Rp = ho(function(i, o, e) {
+  return i + (e ? " " : "") + o.toLowerCase();
+});
+var Ap = qu("toLowerCase");
+function Mn$1(i, o) {
+  return i < o;
+}
+var _p = he$2(Mn$1);
+var Op = he$2(function(i, o) {
+  return i <= o;
+});
+function zp(i, o) {
+  var e = {};
+  return o = Y$2(o), ji(i, function(n, a, u) {
+    pi(e, o(n, a, u), n);
+  }), e;
+}
+function Ep(i, o) {
+  var e = {};
+  return o = Y$2(o), ji(i, function(n, a, u) {
+    pi(e, a, o(n, a, u));
+  }), e;
+}
+var $p = 1;
+function qp(i) {
+  return Xg(di(i, $p));
+}
+var Ip = 1;
+function Up(i, o) {
+  return Dg(i, di(o, Ip));
+}
+function le$2(i, o, e) {
+  for (var n = -1, a = i.length; ++n < a; ) {
+    var u = i[n], g = o(u);
+    if (g != null && (t === void 0 ? g === g && !oi(g) : e(g, t))) var t = g, s = u;
+  }
+  return s;
+}
+function Vp(i) {
+  return i && i.length ? le$2(i, U$4, Hn$1) : void 0;
+}
+function iw(i, o) {
+  return i && i.length ? le$2(i, Y$2(o), Hn$1) : void 0;
+}
+function Gn$1(i, o) {
+  for (var e, n = -1, a = i.length; ++n < a; ) {
+    var u = o(i[n]);
+    u !== void 0 && (e = e === void 0 ? u : e + u);
+  }
+  return e;
+}
+var ow = NaN;
+function td(i, o) {
+  var e = i == null ? 0 : i.length;
+  return e ? Gn$1(i, o) / e : ow;
+}
+function ew(i) {
+  return td(i, U$4);
+}
+function nw(i, o) {
+  return td(i, Y$2(o));
+}
+var aw = go(function(i, o, e) {
+  ge$2(i, o, e);
+});
+var uw = S$2(function(i, o) {
+  return function(e) {
+    return Ho(e, i, o);
+  };
+});
+var gw = S$2(function(i, o) {
+  return function(e) {
+    return Ho(i, e, o);
+  };
+});
+function dw(i) {
+  return i && i.length ? le$2(i, U$4, Mn$1) : void 0;
+}
+function tw(i, o) {
+  return i && i.length ? le$2(i, Y$2(o), Mn$1) : void 0;
+}
+function sw(i, o, e) {
+  var n = F$2(o), a = se$2(o, n), u = !(G$2(e) && "chain" in e) || !!e.chain, g = Li(i);
+  return ui(a, function(t) {
+    var s = o[t];
+    i[t] = s, g && (i.prototype[t] = function() {
+      var h = this.__chain__;
+      if (u || h) {
+        var r = i(this.__wrapped__), l = r.__actions__ = I$2(this.__actions__);
+        return l.push({ func: s, args: arguments, thisArg: i }), r.__chain__ = h, r;
+      }
+      return s.apply(i, Mi([this.value()], arguments));
+    });
+  }), i;
+}
+var hw = zo(function(i, o) {
+  return i * o;
+}, 1);
+var rw = "Expected a function";
+function ve$1(i) {
+  if (typeof i != "function") throw new TypeError(rw);
+  return function() {
+    var o = arguments;
+    switch (o.length) {
+      case 0:
+        return !i.call(this);
+      case 1:
+        return !i.call(this, o[0]);
+      case 2:
+        return !i.call(this, o[0], o[1]);
+      case 3:
+        return !i.call(this, o[0], o[1], o[2]);
+    }
+    return !i.apply(this, o);
+  };
+}
+function lw(i) {
+  for (var o, e = []; !(o = i.next()).done; ) e.push(o.value);
+  return e;
+}
+var vw = "[object Map]";
+var yw = "[object Set]";
+var ke$2 = _$2 ? _$2.iterator : void 0;
+function sd(i) {
+  if (!i) return [];
+  if (V$4(i)) return re$1(i) ? yi(i) : I$2(i);
+  if (ke$2 && i[ke$2]) return lw(i[ke$2]());
+  var o = bi(i), e = o == vw ? mn$1 : o == yw ? ae$2 : ro$1;
+  return e(i);
+}
+function cw() {
+  this.__values__ === void 0 && (this.__values__ = sd(this.value()));
+  var i = this.__index__ >= this.__values__.length, o = i ? void 0 : this.__values__[this.__index__++];
+  return { done: i, value: o };
+}
+function hd(i, o) {
+  var e = i.length;
+  if (e) return o += o < 0 ? e : 0, Zi(o, e) ? i[o] : void 0;
+}
+function bw(i, o) {
+  return i && i.length ? hd(i, Z$2(o)) : void 0;
+}
+function pw(i) {
+  return i = Z$2(i), S$2(function(o) {
+    return hd(o, i);
+  });
+}
+var ww = Object.prototype;
+var jw = ww.hasOwnProperty;
+function Nn$1(i, o) {
+  o = Qi(o, i);
+  var e = -1, n = o.length;
+  if (!n) return true;
+  for (; ++e < n; ) {
+    var a = vi(o[e]);
+    if (a === "__proto__" && !jw.call(i, "__proto__") || (a === "constructor" || a === "prototype") && e < n - 1) return false;
+  }
+  var u = ud(i, o);
+  return u == null || delete u[vi(ri(o))];
+}
+function mw(i) {
+  return Jo(i) ? void 0 : i;
+}
+var fw = 1;
+var Yw = 2;
+var kw = 4;
+var Lw = Xi(function(i, o) {
+  var e = {};
+  if (i == null) return e;
+  var n = false;
+  o = M$2(o, function(u) {
+    return u = Qi(u, i), n || (n = u.length > 1), u;
+  }), wi(i, pn$1(i), e), n && (e = di(e, fw | Yw | kw, mw));
+  for (var a = o.length; a--; ) Nn$1(e, o[a]);
+  return e;
+});
+function Do(i, o, e, n) {
+  if (!G$2(i)) return i;
+  o = Qi(o, i);
+  for (var a = -1, u = o.length, g = u - 1, t = i; t != null && ++a < u; ) {
+    var s = vi(o[a]), h = e;
+    if (s === "__proto__" || s === "constructor" || s === "prototype") return i;
+    if (a != g) {
+      var r = t[s];
+      h = n ? n(r, s, t) : void 0, h === void 0 && (h = G$2(r) ? r : Zi(o[a + 1]) ? [] : {});
+    }
+    Zo(t, s, h), t = t[s];
+  }
+  return i;
+}
+function rd(i, o, e) {
+  for (var n = -1, a = o.length, u = {}; ++n < a; ) {
+    var g = o[n], t = zi(i, g);
+    e(t, g) && Do(u, Qi(g, i), t);
+  }
+  return u;
+}
+function ld(i, o) {
+  if (i == null) return {};
+  var e = M$2(pn$1(i), function(n) {
+    return [n];
+  });
+  return o = Y$2(o), rd(i, e, function(n, a) {
+    return o(n, a[0]);
+  });
+}
+function Zw(i, o) {
+  return ld(i, ve$1(Y$2(o)));
+}
+function Sw(i) {
+  return Ru(2, i);
+}
+function Jw(i, o) {
+  var e = i.length;
+  for (i.sort(o); e--; ) i[e] = i[e].value;
+  return i;
+}
+function vd(i, o) {
+  if (i !== o) {
+    var e = i !== void 0, n = i === null, a = i === i, u = oi(i), g = o !== void 0, t = o === null, s = o === o, h = oi(o);
+    if (!t && !h && !u && i > o || u && g && s && !t && !h || n && g && s || !e && s || !a) return 1;
+    if (!n && !u && !h && i < o || h && e && a && !n && !u || t && e && a || !g && a || !s) return -1;
+  }
+  return 0;
+}
+function Cw(i, o, e) {
+  for (var n = -1, a = i.criteria, u = o.criteria, g = a.length, t = e.length; ++n < g; ) {
+    var s = vd(a[n], u[n]);
+    if (s) {
+      if (n >= t) return s;
+      var h = e[n];
+      return s * (h == "desc" ? -1 : 1);
+    }
+  }
+  return i.index - o.index;
+}
+function yd(i, o, e) {
+  o.length ? o = M$2(o, function(u) {
+    return k$2(u) ? function(g) {
+      return zi(g, u.length === 1 ? u[0] : u);
+    } : u;
+  }) : o = [U$4];
+  var n = -1;
+  o = M$2(o, ai(Y$2));
+  var a = od(i, function(u, g, t) {
+    var s = M$2(o, function(h) {
+      return h(u);
+    });
+    return { criteria: s, index: ++n, value: u };
+  });
+  return Jw(a, function(u, g) {
+    return Cw(u, g, e);
+  });
+}
+function Xw(i, o, e, n) {
+  return i == null ? [] : (k$2(o) || (o = o == null ? [] : [o]), e = n ? void 0 : e, k$2(e) || (e = e == null ? [] : [e]), yd(i, o, e));
+}
+function xn$1(i) {
+  return Xi(function(o) {
+    return o = M$2(o, ai(Y$2)), S$2(function(e) {
+      var n = this;
+      return i(o, function(a) {
+        return ni(a, n, e);
+      });
+    });
+  });
+}
+var Hw = xn$1(M$2);
+var Dw = S$2;
+var Tw = Math.min;
+var Bw = Dw(function(i, o) {
+  o = o.length == 1 && k$2(o[0]) ? M$2(o[0], ai(Y$2)) : M$2(A$2(o, 1), ai(Y$2));
+  var e = o.length;
+  return S$2(function(n) {
+    for (var a = -1, u = Tw(n.length, e); ++a < u; ) n[a] = o[a].call(this, n[a]);
+    return ni(i, this, n);
+  });
+});
+var Qw = xn$1(Eg);
+var Mw = xn$1(jn$1);
+var Gw = 9007199254740991;
+var Nw = Math.floor;
+function Ae$1(i, o) {
+  var e = "";
+  if (!i || o < 1 || o > Gw) return e;
+  do
+    o % 2 && (e += i), o = Nw(o / 2), o && (i += i);
+  while (o);
+  return e;
+}
+var xw = Ln$1("length");
+var cd = "\\ud800-\\udfff";
+var Ww = "\\u0300-\\u036f";
+var Pw = "\\ufe20-\\ufe2f";
+var Fw = "\\u20d0-\\u20ff";
+var Kw = Ww + Pw + Fw;
+var Rw = "\\ufe0e\\ufe0f";
+var Aw = "[" + cd + "]";
+var _e$1 = "[" + Kw + "]";
+var Oe$2 = "\\ud83c[\\udffb-\\udfff]";
+var _w = "(?:" + _e$1 + "|" + Oe$2 + ")";
+var bd = "[^" + cd + "]";
+var pd = "(?:\\ud83c[\\udde6-\\uddff]){2}";
+var wd = "[\\ud800-\\udbff][\\udc00-\\udfff]";
+var Ow = "\\u200d";
+var jd = _w + "?";
+var md = "[" + Rw + "]?";
+var zw = "(?:" + Ow + "(?:" + [bd, pd, wd].join("|") + ")" + md + jd + ")*";
+var Ew = md + jd + zw;
+var $w = "(?:" + [bd + _e$1 + "?", _e$1, pd, wd, Aw].join("|") + ")";
+var $a = RegExp(Oe$2 + "(?=" + Oe$2 + ")|" + $w + Ew, "g");
+function qw(i) {
+  for (var o = $a.lastIndex = 0; $a.test(i); ) ++o;
+  return o;
+}
+function lo(i) {
+  return so$1(i) ? qw(i) : xw(i);
+}
+var Iw = Math.ceil;
+function _o(i, o) {
+  o = o === void 0 ? " " : ei(o);
+  var e = o.length;
+  if (e < 2) return e ? Ae$1(o, i) : o;
+  var n = Ae$1(o, Iw(i / lo(o)));
+  return so$1(o) ? Gi(yi(n), 0, i).join("") : n.slice(0, i);
+}
+var Uw = Math.ceil;
+var Vw = Math.floor;
+function ij(i, o, e) {
+  i = X$2(i), o = Z$2(o);
+  var n = o ? lo(i) : 0;
+  if (!o || n >= o) return i;
+  var a = (o - n) / 2;
+  return _o(Vw(a), e) + i + _o(Uw(a), e);
+}
+function oj(i, o, e) {
+  i = X$2(i), o = Z$2(o);
+  var n = o ? lo(i) : 0;
+  return o && n < o ? i + _o(o - n, e) : i;
+}
+function ej(i, o, e) {
+  i = X$2(i), o = Z$2(o);
+  var n = o ? lo(i) : 0;
+  return o && n < o ? _o(o - n, e) + i : i;
+}
+var nj = /^\s+/;
+var aj = P$3.parseInt;
+function uj(i, o, e) {
+  return e || o == null ? o = 0 : o && (o = +o), aj(X$2(i).replace(nj, ""), o || 0);
+}
+var gj = 32;
+var ye$1 = S$2(function(i, o) {
+  var e = Di(o, uo(ye$1));
+  return Si(i, gj, void 0, o, e);
+});
+ye$1.placeholder = {};
+var dj = 64;
+var Wn$1 = S$2(function(i, o) {
+  var e = Di(o, uo(Wn$1));
+  return Si(i, dj, void 0, o, e);
+});
+Wn$1.placeholder = {};
+var tj = ue$1(function(i, o, e) {
+  i[e ? 0 : 1].push(o);
+}, function() {
+  return [[], []];
+});
+function sj(i, o) {
+  return rd(i, o, function(e, n) {
+    return kn$1(i, n);
+  });
+}
+var hj = Xi(function(i, o) {
+  return i == null ? {} : sj(i, o);
+});
+function rj(i) {
+  for (var o, e = this; e instanceof Eo; ) {
+    var n = Su(e);
+    n.__index__ = 0, n.__values__ = void 0, o ? a.__wrapped__ = n : o = n;
+    var a = n;
+    e = e.__wrapped__;
+  }
+  return a.__wrapped__ = i, o;
+}
+function lj(i) {
+  return function(o) {
+    return i == null ? void 0 : zi(i, o);
+  };
+}
+function vj(i, o, e, n) {
+  for (var a = e - 1, u = i.length; ++a < u; ) if (n(i[a], o)) return a;
+  return -1;
+}
+var yj = Array.prototype;
+var qa = yj.splice;
+function Pn$1(i, o, e, n) {
+  var a = n ? vj : ao, u = -1, g = o.length, t = i;
+  for (i === o && (o = I$2(o)), e && (t = M$2(i, ai(e))); ++u < g; ) for (var s = 0, h = o[u], r = e ? e(h) : h; (s = a(t, r, s, n)) > -1; ) t !== i && qa.call(t, s, 1), qa.call(i, s, 1);
+  return i;
+}
+function fd(i, o) {
+  return i && i.length && o && o.length ? Pn$1(i, o) : i;
+}
+var cj = S$2(fd);
+function bj(i, o, e) {
+  return i && i.length && o && o.length ? Pn$1(i, o, Y$2(e)) : i;
+}
+function pj(i, o, e) {
+  return i && i.length && o && o.length ? Pn$1(i, o, void 0, e) : i;
+}
+var wj = Array.prototype;
+var jj = wj.splice;
+function Yd(i, o) {
+  for (var e = i ? o.length : 0, n = e - 1; e--; ) {
+    var a = o[e];
+    if (e == n || a !== u) {
+      var u = a;
+      Zi(a) ? jj.call(i, a, 1) : Nn$1(i, a);
+    }
+  }
+  return i;
+}
+var mj = Xi(function(i, o) {
+  var e = i == null ? 0 : i.length, n = tn$1(i, o);
+  return Yd(i, M$2(o, function(a) {
+    return Zi(a, e) ? +a : a;
+  }).sort(vd)), n;
+});
+var fj = Math.floor;
+var Yj = Math.random;
+function Fn$1(i, o) {
+  return i + fj(Yj() * (o - i + 1));
+}
+var kj = parseFloat;
+var Lj = Math.min;
+var Zj = Math.random;
+function Sj(i, o, e) {
+  if (e && typeof e != "boolean" && E$2(i, o, e) && (o = e = void 0), e === void 0 && (typeof o == "boolean" ? (e = o, o = void 0) : typeof i == "boolean" && (e = i, i = void 0)), i === void 0 && o === void 0 ? (i = 0, o = 1) : (i = ki(i), o === void 0 ? (o = i, i = 0) : o = ki(o)), i > o) {
+    var n = i;
+    i = o, o = n;
+  }
+  if (e || i % 1 || o % 1) {
+    var a = Zj();
+    return Lj(i + a * (o - i + kj("1e-" + ((a + "").length - 1))), o);
+  }
+  return Fn$1(i, o);
+}
+var Jj = Math.ceil;
+var Cj = Math.max;
+function Xj(i, o, e, n) {
+  for (var a = -1, u = Cj(Jj((o - i) / (e || 1)), 0), g = Array(u); u--; ) g[n ? u : ++a] = i, i += e;
+  return g;
+}
+function kd(i) {
+  return function(o, e, n) {
+    return n && typeof n != "number" && E$2(o, e, n) && (e = n = void 0), o = ki(o), e === void 0 ? (e = o, o = 0) : e = ki(e), n = n === void 0 ? o < e ? 1 : -1 : ki(n), Xj(o, e, n, i);
+  };
+}
+var Hj = kd();
+var Dj = kd(true);
+var Tj = 256;
+var Bj = Xi(function(i, o) {
+  return Si(i, Tj, void 0, void 0, void 0, o);
+});
+function Ld(i, o, e, n, a) {
+  return a(i, function(u, g, t) {
+    e = n ? (n = false, u) : o(e, u, g, t);
+  }), e;
+}
+function Qj(i, o, e) {
+  var n = k$2(i) ? ln$1 : Ld, a = arguments.length < 3;
+  return n(i, Y$2(o), e, a, xi);
+}
+function Mj(i, o, e, n) {
+  var a = i == null ? 0 : i.length;
+  for (n && a && (e = i[--a]); a--; ) e = o(e, i[a], a, i);
+  return e;
+}
+function Gj(i, o, e) {
+  var n = k$2(i) ? Mj : Ld, a = arguments.length < 3;
+  return n(i, Y$2(o), e, a, Rg);
+}
+function Nj(i, o) {
+  var e = k$2(i) ? Ni : qg;
+  return e(i, ve$1(Y$2(o)));
+}
+function xj(i, o) {
+  var e = [];
+  if (!(i && i.length)) return e;
+  var n = -1, a = [], u = i.length;
+  for (o = Y$2(o); ++n < u; ) {
+    var g = i[n];
+    o(g, n, i) && (e.push(g), a.push(n));
+  }
+  return Yd(i, a), e;
+}
+function Wj(i, o, e) {
+  return (e ? E$2(i, o, e) : o === void 0) ? o = 1 : o = Z$2(o), Ae$1(X$2(i), o);
+}
+function Pj() {
+  var i = arguments, o = X$2(i[0]);
+  return i.length < 3 ? o : o.replace(i[1], i[2]);
+}
+var Fj = "Expected a function";
+function Kj(i, o) {
+  if (typeof i != "function") throw new TypeError(Fj);
+  return o = o === void 0 ? o : Z$2(o), S$2(i, o);
+}
+function Rj(i, o, e) {
+  o = Qi(o, i);
+  var n = -1, a = o.length;
+  for (a || (a = 1, i = void 0); ++n < a; ) {
+    var u = i?.[vi(o[n])];
+    u === void 0 && (n = a, u = e), i = Li(u) ? u.call(i) : u;
+  }
+  return i;
+}
+var Aj = Array.prototype;
+var _j = Aj.reverse;
+function ze$1(i) {
+  return i == null ? i : _j.call(i);
+}
+var Oj = yn$1("round");
+function Zd(i) {
+  var o = i.length;
+  return o ? i[Fn$1(0, o - 1)] : void 0;
+}
+function zj(i) {
+  return Zd(ro$1(i));
+}
+function Ej(i) {
+  var o = k$2(i) ? Zd : zj;
+  return o(i);
+}
+function ce$2(i, o) {
+  var e = -1, n = i.length, a = n - 1;
+  for (o = o === void 0 ? n : o; ++e < o; ) {
+    var u = Fn$1(e, a), g = i[u];
+    i[u] = i[e], i[e] = g;
+  }
+  return i.length = o, i;
+}
+function $j(i, o) {
+  return ce$2(I$2(i), Ei(o, 0, i.length));
+}
+function qj(i, o) {
+  var e = ro$1(i);
+  return ce$2(e, Ei(o, 0, e.length));
+}
+function Ij(i, o, e) {
+  (e ? E$2(i, o, e) : o === void 0) ? o = 1 : o = Z$2(o);
+  var n = k$2(i) ? $j : qj;
+  return n(i, o);
+}
+function Uj(i, o, e) {
+  return i == null ? i : Do(i, o, e);
+}
+function Vj(i, o, e, n) {
+  return n = typeof n == "function" ? n : void 0, i == null ? i : Do(i, o, e, n);
+}
+function im(i) {
+  return ce$2(I$2(i));
+}
+function om(i) {
+  return ce$2(ro$1(i));
+}
+function em(i) {
+  var o = k$2(i) ? im : om;
+  return o(i);
+}
+var nm = "[object Map]";
+var am = "[object Set]";
+function um(i) {
+  if (i == null) return 0;
+  if (V$4(i)) return re$1(i) ? lo(i) : i.length;
+  var o = bi(i);
+  return o == nm || o == am ? i.size : un$1(i).length;
+}
+function gm(i, o, e) {
+  var n = i == null ? 0 : i.length;
+  return n ? (e && typeof e != "number" && E$2(i, o, e) ? (o = 0, e = n) : (o = o == null ? 0 : Z$2(o), e = e === void 0 ? n : Z$2(e)), hi(i, o, e)) : [];
+}
+var dm = ho(function(i, o, e) {
+  return i + (e ? "_" : "") + o.toLowerCase();
+});
+function tm(i, o) {
+  var e;
+  return xi(i, function(n, a, u) {
+    return e = o(n, a, u), !e;
+  }), !!e;
+}
+function sm(i, o, e) {
+  var n = k$2(i) ? jn$1 : tm;
+  return e && E$2(i, o, e) && (o = void 0), n(i, Y$2(o));
+}
+var hm = S$2(function(i, o) {
+  if (i == null) return [];
+  var e = o.length;
+  return e > 1 && E$2(i, o[0], o[1]) ? o = [] : e > 2 && E$2(o[0], o[1], o[2]) && (o = [o[0]]), yd(i, A$2(o, 1), []);
+});
+var rm = 4294967295;
+var lm = rm - 1;
+var vm = Math.floor;
+var ym = Math.min;
+function Kn$1(i, o, e, n) {
+  var a = 0, u = i == null ? 0 : i.length;
+  if (u === 0) return 0;
+  o = e(o);
+  for (var g = o !== o, t = o === null, s = oi(o), h = o === void 0; a < u; ) {
+    var r = vm((a + u) / 2), l = e(i[r]), v = l !== void 0, y = l === null, c = l === l, b = oi(l);
+    if (g) var p = n || c;
+    else h ? p = c && (n || v) : t ? p = c && v && (n || !y) : s ? p = c && v && !y && (n || !b) : y || b ? p = false : p = n ? l <= o : l < o;
+    p ? a = r + 1 : u = r;
+  }
+  return ym(u, lm);
+}
+var cm = 4294967295;
+var bm = cm >>> 1;
+function be$2(i, o, e) {
+  var n = 0, a = i == null ? n : i.length;
+  if (typeof o == "number" && o === o && a <= bm) {
+    for (; n < a; ) {
+      var u = n + a >>> 1, g = i[u];
+      g !== null && !oi(g) && (e ? g <= o : g < o) ? n = u + 1 : a = u;
+    }
+    return a;
+  }
+  return Kn$1(i, o, U$4, e);
+}
+function pm(i, o) {
+  return be$2(i, o);
+}
+function wm(i, o, e) {
+  return Kn$1(i, o, Y$2(e));
+}
+function jm(i, o) {
+  var e = i == null ? 0 : i.length;
+  if (e) {
+    var n = be$2(i, o);
+    if (n < e && ci(i[n], o)) return n;
+  }
+  return -1;
+}
+function mm(i, o) {
+  return be$2(i, o, true);
+}
+function fm(i, o, e) {
+  return Kn$1(i, o, Y$2(e), true);
+}
+function Ym(i, o) {
+  var e = i == null ? 0 : i.length;
+  if (e) {
+    var n = be$2(i, o, true) - 1;
+    if (ci(i[n], o)) return n;
+  }
+  return -1;
+}
+function Sd(i, o) {
+  for (var e = -1, n = i.length, a = 0, u = []; ++e < n; ) {
+    var g = i[e], t = o ? o(g) : g;
+    if (!e || !ci(t, s)) {
+      var s = t;
+      u[a++] = g === 0 ? 0 : g;
+    }
+  }
+  return u;
+}
+function km(i) {
+  return i && i.length ? Sd(i) : [];
+}
+function Lm(i, o) {
+  return i && i.length ? Sd(i, Y$2(o)) : [];
+}
+var Zm = 4294967295;
+function Sm(i, o, e) {
+  return e && typeof e != "number" && E$2(i, o, e) && (o = e = void 0), e = e === void 0 ? Zm : e >>> 0, e ? (i = X$2(i), i && (typeof o == "string" || o != null && !Qn$1(o)) && (o = ei(o), !o && so$1(i)) ? Gi(yi(i), 0, e) : i.split(o, e)) : [];
+}
+var Jm = "Expected a function";
+var Cm = Math.max;
+function Xm(i, o) {
+  if (typeof i != "function") throw new TypeError(Jm);
+  return o = o == null ? 0 : Cm(Z$2(o), 0), S$2(function(e) {
+    var n = e[o], a = Gi(e, 0, o);
+    return n && Mi(a, n), ni(i, this, a);
+  });
+}
+var Hm = ho(function(i, o, e) {
+  return i + (e ? " " : "") + rn$1(o);
+});
+function Dm(i, o, e) {
+  return i = X$2(i), e = e == null ? 0 : Ei(Z$2(e), 0, i.length), o = ei(o), i.slice(e, e + o.length) == o;
+}
+function Tm() {
+  return {};
+}
+function Bm() {
+  return "";
+}
+function Qm() {
+  return true;
+}
+var Mm = zo(function(i, o) {
+  return i - o;
+}, 0);
+function Gm(i) {
+  return i && i.length ? Gn$1(i, U$4) : 0;
+}
+function Nm(i, o) {
+  return i && i.length ? Gn$1(i, Y$2(o)) : 0;
+}
+function xm(i) {
+  var o = i == null ? 0 : i.length;
+  return o ? hi(i, 1, o) : [];
+}
+function Wm(i, o, e) {
+  return i && i.length ? (o = e || o === void 0 ? 1 : Z$2(o), hi(i, 0, o < 0 ? 0 : o)) : [];
+}
+function Pm(i, o, e) {
+  var n = i == null ? 0 : i.length;
+  return n ? (o = e || o === void 0 ? 1 : Z$2(o), o = n - o, hi(i, o < 0 ? 0 : o, n)) : [];
+}
+function Fm(i, o) {
+  return i && i.length ? de$2(i, Y$2(o), false, true) : [];
+}
+function Km(i, o) {
+  return i && i.length ? de$2(i, Y$2(o)) : [];
+}
+function Rm(i, o) {
+  return o(i), i;
+}
+var Jd = Object.prototype;
+var Am = Jd.hasOwnProperty;
+function Ia(i, o, e, n) {
+  return i === void 0 || ci(i, Jd[e]) && !Am.call(n, e) ? o : i;
+}
+var _m = { "\\": "\\", "'": "'", "\n": "n", "\r": "r", "\u2028": "u2028", "\u2029": "u2029" };
+function Om(i) {
+  return "\\" + _m[i];
+}
+var Cd = /<%=([\s\S]+?)%>/g;
+var zm = /<%-([\s\S]+?)%>/g;
+var Em = /<%([\s\S]+?)%>/g;
+var Ee$1 = { escape: zm, evaluate: Em, interpolate: Cd, variable: "", imports: { _: { escape: Og } } };
+var $m = "Invalid `variable` option passed into `_.template`";
+var qm = "Invalid `imports` option passed into `_.template`";
+var Im = /\b__p \+= '';/g;
+var Um = /\b(__p \+=) '' \+/g;
+var Vm = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
+var Ua = /[()=,{}\[\]\/\s]/;
+var of = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
+var Go = /($^)/;
+var ef = /['\n\r\u2028\u2029\\]/g;
+var nf = Object.prototype;
+var Va = nf.hasOwnProperty;
+function af(i, o, e) {
+  var n = Ee$1.imports._.templateSettings || Ee$1;
+  e && E$2(i, o, e) && (o = void 0), i = X$2(i), o = Ge$2({}, o, n, Ia);
+  var a = Ge$2({}, o.imports, n.imports, Ia), u = F$2(a), g = Dn$1(a, u);
+  ui(u, function(p) {
+    if (Ua.test(p)) throw new Error(qm);
+  });
+  var t, s, h = 0, r = o.interpolate || Go, l = "__p += '", v = RegExp((o.escape || Go).source + "|" + r.source + "|" + (r === Cd ? of : Go).source + "|" + (o.evaluate || Go).source + "|$", "g"), y = Va.call(o, "sourceURL") ? "//# sourceURL=" + (o.sourceURL + "").replace(/\s/g, " ") + `
+` : "";
+  i.replace(v, function(p, j, L, K, R, O) {
+    return L || (L = K), l += i.slice(h, O).replace(ef, Om), j && (t = true, l += `' +
+__e(` + j + `) +
+'`), R && (s = true, l += `';
+` + R + `;
+__p += '`), L && (l += `' +
+((__t = (` + L + `)) == null ? '' : __t) +
+'`), h = O + p.length, p;
+  }), l += `';
+`;
+  var c = Va.call(o, "variable") && o.variable;
+  if (!c) l = `with (obj) {
+` + l + `
+}
+`;
+  else if (Ua.test(c)) throw new Error($m);
+  l = (s ? l.replace(Im, "") : l).replace(Um, "$1").replace(Vm, "$1;"), l = "function(" + (c || "obj") + `) {
+` + (c ? "" : `obj || (obj = {});
+`) + "var __t, __p = ''" + (t ? ", __e = _.escape" : "") + (s ? `, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
+` : `;
+`) + l + `return __p
+}`;
+  var b = Ku(function() {
+    return Function(u, y + "return " + l).apply(void 0, g);
+  });
+  if (b.source = l, sn$1(b)) throw b;
+  return b;
+}
+var uf = "Expected a function";
+function gf(i, o, e) {
+  var n = true, a = true;
+  if (typeof i != "function") throw new TypeError(uf);
+  return G$2(e) && (n = "leading" in e ? !!e.leading : n, a = "trailing" in e ? !!e.trailing : a), Gg(i, o, { leading: n, maxWait: o, trailing: a });
+}
+function pe$2(i, o) {
+  return o(i);
+}
+var df = 9007199254740991;
+var Le$2 = 4294967295;
+var tf = Math.min;
+function sf(i, o) {
+  if (i = Z$2(i), i < 1 || i > df) return [];
+  var e = Le$2, n = tf(i, Le$2);
+  o = mi(o), i -= Le$2;
+  for (var a = nn$1(n, o); ++e < i; ) o(e);
+  return a;
+}
+function hf() {
+  return this;
+}
+function Xd(i, o) {
+  var e = i;
+  return e instanceof J$3 && (e = e.value()), ln$1(o, function(n, a) {
+    return a.func.apply(a.thisArg, Mi([n], a.args));
+  }, e);
+}
+function rf() {
+  return Xd(this.__wrapped__, this.__actions__);
+}
+function lf(i) {
+  return X$2(i).toLowerCase();
+}
+function vf(i) {
+  return k$2(i) ? M$2(i, vi) : oi(i) ? [i] : I$2(Wu(X$2(i)));
+}
+var iu = 9007199254740991;
+function yf(i) {
+  return i ? Ei(Z$2(i), -iu, iu) : i === 0 ? i : 0;
+}
+function cf(i) {
+  return X$2(i).toUpperCase();
+}
+function bf(i, o, e) {
+  var n = k$2(i), a = n || Ti(i) || to$1(i);
+  if (o = Y$2(o), e == null) {
+    var u = i && i.constructor;
+    a ? e = n ? new u() : [] : G$2(i) ? e = Li(u) ? no$1(ee$2(i)) : {} : e = {};
+  }
+  return (a ? ui : ji)(i, function(g, t, s) {
+    return o(e, g, t, s);
+  }), e;
+}
+function Hd(i, o) {
+  for (var e = i.length; e-- && ao(o, i[e], 0) > -1; ) ;
+  return e;
+}
+function Dd(i, o) {
+  for (var e = -1, n = i.length; ++e < n && ao(o, i[e], 0) > -1; ) ;
+  return e;
+}
+function pf(i, o, e) {
+  if (i = X$2(i), i && (e || o === void 0)) return fu(i);
+  if (!i || !(o = ei(o))) return i;
+  var n = yi(i), a = yi(o), u = Dd(n, a), g = Hd(n, a) + 1;
+  return Gi(n, u, g).join("");
+}
+function wf(i, o, e) {
+  if (i = X$2(i), i && (e || o === void 0)) return i.slice(0, mu(i) + 1);
+  if (!i || !(o = ei(o))) return i;
+  var n = yi(i), a = Hd(n, yi(o)) + 1;
+  return Gi(n, 0, a).join("");
+}
+var jf = /^\s+/;
+function mf(i, o, e) {
+  if (i = X$2(i), i && (e || o === void 0)) return i.replace(jf, "");
+  if (!i || !(o = ei(o))) return i;
+  var n = yi(i), a = Dd(n, yi(o));
+  return Gi(n, a).join("");
+}
+var ff = 30;
+var Yf = "...";
+var kf = /\w*$/;
+function Lf(i, o) {
+  var e = ff, n = Yf;
+  if (G$2(o)) {
+    var a = "separator" in o ? o.separator : a;
+    e = "length" in o ? Z$2(o.length) : e, n = "omission" in o ? ei(o.omission) : n;
+  }
+  i = X$2(i);
+  var u = i.length;
+  if (so$1(i)) {
+    var g = yi(i);
+    u = g.length;
+  }
+  if (e >= u) return i;
+  var t = e - lo(n);
+  if (t < 1) return n;
+  var s = g ? Gi(g, 0, t).join("") : i.slice(0, t);
+  if (a === void 0) return s + n;
+  if (g && (t += s.length - t), Qn$1(a)) {
+    if (i.slice(t).search(a)) {
+      var h, r = s;
+      for (a.global || (a = RegExp(a.source, X$2(kf.exec(a)) + "g")), a.lastIndex = 0; h = a.exec(r); ) var l = h.index;
+      s = s.slice(0, l === void 0 ? t : l);
+    }
+  } else if (i.indexOf(ei(a), t) != t) {
+    var v = s.lastIndexOf(a);
+    v > -1 && (s = s.slice(0, v));
+  }
+  return s + n;
+}
+function Zf(i) {
+  return Tu(i, 1);
+}
+var Sf = { "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'" };
+var Jf = vn$1(Sf);
+var Td = /&(?:amp|lt|gt|quot|#39);/g;
+var Cf = RegExp(Td.source);
+function Xf(i) {
+  return i = X$2(i), i && Cf.test(i) ? i.replace(Td, Jf) : i;
+}
+var Hf = 1 / 0;
+var Df = Vi && 1 / ae$2(new Vi([, -0]))[1] == Hf ? function(i) {
+  return new Vi(i);
+} : Ue$2;
+var Tf = 200;
+function Bi(i, o, e) {
+  var n = -1, a = qo, u = i.length, g = true, t = [], s = t;
+  if (e) g = false, a = Cn$1;
+  else if (u >= Tf) {
+    var h = o ? null : Df(i);
+    if (h) return ae$2(h);
+    g = false, a = ko, s = new Ai();
+  } else s = o ? [] : t;
+  i: for (; ++n < u; ) {
+    var r = i[n], l = o ? o(r) : r;
+    if (r = e || r !== 0 ? r : 0, g && l === l) {
+      for (var v = s.length; v--; ) if (s[v] === l) continue i;
+      o && s.push(l), t.push(r);
+    } else a(s, l, e) || (s !== t && s.push(l), t.push(r));
+  }
+  return t;
+}
+var Bf = S$2(function(i) {
+  return Bi(A$2(i, 1, W$3, true));
+});
+var Qf = S$2(function(i) {
+  var o = ri(i);
+  return W$3(o) && (o = void 0), Bi(A$2(i, 1, W$3, true), Y$2(o));
+});
+var Mf = S$2(function(i) {
+  var o = ri(i);
+  return o = typeof o == "function" ? o : void 0, Bi(A$2(i, 1, W$3, true), void 0, o);
+});
+function Gf(i) {
+  return i && i.length ? Bi(i) : [];
+}
+function Nf(i, o) {
+  return i && i.length ? Bi(i, Y$2(o)) : [];
+}
+function xf(i, o) {
+  return o = typeof o == "function" ? o : void 0, i && i.length ? Bi(i, void 0, o) : [];
+}
+var Wf = 0;
+function Pf(i) {
+  var o = ++Wf;
+  return X$2(i) + o;
+}
+function Ff(i, o) {
+  return i == null ? true : Nn$1(i, o);
+}
+var Kf = Math.max;
+function Rn$1(i) {
+  if (!(i && i.length)) return [];
+  var o = 0;
+  return i = Ni(i, function(e) {
+    if (W$3(e)) return o = Kf(e.length, o), true;
+  }), nn$1(o, function(e) {
+    return M$2(i, Ln$1(e));
+  });
+}
+function Bd(i, o) {
+  if (!(i && i.length)) return [];
+  var e = Rn$1(i);
+  return o == null ? e : M$2(e, function(n) {
+    return ni(o, void 0, n);
+  });
+}
+function Qd(i, o, e, n) {
+  return Do(i, o, e(zi(i, o)), n);
+}
+function Rf(i, o, e) {
+  return i == null ? i : Qd(i, o, mi(e));
+}
+function Af(i, o, e, n) {
+  return n = typeof n == "function" ? n : void 0, i == null ? i : Qd(i, o, mi(e), n);
+}
+var _f = ho(function(i, o, e) {
+  return i + (e ? " " : "") + o.toUpperCase();
+});
+function Of(i) {
+  return i == null ? [] : Dn$1(i, ii(i));
+}
+var zf = S$2(function(i, o) {
+  return W$3(i) ? Xo(i, o) : [];
+});
+function Ef(i, o) {
+  return ye$1(mi(o), i);
+}
+var $f = Xi(function(i) {
+  var o = i.length, e = o ? i[0] : 0, n = this.__wrapped__, a = function(u) {
+    return tn$1(u, i);
+  };
+  return o > 1 || this.__actions__.length || !(n instanceof J$3) || !Zi(e) ? this.thru(a) : (n = n.slice(e, +e + (o ? 1 : 0)), n.__actions__.push({ func: pe$2, args: [a], thisArg: void 0 }), new ti(n, this.__chain__).thru(function(u) {
+    return o && !u.length && u.push(void 0), u;
+  }));
+});
+function qf() {
+  return vg(this);
+}
+function If() {
+  var i = this.__wrapped__;
+  if (i instanceof J$3) {
+    var o = i;
+    return this.__actions__.length && (o = new J$3(this)), o = o.reverse(), o.__actions__.push({ func: pe$2, args: [ze$1], thisArg: void 0 }), new ti(o, this.__chain__);
+  }
+  return this.thru(ze$1);
+}
+function An$1(i, o, e) {
+  var n = i.length;
+  if (n < 2) return n ? Bi(i[0]) : [];
+  for (var a = -1, u = Array(n); ++a < n; ) for (var g = i[a], t = -1; ++t < n; ) t != a && (u[a] = Xo(u[a] || g, i[t], o, e));
+  return Bi(A$2(u, 1), o, e);
+}
+var Uf = S$2(function(i) {
+  return An$1(Ni(i, W$3));
+});
+var Vf = S$2(function(i) {
+  var o = ri(i);
+  return W$3(o) && (o = void 0), An$1(Ni(i, W$3), Y$2(o));
+});
+var iY = S$2(function(i) {
+  var o = ri(i);
+  return o = typeof o == "function" ? o : void 0, An$1(Ni(i, W$3), void 0, o);
+});
+var oY = S$2(Rn$1);
+function Md(i, o, e) {
+  for (var n = -1, a = i.length, u = o.length, g = {}; ++n < a; ) {
+    var t = n < u ? o[n] : void 0;
+    e(g, i[n], t);
+  }
+  return g;
+}
+function eY(i, o) {
+  return Md(i || [], o || [], Zo);
+}
+function nY(i, o) {
+  return Md(i || [], o || [], Do);
+}
+var aY = S$2(function(i) {
+  var o = i.length, e = o > 1 ? i[o - 1] : void 0;
+  return e = typeof e == "function" ? (i.pop(), e) : void 0, Bd(i, e);
+});
+const w$1 = { chunk: Zv, compact: gy, concat: dy, difference: lc, differenceBy: vc, differenceWith: yc, drop: bc, dropRight: pc, dropRightWhile: wc, dropWhile: jc, fill: Wc, findIndex: Ug, findLastIndex: id, flatten: Pu, flattenDeep: ib, flattenDepth: ob, fromPairs: bb, head: Ec, indexOf: Gb, initial: Nb, intersection: Wb, intersectionBy: Pb, intersectionWith: Fb, join: Gp, lastIndexOf: Kp, nth: bw, pull: cj, pullAll: fd, pullAllBy: bj, pullAllWith: pj, pullAt: mj, remove: xj, reverse: ze$1, slice: gm, sortedIndex: pm, sortedIndexBy: wm, sortedIndexOf: jm, sortedLastIndex: mm, sortedLastIndexBy: fm, sortedLastIndexOf: Ym, sortedUniq: km, sortedUniqBy: Lm, tail: xm, take: Wm, takeRight: Pm, takeRightWhile: Fm, takeWhile: Km, union: Bf, unionBy: Qf, unionWith: Mf, uniq: Gf, uniqBy: Nf, uniqWith: xf, unzip: Rn$1, unzipWith: Bd, without: zf, xor: Uf, xorBy: Vf, xorWith: iY, zip: oY, zipObject: eY, zipObjectDeep: nY, zipWith: aY };
+const D$2 = { countBy: qy, every: Gc, filter: Pc, find: Kc, findLast: Oc, flatMap: $c, flatMapDeep: Ic, flatMapDepth: Uc, forEach: mc, forEachRight: Yc, groupBy: fb, includes: Qb, invokeMap: qb, keyBy: xp, map: te$3, orderBy: Xw, partition: tj, reduce: Qj, reduceRight: Gj, reject: Nj, sample: Ej, sampleSize: Ij, shuffle: em, size: um, some: sm, sortBy: hm };
+const uY = { now: Wo };
+const x$1 = { after: ts, ary: Tu, before: Ru, bind: ne$3, bindKey: hn$1, curry: Sn$1, curryRight: Jn$1, debounce: Gg, defer: sc, delay: hc, flip: nb, memoize: oe$2, once: Sw, overArgs: Bw, partial: ye$1, partialRight: Wn$1, rearg: Bj, rest: Kj, spread: Xm, throttle: gf, unary: Zf, wrap: Ef };
+const m$1 = { castArray: jv, clone: q0, cloneDeep: V0, cloneDeepWith: ey, cloneWith: ay, conformsTo: _y, eq: ci, gt: Yb, gte: kb, isArguments: Ki, isArrayBuffer: Vb, isArrayLike: V$4, isArrayLikeObject: W$3, isBoolean: op, isBuffer: Ti, isDate: ap, isElement: up, isEmpty: hp, isEqual: rp, isEqualWith: lp, isError: sn$1, isFinite: yp, isFunction: Li, isInteger: gd, isLength: Uo, isMap: fg, isMatch: cp, isMatchWith: bp, isNaN: wp, isNative: fp, isNil: Yp, isNull: kp, isNumber: dd, isObjectLike: N$3, isPlainObject: Jo, isRegExp: Qn$1, isSafeInteger: Sp, isSet: Yg, isString: re$1, isSymbol: oi, isTypedArray: to$1, isUndefined: Jp, isWeakMap: Xp, isWeakSet: Dp, lt: _p, lte: Op, toArray: sd, toFinite: ki, toLength: $g, toNumber: gi, toPlainObject: xg, toSafeInteger: yf, toString: X$2 };
+const q$2 = { add: Vt$1, ceil: Yv, divide: cc, floor: ab, max: Vp, maxBy: iw, mean: ew, meanBy: nw, min: dw, minBy: tw, multiply: hw, round: Oj, subtract: Mm, sum: Gm, sumBy: Nm };
+const _n$1 = { clamp: Sv, inRange: Db, random: Sj };
+const f = { assign: lr$1, assignIn: pr$1, assignInWith: wr$1, assignWith: Ge$2, at: Ir$1, create: Iy, defaults: uc, defaultsDeep: dc, findKey: Rc, findLastKey: zc, forIn: lb, forInRight: vb, forOwn: yb, forOwnRight: cb, functions: pb, functionsIn: wb, get: dn$1, has: Jb, hasIn: kn$1, invert: _b, invertBy: Eb, invoke: $b, keysIn: ii, mapKeys: zp, mapValues: Ep, merge: aw, mergeWith: Pg, omit: Lw, omitBy: Zw, pick: hj, pickBy: ld, result: Rj, set: Uj, setWith: Vj, toPairs: Cc, toPairsIn: Xc, transform: bf, unset: Ff, update: Rf, updateWith: Af, values: ro$1, valuesIn: Of };
+const fi = { at: $f, chain: vg, commit: uy, next: cw, plant: rj, reverse: If, tap: Rm, toIterator: hf, value: rf, wrapperChain: qf };
+const C$2 = { camelCase: wv, capitalize: Iu, deburr: Uu, endsWith: kc, escape: Og, escapeRegExp: Qc, kebabCase: Np, lowerCase: Rp, lowerFirst: Ap, pad: ij, padEnd: oj, padStart: ej, parseInt: uj, repeat: Wj, replace: Pj, snakeCase: dm, split: Sm, startCase: Hm, startsWith: Dm, template: af, templateSettings: Ee$1, toLower: lf, toUpper: cf, trim: pf, trimEnd: wf, trimStart: mf, truncate: Lf, unescape: Xf, upperCase: _f, upperFirst: rn$1, words: lg };
+const H$2 = { attempt: Ku, bindAll: tl, cond: Fy, conforms: Ay, constant: on$1, defaultTo: nc, flow: hb, flowRight: rb, iteratee: Bp, matches: qp, matchesProperty: Up, method: uw, methodOf: gw, noop: Ue$2, nthArg: pw, over: Hw, overEvery: Qw, overSome: Mw, property: Tg, propertyOf: lj, range: Hj, rangeRight: Dj, stubArray: cn$1, stubFalse: an$1, stubObject: Tm, stubString: Bm, stubTrue: Qm, times: sf, toPath: vf, uniqueId: Pf };
+function gY() {
+  var i = new J$3(this.__wrapped__);
+  return i.__actions__ = I$2(this.__actions__), i.__dir__ = this.__dir__, i.__filtered__ = this.__filtered__, i.__iteratees__ = I$2(this.__iteratees__), i.__takeCount__ = this.__takeCount__, i.__views__ = I$2(this.__views__), i;
+}
+function dY() {
+  if (this.__filtered__) {
+    var i = new J$3(this);
+    i.__dir__ = -1, i.__filtered__ = true;
+  } else i = this.clone(), i.__dir__ *= -1;
+  return i;
+}
+var tY = Math.max;
+var sY = Math.min;
+function hY(i, o, e) {
+  for (var n = -1, a = e.length; ++n < a; ) {
+    var u = e[n], g = u.size;
+    switch (u.type) {
+      case "drop":
+        i += g;
+        break;
+      case "dropRight":
+        o -= g;
+        break;
+      case "take":
+        o = sY(o, i + g);
+        break;
+      case "takeRight":
+        i = tY(i, o - g);
+        break;
+    }
+  }
+  return { start: i, end: o };
+}
+var rY = 1;
+var lY = 2;
+var vY = Math.min;
+function yY() {
+  var i = this.__wrapped__.value(), o = this.__dir__, e = k$2(i), n = o < 0, a = e ? i.length : 0, u = hY(0, a, this.__views__), g = u.start, t = u.end, s = t - g, h = n ? t : g - 1, r = this.__iteratees__, l = r.length, v = 0, y = vY(s, this.__takeCount__);
+  if (!e || !n && a == s && y == s) return Xd(i, this.__actions__);
+  var c = [];
+  i: for (; s-- && v < y; ) {
+    h += o;
+    for (var b = -1, p = i[h]; ++b < l; ) {
+      var j = r[b], L = j.iteratee, K = j.type, R = L(p);
+      if (K == lY) p = R;
+      else if (!R) {
+        if (K == rY) continue i;
+        break i;
+      }
+    }
+    c[v++] = p;
+  }
+  return c;
+}
+var cY = "4.18.1";
+var bY = 2;
+var pY = 1;
+var wY = 3;
+var Gd = 4294967295;
+var jY = Array.prototype;
+var mY = Object.prototype;
+var Nd = mY.hasOwnProperty;
+var ou = _$2 ? _$2.iterator : void 0;
+var fY = Math.max;
+var eu = Math.min;
+var On$1 = /* @__PURE__ */ (function(i) {
+  return function(o, e, n) {
+    if (n == null) {
+      var a = G$2(e), u = a && F$2(e), g = u && u.length && se$2(e, u);
+      (g ? g.length : a) || (n = e, e = o, o = this);
+    }
+    return i(o, e, n);
+  };
+})(sw);
+d$1.after = x$1.after;
+d$1.ary = x$1.ary;
+d$1.assign = f.assign;
+d$1.assignIn = f.assignIn;
+d$1.assignInWith = f.assignInWith;
+d$1.assignWith = f.assignWith;
+d$1.at = f.at;
+d$1.before = x$1.before;
+d$1.bind = x$1.bind;
+d$1.bindAll = H$2.bindAll;
+d$1.bindKey = x$1.bindKey;
+d$1.castArray = m$1.castArray;
+d$1.chain = fi.chain;
+d$1.chunk = w$1.chunk;
+d$1.compact = w$1.compact;
+d$1.concat = w$1.concat;
+d$1.cond = H$2.cond;
+d$1.conforms = H$2.conforms;
+d$1.constant = H$2.constant;
+d$1.countBy = D$2.countBy;
+d$1.create = f.create;
+d$1.curry = x$1.curry;
+d$1.curryRight = x$1.curryRight;
+d$1.debounce = x$1.debounce;
+d$1.defaults = f.defaults;
+d$1.defaultsDeep = f.defaultsDeep;
+d$1.defer = x$1.defer;
+d$1.delay = x$1.delay;
+d$1.difference = w$1.difference;
+d$1.differenceBy = w$1.differenceBy;
+d$1.differenceWith = w$1.differenceWith;
+d$1.drop = w$1.drop;
+d$1.dropRight = w$1.dropRight;
+d$1.dropRightWhile = w$1.dropRightWhile;
+d$1.dropWhile = w$1.dropWhile;
+d$1.fill = w$1.fill;
+d$1.filter = D$2.filter;
+d$1.flatMap = D$2.flatMap;
+d$1.flatMapDeep = D$2.flatMapDeep;
+d$1.flatMapDepth = D$2.flatMapDepth;
+d$1.flatten = w$1.flatten;
+d$1.flattenDeep = w$1.flattenDeep;
+d$1.flattenDepth = w$1.flattenDepth;
+d$1.flip = x$1.flip;
+d$1.flow = H$2.flow;
+d$1.flowRight = H$2.flowRight;
+d$1.fromPairs = w$1.fromPairs;
+d$1.functions = f.functions;
+d$1.functionsIn = f.functionsIn;
+d$1.groupBy = D$2.groupBy;
+d$1.initial = w$1.initial;
+d$1.intersection = w$1.intersection;
+d$1.intersectionBy = w$1.intersectionBy;
+d$1.intersectionWith = w$1.intersectionWith;
+d$1.invert = f.invert;
+d$1.invertBy = f.invertBy;
+d$1.invokeMap = D$2.invokeMap;
+d$1.iteratee = H$2.iteratee;
+d$1.keyBy = D$2.keyBy;
+d$1.keys = F$2;
+d$1.keysIn = f.keysIn;
+d$1.map = D$2.map;
+d$1.mapKeys = f.mapKeys;
+d$1.mapValues = f.mapValues;
+d$1.matches = H$2.matches;
+d$1.matchesProperty = H$2.matchesProperty;
+d$1.memoize = x$1.memoize;
+d$1.merge = f.merge;
+d$1.mergeWith = f.mergeWith;
+d$1.method = H$2.method;
+d$1.methodOf = H$2.methodOf;
+d$1.mixin = On$1;
+d$1.negate = ve$1;
+d$1.nthArg = H$2.nthArg;
+d$1.omit = f.omit;
+d$1.omitBy = f.omitBy;
+d$1.once = x$1.once;
+d$1.orderBy = D$2.orderBy;
+d$1.over = H$2.over;
+d$1.overArgs = x$1.overArgs;
+d$1.overEvery = H$2.overEvery;
+d$1.overSome = H$2.overSome;
+d$1.partial = x$1.partial;
+d$1.partialRight = x$1.partialRight;
+d$1.partition = D$2.partition;
+d$1.pick = f.pick;
+d$1.pickBy = f.pickBy;
+d$1.property = H$2.property;
+d$1.propertyOf = H$2.propertyOf;
+d$1.pull = w$1.pull;
+d$1.pullAll = w$1.pullAll;
+d$1.pullAllBy = w$1.pullAllBy;
+d$1.pullAllWith = w$1.pullAllWith;
+d$1.pullAt = w$1.pullAt;
+d$1.range = H$2.range;
+d$1.rangeRight = H$2.rangeRight;
+d$1.rearg = x$1.rearg;
+d$1.reject = D$2.reject;
+d$1.remove = w$1.remove;
+d$1.rest = x$1.rest;
+d$1.reverse = w$1.reverse;
+d$1.sampleSize = D$2.sampleSize;
+d$1.set = f.set;
+d$1.setWith = f.setWith;
+d$1.shuffle = D$2.shuffle;
+d$1.slice = w$1.slice;
+d$1.sortBy = D$2.sortBy;
+d$1.sortedUniq = w$1.sortedUniq;
+d$1.sortedUniqBy = w$1.sortedUniqBy;
+d$1.split = C$2.split;
+d$1.spread = x$1.spread;
+d$1.tail = w$1.tail;
+d$1.take = w$1.take;
+d$1.takeRight = w$1.takeRight;
+d$1.takeRightWhile = w$1.takeRightWhile;
+d$1.takeWhile = w$1.takeWhile;
+d$1.tap = fi.tap;
+d$1.throttle = x$1.throttle;
+d$1.thru = pe$2;
+d$1.toArray = m$1.toArray;
+d$1.toPairs = f.toPairs;
+d$1.toPairsIn = f.toPairsIn;
+d$1.toPath = H$2.toPath;
+d$1.toPlainObject = m$1.toPlainObject;
+d$1.transform = f.transform;
+d$1.unary = x$1.unary;
+d$1.union = w$1.union;
+d$1.unionBy = w$1.unionBy;
+d$1.unionWith = w$1.unionWith;
+d$1.uniq = w$1.uniq;
+d$1.uniqBy = w$1.uniqBy;
+d$1.uniqWith = w$1.uniqWith;
+d$1.unset = f.unset;
+d$1.unzip = w$1.unzip;
+d$1.unzipWith = w$1.unzipWith;
+d$1.update = f.update;
+d$1.updateWith = f.updateWith;
+d$1.values = f.values;
+d$1.valuesIn = f.valuesIn;
+d$1.without = w$1.without;
+d$1.words = C$2.words;
+d$1.wrap = x$1.wrap;
+d$1.xor = w$1.xor;
+d$1.xorBy = w$1.xorBy;
+d$1.xorWith = w$1.xorWith;
+d$1.zip = w$1.zip;
+d$1.zipObject = w$1.zipObject;
+d$1.zipObjectDeep = w$1.zipObjectDeep;
+d$1.zipWith = w$1.zipWith;
+d$1.entries = f.toPairs;
+d$1.entriesIn = f.toPairsIn;
+d$1.extend = f.assignIn;
+d$1.extendWith = f.assignInWith;
+On$1(d$1, d$1);
+d$1.add = q$2.add;
+d$1.attempt = H$2.attempt;
+d$1.camelCase = C$2.camelCase;
+d$1.capitalize = C$2.capitalize;
+d$1.ceil = q$2.ceil;
+d$1.clamp = _n$1.clamp;
+d$1.clone = m$1.clone;
+d$1.cloneDeep = m$1.cloneDeep;
+d$1.cloneDeepWith = m$1.cloneDeepWith;
+d$1.cloneWith = m$1.cloneWith;
+d$1.conformsTo = m$1.conformsTo;
+d$1.deburr = C$2.deburr;
+d$1.defaultTo = H$2.defaultTo;
+d$1.divide = q$2.divide;
+d$1.endsWith = C$2.endsWith;
+d$1.eq = m$1.eq;
+d$1.escape = C$2.escape;
+d$1.escapeRegExp = C$2.escapeRegExp;
+d$1.every = D$2.every;
+d$1.find = D$2.find;
+d$1.findIndex = w$1.findIndex;
+d$1.findKey = f.findKey;
+d$1.findLast = D$2.findLast;
+d$1.findLastIndex = w$1.findLastIndex;
+d$1.findLastKey = f.findLastKey;
+d$1.floor = q$2.floor;
+d$1.forEach = D$2.forEach;
+d$1.forEachRight = D$2.forEachRight;
+d$1.forIn = f.forIn;
+d$1.forInRight = f.forInRight;
+d$1.forOwn = f.forOwn;
+d$1.forOwnRight = f.forOwnRight;
+d$1.get = f.get;
+d$1.gt = m$1.gt;
+d$1.gte = m$1.gte;
+d$1.has = f.has;
+d$1.hasIn = f.hasIn;
+d$1.head = w$1.head;
+d$1.identity = U$4;
+d$1.includes = D$2.includes;
+d$1.indexOf = w$1.indexOf;
+d$1.inRange = _n$1.inRange;
+d$1.invoke = f.invoke;
+d$1.isArguments = m$1.isArguments;
+d$1.isArray = k$2;
+d$1.isArrayBuffer = m$1.isArrayBuffer;
+d$1.isArrayLike = m$1.isArrayLike;
+d$1.isArrayLikeObject = m$1.isArrayLikeObject;
+d$1.isBoolean = m$1.isBoolean;
+d$1.isBuffer = m$1.isBuffer;
+d$1.isDate = m$1.isDate;
+d$1.isElement = m$1.isElement;
+d$1.isEmpty = m$1.isEmpty;
+d$1.isEqual = m$1.isEqual;
+d$1.isEqualWith = m$1.isEqualWith;
+d$1.isError = m$1.isError;
+d$1.isFinite = m$1.isFinite;
+d$1.isFunction = m$1.isFunction;
+d$1.isInteger = m$1.isInteger;
+d$1.isLength = m$1.isLength;
+d$1.isMap = m$1.isMap;
+d$1.isMatch = m$1.isMatch;
+d$1.isMatchWith = m$1.isMatchWith;
+d$1.isNaN = m$1.isNaN;
+d$1.isNative = m$1.isNative;
+d$1.isNil = m$1.isNil;
+d$1.isNull = m$1.isNull;
+d$1.isNumber = m$1.isNumber;
+d$1.isObject = G$2;
+d$1.isObjectLike = m$1.isObjectLike;
+d$1.isPlainObject = m$1.isPlainObject;
+d$1.isRegExp = m$1.isRegExp;
+d$1.isSafeInteger = m$1.isSafeInteger;
+d$1.isSet = m$1.isSet;
+d$1.isString = m$1.isString;
+d$1.isSymbol = m$1.isSymbol;
+d$1.isTypedArray = m$1.isTypedArray;
+d$1.isUndefined = m$1.isUndefined;
+d$1.isWeakMap = m$1.isWeakMap;
+d$1.isWeakSet = m$1.isWeakSet;
+d$1.join = w$1.join;
+d$1.kebabCase = C$2.kebabCase;
+d$1.last = ri;
+d$1.lastIndexOf = w$1.lastIndexOf;
+d$1.lowerCase = C$2.lowerCase;
+d$1.lowerFirst = C$2.lowerFirst;
+d$1.lt = m$1.lt;
+d$1.lte = m$1.lte;
+d$1.max = q$2.max;
+d$1.maxBy = q$2.maxBy;
+d$1.mean = q$2.mean;
+d$1.meanBy = q$2.meanBy;
+d$1.min = q$2.min;
+d$1.minBy = q$2.minBy;
+d$1.stubArray = H$2.stubArray;
+d$1.stubFalse = H$2.stubFalse;
+d$1.stubObject = H$2.stubObject;
+d$1.stubString = H$2.stubString;
+d$1.stubTrue = H$2.stubTrue;
+d$1.multiply = q$2.multiply;
+d$1.nth = w$1.nth;
+d$1.noop = H$2.noop;
+d$1.now = uY.now;
+d$1.pad = C$2.pad;
+d$1.padEnd = C$2.padEnd;
+d$1.padStart = C$2.padStart;
+d$1.parseInt = C$2.parseInt;
+d$1.random = _n$1.random;
+d$1.reduce = D$2.reduce;
+d$1.reduceRight = D$2.reduceRight;
+d$1.repeat = C$2.repeat;
+d$1.replace = C$2.replace;
+d$1.result = f.result;
+d$1.round = q$2.round;
+d$1.sample = D$2.sample;
+d$1.size = D$2.size;
+d$1.snakeCase = C$2.snakeCase;
+d$1.some = D$2.some;
+d$1.sortedIndex = w$1.sortedIndex;
+d$1.sortedIndexBy = w$1.sortedIndexBy;
+d$1.sortedIndexOf = w$1.sortedIndexOf;
+d$1.sortedLastIndex = w$1.sortedLastIndex;
+d$1.sortedLastIndexBy = w$1.sortedLastIndexBy;
+d$1.sortedLastIndexOf = w$1.sortedLastIndexOf;
+d$1.startCase = C$2.startCase;
+d$1.startsWith = C$2.startsWith;
+d$1.subtract = q$2.subtract;
+d$1.sum = q$2.sum;
+d$1.sumBy = q$2.sumBy;
+d$1.template = C$2.template;
+d$1.times = H$2.times;
+d$1.toFinite = m$1.toFinite;
+d$1.toInteger = Z$2;
+d$1.toLength = m$1.toLength;
+d$1.toLower = C$2.toLower;
+d$1.toNumber = m$1.toNumber;
+d$1.toSafeInteger = m$1.toSafeInteger;
+d$1.toString = m$1.toString;
+d$1.toUpper = C$2.toUpper;
+d$1.trim = C$2.trim;
+d$1.trimEnd = C$2.trimEnd;
+d$1.trimStart = C$2.trimStart;
+d$1.truncate = C$2.truncate;
+d$1.unescape = C$2.unescape;
+d$1.uniqueId = H$2.uniqueId;
+d$1.upperCase = C$2.upperCase;
+d$1.upperFirst = C$2.upperFirst;
+d$1.each = D$2.forEach;
+d$1.eachRight = D$2.forEachRight;
+d$1.first = w$1.head;
+On$1(d$1, (function() {
+  var i = {};
+  return ji(d$1, function(o, e) {
+    Nd.call(d$1.prototype, e) || (i[e] = o);
+  }), i;
+})(), { chain: false });
+d$1.VERSION = cY;
+(d$1.templateSettings = C$2.templateSettings).imports._ = d$1;
+ui(["bind", "bindKey", "curry", "curryRight", "partial", "partialRight"], function(i) {
+  d$1[i].placeholder = d$1;
+});
+ui(["drop", "take"], function(i, o) {
+  J$3.prototype[i] = function(e) {
+    e = e === void 0 ? 1 : fY(Z$2(e), 0);
+    var n = this.__filtered__ && !o ? new J$3(this) : this.clone();
+    return n.__filtered__ ? n.__takeCount__ = eu(e, n.__takeCount__) : n.__views__.push({ size: eu(e, Gd), type: i + (n.__dir__ < 0 ? "Right" : "") }), n;
+  }, J$3.prototype[i + "Right"] = function(e) {
+    return this.reverse()[i](e).reverse();
+  };
+});
+ui(["filter", "map", "takeWhile"], function(i, o) {
+  var e = o + 1, n = e == pY || e == wY;
+  J$3.prototype[i] = function(a) {
+    var u = this.clone();
+    return u.__iteratees__.push({ iteratee: Y$2(a), type: e }), u.__filtered__ = u.__filtered__ || n, u;
+  };
+});
+ui(["head", "last"], function(i, o) {
+  var e = "take" + (o ? "Right" : "");
+  J$3.prototype[i] = function() {
+    return this[e](1).value()[0];
+  };
+});
+ui(["initial", "tail"], function(i, o) {
+  var e = "drop" + (o ? "" : "Right");
+  J$3.prototype[i] = function() {
+    return this.__filtered__ ? new J$3(this) : this[e](1);
+  };
+});
+J$3.prototype.compact = function() {
+  return this.filter(U$4);
+};
+J$3.prototype.find = function(i) {
+  return this.filter(i).head();
+};
+J$3.prototype.findLast = function(i) {
+  return this.reverse().find(i);
+};
+J$3.prototype.invokeMap = S$2(function(i, o) {
+  return typeof i == "function" ? new J$3(this) : this.map(function(e) {
+    return Ho(e, i, o);
+  });
+});
+J$3.prototype.reject = function(i) {
+  return this.filter(ve$1(Y$2(i)));
+};
+J$3.prototype.slice = function(i, o) {
+  i = Z$2(i);
+  var e = this;
+  return e.__filtered__ && (i > 0 || o < 0) ? new J$3(e) : (i < 0 ? e = e.takeRight(-i) : i && (e = e.drop(i)), o !== void 0 && (o = Z$2(o), e = o < 0 ? e.dropRight(-o) : e.take(o - i)), e);
+};
+J$3.prototype.takeRightWhile = function(i) {
+  return this.reverse().takeWhile(i).reverse();
+};
+J$3.prototype.toArray = function() {
+  return this.take(Gd);
+};
+ji(J$3.prototype, function(i, o) {
+  var e = /^(?:filter|find|map|reject)|While$/.test(o), n = /^(?:head|last)$/.test(o), a = d$1[n ? "take" + (o == "last" ? "Right" : "") : o], u = n || /^find/.test(o);
+  a && (d$1.prototype[o] = function() {
+    var g = this.__wrapped__, t = n ? [1] : arguments, s = g instanceof J$3, h = t[0], r = s || k$2(g), l = function(j) {
+      var L = a.apply(d$1, Mi([j], t));
+      return n && v ? L[0] : L;
+    };
+    r && e && typeof h == "function" && h.length != 1 && (s = r = false);
+    var v = this.__chain__, y = !!this.__actions__.length, c = u && !v, b = s && !y;
+    if (!u && r) {
+      g = b ? g : new J$3(this);
+      var p = i.apply(g, t);
+      return p.__actions__.push({ func: pe$2, args: [l], thisArg: void 0 }), new ti(p, v);
+    }
+    return c && b ? i.apply(this, t) : (p = this.thru(l), c ? n ? p.value()[0] : p.value() : p);
+  });
+});
+ui(["pop", "push", "shift", "sort", "splice", "unshift"], function(i) {
+  var o = jY[i], e = /^(?:push|sort|unshift)$/.test(i) ? "tap" : "thru", n = /^(?:pop|shift)$/.test(i);
+  d$1.prototype[i] = function() {
+    var a = arguments;
+    if (n && !this.__chain__) {
+      var u = this.value();
+      return o.apply(k$2(u) ? u : [], a);
+    }
+    return this[e](function(g) {
+      return o.apply(k$2(g) ? g : [], a);
+    });
+  };
+});
+ji(J$3.prototype, function(i, o) {
+  var e = d$1[o];
+  if (e) {
+    var n = e.name + "";
+    Nd.call(Ui, n) || (Ui[n] = []), Ui[n].push({ name: o, func: e });
+  }
+});
+Ui[Io(void 0, bY).name] = [{ name: "wrapper", func: void 0 }];
+J$3.prototype.clone = gY;
+J$3.prototype.reverse = dY;
+J$3.prototype.value = yY;
+d$1.prototype.at = fi.at;
+d$1.prototype.chain = fi.wrapperChain;
+d$1.prototype.commit = fi.commit;
+d$1.prototype.next = fi.next;
+d$1.prototype.plant = fi.plant;
+d$1.prototype.reverse = fi.reverse;
+d$1.prototype.toJSON = d$1.prototype.valueOf = d$1.prototype.value = fi.value;
+d$1.prototype.first = d$1.prototype.head;
+ou && (d$1.prototype[ou] = fi.toIterator);
+var Ii = function() {
+  return Ii = Object.assign || function(i) {
+    for (var o, e = 1, n = arguments.length; e < n; e++) {
+      o = arguments[e];
+      for (var a in o) Object.prototype.hasOwnProperty.call(o, a) && (i[a] = o[a]);
+    }
+    return i;
+  }, Ii.apply(this, arguments);
+};
+var YY = "~";
+var kY = "~~";
+function zn$1(i, o) {
+  for (var e = {}, n = {}, a = i.split(kY), u = false, g = 0; a.length > g; g++) {
+    for (var t = a[g].split(YY), s = 0; s < t.length; s += 2) {
+      var h = t[s], r = t[s + 1], l = "&" + h + ";";
+      e[l] = r, u && (e["&" + h] = r), n[r] = l;
+    }
+    u = true;
+  }
+  return o ? { entities: Ii(Ii({}, e), o.entities), characters: Ii(Ii({}, n), o.characters) } : { entities: e, characters: n };
+}
+var Ze$2 = { xml: /&(?:#\d+|#[xX][\da-fA-F]+|[0-9a-zA-Z]+);?/g, html4: /&notin;|&(?:nbsp|iexcl|cent|pound|curren|yen|brvbar|sect|uml|copy|ordf|laquo|not|shy|reg|macr|deg|plusmn|sup2|sup3|acute|micro|para|middot|cedil|sup1|ordm|raquo|frac14|frac12|frac34|iquest|Agrave|Aacute|Acirc|Atilde|Auml|Aring|AElig|Ccedil|Egrave|Eacute|Ecirc|Euml|Igrave|Iacute|Icirc|Iuml|ETH|Ntilde|Ograve|Oacute|Ocirc|Otilde|Ouml|times|Oslash|Ugrave|Uacute|Ucirc|Uuml|Yacute|THORN|szlig|agrave|aacute|acirc|atilde|auml|aring|aelig|ccedil|egrave|eacute|ecirc|euml|igrave|iacute|icirc|iuml|eth|ntilde|ograve|oacute|ocirc|otilde|ouml|divide|oslash|ugrave|uacute|ucirc|uuml|yacute|thorn|yuml|quot|amp|lt|gt|#\d+|#[xX][\da-fA-F]+|[0-9a-zA-Z]+);?/g, html5: /&centerdot;|&copysr;|&divideontimes;|&gtcc;|&gtcir;|&gtdot;|&gtlPar;|&gtquest;|&gtrapprox;|&gtrarr;|&gtrdot;|&gtreqless;|&gtreqqless;|&gtrless;|&gtrsim;|&ltcc;|&ltcir;|&ltdot;|&lthree;|&ltimes;|&ltlarr;|&ltquest;|&ltrPar;|&ltri;|&ltrie;|&ltrif;|&notin;|&notinE;|&notindot;|&notinva;|&notinvb;|&notinvc;|&notni;|&notniva;|&notnivb;|&notnivc;|&parallel;|&timesb;|&timesbar;|&timesd;|&(?:AElig|AMP|Aacute|Acirc|Agrave|Aring|Atilde|Auml|COPY|Ccedil|ETH|Eacute|Ecirc|Egrave|Euml|GT|Iacute|Icirc|Igrave|Iuml|LT|Ntilde|Oacute|Ocirc|Ograve|Oslash|Otilde|Ouml|QUOT|REG|THORN|Uacute|Ucirc|Ugrave|Uuml|Yacute|aacute|acirc|acute|aelig|agrave|amp|aring|atilde|auml|brvbar|ccedil|cedil|cent|copy|curren|deg|divide|eacute|ecirc|egrave|eth|euml|frac12|frac14|frac34|gt|iacute|icirc|iexcl|igrave|iquest|iuml|laquo|lt|macr|micro|middot|nbsp|not|ntilde|oacute|ocirc|ograve|ordf|ordm|oslash|otilde|ouml|para|plusmn|pound|quot|raquo|reg|sect|shy|sup1|sup2|sup3|szlig|thorn|times|uacute|ucirc|ugrave|uml|uuml|yacute|yen|yuml|#\d+|#[xX][\da-fA-F]+|[0-9a-zA-Z]+);?/g };
+var io = {};
+io.xml = zn$1(`lt~<~gt~>~quot~"~apos~'~amp~&`);
+io.html4 = zn$1(`apos~'~OElig~Œ~oelig~œ~Scaron~Š~scaron~š~Yuml~Ÿ~circ~ˆ~tilde~˜~ensp~ ~emsp~ ~thinsp~ ~zwnj~‌~zwj~‍~lrm~‎~rlm~‏~ndash~–~mdash~—~lsquo~‘~rsquo~’~sbquo~‚~ldquo~“~rdquo~”~bdquo~„~dagger~†~Dagger~‡~permil~‰~lsaquo~‹~rsaquo~›~euro~€~fnof~ƒ~Alpha~Α~Beta~Β~Gamma~Γ~Delta~Δ~Epsilon~Ε~Zeta~Ζ~Eta~Η~Theta~Θ~Iota~Ι~Kappa~Κ~Lambda~Λ~Mu~Μ~Nu~Ν~Xi~Ξ~Omicron~Ο~Pi~Π~Rho~Ρ~Sigma~Σ~Tau~Τ~Upsilon~Υ~Phi~Φ~Chi~Χ~Psi~Ψ~Omega~Ω~alpha~α~beta~β~gamma~γ~delta~δ~epsilon~ε~zeta~ζ~eta~η~theta~θ~iota~ι~kappa~κ~lambda~λ~mu~μ~nu~ν~xi~ξ~omicron~ο~pi~π~rho~ρ~sigmaf~ς~sigma~σ~tau~τ~upsilon~υ~phi~φ~chi~χ~psi~ψ~omega~ω~thetasym~ϑ~upsih~ϒ~piv~ϖ~bull~•~hellip~…~prime~′~Prime~″~oline~‾~frasl~⁄~weierp~℘~image~ℑ~real~ℜ~trade~™~alefsym~ℵ~larr~←~uarr~↑~rarr~→~darr~↓~harr~↔~crarr~↵~lArr~⇐~uArr~⇑~rArr~⇒~dArr~⇓~hArr~⇔~forall~∀~part~∂~exist~∃~empty~∅~nabla~∇~isin~∈~notin~∉~ni~∋~prod~∏~sum~∑~minus~−~lowast~∗~radic~√~prop~∝~infin~∞~ang~∠~and~∧~or~∨~cap~∩~cup~∪~int~∫~there4~∴~sim~∼~cong~≅~asymp~≈~ne~≠~equiv~≡~le~≤~ge~≥~sub~⊂~sup~⊃~nsub~⊄~sube~⊆~supe~⊇~oplus~⊕~otimes~⊗~perp~⊥~sdot~⋅~lceil~⌈~rceil~⌉~lfloor~⌊~rfloor~⌋~lang~〈~rang~〉~loz~◊~spades~♠~clubs~♣~hearts~♥~diams~♦~~nbsp~ ~iexcl~¡~cent~¢~pound~£~curren~¤~yen~¥~brvbar~¦~sect~§~uml~¨~copy~©~ordf~ª~laquo~«~not~¬~shy~­~reg~®~macr~¯~deg~°~plusmn~±~sup2~²~sup3~³~acute~´~micro~µ~para~¶~middot~·~cedil~¸~sup1~¹~ordm~º~raquo~»~frac14~¼~frac12~½~frac34~¾~iquest~¿~Agrave~À~Aacute~Á~Acirc~Â~Atilde~Ã~Auml~Ä~Aring~Å~AElig~Æ~Ccedil~Ç~Egrave~È~Eacute~É~Ecirc~Ê~Euml~Ë~Igrave~Ì~Iacute~Í~Icirc~Î~Iuml~Ï~ETH~Ð~Ntilde~Ñ~Ograve~Ò~Oacute~Ó~Ocirc~Ô~Otilde~Õ~Ouml~Ö~times~×~Oslash~Ø~Ugrave~Ù~Uacute~Ú~Ucirc~Û~Uuml~Ü~Yacute~Ý~THORN~Þ~szlig~ß~agrave~à~aacute~á~acirc~â~atilde~ã~auml~ä~aring~å~aelig~æ~ccedil~ç~egrave~è~eacute~é~ecirc~ê~euml~ë~igrave~ì~iacute~í~icirc~î~iuml~ï~eth~ð~ntilde~ñ~ograve~ò~oacute~ó~ocirc~ô~otilde~õ~ouml~ö~divide~÷~oslash~ø~ugrave~ù~uacute~ú~ucirc~û~uuml~ü~yacute~ý~thorn~þ~yuml~ÿ~quot~"~amp~&~lt~<~gt~>`);
+io.html5 = zn$1('Abreve~Ă~Acy~А~Afr~𝔄~Amacr~Ā~And~⩓~Aogon~Ą~Aopf~𝔸~ApplyFunction~⁡~Ascr~𝒜~Assign~≔~Backslash~∖~Barv~⫧~Barwed~⌆~Bcy~Б~Because~∵~Bernoullis~ℬ~Bfr~𝔅~Bopf~𝔹~Breve~˘~Bscr~ℬ~Bumpeq~≎~CHcy~Ч~Cacute~Ć~Cap~⋒~CapitalDifferentialD~ⅅ~Cayleys~ℭ~Ccaron~Č~Ccirc~Ĉ~Cconint~∰~Cdot~Ċ~Cedilla~¸~CenterDot~·~Cfr~ℭ~CircleDot~⊙~CircleMinus~⊖~CirclePlus~⊕~CircleTimes~⊗~ClockwiseContourIntegral~∲~CloseCurlyDoubleQuote~”~CloseCurlyQuote~’~Colon~∷~Colone~⩴~Congruent~≡~Conint~∯~ContourIntegral~∮~Copf~ℂ~Coproduct~∐~CounterClockwiseContourIntegral~∳~Cross~⨯~Cscr~𝒞~Cup~⋓~CupCap~≍~DD~ⅅ~DDotrahd~⤑~DJcy~Ђ~DScy~Ѕ~DZcy~Џ~Darr~↡~Dashv~⫤~Dcaron~Ď~Dcy~Д~Del~∇~Dfr~𝔇~DiacriticalAcute~´~DiacriticalDot~˙~DiacriticalDoubleAcute~˝~DiacriticalGrave~`~DiacriticalTilde~˜~Diamond~⋄~DifferentialD~ⅆ~Dopf~𝔻~Dot~¨~DotDot~⃜~DotEqual~≐~DoubleContourIntegral~∯~DoubleDot~¨~DoubleDownArrow~⇓~DoubleLeftArrow~⇐~DoubleLeftRightArrow~⇔~DoubleLeftTee~⫤~DoubleLongLeftArrow~⟸~DoubleLongLeftRightArrow~⟺~DoubleLongRightArrow~⟹~DoubleRightArrow~⇒~DoubleRightTee~⊨~DoubleUpArrow~⇑~DoubleUpDownArrow~⇕~DoubleVerticalBar~∥~DownArrow~↓~DownArrowBar~⤓~DownArrowUpArrow~⇵~DownBreve~̑~DownLeftRightVector~⥐~DownLeftTeeVector~⥞~DownLeftVector~↽~DownLeftVectorBar~⥖~DownRightTeeVector~⥟~DownRightVector~⇁~DownRightVectorBar~⥗~DownTee~⊤~DownTeeArrow~↧~Downarrow~⇓~Dscr~𝒟~Dstrok~Đ~ENG~Ŋ~Ecaron~Ě~Ecy~Э~Edot~Ė~Efr~𝔈~Element~∈~Emacr~Ē~EmptySmallSquare~◻~EmptyVerySmallSquare~▫~Eogon~Ę~Eopf~𝔼~Equal~⩵~EqualTilde~≂~Equilibrium~⇌~Escr~ℰ~Esim~⩳~Exists~∃~ExponentialE~ⅇ~Fcy~Ф~Ffr~𝔉~FilledSmallSquare~◼~FilledVerySmallSquare~▪~Fopf~𝔽~ForAll~∀~Fouriertrf~ℱ~Fscr~ℱ~GJcy~Ѓ~Gammad~Ϝ~Gbreve~Ğ~Gcedil~Ģ~Gcirc~Ĝ~Gcy~Г~Gdot~Ġ~Gfr~𝔊~Gg~⋙~Gopf~𝔾~GreaterEqual~≥~GreaterEqualLess~⋛~GreaterFullEqual~≧~GreaterGreater~⪢~GreaterLess~≷~GreaterSlantEqual~⩾~GreaterTilde~≳~Gscr~𝒢~Gt~≫~HARDcy~Ъ~Hacek~ˇ~Hat~^~Hcirc~Ĥ~Hfr~ℌ~HilbertSpace~ℋ~Hopf~ℍ~HorizontalLine~─~Hscr~ℋ~Hstrok~Ħ~HumpDownHump~≎~HumpEqual~≏~IEcy~Е~IJlig~Ĳ~IOcy~Ё~Icy~И~Idot~İ~Ifr~ℑ~Im~ℑ~Imacr~Ī~ImaginaryI~ⅈ~Implies~⇒~Int~∬~Integral~∫~Intersection~⋂~InvisibleComma~⁣~InvisibleTimes~⁢~Iogon~Į~Iopf~𝕀~Iscr~ℐ~Itilde~Ĩ~Iukcy~І~Jcirc~Ĵ~Jcy~Й~Jfr~𝔍~Jopf~𝕁~Jscr~𝒥~Jsercy~Ј~Jukcy~Є~KHcy~Х~KJcy~Ќ~Kcedil~Ķ~Kcy~К~Kfr~𝔎~Kopf~𝕂~Kscr~𝒦~LJcy~Љ~Lacute~Ĺ~Lang~⟪~Laplacetrf~ℒ~Larr~↞~Lcaron~Ľ~Lcedil~Ļ~Lcy~Л~LeftAngleBracket~⟨~LeftArrow~←~LeftArrowBar~⇤~LeftArrowRightArrow~⇆~LeftCeiling~⌈~LeftDoubleBracket~⟦~LeftDownTeeVector~⥡~LeftDownVector~⇃~LeftDownVectorBar~⥙~LeftFloor~⌊~LeftRightArrow~↔~LeftRightVector~⥎~LeftTee~⊣~LeftTeeArrow~↤~LeftTeeVector~⥚~LeftTriangle~⊲~LeftTriangleBar~⧏~LeftTriangleEqual~⊴~LeftUpDownVector~⥑~LeftUpTeeVector~⥠~LeftUpVector~↿~LeftUpVectorBar~⥘~LeftVector~↼~LeftVectorBar~⥒~Leftarrow~⇐~Leftrightarrow~⇔~LessEqualGreater~⋚~LessFullEqual~≦~LessGreater~≶~LessLess~⪡~LessSlantEqual~⩽~LessTilde~≲~Lfr~𝔏~Ll~⋘~Lleftarrow~⇚~Lmidot~Ŀ~LongLeftArrow~⟵~LongLeftRightArrow~⟷~LongRightArrow~⟶~Longleftarrow~⟸~Longleftrightarrow~⟺~Longrightarrow~⟹~Lopf~𝕃~LowerLeftArrow~↙~LowerRightArrow~↘~Lscr~ℒ~Lsh~↰~Lstrok~Ł~Lt~≪~Map~⤅~Mcy~М~MediumSpace~ ~Mellintrf~ℳ~Mfr~𝔐~MinusPlus~∓~Mopf~𝕄~Mscr~ℳ~NJcy~Њ~Nacute~Ń~Ncaron~Ň~Ncedil~Ņ~Ncy~Н~NegativeMediumSpace~​~NegativeThickSpace~​~NegativeThinSpace~​~NegativeVeryThinSpace~​~NestedGreaterGreater~≫~NestedLessLess~≪~NewLine~\n~Nfr~𝔑~NoBreak~⁠~NonBreakingSpace~ ~Nopf~ℕ~Not~⫬~NotCongruent~≢~NotCupCap~≭~NotDoubleVerticalBar~∦~NotElement~∉~NotEqual~≠~NotEqualTilde~≂̸~NotExists~∄~NotGreater~≯~NotGreaterEqual~≱~NotGreaterFullEqual~≧̸~NotGreaterGreater~≫̸~NotGreaterLess~≹~NotGreaterSlantEqual~⩾̸~NotGreaterTilde~≵~NotHumpDownHump~≎̸~NotHumpEqual~≏̸~NotLeftTriangle~⋪~NotLeftTriangleBar~⧏̸~NotLeftTriangleEqual~⋬~NotLess~≮~NotLessEqual~≰~NotLessGreater~≸~NotLessLess~≪̸~NotLessSlantEqual~⩽̸~NotLessTilde~≴~NotNestedGreaterGreater~⪢̸~NotNestedLessLess~⪡̸~NotPrecedes~⊀~NotPrecedesEqual~⪯̸~NotPrecedesSlantEqual~⋠~NotReverseElement~∌~NotRightTriangle~⋫~NotRightTriangleBar~⧐̸~NotRightTriangleEqual~⋭~NotSquareSubset~⊏̸~NotSquareSubsetEqual~⋢~NotSquareSuperset~⊐̸~NotSquareSupersetEqual~⋣~NotSubset~⊂⃒~NotSubsetEqual~⊈~NotSucceeds~⊁~NotSucceedsEqual~⪰̸~NotSucceedsSlantEqual~⋡~NotSucceedsTilde~≿̸~NotSuperset~⊃⃒~NotSupersetEqual~⊉~NotTilde~≁~NotTildeEqual~≄~NotTildeFullEqual~≇~NotTildeTilde~≉~NotVerticalBar~∤~Nscr~𝒩~Ocy~О~Odblac~Ő~Ofr~𝔒~Omacr~Ō~Oopf~𝕆~OpenCurlyDoubleQuote~“~OpenCurlyQuote~‘~Or~⩔~Oscr~𝒪~Otimes~⨷~OverBar~‾~OverBrace~⏞~OverBracket~⎴~OverParenthesis~⏜~PartialD~∂~Pcy~П~Pfr~𝔓~PlusMinus~±~Poincareplane~ℌ~Popf~ℙ~Pr~⪻~Precedes~≺~PrecedesEqual~⪯~PrecedesSlantEqual~≼~PrecedesTilde~≾~Product~∏~Proportion~∷~Proportional~∝~Pscr~𝒫~Qfr~𝔔~Qopf~ℚ~Qscr~𝒬~RBarr~⤐~Racute~Ŕ~Rang~⟫~Rarr~↠~Rarrtl~⤖~Rcaron~Ř~Rcedil~Ŗ~Rcy~Р~Re~ℜ~ReverseElement~∋~ReverseEquilibrium~⇋~ReverseUpEquilibrium~⥯~Rfr~ℜ~RightAngleBracket~⟩~RightArrow~→~RightArrowBar~⇥~RightArrowLeftArrow~⇄~RightCeiling~⌉~RightDoubleBracket~⟧~RightDownTeeVector~⥝~RightDownVector~⇂~RightDownVectorBar~⥕~RightFloor~⌋~RightTee~⊢~RightTeeArrow~↦~RightTeeVector~⥛~RightTriangle~⊳~RightTriangleBar~⧐~RightTriangleEqual~⊵~RightUpDownVector~⥏~RightUpTeeVector~⥜~RightUpVector~↾~RightUpVectorBar~⥔~RightVector~⇀~RightVectorBar~⥓~Rightarrow~⇒~Ropf~ℝ~RoundImplies~⥰~Rrightarrow~⇛~Rscr~ℛ~Rsh~↱~RuleDelayed~⧴~SHCHcy~Щ~SHcy~Ш~SOFTcy~Ь~Sacute~Ś~Sc~⪼~Scedil~Ş~Scirc~Ŝ~Scy~С~Sfr~𝔖~ShortDownArrow~↓~ShortLeftArrow~←~ShortRightArrow~→~ShortUpArrow~↑~SmallCircle~∘~Sopf~𝕊~Sqrt~√~Square~□~SquareIntersection~⊓~SquareSubset~⊏~SquareSubsetEqual~⊑~SquareSuperset~⊐~SquareSupersetEqual~⊒~SquareUnion~⊔~Sscr~𝒮~Star~⋆~Sub~⋐~Subset~⋐~SubsetEqual~⊆~Succeeds~≻~SucceedsEqual~⪰~SucceedsSlantEqual~≽~SucceedsTilde~≿~SuchThat~∋~Sum~∑~Sup~⋑~Superset~⊃~SupersetEqual~⊇~Supset~⋑~TRADE~™~TSHcy~Ћ~TScy~Ц~Tab~	~Tcaron~Ť~Tcedil~Ţ~Tcy~Т~Tfr~𝔗~Therefore~∴~ThickSpace~  ~ThinSpace~ ~Tilde~∼~TildeEqual~≃~TildeFullEqual~≅~TildeTilde~≈~Topf~𝕋~TripleDot~⃛~Tscr~𝒯~Tstrok~Ŧ~Uarr~↟~Uarrocir~⥉~Ubrcy~Ў~Ubreve~Ŭ~Ucy~У~Udblac~Ű~Ufr~𝔘~Umacr~Ū~UnderBar~_~UnderBrace~⏟~UnderBracket~⎵~UnderParenthesis~⏝~Union~⋃~UnionPlus~⊎~Uogon~Ų~Uopf~𝕌~UpArrow~↑~UpArrowBar~⤒~UpArrowDownArrow~⇅~UpDownArrow~↕~UpEquilibrium~⥮~UpTee~⊥~UpTeeArrow~↥~Uparrow~⇑~Updownarrow~⇕~UpperLeftArrow~↖~UpperRightArrow~↗~Upsi~ϒ~Uring~Ů~Uscr~𝒰~Utilde~Ũ~VDash~⊫~Vbar~⫫~Vcy~В~Vdash~⊩~Vdashl~⫦~Vee~⋁~Verbar~‖~Vert~‖~VerticalBar~∣~VerticalLine~|~VerticalSeparator~❘~VerticalTilde~≀~VeryThinSpace~ ~Vfr~𝔙~Vopf~𝕍~Vscr~𝒱~Vvdash~⊪~Wcirc~Ŵ~Wedge~⋀~Wfr~𝔚~Wopf~𝕎~Wscr~𝒲~Xfr~𝔛~Xopf~𝕏~Xscr~𝒳~YAcy~Я~YIcy~Ї~YUcy~Ю~Ycirc~Ŷ~Ycy~Ы~Yfr~𝔜~Yopf~𝕐~Yscr~𝒴~ZHcy~Ж~Zacute~Ź~Zcaron~Ž~Zcy~З~Zdot~Ż~ZeroWidthSpace~​~Zfr~ℨ~Zopf~ℤ~Zscr~𝒵~abreve~ă~ac~∾~acE~∾̳~acd~∿~acy~а~af~⁡~afr~𝔞~aleph~ℵ~amacr~ā~amalg~⨿~andand~⩕~andd~⩜~andslope~⩘~andv~⩚~ange~⦤~angle~∠~angmsd~∡~angmsdaa~⦨~angmsdab~⦩~angmsdac~⦪~angmsdad~⦫~angmsdae~⦬~angmsdaf~⦭~angmsdag~⦮~angmsdah~⦯~angrt~∟~angrtvb~⊾~angrtvbd~⦝~angsph~∢~angst~Å~angzarr~⍼~aogon~ą~aopf~𝕒~ap~≈~apE~⩰~apacir~⩯~ape~≊~apid~≋~approx~≈~approxeq~≊~ascr~𝒶~ast~*~asympeq~≍~awconint~∳~awint~⨑~bNot~⫭~backcong~≌~backepsilon~϶~backprime~‵~backsim~∽~backsimeq~⋍~barvee~⊽~barwed~⌅~barwedge~⌅~bbrk~⎵~bbrktbrk~⎶~bcong~≌~bcy~б~becaus~∵~because~∵~bemptyv~⦰~bepsi~϶~bernou~ℬ~beth~ℶ~between~≬~bfr~𝔟~bigcap~⋂~bigcirc~◯~bigcup~⋃~bigodot~⨀~bigoplus~⨁~bigotimes~⨂~bigsqcup~⨆~bigstar~★~bigtriangledown~▽~bigtriangleup~△~biguplus~⨄~bigvee~⋁~bigwedge~⋀~bkarow~⤍~blacklozenge~⧫~blacksquare~▪~blacktriangle~▴~blacktriangledown~▾~blacktriangleleft~◂~blacktriangleright~▸~blank~␣~blk12~▒~blk14~░~blk34~▓~block~█~bne~=⃥~bnequiv~≡⃥~bnot~⌐~bopf~𝕓~bot~⊥~bottom~⊥~bowtie~⋈~boxDL~╗~boxDR~╔~boxDl~╖~boxDr~╓~boxH~═~boxHD~╦~boxHU~╩~boxHd~╤~boxHu~╧~boxUL~╝~boxUR~╚~boxUl~╜~boxUr~╙~boxV~║~boxVH~╬~boxVL~╣~boxVR~╠~boxVh~╫~boxVl~╢~boxVr~╟~boxbox~⧉~boxdL~╕~boxdR~╒~boxdl~┐~boxdr~┌~boxh~─~boxhD~╥~boxhU~╨~boxhd~┬~boxhu~┴~boxminus~⊟~boxplus~⊞~boxtimes~⊠~boxuL~╛~boxuR~╘~boxul~┘~boxur~└~boxv~│~boxvH~╪~boxvL~╡~boxvR~╞~boxvh~┼~boxvl~┤~boxvr~├~bprime~‵~breve~˘~bscr~𝒷~bsemi~⁏~bsim~∽~bsime~⋍~bsol~\\~bsolb~⧅~bsolhsub~⟈~bullet~•~bump~≎~bumpE~⪮~bumpe~≏~bumpeq~≏~cacute~ć~capand~⩄~capbrcup~⩉~capcap~⩋~capcup~⩇~capdot~⩀~caps~∩︀~caret~⁁~caron~ˇ~ccaps~⩍~ccaron~č~ccirc~ĉ~ccups~⩌~ccupssm~⩐~cdot~ċ~cemptyv~⦲~centerdot~·~cfr~𝔠~chcy~ч~check~✓~checkmark~✓~cir~○~cirE~⧃~circeq~≗~circlearrowleft~↺~circlearrowright~↻~circledR~®~circledS~Ⓢ~circledast~⊛~circledcirc~⊚~circleddash~⊝~cire~≗~cirfnint~⨐~cirmid~⫯~cirscir~⧂~clubsuit~♣~colon~:~colone~≔~coloneq~≔~comma~,~commat~@~comp~∁~compfn~∘~complement~∁~complexes~ℂ~congdot~⩭~conint~∮~copf~𝕔~coprod~∐~copysr~℗~cross~✗~cscr~𝒸~csub~⫏~csube~⫑~csup~⫐~csupe~⫒~ctdot~⋯~cudarrl~⤸~cudarrr~⤵~cuepr~⋞~cuesc~⋟~cularr~↶~cularrp~⤽~cupbrcap~⩈~cupcap~⩆~cupcup~⩊~cupdot~⊍~cupor~⩅~cups~∪︀~curarr~↷~curarrm~⤼~curlyeqprec~⋞~curlyeqsucc~⋟~curlyvee~⋎~curlywedge~⋏~curvearrowleft~↶~curvearrowright~↷~cuvee~⋎~cuwed~⋏~cwconint~∲~cwint~∱~cylcty~⌭~dHar~⥥~daleth~ℸ~dash~‐~dashv~⊣~dbkarow~⤏~dblac~˝~dcaron~ď~dcy~д~dd~ⅆ~ddagger~‡~ddarr~⇊~ddotseq~⩷~demptyv~⦱~dfisht~⥿~dfr~𝔡~dharl~⇃~dharr~⇂~diam~⋄~diamond~⋄~diamondsuit~♦~die~¨~digamma~ϝ~disin~⋲~div~÷~divideontimes~⋇~divonx~⋇~djcy~ђ~dlcorn~⌞~dlcrop~⌍~dollar~$~dopf~𝕕~dot~˙~doteq~≐~doteqdot~≑~dotminus~∸~dotplus~∔~dotsquare~⊡~doublebarwedge~⌆~downarrow~↓~downdownarrows~⇊~downharpoonleft~⇃~downharpoonright~⇂~drbkarow~⤐~drcorn~⌟~drcrop~⌌~dscr~𝒹~dscy~ѕ~dsol~⧶~dstrok~đ~dtdot~⋱~dtri~▿~dtrif~▾~duarr~⇵~duhar~⥯~dwangle~⦦~dzcy~џ~dzigrarr~⟿~eDDot~⩷~eDot~≑~easter~⩮~ecaron~ě~ecir~≖~ecolon~≕~ecy~э~edot~ė~ee~ⅇ~efDot~≒~efr~𝔢~eg~⪚~egs~⪖~egsdot~⪘~el~⪙~elinters~⏧~ell~ℓ~els~⪕~elsdot~⪗~emacr~ē~emptyset~∅~emptyv~∅~emsp13~ ~emsp14~ ~eng~ŋ~eogon~ę~eopf~𝕖~epar~⋕~eparsl~⧣~eplus~⩱~epsi~ε~epsiv~ϵ~eqcirc~≖~eqcolon~≕~eqsim~≂~eqslantgtr~⪖~eqslantless~⪕~equals~=~equest~≟~equivDD~⩸~eqvparsl~⧥~erDot~≓~erarr~⥱~escr~ℯ~esdot~≐~esim~≂~excl~!~expectation~ℰ~exponentiale~ⅇ~fallingdotseq~≒~fcy~ф~female~♀~ffilig~ﬃ~fflig~ﬀ~ffllig~ﬄ~ffr~𝔣~filig~ﬁ~fjlig~fj~flat~♭~fllig~ﬂ~fltns~▱~fopf~𝕗~fork~⋔~forkv~⫙~fpartint~⨍~frac13~⅓~frac15~⅕~frac16~⅙~frac18~⅛~frac23~⅔~frac25~⅖~frac35~⅗~frac38~⅜~frac45~⅘~frac56~⅚~frac58~⅝~frac78~⅞~frown~⌢~fscr~𝒻~gE~≧~gEl~⪌~gacute~ǵ~gammad~ϝ~gap~⪆~gbreve~ğ~gcirc~ĝ~gcy~г~gdot~ġ~gel~⋛~geq~≥~geqq~≧~geqslant~⩾~ges~⩾~gescc~⪩~gesdot~⪀~gesdoto~⪂~gesdotol~⪄~gesl~⋛︀~gesles~⪔~gfr~𝔤~gg~≫~ggg~⋙~gimel~ℷ~gjcy~ѓ~gl~≷~glE~⪒~gla~⪥~glj~⪤~gnE~≩~gnap~⪊~gnapprox~⪊~gne~⪈~gneq~⪈~gneqq~≩~gnsim~⋧~gopf~𝕘~grave~`~gscr~ℊ~gsim~≳~gsime~⪎~gsiml~⪐~gtcc~⪧~gtcir~⩺~gtdot~⋗~gtlPar~⦕~gtquest~⩼~gtrapprox~⪆~gtrarr~⥸~gtrdot~⋗~gtreqless~⋛~gtreqqless~⪌~gtrless~≷~gtrsim~≳~gvertneqq~≩︀~gvnE~≩︀~hairsp~ ~half~½~hamilt~ℋ~hardcy~ъ~harrcir~⥈~harrw~↭~hbar~ℏ~hcirc~ĥ~heartsuit~♥~hercon~⊹~hfr~𝔥~hksearow~⤥~hkswarow~⤦~hoarr~⇿~homtht~∻~hookleftarrow~↩~hookrightarrow~↪~hopf~𝕙~horbar~―~hscr~𝒽~hslash~ℏ~hstrok~ħ~hybull~⁃~hyphen~‐~ic~⁣~icy~и~iecy~е~iff~⇔~ifr~𝔦~ii~ⅈ~iiiint~⨌~iiint~∭~iinfin~⧜~iiota~℩~ijlig~ĳ~imacr~ī~imagline~ℐ~imagpart~ℑ~imath~ı~imof~⊷~imped~Ƶ~in~∈~incare~℅~infintie~⧝~inodot~ı~intcal~⊺~integers~ℤ~intercal~⊺~intlarhk~⨗~intprod~⨼~iocy~ё~iogon~į~iopf~𝕚~iprod~⨼~iscr~𝒾~isinE~⋹~isindot~⋵~isins~⋴~isinsv~⋳~isinv~∈~it~⁢~itilde~ĩ~iukcy~і~jcirc~ĵ~jcy~й~jfr~𝔧~jmath~ȷ~jopf~𝕛~jscr~𝒿~jsercy~ј~jukcy~є~kappav~ϰ~kcedil~ķ~kcy~к~kfr~𝔨~kgreen~ĸ~khcy~х~kjcy~ќ~kopf~𝕜~kscr~𝓀~lAarr~⇚~lAtail~⤛~lBarr~⤎~lE~≦~lEg~⪋~lHar~⥢~lacute~ĺ~laemptyv~⦴~lagran~ℒ~langd~⦑~langle~⟨~lap~⪅~larrb~⇤~larrbfs~⤟~larrfs~⤝~larrhk~↩~larrlp~↫~larrpl~⤹~larrsim~⥳~larrtl~↢~lat~⪫~latail~⤙~late~⪭~lates~⪭︀~lbarr~⤌~lbbrk~❲~lbrace~{~lbrack~[~lbrke~⦋~lbrksld~⦏~lbrkslu~⦍~lcaron~ľ~lcedil~ļ~lcub~{~lcy~л~ldca~⤶~ldquor~„~ldrdhar~⥧~ldrushar~⥋~ldsh~↲~leftarrow~←~leftarrowtail~↢~leftharpoondown~↽~leftharpoonup~↼~leftleftarrows~⇇~leftrightarrow~↔~leftrightarrows~⇆~leftrightharpoons~⇋~leftrightsquigarrow~↭~leftthreetimes~⋋~leg~⋚~leq~≤~leqq~≦~leqslant~⩽~les~⩽~lescc~⪨~lesdot~⩿~lesdoto~⪁~lesdotor~⪃~lesg~⋚︀~lesges~⪓~lessapprox~⪅~lessdot~⋖~lesseqgtr~⋚~lesseqqgtr~⪋~lessgtr~≶~lesssim~≲~lfisht~⥼~lfr~𝔩~lg~≶~lgE~⪑~lhard~↽~lharu~↼~lharul~⥪~lhblk~▄~ljcy~љ~ll~≪~llarr~⇇~llcorner~⌞~llhard~⥫~lltri~◺~lmidot~ŀ~lmoust~⎰~lmoustache~⎰~lnE~≨~lnap~⪉~lnapprox~⪉~lne~⪇~lneq~⪇~lneqq~≨~lnsim~⋦~loang~⟬~loarr~⇽~lobrk~⟦~longleftarrow~⟵~longleftrightarrow~⟷~longmapsto~⟼~longrightarrow~⟶~looparrowleft~↫~looparrowright~↬~lopar~⦅~lopf~𝕝~loplus~⨭~lotimes~⨴~lowbar~_~lozenge~◊~lozf~⧫~lpar~(~lparlt~⦓~lrarr~⇆~lrcorner~⌟~lrhar~⇋~lrhard~⥭~lrtri~⊿~lscr~𝓁~lsh~↰~lsim~≲~lsime~⪍~lsimg~⪏~lsqb~[~lsquor~‚~lstrok~ł~ltcc~⪦~ltcir~⩹~ltdot~⋖~lthree~⋋~ltimes~⋉~ltlarr~⥶~ltquest~⩻~ltrPar~⦖~ltri~◃~ltrie~⊴~ltrif~◂~lurdshar~⥊~luruhar~⥦~lvertneqq~≨︀~lvnE~≨︀~mDDot~∺~male~♂~malt~✠~maltese~✠~map~↦~mapsto~↦~mapstodown~↧~mapstoleft~↤~mapstoup~↥~marker~▮~mcomma~⨩~mcy~м~measuredangle~∡~mfr~𝔪~mho~℧~mid~∣~midast~*~midcir~⫰~minusb~⊟~minusd~∸~minusdu~⨪~mlcp~⫛~mldr~…~mnplus~∓~models~⊧~mopf~𝕞~mp~∓~mscr~𝓂~mstpos~∾~multimap~⊸~mumap~⊸~nGg~⋙̸~nGt~≫⃒~nGtv~≫̸~nLeftarrow~⇍~nLeftrightarrow~⇎~nLl~⋘̸~nLt~≪⃒~nLtv~≪̸~nRightarrow~⇏~nVDash~⊯~nVdash~⊮~nacute~ń~nang~∠⃒~nap~≉~napE~⩰̸~napid~≋̸~napos~ŉ~napprox~≉~natur~♮~natural~♮~naturals~ℕ~nbump~≎̸~nbumpe~≏̸~ncap~⩃~ncaron~ň~ncedil~ņ~ncong~≇~ncongdot~⩭̸~ncup~⩂~ncy~н~neArr~⇗~nearhk~⤤~nearr~↗~nearrow~↗~nedot~≐̸~nequiv~≢~nesear~⤨~nesim~≂̸~nexist~∄~nexists~∄~nfr~𝔫~ngE~≧̸~nge~≱~ngeq~≱~ngeqq~≧̸~ngeqslant~⩾̸~nges~⩾̸~ngsim~≵~ngt~≯~ngtr~≯~nhArr~⇎~nharr~↮~nhpar~⫲~nis~⋼~nisd~⋺~niv~∋~njcy~њ~nlArr~⇍~nlE~≦̸~nlarr~↚~nldr~‥~nle~≰~nleftarrow~↚~nleftrightarrow~↮~nleq~≰~nleqq~≦̸~nleqslant~⩽̸~nles~⩽̸~nless~≮~nlsim~≴~nlt~≮~nltri~⋪~nltrie~⋬~nmid~∤~nopf~𝕟~notinE~⋹̸~notindot~⋵̸~notinva~∉~notinvb~⋷~notinvc~⋶~notni~∌~notniva~∌~notnivb~⋾~notnivc~⋽~npar~∦~nparallel~∦~nparsl~⫽⃥~npart~∂̸~npolint~⨔~npr~⊀~nprcue~⋠~npre~⪯̸~nprec~⊀~npreceq~⪯̸~nrArr~⇏~nrarr~↛~nrarrc~⤳̸~nrarrw~↝̸~nrightarrow~↛~nrtri~⋫~nrtrie~⋭~nsc~⊁~nsccue~⋡~nsce~⪰̸~nscr~𝓃~nshortmid~∤~nshortparallel~∦~nsim~≁~nsime~≄~nsimeq~≄~nsmid~∤~nspar~∦~nsqsube~⋢~nsqsupe~⋣~nsubE~⫅̸~nsube~⊈~nsubset~⊂⃒~nsubseteq~⊈~nsubseteqq~⫅̸~nsucc~⊁~nsucceq~⪰̸~nsup~⊅~nsupE~⫆̸~nsupe~⊉~nsupset~⊃⃒~nsupseteq~⊉~nsupseteqq~⫆̸~ntgl~≹~ntlg~≸~ntriangleleft~⋪~ntrianglelefteq~⋬~ntriangleright~⋫~ntrianglerighteq~⋭~num~#~numero~№~numsp~ ~nvDash~⊭~nvHarr~⤄~nvap~≍⃒~nvdash~⊬~nvge~≥⃒~nvgt~>⃒~nvinfin~⧞~nvlArr~⤂~nvle~≤⃒~nvlt~<⃒~nvltrie~⊴⃒~nvrArr~⤃~nvrtrie~⊵⃒~nvsim~∼⃒~nwArr~⇖~nwarhk~⤣~nwarr~↖~nwarrow~↖~nwnear~⤧~oS~Ⓢ~oast~⊛~ocir~⊚~ocy~о~odash~⊝~odblac~ő~odiv~⨸~odot~⊙~odsold~⦼~ofcir~⦿~ofr~𝔬~ogon~˛~ogt~⧁~ohbar~⦵~ohm~Ω~oint~∮~olarr~↺~olcir~⦾~olcross~⦻~olt~⧀~omacr~ō~omid~⦶~ominus~⊖~oopf~𝕠~opar~⦷~operp~⦹~orarr~↻~ord~⩝~order~ℴ~orderof~ℴ~origof~⊶~oror~⩖~orslope~⩗~orv~⩛~oscr~ℴ~osol~⊘~otimesas~⨶~ovbar~⌽~par~∥~parallel~∥~parsim~⫳~parsl~⫽~pcy~п~percnt~%~period~.~pertenk~‱~pfr~𝔭~phiv~ϕ~phmmat~ℳ~phone~☎~pitchfork~⋔~planck~ℏ~planckh~ℎ~plankv~ℏ~plus~+~plusacir~⨣~plusb~⊞~pluscir~⨢~plusdo~∔~plusdu~⨥~pluse~⩲~plussim~⨦~plustwo~⨧~pm~±~pointint~⨕~popf~𝕡~pr~≺~prE~⪳~prap~⪷~prcue~≼~pre~⪯~prec~≺~precapprox~⪷~preccurlyeq~≼~preceq~⪯~precnapprox~⪹~precneqq~⪵~precnsim~⋨~precsim~≾~primes~ℙ~prnE~⪵~prnap~⪹~prnsim~⋨~profalar~⌮~profline~⌒~profsurf~⌓~propto~∝~prsim~≾~prurel~⊰~pscr~𝓅~puncsp~ ~qfr~𝔮~qint~⨌~qopf~𝕢~qprime~⁗~qscr~𝓆~quaternions~ℍ~quatint~⨖~quest~?~questeq~≟~rAarr~⇛~rAtail~⤜~rBarr~⤏~rHar~⥤~race~∽̱~racute~ŕ~raemptyv~⦳~rangd~⦒~range~⦥~rangle~⟩~rarrap~⥵~rarrb~⇥~rarrbfs~⤠~rarrc~⤳~rarrfs~⤞~rarrhk~↪~rarrlp~↬~rarrpl~⥅~rarrsim~⥴~rarrtl~↣~rarrw~↝~ratail~⤚~ratio~∶~rationals~ℚ~rbarr~⤍~rbbrk~❳~rbrace~}~rbrack~]~rbrke~⦌~rbrksld~⦎~rbrkslu~⦐~rcaron~ř~rcedil~ŗ~rcub~}~rcy~р~rdca~⤷~rdldhar~⥩~rdquor~”~rdsh~↳~realine~ℛ~realpart~ℜ~reals~ℝ~rect~▭~rfisht~⥽~rfr~𝔯~rhard~⇁~rharu~⇀~rharul~⥬~rhov~ϱ~rightarrow~→~rightarrowtail~↣~rightharpoondown~⇁~rightharpoonup~⇀~rightleftarrows~⇄~rightleftharpoons~⇌~rightrightarrows~⇉~rightsquigarrow~↝~rightthreetimes~⋌~ring~˚~risingdotseq~≓~rlarr~⇄~rlhar~⇌~rmoust~⎱~rmoustache~⎱~rnmid~⫮~roang~⟭~roarr~⇾~robrk~⟧~ropar~⦆~ropf~𝕣~roplus~⨮~rotimes~⨵~rpar~)~rpargt~⦔~rppolint~⨒~rrarr~⇉~rscr~𝓇~rsh~↱~rsqb~]~rsquor~’~rthree~⋌~rtimes~⋊~rtri~▹~rtrie~⊵~rtrif~▸~rtriltri~⧎~ruluhar~⥨~rx~℞~sacute~ś~sc~≻~scE~⪴~scap~⪸~sccue~≽~sce~⪰~scedil~ş~scirc~ŝ~scnE~⪶~scnap~⪺~scnsim~⋩~scpolint~⨓~scsim~≿~scy~с~sdotb~⊡~sdote~⩦~seArr~⇘~searhk~⤥~searr~↘~searrow~↘~semi~;~seswar~⤩~setminus~∖~setmn~∖~sext~✶~sfr~𝔰~sfrown~⌢~sharp~♯~shchcy~щ~shcy~ш~shortmid~∣~shortparallel~∥~sigmav~ς~simdot~⩪~sime~≃~simeq~≃~simg~⪞~simgE~⪠~siml~⪝~simlE~⪟~simne~≆~simplus~⨤~simrarr~⥲~slarr~←~smallsetminus~∖~smashp~⨳~smeparsl~⧤~smid~∣~smile~⌣~smt~⪪~smte~⪬~smtes~⪬︀~softcy~ь~sol~/~solb~⧄~solbar~⌿~sopf~𝕤~spadesuit~♠~spar~∥~sqcap~⊓~sqcaps~⊓︀~sqcup~⊔~sqcups~⊔︀~sqsub~⊏~sqsube~⊑~sqsubset~⊏~sqsubseteq~⊑~sqsup~⊐~sqsupe~⊒~sqsupset~⊐~sqsupseteq~⊒~squ~□~square~□~squarf~▪~squf~▪~srarr~→~sscr~𝓈~ssetmn~∖~ssmile~⌣~sstarf~⋆~star~☆~starf~★~straightepsilon~ϵ~straightphi~ϕ~strns~¯~subE~⫅~subdot~⪽~subedot~⫃~submult~⫁~subnE~⫋~subne~⊊~subplus~⪿~subrarr~⥹~subset~⊂~subseteq~⊆~subseteqq~⫅~subsetneq~⊊~subsetneqq~⫋~subsim~⫇~subsub~⫕~subsup~⫓~succ~≻~succapprox~⪸~succcurlyeq~≽~succeq~⪰~succnapprox~⪺~succneqq~⪶~succnsim~⋩~succsim~≿~sung~♪~supE~⫆~supdot~⪾~supdsub~⫘~supedot~⫄~suphsol~⟉~suphsub~⫗~suplarr~⥻~supmult~⫂~supnE~⫌~supne~⊋~supplus~⫀~supset~⊃~supseteq~⊇~supseteqq~⫆~supsetneq~⊋~supsetneqq~⫌~supsim~⫈~supsub~⫔~supsup~⫖~swArr~⇙~swarhk~⤦~swarr~↙~swarrow~↙~swnwar~⤪~target~⌖~tbrk~⎴~tcaron~ť~tcedil~ţ~tcy~т~tdot~⃛~telrec~⌕~tfr~𝔱~therefore~∴~thetav~ϑ~thickapprox~≈~thicksim~∼~thkap~≈~thksim~∼~timesb~⊠~timesbar~⨱~timesd~⨰~tint~∭~toea~⤨~top~⊤~topbot~⌶~topcir~⫱~topf~𝕥~topfork~⫚~tosa~⤩~tprime~‴~triangle~▵~triangledown~▿~triangleleft~◃~trianglelefteq~⊴~triangleq~≜~triangleright~▹~trianglerighteq~⊵~tridot~◬~trie~≜~triminus~⨺~triplus~⨹~trisb~⧍~tritime~⨻~trpezium~⏢~tscr~𝓉~tscy~ц~tshcy~ћ~tstrok~ŧ~twixt~≬~twoheadleftarrow~↞~twoheadrightarrow~↠~uHar~⥣~ubrcy~ў~ubreve~ŭ~ucy~у~udarr~⇅~udblac~ű~udhar~⥮~ufisht~⥾~ufr~𝔲~uharl~↿~uharr~↾~uhblk~▀~ulcorn~⌜~ulcorner~⌜~ulcrop~⌏~ultri~◸~umacr~ū~uogon~ų~uopf~𝕦~uparrow~↑~updownarrow~↕~upharpoonleft~↿~upharpoonright~↾~uplus~⊎~upsi~υ~upuparrows~⇈~urcorn~⌝~urcorner~⌝~urcrop~⌎~uring~ů~urtri~◹~uscr~𝓊~utdot~⋰~utilde~ũ~utri~▵~utrif~▴~uuarr~⇈~uwangle~⦧~vArr~⇕~vBar~⫨~vBarv~⫩~vDash~⊨~vangrt~⦜~varepsilon~ϵ~varkappa~ϰ~varnothing~∅~varphi~ϕ~varpi~ϖ~varpropto~∝~varr~↕~varrho~ϱ~varsigma~ς~varsubsetneq~⊊︀~varsubsetneqq~⫋︀~varsupsetneq~⊋︀~varsupsetneqq~⫌︀~vartheta~ϑ~vartriangleleft~⊲~vartriangleright~⊳~vcy~в~vdash~⊢~vee~∨~veebar~⊻~veeeq~≚~vellip~⋮~verbar~|~vert~|~vfr~𝔳~vltri~⊲~vnsub~⊂⃒~vnsup~⊃⃒~vopf~𝕧~vprop~∝~vrtri~⊳~vscr~𝓋~vsubnE~⫋︀~vsubne~⊊︀~vsupnE~⫌︀~vsupne~⊋︀~vzigzag~⦚~wcirc~ŵ~wedbar~⩟~wedge~∧~wedgeq~≙~wfr~𝔴~wopf~𝕨~wp~℘~wr~≀~wreath~≀~wscr~𝓌~xcap~⋂~xcirc~◯~xcup~⋃~xdtri~▽~xfr~𝔵~xhArr~⟺~xharr~⟷~xlArr~⟸~xlarr~⟵~xmap~⟼~xnis~⋻~xodot~⨀~xopf~𝕩~xoplus~⨁~xotime~⨂~xrArr~⟹~xrarr~⟶~xscr~𝓍~xsqcup~⨆~xuplus~⨄~xutri~△~xvee~⋁~xwedge~⋀~yacy~я~ycirc~ŷ~ycy~ы~yfr~𝔶~yicy~ї~yopf~𝕪~yscr~𝓎~yucy~ю~zacute~ź~zcaron~ž~zcy~з~zdot~ż~zeetrf~ℨ~zfr~𝔷~zhcy~ж~zigrarr~⇝~zopf~𝕫~zscr~𝓏~~AMP~&~COPY~©~GT~>~LT~<~QUOT~"~REG~®', io.html4);
+var oo$1 = function() {
+  return oo$1 = Object.assign || function(i) {
+    for (var o, e = 1, n = arguments.length; e < n; e++) {
+      o = arguments[e];
+      for (var a in o) Object.prototype.hasOwnProperty.call(o, a) && (i[a] = o[a]);
+    }
+    return i;
+  }, oo$1.apply(this, arguments);
+};
+oo$1(oo$1({}, io), { all: io.html5 });
+var Se$2 = /&(?:#\d+|#[xX][\da-fA-F]+|[0-9a-zA-Z]+);/g;
+var Je$2 = /&(?:#\d+|#[xX][\da-fA-F]+|[0-9a-zA-Z]+)[;=]?/g;
+var nu = { xml: { strict: Se$2, attribute: Je$2, body: Ze$2.xml }, html4: { strict: Se$2, attribute: Je$2, body: Ze$2.html4 }, html5: { strict: Se$2, attribute: Je$2, body: Ze$2.html5 } };
+oo$1(oo$1({}, nu), { all: nu.html5 });
+pu();
+const au = (i, o) => Object.hasOwn(i, o);
+const Ce$1 = (i, o) => Object.assign(i, o);
+const Xe$2 = (i, o, e) => {
+  if (i.length === 0) return [];
+  let n = 0;
+  const a = Ct$1.exec(i[0]);
+  a && (n = a[1].length);
+  const u = String.raw`(\r\n|\r|\n).{0,${n}}`, g = new RegExp(u, "g"), t = o ? i.slice(1) : i, { newline: s, trimLeadingNewline: h, trimTrailingNewline: r } = e, l = typeof s == "string", v = t.length, y = Array.from({ length: v });
+  for (let c = 0; c < v; c++) {
+    let b = t[c];
+    b = b.replace(g, "$1"), c === 0 && h && (b = b.replace(Zt$1, "")), c === v - 1 && r && (b = b.replace(St$2, "")), l && (b = b.replaceAll(Ht$1, s)), y[c] = b;
+  }
+  return y;
+};
+const LY = (i, o) => {
+  const e = Array.from({ length: i.length + o.length });
+  let n = 0;
+  const a = i.length;
+  for (; n < a - 1; n++) e[n * 2] = i[n], e[n * 2 + 1] = String(o[n]);
+  return e[n * 2] = i[n], e.join("");
+};
+const ZY = (i) => au(i, "raw") && au(i, "length");
+const SY = /* @__PURE__ */ new WeakMap();
+const xd = (i) => {
+  const o = i.cache !== false, e = o ? i.cacheStore ?? SY : void 0, n = i.newline !== void 0;
+  function a(u, ...g) {
+    if (ZY(u)) {
+      const t = u, s = g.length;
+      if (t.length === 1 && t[0] === "") return "";
+      if (s === 0) {
+        if (o && e && !n) {
+          const v = e.get(t);
+          if (v) return v[0];
+        }
+        const l = Xe$2(t, false, i);
+        return o && e && e.set(t, l), l[0];
+      }
+      const h = (g[0] === a || g[0] === JY) && Xt$1.test(t[0]) && Jt$1.test(t[1]);
+      let r;
+      return o && e && !n && (r = e.get(t)), r || (r = Xe$2(t, h, i), o && e && e.set(t, r)), LY(r, h ? g.slice(1) : g);
+    }
+    return xd(Ce$1(Ce$1({}, i), u));
+  }
+  return Ce$1(a, { string(u) {
+    return u === "" || !u ? "" : Xe$2([u], false, i)[0];
+  } });
+};
+const JY = xd({ cache: true, newline: null, trimLeadingNewline: true, trimTrailingNewline: true });
+const CY = ["\0", "", "", "", "", "", "", "\x07", "\b", "	", `
+`, "\v", "\f", "\r", "", "", "", "", "", "", "", "", "", "", "", "", "", "\x1B", "", "", "", "", " ", "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, " ", "!", "C/", "PS", "$?", "Y=", "|", "SS", '"', "(c)", "a", "<<", "!", void 0, "(r)", "-", "deg", "+-", "2", "3", "'", "u", "P", "*", ",", "1", "o", ">>", "1/4", "1/2", "3/4", "?", "A", "A", "A", "A", "Ae", "Aa", "AE", "C", "E", "E", "E", "E", "I", "I", "I", "I", "D", "N", "O", "O", "O", "O", "Oe", "x", "Oe", "U", "U", "U", "Ue", "U", "Th", "ss", "a", "a", "a", "a", "ae", "aa", "ae", "c", "e", "e", "e", "e", "i", "i", "i", "i", "d", "n", "o", "o", "o", "o", "oe", "/", "oe", "u", "u", "u", "ue", "y", "th", "y"];
+const XY = Object.freeze(CY);
+const HY = ["A", "a", "A", "a", "A", "a", "C", "c", "C", "c", "C", "c", "C", "c", "D", "d", "D", "d", "E", "e", "E", "e", "E", "e", "E", "e", "E", "e", "G", "g", "G", "g", "G", "g", "G", "g", "H", "h", "H", "h", "I", "i", "I", "i", "I", "i", "I", "i", "I", "i", "IJ", "ij", "J", "j", "K", "k", "k", "L", "l", "L", "l", "L", "l", "L", "l", "L", "l", "N", "n", "N", "n", "N", "n", "'n", "NG", "ng", "O", "o", "O", "o", "O", "o", "OE", "oe", "R", "r", "R", "r", "R", "r", "S", "s", "S", "s", "S", "s", "S", "s", "T", "t", "T", "t", "T", "t", "U", "u", "U", "u", "U", "u", "U", "u", "U", "u", "U", "u", "W", "w", "Y", "y", "Y", "Z", "z", "Z", "z", "Z", "z", "s", "b", "B", "B", "b", "6", "6", "O", "C", "c", "D", "D", "D", "d", "d", "3", "@", "E", "F", "f", "G", "G", "hv", "I", "I", "K", "k", "l", "l", "W", "N", "n", "O", "O", "o", "OI", "oi", "P", "p", "YR", "2", "2", "SH", "sh", "t", "T", "t", "T", "U", "u", "Y", "V", "Y", "y", "Z", "z", "ZH", "ZH", "zh", "zh", "2", "5", "5", "ts", "w", "|", "||", "|=", "!", "DZ", "Dz", "dz", "LJ", "Lj", "lj", "NJ", "Nj", "nj", "A", "a", "I", "i", "O", "o", "U", "u", "U", "u", "U", "u", "U", "u", "U", "u", "@", "A", "a", "A", "a", "AE", "ae", "G", "g", "G", "g", "K", "k", "O", "o", "O", "o", "ZH", "zh", "j", "DZ", "D", "dz", "G", "g", "HV", "W", "N", "n", "A", "a", "AE", "ae", "O", "o"];
+const DY = Object.freeze(HY);
+const TY = ["A", "a", "A", "a", "E", "e", "E", "e", "I", "i", "I", "i", "O", "o", "O", "o", "R", "r", "R", "r", "U", "u", "U", "u", "S", "s", "T", "t", "Y", "y", "H", "h", "N", "d", "OU", "ou", "Z", "z", "A", "a", "E", "e", "O", "o", "O", "o", "O", "o", "O", "o", "Y", "y", "l", "n", "t", "j", "db", "qp", "A", "C", "c", "L", "T", "s", "z", "?", "?", "B", "U", "V", "E", "e", "J", "j", "Q", "q", "R", "r", "Y", "y", "a", "a", "a", "b", "o", "c", "d", "d", "e", "@", "@", "e", "e", "e", "e", "j", "g", "g", "g", "g", "u", "Y", "h", "h", "i", "i", "I", "l", "l", "l", "lZ", "W", "W", "m", "n", "n", "n", "o", "OE", "O", "F", "R", "R", "R", "R", "r", "r", "R", "R", "R", "s", "S", "j", "S", "S", "t", "t", "U", "U", "v", "^", "W", "Y", "Y", "z", "z", "Z", "Z", "?", "?", "?", "C", "@", "B", "E", "G", "H", "j", "k", "L", "q", "?", "?", "dz", "dZ", "dz", "ts", "tS", "tC", "fN", "ls", "lz", "WW", "]]", "h", "h", "k", "h", "j", "r", "r", "r", "r", "w", "y", "'", '"', "`", "'", "`", "`", "'", "?", "?", "<", ">", "^", "V", "^", "V", "'", "-", "/", "\\", ",", "_", "\\", "/", ":", ".", "`", "'", "^", "V", "+", "-", "V", ".", "@", ",", "~", '"', "R", "X", "G", "l", "s", "x", "?", void 0, void 0, void 0, void 0, void 0, void 0, void 0, "V", "=", '"', void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0];
+const BY = Object.freeze(TY);
+const MY = Object.freeze(QY);
+const NY = Object.freeze(GY);
+const WY = Object.freeze(xY);
+const FY = Object.freeze(PY);
+const RY = Object.freeze(KY);
+const _Y = Object.freeze(AY);
+const zY = Object.freeze(OY);
+const $Y = Object.freeze(EY);
+const IY = Object.freeze(qY);
+const VY = Object.freeze(UY);
+const ok = Object.freeze(ik);
+const nk = Object.freeze(ek);
+const uk = Object.freeze(ak);
+const dk = Object.freeze(gk);
+const sk = Object.freeze(tk);
+const rk = Object.freeze(hk);
+const vk = Object.freeze(lk);
+const ck = Object.freeze(yk);
+const pk = Object.freeze(bk);
+const jk = Object.freeze(wk);
+const fk = Object.freeze(mk);
+const Yk = ["A", "a", "B", "b", "B", "b", "B", "b", "C", "c", "D", "d", "D", "d", "D", "d", "D", "d", "D", "d", "E", "e", "E", "e", "E", "e", "E", "e", "E", "e", "F", "f", "G", "g", "H", "h", "H", "h", "H", "h", "H", "h", "H", "h", "I", "i", "I", "i", "K", "k", "K", "k", "K", "k", "L", "l", "L", "l", "L", "l", "L", "l", "M", "m", "M", "m", "M", "m", "N", "n", "N", "n", "N", "n", "N", "n", "O", "o", "O", "o", "O", "o", "O", "o", "P", "p", "P", "p", "R", "r", "R", "r", "R", "r", "R", "r", "S", "s", "S", "s", "S", "s", "S", "s", "S", "s", "T", "t", "T", "t", "T", "t", "T", "t", "U", "u", "U", "u", "U", "u", "U", "u", "U", "u", "V", "v", "V", "v", "W", "w", "W", "w", "W", "w", "W", "w", "W", "w", "X", "x", "X", "x", "Y", "y", "Z", "z", "Z", "z", "Z", "z", "h", "t", "w", "y", "a", "S", void 0, void 0, void 0, void 0, "A", "a", "A", "a", "A", "a", "A", "a", "A", "a", "A", "a", "A", "a", "A", "a", "A", "a", "A", "a", "A", "a", "A", "a", "E", "e", "E", "e", "E", "e", "E", "e", "E", "e", "E", "e", "E", "e", "E", "e", "I", "i", "I", "i", "O", "o", "O", "o", "O", "o", "O", "o", "O", "o", "O", "o", "O", "o", "O", "o", "O", "o", "O", "o", "O", "o", "O", "o", "U", "u", "U", "u", "U", "u", "U", "u", "U", "u", "U", "u", "U", "u", "Y", "y", "Y", "y", "Y", "y", "Y", "y", void 0, void 0, void 0, void 0, void 0, void 0];
+const kk = Object.freeze(Yk);
+const Lk = ["a", "a", "a", "a", "a", "a", "a", "a", "A", "A", "A", "A", "A", "A", "A", "A", "e", "e", "e", "e", "e", "e", void 0, void 0, "E", "E", "E", "E", "E", "E", void 0, void 0, "e", "e", "e", "e", "e", "e", "e", "e", "E", "E", "E", "E", "E", "E", "E", "E", "i", "i", "i", "i", "i", "i", "i", "i", "I", "I", "I", "I", "I", "I", "I", "I", "o", "o", "o", "o", "o", "o", void 0, void 0, "O", "O", "O", "O", "O", "O", void 0, void 0, "u", "u", "u", "u", "u", "u", "u", "u", void 0, "U", void 0, "U", void 0, "U", void 0, "U", "o", "o", "o", "o", "o", "o", "o", "o", "O", "O", "O", "O", "O", "O", "O", "O", "a", "a", "e", "e", "e", "e", "i", "i", "o", "o", "u", "u", "o", "o", void 0, void 0, "a", "a", "a", "a", "a", "a", "a", "a", "A", "A", "A", "A", "A", "A", "A", "A", "e", "e", "e", "e", "e", "e", "e", "e", "E", "E", "E", "E", "E", "E", "E", "E", "o", "o", "o", "o", "o", "o", "o", "o", "O", "O", "O", "O", "O", "O", "O", "O", "a", "a", "a", "a", "a", void 0, "a", "a", "A", "A", "A", "A", "A", "'", "i", "'", "~", '"~', "e", "e", "e", void 0, "e", "e", "E", "E", "E", "E", "E", "'`", "''", "'~", "i", "i", "i", "i", void 0, void 0, "i", "i", "I", "I", "I", "I", void 0, "`'", "`'", "`~", "u", "u", "u", "u", "R", "R", "u", "u", "U", "U", "U", "U", "R", '"`', `"'`, "`", void 0, void 0, "o", "o", "o", void 0, "o", "o", "O", "O", "O", "O", "O", "'", "`", void 0];
+const Zk = Object.freeze(Lk);
+const Sk = [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", void 0, void 0, void 0, void 0, "-", "-", "-", "-", "--", "--", "||", "_", "'", "'", ",", "'", '"', '"', ",,", '"', "+", "++", "*", "*>", ".", "..", "...", ".", `
+`, `
+
+`, void 0, void 0, void 0, void 0, void 0, " ", "%0", "%00", "'", "''", "'''", "`", "``", "```", "^", "<", ">", "*", "!!", "!?", "-", "_", "-", "^", "***", "--", "/", "-[", "]-", void 0, "?!", "!?", "7", "PP", "(]", "[)", void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, "0", void 0, void 0, void 0, "4", "5", "6", "7", "8", "9", "+", "-", "=", "(", ")", "n", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "=", "(", ")", void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, "ECU", "CL", "Cr", "FF", "L", "mil", "N", "Pts", "Rs", "W", "NS", "D", "EU", "K", "T", "Dr", void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0];
+const Jk = Object.freeze(Sk);
+const Xk = Object.freeze(Ck);
+const Dk = Object.freeze(Hk);
+const Tk = ["-", "-", "|", "|", "-", "-", "|", "|", "-", "-", "|", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "-", "-", "|", "|", "-", "|", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "/", "\\", "X", "-", "|", "-", "|", "-", "|", "-", "|", "-", "|", "-", "|", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "-", "|", void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "^", "^", "^", "^", ">", ">", ">", ">", ">", ">", "V", "V", "V", "V", "<", "<", "<", "<", "<", "<", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "#", "#", "#", "#", "#", "^", "^", "^", "O", "#", "#", "#", "#", "#", "#", "#", "#", void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0];
+const Bk = Object.freeze(Tk);
+const Mk = Object.freeze(Qk);
+const Nk = Object.freeze(Gk);
+const Wk = Object.freeze(xk);
+const Fk = Object.freeze(Pk);
+const Rk = Object.freeze(Kk);
+const _k = Object.freeze(Ak);
+const zk = Object.freeze(Ok);
+const $k = Object.freeze(Ek);
+const Ik = Object.freeze(qk);
+const Vk = Object.freeze(Uk);
+const oL = Object.freeze(iL);
+const nL = Object.freeze(eL);
+const uL = Object.freeze(aL);
+const dL = Object.freeze(gL);
+const sL = Object.freeze(tL);
+const rL = Object.freeze(hL);
+const vL = Object.freeze(lL);
+const cL = Object.freeze(yL);
+const pL = Object.freeze(bL);
+const jL = Object.freeze(wL);
+const fL = Object.freeze(mL);
+const kL = Object.freeze(YL);
+const ZL = Object.freeze(LL);
+const JL = Object.freeze(SL);
+const XL = Object.freeze(CL);
+const DL = Object.freeze(HL);
+const BL = Object.freeze(TL);
+const ML = Object.freeze(QL);
+const NL = Object.freeze(GL);
+const WL = Object.freeze(xL);
+const FL = Object.freeze(PL);
+const RL = Object.freeze(KL);
+const _L = Object.freeze(AL);
+const zL = Object.freeze(OL);
+const $L = Object.freeze(EL);
+const IL = Object.freeze(qL);
+const VL = Object.freeze(UL);
+const oZ = Object.freeze(iZ);
+const nZ = Object.freeze(eZ);
+const uZ = Object.freeze(aZ);
+const dZ = Object.freeze(gZ);
+const sZ = Object.freeze(tZ);
+const rZ = Object.freeze(hZ);
+const vZ = Object.freeze(lZ);
+const cZ = Object.freeze(yZ);
+const pZ = Object.freeze(bZ);
+const jZ = Object.freeze(wZ);
+const fZ = Object.freeze(mZ);
+const kZ = Object.freeze(YZ);
+const ZZ = Object.freeze(LZ);
+const JZ = Object.freeze(SZ);
+const XZ = Object.freeze(CZ);
+const DZ = Object.freeze(HZ);
+const BZ = Object.freeze(TZ);
+const MZ = Object.freeze(QZ);
+const NZ = Object.freeze(GZ);
+const WZ = Object.freeze(xZ);
+const FZ = Object.freeze(PZ);
+const RZ = Object.freeze(KZ);
+const _Z = Object.freeze(AZ);
+const zZ = Object.freeze(OZ);
+const $Z = Object.freeze(EZ);
+const IZ = Object.freeze(qZ);
+const VZ = Object.freeze(UZ);
+const o1 = Object.freeze(i1);
+const n1 = Object.freeze(e1);
+const u1 = Object.freeze(a1);
+const d1 = Object.freeze(g1);
+const s1 = Object.freeze(t1);
+const r1 = Object.freeze(h1);
+const v1 = Object.freeze(l1);
+const c1 = Object.freeze(y1);
+const p1 = Object.freeze(b1);
+const j1 = Object.freeze(w1);
+const f1 = Object.freeze(m1);
+const k1 = Object.freeze(Y1);
+const Z1 = Object.freeze(L1);
+const J1 = Object.freeze(S1);
+const X1 = Object.freeze(C1);
+const D1 = Object.freeze(H1);
+const B1 = Object.freeze(T1);
+const M1 = Object.freeze(Q1);
+const N1 = Object.freeze(G1);
+const W1 = Object.freeze(x1);
+const F1 = Object.freeze(P1);
+const R1 = Object.freeze(K1);
+const _1 = Object.freeze(A1);
+const z1 = Object.freeze(O1);
+const $1 = Object.freeze(E1);
+const I1 = Object.freeze(q1);
+const V1 = Object.freeze(U1);
+const oS = Object.freeze(iS);
+const nS = Object.freeze(eS);
+const uS = Object.freeze(aS);
+const dS = Object.freeze(gS);
+const sS = Object.freeze(tS);
+const rS = Object.freeze(hS);
+const vS = Object.freeze(lS);
+const cS = Object.freeze(yS);
+const pS = Object.freeze(bS);
+const jS = Object.freeze(wS);
+const fS = Object.freeze(mS);
+const kS = Object.freeze(YS);
+const ZS = Object.freeze(LS);
+const JS = Object.freeze(SS);
+const XS = Object.freeze(CS);
+const DS = Object.freeze(HS);
+const BS = Object.freeze(TS);
+const MS = Object.freeze(QS);
+const NS = Object.freeze(GS);
+const WS = Object.freeze(xS);
+const FS = Object.freeze(PS);
+const RS = Object.freeze(KS);
+const _S = Object.freeze(AS);
+const zS = Object.freeze(OS);
+const $S = Object.freeze(ES);
+const IS = Object.freeze(qS);
+const VS = Object.freeze(US);
+const oJ = Object.freeze(iJ);
+const nJ = Object.freeze(eJ);
+const uJ = Object.freeze(aJ);
+const dJ = Object.freeze(gJ);
+const sJ = Object.freeze(tJ);
+const rJ = Object.freeze(hJ);
+const vJ = Object.freeze(lJ);
+const cJ = Object.freeze(yJ);
+const pJ = Object.freeze(bJ);
+const jJ = Object.freeze(wJ);
+const fJ = Object.freeze(mJ);
+const kJ = Object.freeze(YJ);
+const ZJ = Object.freeze(LJ);
+const JJ = Object.freeze(SJ);
+const XJ = Object.freeze(CJ);
+const DJ = Object.freeze(HJ);
+const BJ = Object.freeze(TJ);
+const MJ = Object.freeze(QJ);
+const NJ = Object.freeze(GJ);
+const WJ = Object.freeze(xJ);
+const FJ = Object.freeze(PJ);
+const RJ = Object.freeze(KJ);
+const _J = Object.freeze(AJ);
+const zJ = Object.freeze(OJ);
+const $J = Object.freeze(EJ);
+const IJ = Object.freeze(qJ);
+const VJ = Object.freeze(UJ);
+const iC = [void 0, "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", void 0, void 0, ".", "[", "]", ",", "*", "wo", "a", "i", "u", "e", "o", "ya", "yu", "yo", "tu", "+", "a", "i", "u", "e", "o", "ka", "ki", "ku", "ke", "ko", "sa", "si", "su", "se", "so", "ta", "ti", "tu", "te", "to", "na", "ni", "nu", "ne", "no", "ha", "hi", "hu", "he", "ho", "ma", "mi", "mu", "me", "mo", "ya", "yu", "yo", "ra", "ri", "ru", "re", "ro", "wa", "n", ":", ";", void 0, "g", "gg", "gs", "n", "nj", "nh", "d", "dd", "r", "lg", "lm", "lb", "ls", "lt", "lp", "rh", "m", "b", "bb", "bs", "s", "ss", void 0, "j", "jj", "c", "k", "t", "p", "h", void 0, void 0, void 0, "a", "ae", "ya", "yae", "eo", "e", void 0, void 0, "yeo", "ye", "o", "wa", "wae", "oe", void 0, void 0, "yo", "u", "weo", "we", "wi", "yu", void 0, void 0, "eu", "yi", "i", void 0, void 0, void 0, "/C", "PS", "!", "-", "|", "Y=", "W=", void 0, "|", "-", "|", "-", "|", "#", "O", void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, void 0, "{", "|", "}", void 0, void 0, void 0, void 0];
+const oC = Object.freeze(iC);
+const He$2 = Object.freeze({ 0: XY, 1: DY, 2: BY, 3: MY, 4: NY, 5: WY, 6: FY, 7: RY, 9: _Y, 10: zY, 11: $Y, 12: IY, 13: VY, 14: ok, 15: nk, 16: uk, 17: dk, 18: sk, 19: rk, 20: vk, 21: ck, 22: pk, 23: jk, 24: fk, 30: kk, 31: Zk, 32: Jk, 33: Xk, 36: Dk, 37: Bk, 38: Mk, 39: Nk, 40: Wk, 48: Fk, 49: Rk, 50: _k, 51: zk, 78: $k, 79: Ik, 80: Vk, 81: oL, 82: nL, 83: uL, 84: dL, 85: sL, 86: rL, 87: vL, 88: cL, 89: pL, 90: jL, 91: fL, 92: kL, 93: ZL, 94: JL, 95: XL, 96: DL, 97: BL, 98: ML, 99: NL, 100: WL, 101: FL, 102: RL, 103: _L, 104: zL, 105: $L, 106: IL, 107: VL, 108: oZ, 109: nZ, 110: uZ, 111: dZ, 112: sZ, 113: rZ, 114: vZ, 115: cZ, 116: pZ, 117: jZ, 118: fZ, 119: kZ, 120: ZZ, 121: JZ, 122: XZ, 123: DZ, 124: BZ, 125: MZ, 126: NZ, 127: WZ, 128: FZ, 129: RZ, 130: _Z, 131: zZ, 132: $Z, 133: IZ, 134: VZ, 135: o1, 136: n1, 137: u1, 138: d1, 139: s1, 140: r1, 141: v1, 142: c1, 143: p1, 144: j1, 145: f1, 146: k1, 147: Z1, 148: J1, 149: X1, 150: D1, 151: B1, 152: M1, 153: N1, 154: W1, 155: F1, 156: R1, 157: _1, 158: z1, 159: $1, 160: I1, 161: V1, 162: oS, 163: nS, 164: uS, 167: dS, 172: sS, 173: rS, 174: vS, 175: cS, 176: pS, 177: jS, 178: fS, 179: kS, 180: ZS, 181: JS, 182: XS, 183: DS, 184: BS, 185: MS, 186: NS, 187: WS, 188: FS, 189: RS, 190: _S, 191: zS, 192: $S, 193: IS, 194: VS, 195: oJ, 196: nJ, 197: uJ, 198: dJ, 199: sJ, 200: rJ, 201: vJ, 202: cJ, 203: pJ, 204: jJ, 205: fJ, 206: kJ, 207: ZJ, 208: JJ, 209: XJ, 210: DJ, 211: BJ, 212: MJ, 213: NJ, 214: WJ, 215: FJ, 249: RJ, 250: _J, 251: zJ, 252: $J, 253: IJ, 254: VJ, 255: oC });
+const Po = {};
+for (const i in He$2) if (Object.prototype.hasOwnProperty.call(He$2, i)) {
+  const o = He$2[i];
+  if (o) {
+    const e = Number(i) * 256, n = o.length;
+    for (let a = 0; a < n; a++) {
+      const u = o[a], g = e + a, t = String(g);
+      Object.prototype.hasOwnProperty.call(Po, t) || (typeof u == "string" ? Po[t] = u : Po[t] = void 0);
+    }
+  }
+}
+Object.freeze(Po);
+const Wd = [["เฅียะ", "khia"], ["เฅืยะ", "khuea"], ["เฅือย", "khueai"], ["เฆียว", "khiao"], ["เฆียะ", "khia"], ["เฆืยะ", "khuea"], ["เฆือย", "khueai"], ["เงียว", "ngiao"], ["เงียะ", "ngia"], ["เงืยะ", "nguea"], ["เงือย", "ngueai"], ["เจียว", "chiao"], ["เจียะ", "chia"], ["เจืยะ", "chuea"], ["เจือย", "chueai"], ["เฉียว", "chiao"], ["เฉียะ", "chia"], ["เฉืยะ", "chuea"], ["เฉือย", "chueai"], ["เชียว", "chiao"], ["เชียะ", "chia"], ["เชืยะ", "chuea"], ["เชือย", "chueai"], ["เซียว", "siao"], ["เซียะ", "sia"], ["เซืยะ", "suea"], ["เซือย", "sueai"], ["เดียว", "diao"], ["เดียะ", "dia"], ["เดืยะ", "duea"], ["เดือย", "dueai"], ["เตียว", "tiao"], ["เตียะ", "tia"], ["เตืยะ", "tuea"], ["เตือย", "tueai"], ["เถียว", "tiao"], ["เถียะ", "thia"], ["เถืยะ", "thuea"], ["เถือย", "thueai"], ["น้อย", "noi"], ["หน้า", "na"], ["เหล่อ", "le"], ["หยก", "yok"], ["หล่อ", "lo"], ["หม่อง", "mong"], ["หน่อง", "nong"], ["หนอง", "nong"], ["ทหาร", "thahan"], ["เทียว", "thiao"], ["เทียะ", "thia"], ["เทืยะ", "thuea"], ["เทือย", "thueai"], ["เธียว", "thiao"], ["เธียะ", "thia"], ["เธืยะ", "thuea"], ["เธือย", "thueai"], ["เนียว", "niao"], ["เนียะ", "nia"], ["เนืยะ", "nuea"], ["เนือย", "nueai"], ["เบียว", "biao"], ["เบียะ", "bia"], ["เบืยะ", "buea"], ["เบือย", "bueai"], ["เปียว", "piao"], ["เปียะ", "pia"], ["เปืยะ", "puea"], ["เปือย", "pueai"], ["เผียว", "phiao"], ["เผียะ", "phia"], ["เผืยะ", "phuea"], ["เผือย", "phueai"], ["เฝียว", "fiao"], ["เฝียะ", "fia"], ["เฝืยะ", "fuea"], ["เฝือย", "fueai"], ["เพียว", "phiao"], ["เพียะ", "phia"], ["เพืยะ", "phuea"], ["เพือย", "phueai"], ["เฟียว", "fiao"], ["เฟียะ", "fia"], ["เฟืยะ", "fuea"], ["เฟือย", "fueai"], ["เมียว", "miao"], ["เมียะ", "mia"], ["เมืยะ", "muea"], ["เมือย", "mueai"], ["หมื่น", "meun"], ["่", ""], ["เยียว", "yiao"], ["เยึยะ", "yia"], ["เยึีย", "yia"], ["เยืยะ", "yuea"], ["เยือย", "yueai"], ["เรือ", "rua"], ["เรียว", "riao"], ["เรียะ", "ria"], ["เรืยะ", "ruea"], ["เรือย", "rueai"], ["เลียว", "liao"], ["เลียะ", "lia"], ["เลืยะ", "luea"], ["เลือย", "lueai"], ["เวียว", "wiao"], ["เวียะ", "wia"], ["เวืยะ", "wuea"], ["เวือย", "wueai"], ["เศียว", "siao"], ["เศียะ", "sia"], ["เศืยะ", "suea"], ["เศือย", "sueai"], ["เษียว", "siao"], ["เษียะ", "sia"], ["เษืยะ", "suea"], ["เษือย", "sueai"], ["เสียว", "siao"], ["เสียะ", "sia"], ["เสืยะ", "suea"], ["เสือย", "sueai"], ["เหียว", "hiao"], ["เหียะ", "hia"], ["เหืยะ", "huea"], ["เหือย", "hueai"], ["เฮียว", "hiao"], ["เฮียะ", "hia"], ["เฮืยะ", "huea"], ["เฮือย", "hueai"], ["เต็ม", "tem"], ["กัวะ", "kua"], ["ขัวะ", "khua"], ["ฃัวะ", "khua"], ["คัวะ", "khua"], ["ฅัวะ", "khua"], ["ฆัวะ", "khua"], ["งัวะ", "ngua"], ["จัวะ", "chua"], ["ฉัวะ", "chua"], ["ชัวะ", "chua"], ["ซัวะ", "sua"], ["ดัวะ", "dua"], ["ตัวะ", "tua"], ["ถัวะ", "thua"], ["ทัวะ", "thua"], ["ธัวะ", "thua"], ["นัวะ", "nua"], ["บัวะ", "bua"], ["ปัวะ", "pua"], ["ผัวะ", "phua"], ["ฝัวะ", "fua"], ["พัวะ", "phua"], ["ฟัวะ", "fua"], ["มัวะ", "mua"], ["ยัวะ", "yua"], ["รัวะ", "rua"], ["ลัวะ", "lua"], ["วัวะ", "wua"], ["ศัวะ", "sua"], ["ษัวะ", "sua"], ["สัวะ", "sua"], ["หัวะ", "hua"], ["ฮัวะ", "hua"], ["เกอะ", "koe"], ["เกีย", "kia"], ["เกืย", "kuea"], ["เขอะ", "khoe"], ["เขีย", "khia"], ["เขืย", "khuea"], ["เฃอะ", "khoe"], ["เฃีย", "khia"], ["เฃืย", "khuea"], ["เคอะ", "khoe"], ["เคีย", "khia"], ["เคืย", "khuea"], ["เฅอะ", "khoe"], ["เฅีย", "khia"], ["เฅืย", "khuea"], ["เฆอะ", "khoe"], ["เฆีย", "khia"], ["เฆืย", "khuea"], ["เงอะ", "ngoe"], ["เงีย", "ngia"], ["เงืย", "nguea"], ["เจอะ", "choe"], ["เจีย", "chia"], ["เจืย", "chuea"], ["เฉอะ", "choe"], ["เฉีย", "chia"], ["เฉืย", "chuea"], ["เชอะ", "choe"], ["เชีย", "chia"], ["เชืย", "chuea"], ["เซอะ", "soe"], ["เซีย", "sia"], ["เซืย", "suea"], ["เดอะ", "doe"], ["เดีย", "dia"], ["เดืย", "duea"], ["เตอะ", "toe"], ["เตีย", "tia"], ["เตืย", "tuea"], ["เถอะ", "thoe"], ["เถีย", "thia"], ["เถืย", "thuea"], ["เทอะ", "thoe"], ["เทีย", "thia"], ["เทืย", "thuea"], ["เธอะ", "thoe"], ["เธีย", "thia"], ["เธืย", "thuea"], ["เนอะ", "noe"], ["เนีย", "nia"], ["เนืย", "nuea"], ["เบอะ", "boe"], ["เบีย", "bia"], ["เบืย", "buea"], ["เปอะ", "poe"], ["เปีย", "pia"], ["เปืย", "puea"], ["เผอะ", "phoe"], ["เผีย", "phia"], ["เผืย", "phuea"], ["เฝอะ", "foe"], ["เฝีย", "fia"], ["เฝืย", "fuea"], ["เพอะ", "phoe"], ["เพีย", "phia"], ["เพืย", "phuea"], ["เฟอะ", "foe"], ["เฟีย", "fia"], ["เฟืย", "fuea"], ["เมอะ", "moe"], ["เมีย", "mia"], ["เมืย", "muea"], ["เยอะ", "yoe"], ["เยืย", "yuea"], ["เรอะ", "roe"], ["เรีย", "ria"], ["เรืย", "ruea"], ["เลอะ", "loe"], ["เลีย", "lia"], ["เลืย", "luea"], ["เวอะ", "woe"], ["เวีย", "wia"], ["เวืย", "wuea"], ["เศอะ", "soe"], ["เศีย", "sia"], ["เศืย", "suea"], ["เษอะ", "soe"], ["เษีย", "sia"], ["เษืย", "suea"], ["เสอะ", "soe"], ["เสีย", "sia"], ["เสืย", "suea"], ["เหอะ", "hoe"], ["เหีย", "hia"], ["เหืย", "huea"], ["เฮอะ", "hoe"], ["เฮีย", "hia"], ["เฮืย", "huea"], ["โหมด", "mode"], ["ไก", "kai"], ["ไข", "khai"], ["ไฃ", "khai"], ["ไค", "khai"], ["ไฅ", "khai"], ["ไฆ", "khai"], ["ไง", "ngai"], ["ไจ", "chai"], ["ไฉ", "chai"], ["ไช", "chai"], ["ไซ", "sai"], ["ได", "dai"], ["ไต", "tai"], ["ไถ", "thai"], ["ไธ", "thai"], ["ไน", "nai"], ["ไบ", "bai"], ["ไป", "pai"], ["ไผ", "phai"], ["ไฝ", "fai"], ["ไพ", "phai"], ["ไฟ", "fai"], ["ไม", "mai"], ["ไย", "yai"], ["ไร", "rai"], ["ไล", "lai"], ["ไว", "wai"], ["ไศ", "sai"], ["ไษ", "sai"], ["ไส", "sai"], ["ไฮ", "hai"], ["กนก", "kanok"], ["กรร", "ka"], ["กวย", "kuai"], ["กอย", "koi"], ["กัย", "kai"], ["กัว", "kua"], ["กาย", "kai"], ["กาว", "kao"], ["กิว", "kio"], ["กือ", "kue"], ["กุย", "kui"], ["ขรร", "kha"], ["ขวย", "khuai"], ["ขอย", "khoi"], ["ขัย", "khai"], ["ขัว", "khua"], ["ขาย", "khai"], ["ขาว", "khao"], ["ขิว", "khio"], ["ขือ", "khue"], ["ขุย", "khui"], ["ฃรร", "kha"], ["ฃวย", "khuai"], ["ฃอย", "khoi"], ["ฃัย", "khai"], ["ฃัว", "khua"], ["ฃาย", "khai"], ["ฃาว", "khao"], ["ฃิว", "khio"], ["ฃือ", "khue"], ["ฃุย", "khui"], ["ครร", "kha"], ["ควย", "khuai"], ["คอย", "khoi"], ["คัย", "khai"], ["คัว", "khua"], ["คาย", "khai"], ["คาว", "khao"], ["ความ", "khwam"], ["คิว", "khio"], ["คือ", "khue"], ["คุย", "khui"], ["ฅรร", "kha"], ["ฅวย", "khuai"], ["ฅอย", "khoi"], ["ฅัย", "khai"], ["ฅัว", "khua"], ["ฅาย", "khai"], ["ฅาว", "khao"], ["ฅิว", "khio"], ["ฅือ", "khue"], ["ฅุย", "khui"], ["ฆรร", "kha"], ["ฆวย", "khuai"], ["ฆอย", "khoi"], ["ฆัย", "khai"], ["ฆัว", "khua"], ["ฆาย", "khai"], ["ฆาว", "khao"], ["ฆิว", "khio"], ["ฆือ", "khue"], ["ฆุย", "khui"], ["ยุ่ง", "yung"], ["งรร", "nga"], ["งวย", "nguai"], ["งวง", "nguang"], ["งอย", "ngoi"], ["งัย", "ngai"], ["งัว", "ngua"], ["งาย", "ngai"], ["งาว", "ngao"], ["งิว", "ngio"], ["งือ", "ngue"], ["งุย", "ngui"], ["จรร", "cha"], ["จวย", "chuai"], ["จอย", "choi"], ["จัย", "chai"], ["จัว", "chua"], ["จาย", "chai"], ["จาว", "chao"], ["จิว", "chio"], ["จือ", "chue"], ["จุย", "chui"], ["ฉรร", "cha"], ["ฉวย", "chuai"], ["ฉอย", "choi"], ["ฉัย", "chai"], ["ฉัว", "chua"], ["ฉาย", "chai"], ["ฉาว", "chao"], ["ฉิว", "chio"], ["ฉือ", "chue"], ["ฉุย", "chui"], ["ชรร", "cha"], ["ชวย", "chuai"], ["ชอย", "choi"], ["ชัย", "chai"], ["ชัว", "chua"], ["ชาติ", "chat"], ["ชาย", "chai"], ["ชาว", "chao"], ["ชิว", "chio"], ["ชือ", "chue"], ["ชุย", "chui"], ["ซรร", "sa"], ["ซวย", "suai"], ["ซอย", "soi"], ["ซัย", "sai"], ["ซัว", "sua"], ["ซาย", "sai"], ["ซาว", "sao"], ["ซิว", "sio"], ["ซือ", "sue"], ["ซุย", "sui"], ["ดรร", "da"], ["ดวย", "duai"], ["ดอย", "doi"], ["ดัย", "dai"], ["ดัว", "dua"], ["ดาย", "dai"], ["ดาว", "dao"], ["ดิว", "diw"], ["ดือ", "due"], ["ดุย", "dui"], ["ตรร", "ta"], ["ตวย", "tuai"], ["ตอย", "toi"], ["ตัย", "tai"], ["ตัว", "tua"], ["ตาย", "tai"], ["ตาว", "tao"], ["ติว", "tio"], ["ตือ", "tue"], ["ตุย", "tui"], ["ถรร", "tha"], ["ถวย", "tuau"], ["ถอย", "thoi"], ["ถัย", "thai"], ["ถัว", "thua"], ["ถาย", "thai"], ["ถาว", "thao"], ["ถิว", "tio"], ["ถุย", "thui"], ["ทรร", "tha"], ["ทวย", "thuai"], ["ทอย", "thoi"], ["ทัย", "thai"], ["ทัว", "thua"], ["ทาย", "thai"], ["ทาว", "thao"], ["ทิว", "thio"], ["ทือ", "thue"], ["ทุย", "thui"], ["ธรร", "tha"], ["ธวย", "thuai"], ["ธอย", "thoi"], ["ธัย", "thai"], ["ธัว", "thua"], ["ธาย", "thai"], ["ธาว", "thao"], ["ธิว", "thio"], ["ธุย", "thui"], ["นรร", "na"], ["นวย", "nuai"], ["นอย", "noi"], ["น้อง", "nong"], ["นัย", "nai"], ["นัว", "nua"], ["นาย", "nai"], ["นาว", "nao"], ["นิว", "nio"], ["นือ", "nue"], ["นุย", "nui"], ["บรร", "ba"], ["บวย", "buai"], ["บอย", "boi"], ["บัย", "bai"], ["บัว", "bua"], ["บาย", "bai"], ["บาว", "bao"], ["บิว", "bio"], ["บือ", "bue"], ["บุย", "bui"], ["ปรร", "pa"], ["ปวย", "puai"], ["ปอย", "poi"], ["ปัย", "pai"], ["ปัว", "pua"], ["ปาย", "pai"], ["ปาว", "pao"], ["ภาร", "phan"], ["ปิว", "pio"], ["ปือ", "pue"], ["ปุย", "pui"], ["ผรร", "pha"], ["ผวย", "phuai"], ["ผอย", "phoi"], ["ผัย", "phai"], ["ผัว", "phua"], ["ผาย", "phai"], ["ผาว", "phao"], ["ผิว", "phio"], ["ผือ", "phue"], ["ผุย", "phui"], ["ฝรร", "fa"], ["ฝวย", "fuai"], ["ฝอย", "foi"], ["ฝัย", "fai"], ["ฝาย", "fai"], ["ฝาว", "fao"], ["ฝิว", "fio"], ["ฝือ", "fue"], ["ฝุย", "fui"], ["พรร", "pha"], ["พวย", "phuai"], ["พอย", "phoi"], ["พัย", "phai"], ["พัว", "phua"], ["พาย", "phai"], ["พาว", "phao"], ["พิว", "phio"], ["พือ", "phue"], ["พุย", "phui"], ["ฟรร", "fa"], ["ฟวย", "fuai"], ["ฟอย", "faoi"], ["ฟัย", "fai"], ["ฟัว", "fua"], ["ฟาย", "fai"], ["ฟาว", "fao"], ["ฟิว", "fuai"], ["ฟือ", "fue"], ["ฟุย", "fui"], ["มรร", "ma"], ["มวย", "muai"], ["มอย", "moi"], ["มัย", "mai"], ["มัว", "mua"], ["มาย", "mai"], ["มาว", "mao"], ["มิว", "mio"], ["มือ", "mue"], ["มุย", "mui"], ["ยรร", "ya"], ["ยวย", "yuai"], ["ยอย", "yoi"], ["ยัย", "yai"], ["ยัว", "yua"], ["ยาย", "yai"], ["ยาว", "yao"], ["ยิว", "yio"], ["ยือ", "yue"], ["ยุย", "yui"], ["รรร", "ra"], ["รอง", "rong"], ["รวย", "ruai"], ["รอย", "roi"], ["รัย", "rai"], ["รัว", "rua"], ["ราย", "rai"], ["ราว", "rao"], ["ริว", "rio"], ["รือ", "rue"], ["รุย", "rui"], ["ลรร", "la"], ["ลวย", "luai"], ["ลอย", "loi"], ["ลัย", "lai"], ["ลัว", "lua"], ["ลาย", "lai"], ["ลาว", "lao"], ["ลิว", "lio"], ["ลือ", "lue"], ["ลุย", "lui"], ["วรร", "wa"], ["ววย", "wuai"], ["วอย", "woi"], ["วัย", "wai"], ["วัว", "wua"], ["วาย", "wai"], ["วาว", "wao"], ["วิว", "wio"], ["วุย", "wui"], ["ศรร", "sa"], ["ศวย", "suai"], ["ศอย", "soi"], ["ศัย", "sai"], ["ศาย", "sai"], ["ศาว", "sao"], ["ศิว", "sio"], ["ศุย", "sui"], ["ษรร", "sa"], ["ษวย", "suai"], ["ษอย", "soi"], ["ษัย", "sai"], ["ษาย", "sai"], ["ษาว", "sao"], ["ษา", "sa"], ["ษิว", "sio"], ["ษุย", "sui"], ["สรร", "sa"], ["สวย", "suai"], ["สอย", "soi"], ["สัย", "sai"], ["สาย", "sai"], ["สาว", "sao"], ["สิว", "sio"], ["สือ", "sue"], ["สุย", "sui"], ["หรร", "ha"], ["หมด", "mod"], ["หวย", "huai"], ["หอย", "hoi"], ["หัย", "hai"], ["หัว", "hua"], ["หาย", "hai"], ["มหา", "maha"], ["หาว", "hao"], ["หิว", "hio"], ["หือ", "hue"], ["หุย", "hui"], ["ฮรร", "ha"], ["ฮวย", "huai"], ["ฮอย", "hoi"], ["ฮัย", "hai"], ["ฮาย", "hai"], ["ฮาว", "haw"], ["ฮิว", "hio"], ["ฮือ", "hue"], ["ฮุย", "hui"], ["เกย", "koei"], ["เกอ", "koe"], ["เกะ", "ku"], ["เกา", "kao"], ["เกิ", "koe"], ["เก็", "ke"], ["เขย", "khoei"], ["เขอ", "khoe"], ["เขะ", "khe"], ["เขา", "khao"], ["เขิ", "khoe"], ["เข็", "khu"], ["เฃย", "khoei"], ["เฃอ", "khoe"], ["เฃะ", "khe"], ["เฃา", "khao"], ["เฃิ", "khoe"], ["เฃ็", "khu"], ["เคย", "khoei"], ["เคอ", "khoe"], ["เคะ", "khe"], ["เคา", "khao"], ["เคิ", "khoe"], ["เค็", "khu"], ["เฅย", "khoei"], ["เฅอ", "khoe"], ["เฅะ", "khe"], ["เฅา", "khao"], ["เฅิ", "khoe"], ["เฅ็", "khu"], ["เฆย", "khoei"], ["เฆอ", "khoe"], ["เฆะ", "khe"], ["เฆา", "khao"], ["เฆิ", "khoe"], ["เฆ็", "khu"], ["เงย", "ngoei"], ["เงอ", "ngoe"], ["เงะ", "nge"], ["เงา", "ngao"], ["เงิ", "ngoe"], ["เง็", "ngu"], ["เจย", "choei"], ["เจอ", "choe"], ["เจะ", "che"], ["เจา", "chao"], ["เจิ", "choe"], ["เจ็", "chu"], ["เฉย", "choei"], ["เฉอ", "choe"], ["เฉะ", "che"], ["เฉา", "chao"], ["เฉิ", "choe"], ["เฉ็", "chu"], ["เชย", "choei"], ["เชอ", "choe"], ["เชะ", "che"], ["เชา", "chao"], ["เชิ", "choe"], ["เช็", "chu"], ["เซย", "soei"], ["เซอ", "soe"], ["เซะ", "se"], ["เซา", "sao"], ["เซิ", "soe"], ["เซ็", "su"], ["เดย", "doei"], ["เดอ", "doe"], ["เดะ", "de"], ["เดา", "dao"], ["เดิ", "doe"], ["เด็", "du"], ["เตย", "toei"], ["เตอ", "toe"], ["เตะ", "te"], ["เตา", "tao"], ["เติ", "toe"], ["เต็", "tu"], ["เถย", "thoei"], ["เถอ", "thoe"], ["เถา", "thao"], ["เถิ", "thoe"], ["เทย", "thoei"], ["เทอ", "thoe"], ["เทะ", "the"], ["เทา", "thao"], ["เทิ", "thoe"], ["เท็", "thu"], ["เธย", "thoei"], ["เธอ", "thoe"], ["เธา", "thao"], ["เธิ", "thoe"], ["เนย", "noei"], ["เนอ", "noe"], ["เนะ", "ne"], ["เนา", "nao"], ["เนิ", "noe"], ["เน็", "nu"], ["เบย", "boei"], ["เบอ", "boe"], ["เบะ", "be"], ["เบา", "bao"], ["เบิ", "boe"], ["เบ็", "bu"], ["เปย", "poei"], ["เปอ", "poe"], ["เปะ", "pe"], ["เปา", "pao"], ["เปิ", "poe"], ["เป็", "pu"], ["เผย", "phoei"], ["เผอ", "phoe"], ["เผะ", "phe"], ["เผา", "phao"], ["เผิ", "phoe"], ["เผ็", "phu"], ["เฝย", "foei"], ["เฝอ", "foe"], ["เฝา", "fao"], ["เฝิ", "foe"], ["เฝ็", "fu"], ["เพย", "phoei"], ["เพอ", "phoe"], ["เพะ", "phe"], ["เพา", "phao"], ["เพิ", "phoe"], ["เพ็", "phu"], ["เฟย", "faoei"], ["เฟอ", "foe"], ["เฟา", "fao"], ["เฟิ", "foe"], ["เฟ็", "fu"], ["เมย", "moei"], ["เมอ", "moe"], ["เมะ", "me"], ["เมา", "mao"], ["เมิ", "moe"], ["เม็", "mu"], ["เยย", "yoei"], ["เยอ", "yoe"], ["เยา", "yao"], ["เยิ", "yoe"], ["เย็", "yu"], ["เรย", "roei"], ["เรอ", "roe"], ["เรา", "rao"], ["เริ", "roe"], ["เร็", "ru"], ["เลย", "loei"], ["เลอ", "loe"], ["เละ", "le"], ["เลา", "lao"], ["เลิ", "loe"], ["เล็", "lu"], ["เวย", "woei"], ["เวอ", "woe"], ["เวะ", "we"], ["เวา", "wao"], ["เวิ", "woe"], ["เว็", "wu"], ["เศย", "soei"], ["เศร้า", "sao"], ["เศอ", "soe"], ["เศา", "sao"], ["เศิ", "soe"], ["เศ็", "su"], ["เษย", "soei"], ["เษอ", "soe"], ["เษา", "sao"], ["เษิ", "soe"], ["เษ็", "su"], ["เสย", "soei"], ["เสอ", "soe"], ["เสะ", "se"], ["เสา", "sao"], ["เสิ", "soe"], ["เส็", "su"], ["เหย", "hoei"], ["เหอ", "hoe"], ["เหะ", "he"], ["เหา", "hao"], ["เหิ", "hoe"], ["เห็", "he"], ["เฮย", "hoei"], ["เฮอ", "hoe"], ["เฮะ", "he"], ["เฮา", "hao"], ["เฮิ", "hoe"], ["เฮ็", "hu"], ["แต", "tae"], ["แกว", "kaeo"], ["แกะ", "kae"], ["แขะ", "khae"], ["แฃะ", "khae"], ["แคว", "khaeo"], ["แคะ", "khae"], ["แฅะ", "khae"], ["แฆะ", "khae"], ["แงะ", "ngae"], ["แจว", "chaeo"], ["แจะ", "chae"], ["แฉว", "chaeo"], ["แฉะ", "chae"], ["แชว", "chaeo"], ["แชะ", "chae"], ["แซว", "saeo"], ["แซะ", "sae"], ["แดว", "daeo"], ["แดะ", "dae"], ["แตว", "taeo"], ["แตะ", "tae"], ["แถว", "taeo"], ["แทว", "thaeo"], ["แทะ", "thae"], ["แธว", "thaeo"], ["แนว", "naew"], ["แนะ", "nae"], ["แบว", "baeo"], ["แบะ", "bae"], ["แปว", "paeo"], ["แปะ", "pae"], ["แผว", "phaeo"], ["แผะ", "phae"], ["แฝว", "faeo"], ["แฝะ", "fae"], ["แพว", "phaeo"], ["แพะ", "phae"], ["แฟว", "faeo"], ["แฟะ", "fae"], ["แมว", "maeo"], ["แมะ", "mae"], ["แยว", "yaeo"], ["แยะ", "yae"], ["แรว", "raeo"], ["แระ", "rae"], ["แลว", "laeo"], ["และ", "lae"], ["แวว", "waeo"], ["แวะ", "wae"], ["แศว", "saeo"], ["แศะ", "sae"], ["แษว", "saeo"], ["แษะ", "sae"], ["แสว", "saeo"], ["แสะ", "sae"], ["แหว", "haeo"], ["แหะ", "hae"], ["แฮว", "haeo"], ["แฮะ", "hae"], ["โกย", "koi"], ["โกะ", "ko"], ["โขย", "khoi"], ["โขะ", "kho"], ["โฃย", "khoi"], ["โฃะ", "kho"], ["โคย", "khoi"], ["โคะ", "kho"], ["โฅย", "khoi"], ["โฅะ", "kho"], ["โฆย", "khoi"], ["โฆะ", "kho"], ["โงย", "ngoi"], ["โงะ", "ngo"], ["โจร", "cho"], ["โจย", "choi"], ["โจะ", "cho"], ["โฉย", "choi"], ["โฉะ", "cho"], ["โชย", "choi"], ["โชะ", "cho"], ["โซย", "soi"], ["โซะ", "so"], ["โดย", "doi"], ["โดะ", "do"], ["โตย", "toi"], ["โตะ", "to"], ["โถย", "thoi"], ["โทย", "thoi"], ["โทะ", "tho"], ["โธย", "thoi"], ["โนย", "noi"], ["โนะ", "no"], ["โบย", "boi"], ["โบะ", "bo"], ["โปย", "poi"], ["โปะ", "po"], ["โผย", "phoi"], ["โผะ", "pho"], ["โฝย", "foi"], ["โฝะ", "fo"], ["โพย", "phoi"], ["โพะ", "pho"], ["โฟย", "faoi"], ["โฟะ", "fo"], ["โมย", "moi"], ["โมะ", "mo"], ["โยย", "yoi"], ["โยะ", "yo"], ["โรย", "roi"], ["โระ", "ro"], ["โลย", "loi"], ["โละ", "lo"], ["โวย", "woi"], ["โวะ", "wo"], ["โศย", "soi"], ["โศะ", "so"], ["โษย", "soi"], ["โษะ", "so"], ["โสย", "soi"], ["โสะ", "so"], ["โหย", "hoi"], ["โหะ", "ho"], ["โฮย", "hoi"], ["โฮะ", "ho"], ["ไกย", "kai"], ["ไขย", "khai"], ["ไฃย", "khai"], ["ไคย", "khai"], ["ไฅย", "khai"], ["ไฆย", "khai"], ["ไงย", "ngai"], ["ไจย", "chai"], ["ไฉย", "chai"], ["ไชย", "chai"], ["ไซย", "sai"], ["ไดย", "dai"], ["ไตย", "tai"], ["ไถย", "thai"], ["ไทย", "thai"], ["ไธย", "thai"], ["ไนย", "nai"], ["ไบย", "bai"], ["ไปย", "pai"], ["ไผย", "phai"], ["ไฝย", "fai"], ["ไพย", "phai"], ["ไฟย", "fai"], ["ไมย", "mai"], ["ไยย", "yai"], ["ไรย", "rai"], ["ไลย", "lai"], ["ไวย", "wai"], ["ไศย", "sai"], ["ไษย", "sai"], ["ไสย", "sai"], ["ไหย", "hai"], ["ไฮย", "hai"], ["อาน", "an"], ["กอ", "ko"], ["กะ", "ka"], ["กั", "ka"], ["การ", "kan"], ["กา", "ka"], ["กำ", "kam"], ["กิ", "ki"], ["กี", "ki"], ["กึ", "kue"], ["กุ", "ku"], ["กู", "ku"], ["ขว", "khua"], ["ขอ", "kho"], ["ขะ", "kha"], ["ขั", "kha"], ["ขา", "kha"], ["ขำ", "kham"], ["ขิ", "khi"], ["ขี", "khi"], ["ขึ", "khue"], ["ขุ", "khu"], ["ขู", "khu"], ["ฃว", "khua"], ["ฃอ", "kho"], ["ฃะ", "kha"], ["ฃั", "kha"], ["ฃา", "kha"], ["ฃำ", "kham"], ["ฃิ", "khi"], ["ฃี", "khi"], ["ฃึ", "khue"], ["ฃุ", "khu"], ["ฃู", "khu"], ["คว", "khua"], ["คอ", "kho"], ["คะ", "kha"], ["คั", "kha"], ["คา", "kha"], ["คำ", "kham"], ["คิ", "khi"], ["คี", "khi"], ["คึ", "khue"], ["คุ", "khu"], ["คู", "khu"], ["ฅว", "khua"], ["ฅอ", "kho"], ["ฅะ", "kha"], ["ฅั", "kha"], ["ฅา", "kha"], ["ฅำ", "kham"], ["ฅิ", "khi"], ["ฅี", "khi"], ["ฅึ", "khue"], ["ฅุ", "khu"], ["ฅู", "khu"], ["ฆว", "khua"], ["ฆอ", "kho"], ["ฆะ", "kha"], ["ฆั", "kha"], ["ฆา", "kha"], ["ฆำ", "kham"], ["ฆิ", "khi"], ["ฆี", "khi"], ["ฆึ", "khue"], ["ฆุ", "khu"], ["ฆู", "khu"], ["งว", "ngua"], ["งอ", "ngo"], ["งะ", "nga"], ["งั", "nga"], ["งา", "nga"], ["งำ", "ngam"], ["งิ", "ngi"], ["งี", "ngi"], ["งึ", "ngue"], ["งุ", "ngu"], ["งู", "ngu"], ["จว", "chua"], ["จอ", "cho"], ["จะ", "cha"], ["จั", "cha"], ["จา", "cha"], ["จำ", "cham"], ["จิ", "chi"], ["จี", "chi"], ["จึ", "chue"], ["จุ", "chu"], ["จู", "chu"], ["ฉว", "chua"], ["ฉอ", "cho"], ["ฉะ", "cha"], ["ฉั", "cha"], ["ฉา", "cha"], ["ฉำ", "cham"], ["ฉิ", "chi"], ["ฉี", "chi"], ["ฉึ", "chue"], ["ฉุ", "chu"], ["ฉู", "chu"], ["ชว", "chua"], ["ชอ", "cho"], ["ชะ", "cha"], ["ชั", "cha"], ["ชา", "cha"], ["ชำ", "cham"], ["ชิ", "chi"], ["ชี", "chi"], ["ชึ", "chue"], ["ชุ", "chu"], ["ชู", "chu"], ["ซว", "sua"], ["ซอ", "so"], ["ซะ", "sa"], ["ซั", "sa"], ["ซา", "sa"], ["ซำ", "sam"], ["ซิ", "si"], ["ซี", "si"], ["ซึ", "sue"], ["ซุ", "su"], ["ซู", "su"], ["ดว", "dua"], ["ดอ", "do"], ["ดะ", "da"], ["ดั", "da"], ["ดา", "da"], ["ดำ", "dam"], ["ดิ", "di"], ["ดี", "di"], ["ดึ", "due"], ["ดุ", "du"], ["ดู", "du"], ["ตว", "tua"], ["ตอ", "to"], ["ตะ", "ta"], ["ตั", "ta"], ["ตา", "ta"], ["ตำ", "tam"], ["ติ", "ti"], ["ตี", "ti"], ["ตึ", "tue"], ["ตุ", "tu"], ["ตู", "tu"], ["ถว", "thua"], ["ถะ", "tha"], ["ถั", "tha"], ["ถา", "tha"], ["ทว", "thua"], ["ทอ", "tho"], ["ทะ", "tha"], ["ทั", "tha"], ["ท่า", "tha"], ["ทา", "tha"], ["ทำ", "tham"], ["ทิ", "thi"], ["ที", "thi"], ["ทึ", "thue"], ["ทุ", "thu"], ["ทู", "thu"], ["ธว", "thua"], ["ธะ", "tha"], ["ธั", "tha"], ["ธา", "tha"], ["ธี", "thi"], ["ธุ", "thu"], ["นว", "nua"], ["นอ", "no"], ["นะ", "na"], ["นั", "na"], ["นา", "na"], ["นำ", "nam"], ["นิ", "ni"], ["นี", "ni"], ["นึ", "nue"], ["นุ", "nu"], ["นู", "nu"], ["บว", "bua"], ["บอ", "bo"], ["บะ", "ba"], ["บั", "ba"], ["บา", "ba"], ["บำ", "bam"], ["บิ", "bi"], ["บี", "bi"], ["บึ", "bue"], ["บุ", "bu"], ["บู", "bu"], ["ปว", "pua"], ["ปอ", "po"], ["ภา", "pha"], ["ปะ", "pa"], ["ปั", "pa"], ["ปา", "pa"], ["ปำ", "pam"], ["ปิ", "pi"], ["ปี", "pi"], ["ปึ", "pue"], ["ปุ", "pu"], ["ปู", "pu"], ["ผว", "phua"], ["ผอ", "pho"], ["ผะ", "pha"], ["ผั", "pha"], ["ผา", "pha"], ["ผำ", "pham"], ["ผิ", "phi"], ["ผี", "phi"], ["ผึ", "phue"], ["ผุ", "phu"], ["ผู", "phu"], ["ฝว", "fua"], ["ฝอ", "fo"], ["ฝะ", "fa"], ["ฝั", "fa"], ["ฝา", "fa"], ["ฝำ", "fam"], ["ฝิ", "fi"], ["ฝี", "fi"], ["ฝึ", "fue"], ["ฝุ", "fu"], ["ฝู", "fu"], ["พว", "phua"], ["พอ", "pho"], ["พะ", "pha"], ["พั", "pha"], ["พา", "pha"], ["พำ", "pham"], ["พิ", "phi"], ["พี", "phi"], ["พึ", "phue"], ["พุ", "phu"], ["พู", "phu"], ["ฟว", "fua"], ["ฟอ", "fo"], ["ฟะ", "fa"], ["ฟั", "fa"], ["ฟา", "fa"], ["ฟำ", "fam"], ["ฟิ", "fi"], ["ฟี", "fi"], ["ฟึ", "fue"], ["ฟุ", "fu"], ["ฟู", "fu"], ["มว", "mua"], ["มอ", "mo"], ["มะ", "ma"], ["มั", "ma"], ["มา", "ma"], ["มำ", "mam"], ["มิ", "mi"], ["มี", "mi"], ["มึ", "mue"], ["มุ", "mu"], ["มู", "mu"], ["ยว", "yua"], ["ยอ", "yo"], ["ยะ", "ya"], ["ยั", "ya"], ["ยา", "ya"], ["ยำ", "yam"], ["ยิ", "yi"], ["ยี", "yi"], ["ยึ", "yue"], ["ยุ", "yu"], ["ยู", "yu"], ["รว", "rua"], ["รอ", "ro"], ["ระ", "ra"], ["รั", "ra"], ["รา", "ra"], ["รำ", "ram"], ["ริ", "ri"], ["รี", "ri"], ["รึ", "rue"], ["รุ", "ru"], ["รู", "ru"], ["ฤๅ", "rue"], ["ลว", "lua"], ["ลอ", "lo"], ["ละ", "la"], ["ลั", "la"], ["ลา", "la"], ["ลำ", "lam"], ["ลิ", "li"], ["ลี", "li"], ["ลึ", "lue"], ["ลุ", "lu"], ["ลู", "lu"], ["ฦๅ", "lue"], ["วว", "wua"], ["วอ", "wo"], ["วะ", "wa"], ["วั", "wa"], ["วา", "wa"], ["วำ", "wam"], ["วิ", "wi"], ["วี", "wi"], ["วึ", "wue"], ["วุ", "wu"], ["วู", "wu"], ["ศว", "sua"], ["ศอ", "so"], ["ศะ", "sa"], ["ศั", "sa"], ["ศา", "sa"], ["ศำ", "sam"], ["ศิ", "si"], ["ศี", "si"], ["ศึ", "sue"], ["ศุ", "su"], ["ศู", "su"], ["ษว", "sua"], ["ษอ", "so"], ["ษะ", "sa"], ["ษั", "sa"], ["ษา", "sa"], ["ษำ", "sam"], ["ษิ", "si"], ["ษี", "si"], ["ษึ", "sue"], ["ษุ", "su"], ["ษู", "su"], ["สว", "sua"], ["สอ", "so"], ["สะ", "sa"], ["สั", "sa"], ["สา", "sa"], ["สำ", "sam"], ["สิ", "si"], ["สี", "si"], ["สึ", "sue"], ["สุ", "su"], ["สู", "su"], ["หว", "hua"], ["หอ", "ho"], ["หะ", "ha"], ["หั", "ha"], ["หา", "ha"], ["หำ", "ham"], ["หิ", "hi"], ["หี", "hi"], ["หึ", "hue"], ["หุ", "hu"], ["หู", "hu"], ["ฮว", "hua"], ["ฮอ", "ho"], ["ฮะ", "ha"], ["ฮั", "ha"], ["ฮา", "ha"], ["ฮำ", "ham"], ["ฮิ", "hi"], ["ฮี", "hi"], ["ฮึ", "hue"], ["ฮุ", "hu"], ["ฮู", "hu"], ["อา", "a"], ["อำ", "am"], ["อิ", "i"], ["อี", "i"], ["อึ", "ue"], ["อุ", "u"], ["อู", "u"], ["เอ", "e"], ["แอ", "ae"], ["โอ", "o"], ["ใอ", "ai"], ["ไอ", "ai"], ["อย", "oi"], ["ออ", "o"], ["อะ", "a"], ["อั", "a"], ["อำ", "am"], ["อิ", "i"], ["อี", "i"], ["อึ", "ue"], ["อุ", "u"], ["อู", "u"], ["เอ", "e"], ["แอ", "ae"], ["โอ", "o"], ["ใอ", "ai"], ["ไอ", "ai"], ["อย", "oi"], ["อว", "ua"], ["อ๋วง", "uang"], ["วอก", "wok"], ["อ้วน", "on"], ["ออ", "o"], ["อะ", "a"], ["อั", "a"], ["อำ", "am"], ["อิ", "i"], ["อี", "i"], ["อึ", "ue"], ["อุ", "u"], ["อู", "u"], ["เอ", "e"], ["แอ", "ae"], ["โอ", "o"], ["ใอ", "ai"], ["ไอ", "ai"], ["อย", "oi"], ["ออ", "o"], ["อะ", "a"], ["อั", "a"], ["อำ", "am"], ["อิ", "i"], ["อี", "i"], ["อึ", "ue"], ["อุ", "u"], ["อู", "u"], ["เอ", "e"], ["แอ", "ae"], ["โอ", "o"], ["ใอ", "ai"], ["ไอ", "ai"], ["อย", "oi"], ["อว", "ua"], ["ออ", "o"], ["อะ", "a"], ["เกรง", "kreng"], ["เก", "ke"], ["เข", "khe"], ["เฃ", "khe"], ["เค", "khe"], ["เฅ", "khe"], ["เฆ", "khe"], ["เง", "nge"], ["เจ", "che"], ["เฉ", "che"], ["เช", "che"], ["เซ", "se"], ["เด", "de"], ["เต", "te"], ["เท", "the"], ["เน", "ne"], ["เบ", "be"], ["เป", "pe"], ["เผ", "phe"], ["เฝ", "fe"], ["เพ", "phe"], ["เฟ", "fe"], ["เม", "me"], ["เย", "ye"], ["เร", "re"], ["เล", "le"], ["เว", "we"], ["เศ", "se"], ["เส", "se"], ["เห", "he"], ["เฮ", "he"], ["แก", "kae"], ["แข", "khae"], ["แฃ", "khae"], ["แค", "khae"], ["แฅ", "khae"], ["แฆ", "khae"], ["แง", "ngae"], ["แจ", "chae"], ["แฉ", "chae"], ["แช", "chae"], ["แซ", "sae"], ["แด", "dae"], ["แต", "tae"], ["แท", "thae"], ["แน", "nae"], ["แบ", "bae"], ["แปล", "plae"], ["แป", "pae"], ["แผ", "phae"], ["แฝ", "fae"], ["แพ", "phae"], ["แฟ", "fae"], ["แม", "mae"], ["แย", "yae"], ["แร", "rae"], ["แล", "lae"], ["แว", "wae"], ["แศ", "sae"], ["แษ", "sae"], ["แส", "sae"], ["แห", "hae"], ["แฮ", "hae"], ["โก", "ko"], ["โข", "kho"], ["โฃ", "kho"], ["โค", "kho"], ["โฅ", "kho"], ["โฆ", "kho"], ["โง", "ngo"], ["โจ", "cho"], ["โฉ", "cho"], ["โช", "cho"], ["โซ", "so"], ["โด", "do"], ["โต", "to"], ["โท", "tho"], ["โน", "no"], ["โบ", "bo"], ["โป", "po"], ["โผ", "pho"], ["โฝ", "fo"], ["โพ", "pho"], ["โฟ", "fo"], ["โม", "mo"], ["โย", "yo"], ["โร", "ro"], ["โล", "lo"], ["โว", "wo"], ["โศ", "so"], ["โษ", "so"], ["โส", "so"], ["โห", "ho"], ["โฮ", "ho"], ["โอ", "o"], ["ใก", "kai"], ["ใข", "khai"], ["ใฃ", "khai"], ["ใค", "khai"], ["ใฅ", "khai"], ["ใฆ", "khai"], ["ใง", "ngai"], ["ใจ", "chai"], ["ใฉ", "chai"], ["ใช", "chai"], ["ใซ", "sai"], ["ใด", "dai"], ["ใต", "tai"], ["ใถ", "thai"], ["ใท", "thai"], ["ใธ", "thai"], ["ใน", "nai"], ["ใบ", "bai"], ["ใป", "pai"], ["ใผ", "phai"], ["ใฝ", "fai"], ["ใพ", "phai"], ["ใฟ", "fai"], ["ใม", "mai"], ["ใย", "yai"], ["ใร", "rai"], ["ใล", "lai"], ["ใว", "wai"], ["ใศ", "sai"], ["ใษ", "sai"], ["ใส", "sai"], ["ให", "hai"], ["ใฮ", "hai"], ["ไก", "kai"], ["ไข", "khai"], ["ไฃ", "khai"], ["ไค", "khai"], ["ไฅ", "khai"], ["ไฆ", "khai"], ["ไง", "ngai"], ["ไจ", "chai"], ["ไฉ", "chai"], ["ไช", "chai"], ["ไซ", "sai"], ["ได", "dai"], ["ไต", "tai"], ["ไถ", "thai"], ["ไท", "thai"], ["ไธ", "thai"], ["ไน", "nai"], ["ไบ", "bai"], ["ไป", "pai"], ["ไผ", "phai"], ["ไฝ", "fai"], ["ไพ", "phai"], ["ไฟ", "fai"], ["ไม", "mai"], ["ไย", "yai"], ["ไร", "rai"], ["ไล", "lai"], ["ไว", "wai"], ["ไศ", "sai"], ["ไษ", "sai"], ["ไส", "sai"], ["ไห", "hai"], ["ไฮ", "hai"], ["้", ""], ["พลเ", "phonla"], ["กรม", "krom"], ["นม", "nom"], ["([ก-ฮ])า", "a", "r"], [String.raw`([ก-ฮ])(?!\1)ง(?!ง)`, "ong", "r"], [String.raw`([ก-ฮ])(?!\1)ก(?!ก)`, "ok", "r"], [String.raw`([ก-ฮ])(?!\1)ด(?!ด)`, "od", "r"], [String.raw`([ก-ฮ])(?!\1)น(?!น)`, "on", "r"], [String.raw`([ก-ฮ])(?!\1)บ(?!บ)`, "ob", "r"], [String.raw`([ก-ฮ])(?!\1)ม(?!ม)`, "om", "r"], ["ก", "k", "c"], ["ข", "kh", "c"], ["ฃ", "kh", "c"], ["ค", "kh", "c"], ["ฅ", "kh", "c"], ["ฆ", "kh", "c"], ["ง", "ng", "c"], ["จ", "ch", "c"], ["ฉ", "ch", "c"], ["ช", "ch", "c"], ["ซ", "s", "c"], ["ฌ", "ch", "c"], ["ญ", "y"], ["ฎ", "d"], ["ฏ", "t"], ["ฐ", "th"], ["ฑ", "th"], ["ฒ", "th"], ["ณ", "n"], ["ด", "d", "c"], ["ต", "t", "c"], ["ถ", "th", "c"], ["ท", "th", "c"], ["ธ", "th", "c"], ["น", "n", "c"], ["บ", "b", "c"], ["ป", "p", "c"], ["ผ", "ph", "c"], ["ฝ", "f", "c"], ["พ", "ph", "c"], ["ฟ", "f", "c"], ["ภ", "ph", "c"], ["ม", "m", "c"], ["ย", "y", "c"], ["ร", "r", "c"], ["ฤ", "rue"], ["ล", "l", "c"], ["ฦ", "lue"], ["ว", "w", "c"], ["ศ", "s", "c"], ["ษ", "s", "c"], ["ส", "s", "c"], ["ห", "h", "c"], ["ฬ", "l", "c"], ["ฮ", "h", "c"], ["อ", "", "c"], ["้", ""], ["๊", ""], ["๋", ""], ["เ", ""], ["แ", ""], ["์", ""], ["็", ""], ["ู", ""], ["ิ", ""], ["ื", ""], ["ี", ""], ["ึ", ""], ["", ""], ["ํ", ""], ["ั", ""], ["้", ""], ["ุ", ""], ["ุ", ""], ["ๅ", ""], ["ำ", ""], ["ไ", ""], ["ใ", ""], ["ะ", "a"], ["ๆ", ""], ["า", "a"], ["ฯ", ""], ["๐", "0"], ["๏", "0"], ["๑", "1"], ["๒", "2"], ["๓", "3"], ["๔", "4"], ["๕", "5"], ["๖", "6"], ["๗", "7"], ["๘", "8"], ["๙", "9"]];
+const uu = /* @__PURE__ */ new Map();
+for (const [i, o, e] of Wd) typeof i == "string" && typeof o == "string" && (!e || e === "c") && !uu.has(i) && uu.set(i, o);
+const gu = [];
+for (const [i, o, e] of Wd) typeof i != "string" || typeof o != "string" || (e === "r" ? gu.push({ regex: new RegExp(i, "g"), replace: o, type: "r" }) : gu.push({ replace: o, search: i, type: "s" }));
+const eC = /\x1B\[(\d+)m/;
+class Pd {
+  activeForeground = void 0;
+  activeBackground = void 0;
+  activeFormatting = [];
+  processEscape(o) {
+    const e = eC.exec(o);
+    if (!e) return;
+    const n = Number.parseInt(e[1], 10);
+    switch (n) {
+      case 0: {
+        this.activeForeground = void 0, this.activeBackground = void 0, this.activeFormatting = [];
+        break;
+      }
+      case 39: {
+        this.activeForeground = void 0;
+        break;
+      }
+      case 49: {
+        this.activeBackground = void 0;
+        break;
+      }
+      default:
+        if (n >= 30 && n <= 37 || n >= 90 && n <= 97) this.activeForeground = o;
+        else if (n >= 40 && n <= 47 || n >= 100 && n <= 107) this.activeBackground = o;
+        else if ([1, 2, 3, 4, 7, 8, 9].includes(n)) this.activeFormatting.push(o);
+        else if ([22, 23, 24, 27, 28, 29].includes(n)) {
+          const a = { 22: "[1m", 23: "[3m", 24: "[4m", 27: "[7m", 28: "[8m", 29: "[9m" }[n];
+          a && (this.activeFormatting = this.activeFormatting.filter((u) => !u.includes(a)));
+        }
+    }
+  }
+  getStartEscapesForAllActiveAttributes() {
+    return [this.activeBackground, this.activeForeground, ...this.activeFormatting].filter(Boolean).join("");
+  }
+  getEndEscapesForAllActiveAttributes() {
+    const o = [];
+    if (this.activeFormatting.length > 0) {
+      const e = { "\x1B[1m": "\x1B[22m", "\x1B[2m": "\x1B[22m", "\x1B[3m": "\x1B[23m", "\x1B[4m": "\x1B[24m", "\x1B[7m": "\x1B[27m", "\x1B[8m": "\x1B[28m", "\x1B[9m": "\x1B[29m" };
+      [...this.activeFormatting].toReversed().forEach((n) => {
+        const a = e[n];
+        a && o.push(a);
+      });
+    }
+    return this.activeForeground && o.push("\x1B[39m"), this.activeBackground && o.push("\x1B[49m"), o.join("");
+  }
+}
+const nC = (i, o) => {
+  if (!eo$1.has(i[o])) return { isInsideEscape: false, isInsideLinkEscape: false };
+  const e = true, n = i.slice(o + 1, o + 1 + wo.length).join("") === wo;
+  return { isInsideEscape: e, isInsideLinkEscape: n };
+};
+const aC = (i, o = {}) => {
+  const e = new Pd();
+  let n = "", a = false, u = "", g = "", t = false;
+  const s = [...i];
+  for (let h = 0; h < s.length; h++) {
+    const r = s[h];
+    if (r && eo$1.has(r)) {
+      if (n) {
+        const b = o.getWidth?.(n) ?? 0, p = { isEscapeSequence: false, isGrapheme: true, text: n, width: b };
+        if (t && (p.isHyperlink = true, p.hyperlinkUrl = g), o.onSegment?.(p, e) === false) return;
+        n = "";
+      }
+      a = true, u = r;
+      const y = nC(s, h), { isInsideLinkEscape: c } = y;
+      if (c) {
+        let b = h + 1;
+        for (g = ""; b < s.length; ) {
+          const j = s[b];
+          if (j === Oo) break;
+          g += j, b += 1;
+        }
+        g = g.slice(4);
+        const p = { hyperlinkUrl: g, isEscapeSequence: true, isGrapheme: false, isHyperlink: true, isHyperlinkStart: true, width: 0 };
+        if (o.onSegment?.(p, e) === false) return;
+        h = b, t = true, a = false, u = "";
+        continue;
+      }
+      if (h + 1 < s.length && s[h + 1] === "\\" && t) {
+        const b = { isEscapeSequence: true, isGrapheme: false, isHyperlink: true, isHyperlinkEnd: true, width: 0 };
+        if (o.onSegment?.(b, e) === false) return;
+        t = false, g = "", h += 1, a = false, u = "";
+        continue;
+      }
+    }
+    if (a) {
+      if (u !== r && (u += r), r === Ie$1) {
+        a = false, e.processEscape(u);
+        const y = { isEscapeSequence: true, isGrapheme: false, text: u, width: 0 };
+        if (o.onSegment?.(y, e) === false) return;
+        u = "";
+      }
+      continue;
+    }
+    n += r;
+    const l = o.getWidth?.(n) ?? 0, v = { isEscapeSequence: false, isGrapheme: true, text: n, width: l };
+    if (t && (v.isHyperlink = true, v.hyperlinkUrl = g), o.onSegment?.(v, e) === false) return;
+    n = "";
+  }
+  if (n) {
+    const h = o.getWidth?.(n) ?? 0, r = { isEscapeSequence: false, isGrapheme: true, text: n, width: h };
+    t && (r.isHyperlink = true, r.hyperlinkUrl = g), o.onSegment?.(r, e);
+  }
+  if (u) {
+    const h = { isEscapeSequence: true, isGrapheme: false, text: u, width: 0 };
+    o.onSegment?.(h, e);
+  }
+};
+const du = (i) => `${eo$1.values().next().value}${yu}${String(i)}${Ie$1}`;
+const tu = (i) => `${eo$1.values().next().value}${wo}${i}${Oo}`;
+const uC = (i) => {
+  if (i.length === 0) return "";
+  if (i.length === 1) return i[0];
+  let o = "", e, n;
+  const a = i.join(`
+`), u = [...a];
+  let g = 0;
+  for (const [t, s] of u.entries()) {
+    if (o += s, eo$1.has(s)) {
+      const r = kt$2.exec(a.slice(g))?.groups ?? {};
+      if (r.code !== void 0) {
+        const l = Number.parseFloat(r.code);
+        e = l === ft$2 ? void 0 : l;
+      } else r.uri !== void 0 && (n = r.uri.length === 0 ? void 0 : r.uri);
+    }
+    const h = Lt$2.get(Number(e));
+    u[t + 1] === `
+` ? (n && (o += tu("")), e && h && (o += du(h))) : s === `
+` && (e && h && (o += du(e)), n && (o += tu(n))), g += s.length;
+  }
+  return o;
+};
+const Fd = /(?=\s)|(?<=\s)/;
+const Kd = /^\s+$/;
+const su = /* @__PURE__ */ new Map();
+const gC = (i) => {
+  const o = su.get(i);
+  if (o !== void 0) return o;
+  const e = Hi(i);
+  return su.set(i, e), e;
+};
+const De$1 = (i) => {
+  if (!i.includes("\x1B")) return i;
+  let o = i;
+  return i.includes("\x1B[30m") && (o += "\x1B[39m"), i.includes("\x1B[42m") && (o += "\x1B[49m"), o;
+};
+const Fi = (i) => {
+  const o = i.split(" ");
+  let e = o.length;
+  for (; e > 0 && Hi(o[e - 1]) === 0; ) e--;
+  return e === o.length ? i : o.slice(0, e).join(" ") + o.slice(e).join("");
+};
+const Rd = (i, o, e) => {
+  if (i.length === 0) return [""];
+  if (o <= 0) return [i];
+  const n = [], a = new Pd();
+  let u = "", g = 0, t = false, s = false, h = "", r = 0;
+  for (; r < i.length; ) {
+    const l = i.codePointAt(r), v = String.fromCodePoint(l), y = v.length;
+    if (eo$1.has(v)) {
+      t = true, h = v, u += v, s = i.startsWith(wo, r + 1), r += 1;
+      continue;
+    }
+    if (t) {
+      h += v, u += v, s ? v === Oo && (t = s = false) : v === Ie$1 && (t = false, a.processEscape(h)), r += 1;
+      continue;
+    }
+    const c = gC(v), b = v === " ";
+    if (c === 0) {
+      u += v, r += y;
+      continue;
+    }
+    if (g + c > o && (u && n.push(u + a.getEndEscapesForAllActiveAttributes()), u = a.getStartEscapesForAllActiveAttributes(), g = Hi(u), b && e)) {
+      for (; r < i.length && i[r] === " "; ) r += 1;
+      continue;
+    }
+    if (u += v, g += c, g === o && r + y < i.length && (n.push(u + a.getEndEscapesForAllActiveAttributes()), u = a.getStartEscapesForAllActiveAttributes(), g = Hi(u), r + y < i.length && i[r + y] === " " && e)) {
+      for (r += y; r < i.length && i[r] === " "; ) r += 1;
+      continue;
+    }
+    r += y;
+  }
+  return u && n.push(u + a.getEndEscapesForAllActiveAttributes()), e ? n.map((l) => Fi(l)) : n;
+};
+const dC = (i, o, e) => {
+  if (i.length === 0) return [];
+  const n = e ? i.trim() : i;
+  if (n.length === 0) return [];
+  const a = [];
+  let u = "", g = 0;
+  return aC(n, { getWidth: Hi, onSegment: (t, s) => {
+    const h = t.text ?? "";
+    if (t.isEscapeSequence) u += h;
+    else {
+      const r = h === " ";
+      if (t.width === 0) return u += h, true;
+      if (g + t.width > o && (u && a.push(u), u = s.getStartEscapesForAllActiveAttributes(), g = 0, r)) return e || a.push(s.getStartEscapesForAllActiveAttributes() + h), true;
+      u += h, g += t.width;
+    }
+    return true;
+  } }), u && a.push(u), e ? a.map((t) => Fi(t)) : a;
+};
+const tC = (i, o, e) => {
+  if (i.length === 0) return [];
+  const n = e ? i.trim() : i;
+  if (n.length === 0) return [];
+  const a = n.split(Fd), u = [];
+  let g = "", t = 0, s = 0;
+  for (; s < a.length; ) {
+    const h = a[s], r = Kd.test(h), l = Hi(h);
+    if (h.length === 0) {
+      s += 1;
+      continue;
+    }
+    if (e && r && t === 0) {
+      s += 1;
+      continue;
+    }
+    if (t + l > o && t > 0) {
+      e ? u.push(Fi(g)) : u.push(g), g = "", t = 0;
+      continue;
+    }
+    g += h, t += l, s += 1;
+  }
+  return g && (e ? u.push(Fi(g)) : u.push(g)), u;
+};
+const sC = (i, o, e) => {
+  if (i.length === 0) return [];
+  const n = e ? i.trim() : i;
+  if (n.length === 0) return [];
+  const a = n.split(Fd), u = [];
+  let g = "", t = 0, s = 0;
+  for (; s < a.length; ) {
+    const h = a[s], r = Kd.test(h), l = Hi(h);
+    if (h.length === 0) {
+      s += 1;
+      continue;
+    }
+    if (e && r && t === 0) {
+      s += 1;
+      continue;
+    }
+    if (l > o) {
+      g && u.push(De$1(e ? Fi(g) : g));
+      const v = Rd(h, o, e);
+      if (v.length > 0) {
+        for (let y = 0; y < v.length - 1; y += 1) u.push(v[y]);
+        g = v.at(-1), t = Hi(g);
+      } else g = "", t = 0;
+      s += 1;
+      continue;
+    }
+    if (t + l > o && t > 0 && (u.push(De$1(e ? Fi(g) : g)), g = "", t = 0, e && r)) {
+      s += 1;
+      continue;
+    }
+    g += h, t += l, s += 1;
+  }
+  return g && u.push(De$1(e ? Fi(g) : g)), u;
+};
+const bo = { BREAK_AT_CHARACTERS: "BREAK_AT_CHARACTERS", BREAK_WORDS: "BREAK_WORDS", PRESERVE_WORDS: "PRESERVE_WORDS", STRICT_WIDTH: "STRICT_WIDTH" };
+const hC = (i, o = {}) => {
+  const { removeZeroWidthCharacters: e = true, trim: n = true, width: a = 80, wrapMode: u = bo.PRESERVE_WORDS } = o;
+  if (n && i.trim() === "") return "";
+  let g = i.normalize("NFC").replaceAll(`\r
+`, `
+`);
+  return e && (g = g.replaceAll(Yt$1, "")), g.split(`
+`).map((t) => {
+    if (n && t.trim() === "") return "";
+    let s;
+    switch (u) {
+      case bo.BREAK_AT_CHARACTERS: {
+        s = dC(t, a, n);
+        break;
+      }
+      case bo.BREAK_WORDS: {
+        s = sC(t, a, n);
+        break;
+      }
+      case bo.STRICT_WIDTH: {
+        s = Rd(t, a, n);
+        break;
+      }
+      default:
+        s = tC(t, a, n);
+    }
+    return uC(s);
+  }).join(`
+`);
+};
+const Ad = 80;
+const _d = 24;
+const $e$2 = (i, o, { shell: e, env: n } = {}) => qd(i, o, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], timeout: 500, shell: e, env: n }).trim();
+const Fo = (i, o) => ({ columns: Number.parseInt(i, 10), rows: Number.parseInt(o, 10) });
+const Od = (i, o) => {
+  const { columns: e, rows: n } = Fo(i, o);
+  if (!(Number.isNaN(e) || Number.isNaN(n)) && !(e === Ad && n === _d)) return { columns: e, rows: n };
+};
+const rC = () => {
+  if (Pi.platform !== "linux") return true;
+  try {
+    const i = co.readFileSync("/proc/self/stat", "utf8"), o = i.lastIndexOf(") ");
+    if (o === -1) return false;
+    const e = i.slice(o + 2).trim().split(/\s+/), n = Number.parseInt(e[2], 10), a = Number.parseInt(e[5], 10);
+    return Number.isNaN(n) || Number.isNaN(a) || a <= 0 ? false : n === a;
   } catch {
     return false;
   }
+};
+function Te$2() {
+  const { env: i, stdout: o, stderr: e } = Pi;
+  if (o?.columns && o?.rows) return Fo(o.columns, o.rows);
+  if (e?.columns && e?.rows) return Fo(e.columns, e.rows);
+  if (i.COLUMNS && i.LINES) return Fo(i.COLUMNS, i.LINES);
+  const n = { columns: Ad, rows: _d };
+  return Pi.platform === "win32" ? Be$2() ?? n : Pi.platform === "darwin" ? hu() ?? Be$2() ?? n : hu() ?? Be$2() ?? lC() ?? n;
 }
-function realpath$1(path) {
+const hu = () => {
   try {
-    return realpathSync(path);
+    const i = Pi.platform === "darwin" ? co.constants.O_EVTONLY | co.constants.O_NONBLOCK : co.constants.O_NONBLOCK, { columns: o, rows: e } = Id.WriteStream(co.openSync("/dev/tty", i));
+    return { columns: o, rows: e };
   } catch {
-    return void 0;
+  }
+};
+const Be$2 = () => {
+  try {
+    const i = $e$2("tput", ["cols"], { env: { TERM: "dumb", ...Pi.env } }), o = $e$2("tput", ["lines"], { env: { TERM: "dumb", ...Pi.env } });
+    if (i && o) return Od(i, o);
+  } catch {
+  }
+};
+const lC = () => {
+  try {
+    if (!rC()) return;
+    const i = $e$2("resize", ["-u"]).match(/\d+/g);
+    if (i.length === 2) return Od(i[0], i[1]);
+  } catch {
+  }
+};
+class yC {
+  #i;
+  #a = false;
+  #n = false;
+  #o = 0;
+  #e = 0;
+  #u;
+  #g;
+  constructor(o, e) {
+    this.#i = { stderr: e, stdout: o }, this.#u = Te$2(), this.#g = () => {
+      this.#u = Te$2();
+    };
+    for (const n of Object.keys(this.#i)) this.#i[n].onEarlyFlush(() => {
+      this.erase(n), this.#o = 0, this.#e = 0;
+    });
+  }
+  get lastLength() {
+    return this.#o;
+  }
+  get outside() {
+    return this.#e;
+  }
+  get isHooked() {
+    return this.#a;
+  }
+  get isSuspended() {
+    return this.#n;
+  }
+  clear(o) {
+    this.erase(o), this.#o = 0, this.#e = 0;
+  }
+  done(o) {
+    this.#o = 0, this.#e = 0;
+  }
+  erase(o, e = this.#o) {
+    this.#i[o].erase(e);
+  }
+  hook() {
+    if (this.#a) return false;
+    const o = Object.values(this.#i);
+    for (const e of o) e.active();
+    return this.#u = Te$2(), process.stdout.isTTY && typeof process.stdout.on == "function" && process.stdout.on("resize", this.#g), this.#d(true), true;
+  }
+  resume(o, e) {
+    if (this.#n && this.#a) {
+      this.#n = false, e && this.erase(o, e), this.#o = 0, this.#e = 0;
+      const n = Object.values(this.#i);
+      for (const a of n) a.active();
+    }
+  }
+  suspend(o, e = true) {
+    if (!this.#n) {
+      this.#n = true, e && this.erase(o);
+      const n = Object.values(this.#i);
+      for (const a of n) a.renew();
+    }
+  }
+  unhook(o = true) {
+    if (!this.#a) return false;
+    const e = Object.values(this.#i);
+    for (const n of e) n.inactive(o);
+    return typeof process.stdout.off == "function" && process.stdout.off("resize", this.#g), this.#d(), true;
+  }
+  update(o, e, n = 0) {
+    if (this.#n) return;
+    if (e.length === 0) {
+      this.clear(o);
+      return;
+    }
+    const a = this.#i[o], { columns: u, rows: g } = this.#u, t = Math.max(0, Math.min(g - 1, n)), s = this.lastLength - t, h = Math.max(s - g, this.outside);
+    let r = e.flatMap((l) => hC(l, { trim: false, width: u, wrapMode: bo.STRICT_WIDTH }).split(`
+`));
+    g <= s ? (a.erase(g), t < h && (r = r.slice(h - t + 1))) : s && a.erase(s), a.write(`${r.join(`
+`)}
+`), this.#o = h ? h + r.length + 1 : t + r.length, this.#e = Math.max(this.lastLength - g, this.outside);
+  }
+  #d(o = false) {
+    this.#a = o, this.#o = 0, this.#e = 0;
   }
 }
-function mktempDir() {
-  return mkdtempSync(join(tmpdir(), "omarsync-"));
-}
-function rmrf(path) {
-  try {
-    rmSync(path, { force: true, recursive: true });
-  } catch {
+
+let m;
+const N$2 = (t) => (m ??= createRequire(import.meta.url))(t);
+const a$1 = typeof globalThis < "u" && typeof globalThis.process < "u" ? globalThis.process : process;
+const P$2 = (t) => {
+  if (typeof a$1 < "u" && a$1.versions && a$1.versions.node) {
+    const [e, i] = a$1.versions.node.split(".").map(Number);
+    if (e > 22 || e === 22 && i >= 3 || e === 20 && i >= 16) return a$1.getBuiltinModule(t);
   }
+  return N$2(t);
+};
+const { StringDecoder: A$1 } = P$2("node:string_decoder");
+const s = "\x1B[";
+const p = ";";
+const D$1 = typeof globalThis < "u" && typeof globalThis.process < "u" ? globalThis.process : process;
+const h = D$1;
+const b$2 = (t, e, i, n) => {
+  if (i === "length" || i === "prototype" || i === "arguments" || i === "caller") return;
+  const r = Object.getOwnPropertyDescriptor(t, i), o = Object.getOwnPropertyDescriptor(e, i);
+  !w(r, o) && n || Object.defineProperty(t, i, o);
+};
+const w = function(t, e) {
+  return t === void 0 || t.configurable || t.writable === e.writable && t.enumerable === e.enumerable && t.configurable === e.configurable && (t.writable || t.value === e.value);
+};
+const L$1 = (t, e) => {
+  const i = Object.getPrototypeOf(e);
+  i !== Object.getPrototypeOf(t) && Object.setPrototypeOf(t, i);
+};
+const x = (t, e) => `/* Wrapped ${t}*/
+${e}`;
+const C$1 = Object.getOwnPropertyDescriptor(Function.prototype, "toString");
+const v$1 = Object.getOwnPropertyDescriptor(Function.prototype.toString, "name");
+const M$1 = (t, e, i) => {
+  const n = i === "" ? "" : `with ${i.trim()}() `, r = x.bind(null, n, e.toString());
+  Object.defineProperty(r, "name", v$1);
+  const { writable: o, enumerable: c, configurable: f } = C$1;
+  Object.defineProperty(t, "toString", { value: r, writable: o, enumerable: c, configurable: f });
+};
+function B$2(t, e, { ignoreNonConfigurable: i = false } = {}) {
+  const { name: n } = t;
+  for (const r of Reflect.ownKeys(e)) b$2(t, e, r, i);
+  return L$1(t, e), M$1(t, e, n), t;
 }
+const u = /* @__PURE__ */ new WeakMap();
+const S$1 = (t, e = {}) => {
+  if (typeof t != "function") throw new TypeError("Expected a function");
+  let i, n = 0;
+  const r = t.displayName || t.name || "<anonymous>", o = function(...c) {
+    if (u.set(o, ++n), n === 1) i = t.apply(this, c), t = void 0;
+    else if (e.throw === true) throw new Error(`Function \`${r}\` can only be called once`);
+    return i;
+  };
+  return B$2(o, t), u.set(o, n), o;
+};
+S$1.callCount = (t) => {
+  if (!u.has(t)) throw new Error(`The given function \`${t.name}\` is not wrapped by the \`onetime\` package`);
+  return u.get(t);
+};
+const l = [];
+l.push("SIGHUP", "SIGINT", "SIGTERM");
+process.platform !== "win32" && l.push("SIGALRM", "SIGABRT", "SIGVTALRM", "SIGXCPU", "SIGXFSZ", "SIGUSR2", "SIGTRAP", "SIGSYS", "SIGQUIT", "SIGIOT");
+process.platform === "linux" && l.push("SIGIO", "SIGPOLL", "SIGPWR", "SIGSTKFLT");
+const _$1 = (t) => !!t && true && typeof t.removeListener == "function" && typeof t.emit == "function" && typeof t.reallyExit == "function" && typeof t.listeners == "function" && typeof t.kill == "function" && typeof t.pid == "number" && typeof t.on == "function";
+const T = /* @__PURE__ */ Symbol.for("signal-exit emitter");
+const O$1 = globalThis;
+const X$1 = Object.defineProperty.bind(Object);
+let Z$1 = class Z {
+  emitted = { afterExit: false, exit: false };
+  listeners = { afterExit: [], exit: [] };
+  count = 0;
+  id = Math.random();
+  constructor() {
+    if (O$1[T]) return O$1[T];
+    X$1(O$1, T, { value: this, writable: false, enumerable: false, configurable: false });
+  }
+  on(e, i) {
+    this.listeners[e].push(i);
+  }
+  removeListener(e, i) {
+    const n = this.listeners[e], r = n.indexOf(i);
+    r !== -1 && (r === 0 && n.length === 1 ? n.length = 0 : n.splice(r, 1));
+  }
+  emit(e, i, n) {
+    if (this.emitted[e]) return false;
+    this.emitted[e] = true;
+    let r = false;
+    for (const o of this.listeners[e]) r = o(i, n) === true || r;
+    return e === "exit" && (r = this.emit("afterExit", i, n) || r), r;
+  }
+};
+let g = class {
+};
+const G$1 = (t) => ({ onExit(e, i) {
+  return t.onExit(e, i);
+}, load() {
+  return t.load();
+}, unload() {
+  return t.unload();
+} });
+let j$1 = class j extends g {
+  onExit() {
+    return () => {
+    };
+  }
+  load() {
+  }
+  unload() {
+  }
+};
+let $ = class extends g {
+  #s = E$1.platform === "win32" ? "SIGINT" : "SIGHUP";
+  #e = new Z$1();
+  #t;
+  #n;
+  #o;
+  #r = {};
+  #i = false;
+  constructor(e) {
+    super(), this.#t = e, this.#r = {};
+    for (const i of l) this.#r[i] = () => {
+      const n = this.#t.listeners(i);
+      let { count: r } = this.#e;
+      const o = e;
+      if (typeof o.__signal_exit_emitter__ == "object" && typeof o.__signal_exit_emitter__.count == "number" && (r += o.__signal_exit_emitter__.count), n.length === r) {
+        this.unload();
+        const c = this.#e.emit("exit", null, i), f = i === "SIGHUP" ? this.#s : i;
+        c || e.kill(e.pid, f);
+      }
+    };
+    this.#o = e.reallyExit, this.#n = e.emit;
+  }
+  onExit(e, i) {
+    if (!_$1(this.#t)) return () => {
+    };
+    this.#i === false && this.load();
+    const n = i?.alwaysLast ? "afterExit" : "exit";
+    return this.#e.on(n, e), () => {
+      this.#e.removeListener(n, e), this.#e.listeners.exit.length === 0 && this.#e.listeners.afterExit.length === 0 && this.unload();
+    };
+  }
+  load() {
+    if (!this.#i) {
+      this.#i = true, this.#e.count += 1;
+      for (const e of l) try {
+        const i = this.#r[e];
+        i && this.#t.on(e, i);
+      } catch {
+      }
+      this.#t.emit = (e, ...i) => this.#c(e, ...i), this.#t.reallyExit = (e) => this.#l(e);
+    }
+  }
+  unload() {
+    this.#i && (this.#i = false, l.forEach((e) => {
+      const i = this.#r[e];
+      if (!i) throw new Error("Listener not defined for signal: " + e);
+      try {
+        this.#t.removeListener(e, i);
+      } catch {
+      }
+    }), this.#t.emit = this.#n, this.#t.reallyExit = this.#o, this.#e.count -= 1);
+  }
+  #l(e) {
+    return _$1(this.#t) ? (this.#t.exitCode = e || 0, this.#e.emit("exit", this.#t.exitCode, null), this.#o.call(this.#t, this.#t.exitCode)) : 0;
+  }
+  #c(e, ...i) {
+    const n = this.#n;
+    if (e === "exit" && _$1(this.#t)) {
+      typeof i[0] == "number" && (this.#t.exitCode = i[0]);
+      const r = n.call(this.#t, e, ...i);
+      return this.#e.emit("exit", this.#t.exitCode, null), r;
+    } else return n.call(this.#t, e, ...i);
+  }
+};
+const E$1 = globalThis.process;
+const { onExit: U$3 } = G$1(_$1(E$1) ? new $(E$1) : new j$1());
+const R$2 = h.stderr.isTTY ? h.stderr : h.stdout.isTTY ? h.stdout : void 0;
+R$2 && S$1(() => {
+  U$3(() => {
+    R$2.write("\x1B[?25h");
+  }, { alwaysLast: true });
+});
+const Y$1 = `${s}?25l`;
+const k$1 = `${s}G`;
+const F$1 = `${s}?25h`;
+const H$1 = (t = 1) => `${s}${String(t)}A`;
+var q$1 = ((t) => (t[t.Default = 0] = "Default", t[t.BlinkingBlock = 1] = "BlinkingBlock", t[t.SteadyBlock = 2] = "SteadyBlock", t[t.BlinkingUnderline = 3] = "BlinkingUnderline", t[t.SteadyUnderline = 4] = "SteadyUnderline", t[t.BlinkingBar = 5] = "BlinkingBar", t[t.SteadyBar = 6] = "SteadyBar", t))(q$1 || {});
+var V$3 = ((t) => (t[t.ToEnd = 0] = "ToEnd", t[t.ToBeginning = 1] = "ToBeginning", t[t.EntireScreen = 2] = "EntireScreen", t[t.EntireScreenAndScrollback = 3] = "EntireScreenAndScrollback", t))(V$3 || {});
+var K$3 = ((t) => (t[t.ToEnd = 0] = "ToEnd", t[t.ToBeginning = 1] = "ToBeginning", t[t.EntireLine = 2] = "EntireLine", t))(K$3 || {});
+const Q$2 = (t) => {
+  const e = t ;
+  return `${s}${String(e)}K`;
+};
+const z$1 = Q$2(2);
+const J$2 = (t) => {
+  if (t <= 0) return "";
+  let e = "";
+  for (let i = 0; i < t; i += 1) e += z$1, i < t - 1 && (e += H$1());
+  return e += k$1, e;
+};
+var tt$2 = ((t) => (t[t.NotRecognized = 0] = "NotRecognized", t[t.Set = 1] = "Set", t[t.Reset = 2] = "Reset", t[t.PermanentlySet = 3] = "PermanentlySet", t[t.PermanentlyReset = 4] = "PermanentlyReset", t))(tt$2 || {});
+let et$2 = class et {
+  constructor(e) {
+    this.reportCode = e;
+  }
+  reportCode;
+  isDecReport = false;
+};
+let it$2 = class it {
+  constructor(e) {
+    this.reportCode = e;
+  }
+  reportCode;
+  isDecReport = true;
+};
+const rt$2 = (t) => new et$2(t);
+const d = (t) => new it$2(t);
+const I$1 = (...t) => {
+  if (t.length === 0) return "";
+  const e = t.filter((r) => !r.isDecReport).map((r) => r.reportCode.toString()), i = t.filter((r) => r.isDecReport).map((r) => r.reportCode.toString());
+  let n = "";
+  return e.length > 0 && (n += `${s}${e.join(p)}n`), i.length > 0 && (n += `${s}?${i.join(p)}n`), n;
+};
+const nt$2 = rt$2(5);
+I$1(nt$2);
+const ot$2 = d(15);
+I$1(ot$2);
+const st$2 = d(25);
+I$1(st$2);
+const lt$2 = d(26);
+I$1(lt$2);
+var ct$2 = ((t) => (t[t.DEICONIFY_WINDOW = 1] = "DEICONIFY_WINDOW", t[t.ICONIFY_WINDOW = 2] = "ICONIFY_WINDOW", t[t.MOVE_WINDOW = 3] = "MOVE_WINDOW", t[t.RESIZE_TEXT_AREA_CHARS = 4] = "RESIZE_TEXT_AREA_CHARS", t[t.RAISE_WINDOW = 5] = "RAISE_WINDOW", t[t.LOWER_WINDOW = 6] = "LOWER_WINDOW", t[t.REFRESH_WINDOW = 7] = "REFRESH_WINDOW", t[t.RESIZE_TEXT_AREA_PIXELS = 8] = "RESIZE_TEXT_AREA_PIXELS", t[t.RESTORE_MAXIMIZED_WINDOW = 9] = "RESTORE_MAXIMIZED_WINDOW", t[t.MAXIMIZE_WINDOW = 10] = "MAXIMIZE_WINDOW", t[t.MAXIMIZE_WINDOW_VERTICALLY = 10.1] = "MAXIMIZE_WINDOW_VERTICALLY", t[t.MAXIMIZE_WINDOW_HORIZONTALLY = 10.2] = "MAXIMIZE_WINDOW_HORIZONTALLY", t[t.UNDO_FULL_SCREEN_MODE = 10.3] = "UNDO_FULL_SCREEN_MODE", t[t.REPORT_WINDOW_STATE = 11] = "REPORT_WINDOW_STATE", t[t.REPORT_WINDOW_POSITION = 13] = "REPORT_WINDOW_POSITION", t[t.REPORT_TEXT_AREA_SIZE_CHARS = 14] = "REPORT_TEXT_AREA_SIZE_CHARS", t[t.REQUEST_WINDOW_SIZE_WIN_OP_COMPAT = 14] = "REQUEST_WINDOW_SIZE_WIN_OP_COMPAT", t[t.REPORT_CELL_SIZE_PIXELS = 16] = "REPORT_CELL_SIZE_PIXELS", t[t.REPORT_TEXT_AREA_SIZE_PIXELS = 18] = "REPORT_TEXT_AREA_SIZE_PIXELS", t[t.REPORT_ICON_LABEL = 19] = "REPORT_ICON_LABEL", t[t.REPORT_WINDOW_TITLE = 21] = "REPORT_WINDOW_TITLE", t[t.PUSH_WINDOW_TITLE = 22] = "PUSH_WINDOW_TITLE", t[t.POP_WINDOW_TITLE = 23] = "POP_WINDOW_TITLE", t[t.RESIZE_SCREEN_AND_TEXT_AREA = 24] = "RESIZE_SCREEN_AND_TEXT_AREA", t))(ct$2 || {});
+const at$2 = 1e4;
+let W$2 = class W {
+  static DRAIN = true;
+  #s = new A$1();
+  #e = [];
+  #t;
+  #n;
+  #o;
+  #r;
+  #i;
+  isTTY;
+  constructor(e, i = {}) {
+    this.#r = e.write.bind(e), this.#i = e, this.#o = i.maxHistory ?? at$2, this.isTTY = e.isTTY;
+  }
+  active() {
+    this.isTTY && this.write(Y$1);
+    const e = (i, ...n) => {
+      const r = n.at(-1);
+      return this.#e.push(typeof i == "string" ? i : this.#s.write(Buffer.from(i))), this.#e.length > this.#o && (this.isTTY && this.#n !== void 0 && this.#n(), this.#l(this.#e.length - Math.floor(this.#o / 2))), typeof r == "function" && r(), W.DRAIN;
+    };
+    this.#t = e, this.#i.write = this.#t;
+  }
+  erase(e) {
+    e > 0 && this.isTTY && this.write(J$2(e + 1));
+  }
+  inactive(e = false) {
+    this.#e.length > 0 && (e && this.write(`
+`), this.#l(this.#e.length));
+    const i = this.#s.end();
+    i && this.write(i), this.renew();
+  }
+  renew() {
+    this.#t === void 0 || this.#i.write === this.#t ? this.#i.write = this.#r : console.warn("[@visulima/interactive-manager] stream.write was replaced by a third party while the hook was active; leaving it untouched to avoid stomping the other patch."), this.#t = void 0, this.isTTY && this.write(F$1);
+  }
+  onEarlyFlush(e) {
+    this.#n = e;
+  }
+  write(e) {
+    this.#r.apply(this.#i, [e]);
+  }
+  #l(e) {
+    if (e <= 0) return;
+    const i = this.#e.splice(0, e);
+    for (const n of i) this.write(n);
+  }
+};
 
 let bt$1;
 const $t$1 = (e) => (bt$1 ??= createRequire(import.meta.url))(e);
@@ -2734,7 +8107,6 @@ const Qr = (e, t = {}) => {
   if (t.framesMaxLimit !== void 0 && t.framesMaxLimit <= 0) throw new RangeError("The 'framesMaxLimit' option must be a positive number");
   return rt$1(e, t, 0);
 };
-const Jn = [161, 161, 164, 164, 167, 168, 170, 170, 173, 174, 176, 180, 182, 186, 188, 191, 198, 198, 208, 208, 215, 216, 222, 225, 230, 230, 232, 234, 236, 237, 240, 240, 242, 243, 247, 250, 252, 252, 254, 254, 257, 257, 273, 273, 275, 275, 283, 283, 294, 295, 299, 299, 305, 307, 312, 312, 319, 322, 324, 324, 328, 331, 333, 333, 338, 339, 358, 359, 363, 363, 462, 462, 464, 464, 466, 466, 468, 468, 470, 470, 472, 472, 474, 474, 476, 476, 593, 593, 609, 609, 708, 708, 711, 711, 713, 715, 717, 717, 720, 720, 728, 731, 733, 733, 735, 735, 768, 879, 913, 929, 931, 937, 945, 961, 963, 969, 1025, 1025, 1040, 1103, 1105, 1105, 8208, 8208, 8211, 8214, 8216, 8217, 8220, 8221, 8224, 8226, 8228, 8231, 8240, 8240, 8242, 8243, 8245, 8245, 8251, 8251, 8254, 8254, 8308, 8308, 8319, 8319, 8321, 8324, 8364, 8364, 8451, 8451, 8453, 8453, 8457, 8457, 8467, 8467, 8470, 8470, 8481, 8482, 8486, 8486, 8491, 8491, 8531, 8532, 8539, 8542, 8544, 8555, 8560, 8569, 8585, 8585, 8592, 8601, 8632, 8633, 8658, 8658, 8660, 8660, 8679, 8679, 8704, 8704, 8706, 8707, 8711, 8712, 8715, 8715, 8719, 8719, 8721, 8721, 8725, 8725, 8730, 8730, 8733, 8736, 8739, 8739, 8741, 8741, 8743, 8748, 8750, 8750, 8756, 8759, 8764, 8765, 8776, 8776, 8780, 8780, 8786, 8786, 8800, 8801, 8804, 8807, 8810, 8811, 8814, 8815, 8834, 8835, 8838, 8839, 8853, 8853, 8857, 8857, 8869, 8869, 8895, 8895, 8978, 8978, 9312, 9449, 9451, 9547, 9552, 9587, 9600, 9615, 9618, 9621, 9632, 9633, 9635, 9641, 9650, 9651, 9654, 9655, 9660, 9661, 9664, 9665, 9670, 9672, 9675, 9675, 9678, 9681, 9698, 9701, 9711, 9711, 9733, 9734, 9737, 9737, 9742, 9743, 9756, 9756, 9758, 9758, 9792, 9792, 9794, 9794, 9824, 9825, 9827, 9829, 9831, 9834, 9836, 9837, 9839, 9839, 9886, 9887, 9919, 9919, 9926, 9933, 9935, 9939, 9941, 9953, 9955, 9955, 9960, 9961, 9963, 9969, 9972, 9972, 9974, 9977, 9979, 9980, 9982, 9983, 10045, 10045, 10102, 10111, 11094, 11097, 12872, 12879, 57344, 63743, 65024, 65039, 65533, 65533, 127232, 127242, 127248, 127277, 127280, 127337, 127344, 127373, 127375, 127376, 127387, 127404, 917760, 917999, 983040, 1048573, 1048576, 1114109];
 const Kn = 12288;
 const Zn = 65510;
 const Xn = [12288, 12288, 65281, 65376, 65504, 65510];
@@ -4024,7 +9396,7 @@ class nt {
 class me extends pe {
   constructor(e) {
     const t = e.parentStderr, s = e.parentStdout, { interactive: n, processors: l, rawReporter: a, reporters: o, stderr: d, stdout: m } = e, b = t ?? d, f = s ?? m, $ = e.parentLongestLabel, u = e.parentTypes, { parentLogLevels: L, parentMessages: I, parentStringify: G } = e, C = { disabled: e.disabled, logLevel: e.logLevel, logLevels: e.logLevels, messages: e.messages, processors: [], rawReporter: e.rawReporter, reporters: [], scope: e.scope, throttle: e.throttle, throttleMin: e.throttleMin }, c = "types" in e;
-    u && $ && !c ? (C.parentTypes = u, C.parentLongestLabel = $) : c && e.types !== void 0 && (C.types = e.types), G && (C.parentStringify = G), L && !e.logLevels && (C.parentLogLevels = L), I && !e.messages && (C.parentMessages = I), super(C), this.options = e, this.interactive = n ?? false, this.stdout = f, this.stderr = b, this.interactive && this.stdout && this.stderr && (this.interactiveManager = new yC(new W$3(this.stdout), new W$3(this.stderr))), Array.isArray(o) && this.registerReporters(o), this.rawReporter = this.extendReporter(a ?? new nt()), Array.isArray(l) && this.registerProcessors(l);
+    u && $ && !c ? (C.parentTypes = u, C.parentLongestLabel = $) : c && e.types !== void 0 && (C.types = e.types), G && (C.parentStringify = G), L && !e.logLevels && (C.parentLogLevels = L), I && !e.messages && (C.parentMessages = I), super(C), this.options = e, this.interactive = n ?? false, this.stdout = f, this.stderr = b, this.interactive && this.stdout && this.stderr && (this.interactiveManager = new yC(new W$2(this.stdout), new W$2(this.stderr))), Array.isArray(o) && this.registerReporters(o), this.rawReporter = this.extendReporter(a ?? new nt()), Array.isArray(l) && this.registerProcessors(l);
   }
   options;
   stdout;
@@ -4618,38 +9990,16 @@ ${Qr(E, { ...this.#s, filterStacktrace: L, hideErrorCauseCodeView: true, hideErr
   }
 }
 
-const HOME$5 = homedir();
+const HOME = homedir();
 const paths = {
-  /** 本机配置目录(信任文件、scope、plugins-skip 都在这,永不上传) */
-  configDir: join(HOME$5, ".config", "omarsync"),
-  configFile: join(HOME$5, ".config", "omarsync", "config"),
-  /** 状态目录(镜像、备份、applied 印章、last.log) */
-  stateDir: join(HOME$5, ".local", "state", "omarsync"),
-  mirrorDir: join(HOME$5, ".local", "state", "omarsync", "repo"),
-  backupDir: join(HOME$5, ".local", "state", "omarsync", "backup"),
-  scopeFile: join(HOME$5, ".config", "omarsync", "scope"),
-  pluginsSkipFile: join(HOME$5, ".config", "omarsync", "plugins-skip"),
-  pushIgnoreFile: join(HOME$5, ".config", "omarsync", "push-ignore"),
-  trustedKeysFile: join(HOME$5, ".config", "omarsync", "trusted-keys"),
-  appliedStamp: join(HOME$5, ".local", "state", "omarsync", "applied"),
-  lastLog: join(HOME$5, ".local", "state", "omarsync", "last.log"),
-  lockFile: join(HOME$5, ".local", "state", "omarsync", "omarsync.lock"),
-  statusJson: join(HOME$5, ".local", "state", "omarsync", "status.json")
+  /** 配置仓库(源文件 + mise.toml),可用 OMARSYNC_REPO 覆盖 */
+  configRepo: process.env["OMARSYNC_REPO"] ?? join(HOME, "Documents", "GitHub", "omarchy-config"),
+  /** 状态目录(status.json、last.log、锁) */
+  stateDir: join(HOME, ".local", "state", "omarsync"),
+  statusJson: join(HOME, ".local", "state", "omarsync", "status.json"),
+  lastLog: join(HOME, ".local", "state", "omarsync", "last.log"),
+  lockFile: join(HOME, ".local", "state", "omarsync", "omarsync.lock")
 };
-function configGet(key, readFile) {
-  const data = readFile(paths.configFile);
-  if (data === void 0) {
-    return void 0;
-  }
-  let value;
-  for (const line of data.split("\n")) {
-    const match = /^([A-Z_]+)=(.*)$/.exec(line);
-    if (match && match[1] === key) {
-      value = match[2];
-    }
-  }
-  return value;
-}
 
 const logger = Nt({
   logLevel: "informational",
@@ -4687,68 +10037,6 @@ const log = {
   },
   die
 };
-function readTextFile(path) {
-  try {
-    return readFileSync(path, "utf8");
-  } catch {
-    return void 0;
-  }
-}
-
-const PROXY_NAMES = [
-  "http_proxy",
-  "https_proxy",
-  "all_proxy",
-  "no_proxy",
-  "HTTP_PROXY",
-  "HTTPS_PROXY",
-  "ALL_PROXY",
-  "NO_PROXY"
-];
-function hasForbidden(value) {
-  return value.includes("$") || value.includes("`") || value.includes('"') || value.includes("'") || value.includes("\n") || value.includes("\r") || value.includes(" ") || value.includes("..");
-}
-function bodyOk(rest) {
-  if (rest === "") {
-    return false;
-  }
-  return /^[\][A-Za-z0-9._~:/?#@%+-]+$/.test(rest);
-}
-function urlOk(value) {
-  if (value === "" || value.length > 256 || hasForbidden(value)) {
-    return false;
-  }
-  const rest = /^(?:https?|socks5h?|socks4):\/\/(.*)$/.exec(value)?.[1];
-  return rest !== void 0 && bodyOk(rest);
-}
-function bypassOk(value) {
-  if (value === "" || value.length > 512) {
-    return false;
-  }
-  if (value.includes("\n") || value.includes("\r") || value.includes(" ")) {
-    return false;
-  }
-  return /^[A-Za-z0-9.*:,_/-]+$/.test(value);
-}
-function valueOk(name, value) {
-  if (name === "no_proxy" || name === "NO_PROXY") {
-    return bypassOk(value);
-  }
-  if (name === "http_proxy" || name === "https_proxy" || name === "all_proxy" || name === "HTTP_PROXY" || name === "HTTPS_PROXY" || name === "ALL_PROXY") {
-    return urlOk(value);
-  }
-  return false;
-}
-function assignments() {
-  const out = [];
-  for (const name of PROXY_NAMES) {
-    const value = process.env[name];
-    if (value && valueOk(name, value)) {
-      out.push(`${name}=${value}`);
-    }
-  }
-  return out;
-}
 
 function gitBin() {
   const bin = resolveTool("git");
@@ -4757,116 +10045,51 @@ function gitBin() {
   }
   return bin;
 }
-function baseArgs() {
-  const keygen = resolveTool("ssh-keygen");
-  if (!keygen) {
-    die("ssh-keygen 不可用");
-  }
-  return ["-c", "core.hooksPath=/dev/null", "-c", `gpg.ssh.program=${keygen}`];
+function baseArgs(repo) {
+  return ["-C", repo, "-c", "core.hooksPath=/dev/null"];
 }
-function git(args) {
-  return run(gitBin(), [...baseArgs(), ...args], assignments());
+function git(repo, args) {
+  return run(gitBin(), [...baseArgs(repo), ...args]);
 }
-function gitCapture(args) {
-  const result = capture(gitBin(), [...baseArgs(), ...args], assignments());
-  return { ok: result.code === 0, code: result.code, out: result.stdout };
-}
-function gitCaptureDetailed(args) {
-  const result = capture(gitBin(), [...baseArgs(), ...args], assignments());
+function gitCapture(repo, args) {
+  const result = capture(gitBin(), [...baseArgs(repo), ...args]);
   return { ok: result.code === 0, code: result.code, stdout: result.stdout, stderr: result.stderr };
 }
-function gitCaptureEnv(args, extraEnv) {
-  const result = capture(gitBin(), [...baseArgs(), ...args], [...assignments(), ...extraEnv]);
-  return { ok: result.code === 0, code: result.code, out: result.stdout };
-}
-function gitCaptureInputEnv(args, extraEnv, input) {
-  const result = capture(gitBin(), [...baseArgs(), ...args], [...assignments(), ...extraEnv], input);
-  return { ok: result.code === 0, code: result.code, out: result.stdout };
-}
-function gitOutEnv(args, extraEnv) {
-  const { ok, out } = gitCaptureEnv(args, extraEnv);
-  if (!ok) {
-    return void 0;
-  }
-  return out.trimEnd();
-}
-function gitOut(args) {
-  const { ok, out } = gitCapture(args);
-  if (!ok) {
-    return void 0;
-  }
-  return out.trimEnd();
+function gitOut(repo, args) {
+  const { ok, stdout } = gitCapture(repo, args);
+  return ok ? stdout.trimEnd() : void 0;
 }
 
-function vsCodeDiffAvailable() {
-  return resolveTool("code") !== void 0;
+function miseBin() {
+  return resolveTool("mise");
 }
-function reviewWithVsCode(args) {
-  const code = resolveTool("code");
-  if (!code) {
+function available() {
+  return miseBin() !== void 0;
+}
+function dotApply() {
+  const bin = miseBin();
+  if (!bin) {
     return false;
   }
-  const result = gitCaptureDetailed([
-    "-c",
-    `difftool.vscode.cmd=${code} --wait --diff $LOCAL $REMOTE`,
-    "difftool",
-    "--no-prompt",
-    "--tool=vscode",
-    ...args
-  ]);
-  if (result.ok) {
-    return true;
+  return run(bin, ["-C", paths.configRepo, "dot", "apply"]);
+}
+function adoptChanged() {
+  const bin = miseBin();
+  if (!bin) {
+    return { ok: false, stderr: "mise 不可用" };
   }
-  const reason = result.stderr.trim() || result.stdout.trim() || `git difftool 退出码 ${result.code}`;
-  log.warn(`VS Code 左右对比没有启动,回退到文本 diff: ${reason}`);
-  return false;
+  const result = capture(bin, ["-C", paths.configRepo, "dot", "add", "--changed"]);
+  return { ok: result.code === 0, stderr: result.stderr };
+}
+function dotStatus() {
+  const bin = miseBin();
+  if (!bin) {
+    return { ok: false, stdout: "", stderr: "mise 不可用" };
+  }
+  const result = capture(bin, ["-C", paths.configRepo, "dot", "status", "--json"]);
+  return { ok: result.code === 0, stdout: result.stdout, stderr: result.stderr };
 }
 
-function editorCommand() {
-  const fromEnv = process.env["OMARSYNC_EDITOR"] ?? process.env["VISUAL"] ?? process.env["EDITOR"];
-  if (fromEnv && fromEnv.trim() !== "") {
-    return fromEnv.trim();
-  }
-  const launcher = resolveTool("omarchy-launch-editor");
-  if (launcher) {
-    return launcher;
-  }
-  return resolveTool("code");
-}
-function openInEditor(files) {
-  if (files.length === 0) {
-    return;
-  }
-  const editor = editorCommand();
-  const quoted = files.map((f) => `'${f.replaceAll("'", "'\\''")}'`).join(" ");
-  if (!editor) {
-    log.warn(`找不到可用的编辑器;手动查看: cat ${quoted}`);
-    return;
-  }
-  const child = spawn(`${editor} ${quoted}`, {
-    detached: true,
-    shell: true,
-    stdio: "ignore"
-  });
-  child.unref();
-  log.info(`已用编辑器打开审阅: ${editor}`);
-  log.info(`没弹出来?复制这条手动打开: ${editor} ${quoted}`);
-  log.info("想换编辑器(比如 VS Code): export OMARSYNC_EDITOR=code");
-}
-
-function displayToken(value) {
-  if (typeof value !== "string") {
-    return "";
-  }
-  const cleaned = value.replaceAll(/[^A-Za-z0-9._-]/g, "");
-  return cleaned.length > 64 ? cleaned.slice(0, 64) : cleaned;
-}
-function displayTime(value) {
-  if (typeof value !== "string") {
-    return "";
-  }
-  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$/.test(value) ? value : "";
-}
 function hostnameSafe() {
   let name = "";
   try {
@@ -4900,2951 +10123,89 @@ async function confirm(prompt) {
     });
   });
 }
-function configSet(key, value) {
-  let lines = [];
-  try {
-    lines = readFileSync(paths.configFile, "utf8").split("\n").filter((line) => line !== "" && !line.startsWith(`${key}=`));
-  } catch {
-  }
-  lines.push(`${key}=${value}`);
-  writeFileSync(paths.configFile, `${lines.join("\n")}
-`);
-}
 
-function isFullSha(value) {
-  return typeof value === "string" && /^[0-9a-f]{40}$/.test(value);
-}
-function realpath(path) {
-  try {
-    return realpathSync(path);
-  } catch {
-    return void 0;
-  }
-}
-function pathWithin(a, b) {
-  return a === b || a.startsWith(`${b}/`);
-}
-function refuseInsideMirror(path) {
-  if (!isDir(paths.mirrorDir)) {
-    return;
-  }
-  const realPath = realpath(path);
-  const realMirror = realpath(paths.mirrorDir);
-  if (realPath && realMirror && pathWithin(realPath, realMirror)) {
-    die(`拒绝使用同步镜像内的信任文件: ${path}`);
-  }
-}
-function resolveRemoteSha(mirror, branch) {
-  git(["-C", mirror, "fetch", "--quiet", "origin", branch]);
-  const sha = gitOut(["-C", mirror, "rev-parse", "--verify", `refs/remotes/origin/${branch}^{commit}`]);
-  if (!isFullSha(sha)) {
-    die(`origin/${branch} 没有解析出完整提交: ${sha ?? "<空>"}`);
-  }
-  return sha;
-}
-function checkoutPinnedCommit(mirror, sha) {
-  if (!isFullSha(sha)) {
-    die(`拒绝检出非提交: ${sha}`);
-  }
-  git(["-C", mirror, "checkout", "--quiet", "--force", "--detach", sha]);
-  const head = gitOut(["-C", mirror, "rev-parse", "--verify", "HEAD"]);
-  if (head !== sha) {
-    die(`镜像 HEAD ${head ?? "?"} 不是钉住的提交 ${sha}`);
-  }
-  if (gitCapture(["-C", mirror, "symbolic-ref", "-q", "HEAD"]).ok) {
-    die(`钉住 ${sha} 后镜像仍挂在分支上`);
-  }
-}
-function commitIsTrusted(mirror, sha) {
-  const keys = paths.trustedKeysFile;
-  if (!isFile(keys)) {
-    return false;
-  }
-  const data = readTextFile(keys) ?? "";
-  if (!/\S/.test(data)) {
-    return false;
-  }
-  refuseInsideMirror(keys);
-  return gitCapture(["-C", mirror, "-c", `gpg.ssh.allowedSignersFile=${keys}`, "verify-commit", sha]).ok;
-}
-function trustedKeysPresent() {
-  if (!isFile(paths.trustedKeysFile)) {
-    return false;
-  }
-  return /\S/.test(readTextFile(paths.trustedKeysFile) ?? "");
-}
-function extractArmor(commitText) {
-  const lines = [];
-  let on = false;
-  for (const line of commitText.split("\n")) {
-    if (!on) {
-      const rest = /^gpgsig (.*)$/.exec(line)?.[1];
-      if (rest !== void 0) {
-        on = true;
-        lines.push(rest);
-        if (rest.includes("END SSH SIGNATURE")) {
-          break;
-        }
-      }
-    } else {
-      const rest = /^ (.*)$/.exec(line)?.[1];
-      if (rest === void 0) {
-        break;
-      }
-      lines.push(rest);
-      if (rest.includes("END SSH SIGNATURE")) {
-        break;
-      }
-    }
-  }
-  const armor = lines.join("\n");
-  if (!armor.includes("BEGIN SSH SIGNATURE") || !armor.includes("END SSH SIGNATURE")) {
-    return void 0;
-  }
-  return armor;
-}
-function signaturePubkeyLine(mirror, sha) {
-  const commit = gitOut(["-C", mirror, "cat-file", "commit", sha]);
-  if (!commit) {
-    return void 0;
-  }
-  const armor = extractArmor(commit);
-  if (!armor) {
-    return void 0;
-  }
-  const body = armor.replace("-----BEGIN SSH SIGNATURE-----", "").replace("-----END SSH SIGNATURE-----", "");
-  const sig = Buffer.from(body.replaceAll(/\s/g, ""), "base64");
-  if (sig.length < 14 || sig.subarray(0, 6).toString("ascii") !== "SSHSIG") {
-    return void 0;
-  }
-  if (sig.readUInt32BE(6) !== 1) {
-    return void 0;
-  }
-  const keyLength = sig.readUInt32BE(10);
-  if (keyLength < 16 || keyLength > 4096 || sig.length < 14 + keyLength) {
-    return void 0;
-  }
-  const key = sig.subarray(14, 14 + keyLength);
-  const typeLength = key.readUInt32BE(0);
-  if (typeLength < 4 || typeLength > 64 || key.length < 4 + typeLength) {
-    return void 0;
-  }
-  const keyType = key.subarray(4, 4 + typeLength).toString("ascii");
-  if (!/^ssh-[a-z0-9-]+$/.test(keyType)) {
-    return void 0;
-  }
-  return `${keyType} ${key.toString("base64")}`;
-}
-function fingerprintOfPubkeyLine(pub) {
-  const mktemp = resolveTool("mktemp");
-  if (!mktemp) {
-    return void 0;
-  }
-  const tmp = capture(mktemp, []).stdout.trim();
-  if (tmp === "") {
-    return void 0;
-  }
-  writeFileSync(tmp, `${pub}
-`);
-  const keygen = resolveTool("ssh-keygen");
-  const out = keygen ? capture(keygen, ["-lf", tmp]).stdout : "";
-  try {
-    unlinkSync(tmp);
-  } catch {
-  }
-  return /\S+\s+(SHA256:[A-Za-z0-9+/]+=*)/.exec(out)?.[1];
-}
-function pubkeyVerifiesCommit(mirror, sha, pub) {
-  const mktemp = resolveTool("mktemp");
-  if (!mktemp) {
-    return false;
-  }
-  const tmp = capture(mktemp, []).stdout.trim();
-  if (tmp === "") {
-    return false;
-  }
-  writeFileSync(tmp, `* namespaces="git" ${pub}
-`);
-  const ok = gitCapture(["-C", mirror, "-c", `gpg.ssh.allowedSignersFile=${tmp}`, "verify-commit", sha]).ok;
-  try {
-    unlinkSync(tmp);
-  } catch {
-  }
-  return ok;
-}
-function appliedStampFile() {
-  return paths.appliedStamp;
-}
-function firstApplyAvailable() {
-  if (trustedKeysPresent()) {
-    return false;
-  }
-  return !isFile(appliedStampFile());
-}
-function markApplied(sha) {
-  mkdirSync(dirname(appliedStampFile()), { recursive: true });
-  writeFileSync(appliedStampFile(), `${sha}
-`);
-}
-function rememberSigner(pub) {
-  const keys = paths.trustedKeysFile;
-  refuseInsideMirror(keys);
-  mkdirSync(dirname(keys), { recursive: true });
-  if (!isFile(keys)) {
-    writeFileSync(keys, "");
-  }
-  chmodSync(keys, 420);
-  const entry = `* namespaces="git" ${pub}`;
-  const data = readTextFile(keys) ?? "";
-  if (!data.split("\n").includes(entry)) {
-    appendFileSync(keys, `${entry}
-`);
-  }
-}
-function acceptFirstApply(mirror, sha) {
-  const pub = signaturePubkeyLine(mirror, sha);
-  const fp = pub ? fingerprintOfPubkeyLine(pub) : void 0;
-  if (pub && fp && pubkeyVerifiesCommit(mirror, sha, pub)) {
-    rememberSigner(pub);
-    log.info(`已信任签名者 ${fp}`);
-    return;
-  }
-  log.info(`本机首次应用;提交 ${sha} 未签名`);
-  log.info("之后的 apply 需要可信签名");
-}
-async function trustRemoteSigner(mirror, sha, allowPrompt) {
-  const pub = signaturePubkeyLine(mirror, sha);
-  const fp = pub ? fingerprintOfPubkeyLine(pub) : void 0;
-  if (!pub || !fp || !pubkeyVerifiesCommit(mirror, sha, pub)) {
-    die(`提交 ${sha} 未签名,或自带公钥验签失败。拒绝信任。`);
-  }
-  if (commitIsTrusted(mirror, sha)) {
-    log.info(`签名者 ${fp} 已在信任名单中,无需重复添加`);
-    return;
-  }
-  if (!allowPrompt) {
-    if (stdinIsTty()) {
-      log.info(`提交 ${sha} 的签名者指纹: ${fp}`);
-      if (!await confirm("确认信任这把密钥?")) {
-        die("未信任该签名密钥");
-      }
-    } else {
-      die(`需要在终端里核对指纹 ${fp} 并确认,或加 --yes 跳过确认。`);
-    }
-  }
-  rememberSigner(pub);
-  log.info(`已信任签名者 ${fp}`);
-}
-function requireTrustedCommit(mirror, sha) {
-  if (!isFullSha(sha)) {
-    die(`拒绝未钉住的版本: ${sha}`);
-  }
-  if (!commitIsTrusted(mirror, sha)) {
-    die(`提交 ${sha} 不是由 ${paths.trustedKeysFile} 里的密钥签名的。拒绝应用。`);
-  }
-}
-function commitSignatureState(mirror, sha) {
-  let state = "none";
-  if (commitIsTrusted(mirror, sha)) {
-    state = "trusted";
-  }
-  const pub = signaturePubkeyLine(mirror, sha);
-  const fp = (pub ? fingerprintOfPubkeyLine(pub) : void 0) ?? "";
-  if (state === "none" && pub && fp !== "" && pubkeyVerifiesCommit(mirror, sha, pub)) {
-    state = "untrusted";
-  }
-  return { state, fingerprint: fp };
-}
-function preparePushBranch(mirror, branch) {
-  git(["-C", mirror, "checkout", "-q", "-B", branch]);
-}
-function recordTrustedSigner(keyType, keyData, priv) {
-  if (!keyType.startsWith("ssh-")) {
-    die("不是 ssh 公钥");
-  }
-  if (!/^[A-Za-z0-9+/=]+$/.test(keyData)) {
-    die("ssh 公钥格式不对");
-  }
-  if (priv) {
-    if (!isFile(priv)) {
-      die(`私钥不存在: ${priv}`);
-    }
-    refuseInsideMirror(priv);
-  }
-  let email = configGet("SIGNING_EMAIL", readTextFile);
-  if (!email) {
-    email = "omarsync@localhost";
-    configSet("SIGNING_EMAIL", email);
-  }
-  const keys = paths.trustedKeysFile;
-  refuseInsideMirror(keys);
-  mkdirSync(dirname(keys), { recursive: true });
-  if (!isFile(keys)) {
-    writeFileSync(keys, "");
-  }
-  chmodSync(keys, 420);
-  const entry = `${email} namespaces="git" ${keyType} ${keyData}`;
-  const data = readTextFile(keys) ?? "";
-  if (!data.split("\n").includes(entry)) {
-    appendFileSync(keys, `${entry}
-`);
-  }
-  if (priv) {
-    configSet("SIGNING_KEY", priv);
-  }
-  log.info(`已为 ${email} 信任 ${keyType} 密钥`);
-}
-function privateKeyPub(priv) {
-  if (!priv || !isFile(priv)) {
-    return void 0;
-  }
-  if (isDir(paths.mirrorDir)) {
-    const realPath = realpath(priv);
-    const realMirror = realpath(paths.mirrorDir);
-    if (!realPath || !realMirror || pathWithin(realPath, realMirror)) {
-      return void 0;
-    }
-  }
-  if ((statSync(priv).mode & 18) !== 0) {
-    return void 0;
-  }
-  const keygen = resolveTool("ssh-keygen");
-  if (!keygen) {
-    return void 0;
-  }
-  const { code, stdout } = capture(keygen, ["-y", "-f", priv, "-P", ""]);
-  if (code !== 0) {
-    return void 0;
-  }
-  const pub = stdout.trim();
-  return /^ssh-[a-z0-9-]+\s+[A-Za-z0-9+/=]+/.test(pub) ? pub : void 0;
-}
-function dedicatedSigningKey() {
-  return `${dirname(paths.trustedKeysFile)}/signing_key`;
-}
-function createDedicatedSigningKey(priv) {
-  if (exists(priv) || exists(`${priv}.pub`)) {
-    die(`无法在 ${priv} 创建签名密钥`);
-  }
-  refuseInsideMirror(priv);
-  mkdirSync(dirname(priv), { recursive: true });
-  const keygen = resolveTool("ssh-keygen");
-  if (!keygen) {
-    die("ssh-keygen 不可用");
-  }
-  if (!run(keygen, ["-q", "-t", "ed25519", "-f", priv, "-N", "", "-C", `omarsync@${hostnameSafe()}`])) {
-    die("创建签名密钥失败");
-  }
-  chmodSync(priv, 384);
-}
-function ensurePushSigner() {
-  const home = dirname(dirname(paths.trustedKeysFile));
-  let priv;
-  let pub;
-  const configured = configGet("SIGNING_KEY", readTextFile);
-  if (configured) {
-    pub = privateKeyPub(configured);
-    if (!pub) {
-      die(`SIGNING_KEY 无法免密签名: ${configured}`);
-    }
-    priv = configured;
-  } else {
-    const defaultKey = `${home}/.ssh/id_ed25519`;
-    pub = privateKeyPub(defaultKey);
-    if (pub) {
-      priv = defaultKey;
-      log.info("使用 ~/.ssh/id_ed25519 签名");
-    } else {
-      priv = dedicatedSigningKey();
-      pub = privateKeyPub(priv);
-      if (!pub) {
-        createDedicatedSigningKey(priv);
-        pub = privateKeyPub(priv);
-        if (!pub) {
-          die("创建签名密钥失败");
-        }
-      }
-      log.info(`使用 ${priv} 签名`);
-    }
-  }
-  const [keyType, keyData] = pub.split(/\s+/);
-  recordTrustedSigner(keyType, keyData, priv);
-}
-function requireTrustedRemoteTip(mirror, sha) {
-  if (!commitIsTrusted(mirror, sha)) {
-    log.info(`如已确认这是你的快照,可审阅后补签名: omarsync repair-remote --commit ${sha}`);
-    die(`远程提交 ${sha} 不是可信签名。拒绝合并,也不会为它签名。`);
-  }
-}
-function signReviewedTip(mirror, reviewedTree) {
-  if (!isFullSha(reviewedTree)) {
-    die("拒绝为未经审阅的树签名");
-  }
-  const tree = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
-  if (tree !== reviewedTree) {
-    die("拒绝为未经审阅的树签名");
-  }
-  const sha = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-  if (sha && commitIsTrusted(mirror, sha)) {
-    return;
-  }
-  log.info("为已审阅的快照补签名");
-  if (!git(["-C", mirror, "commit", "-S", "--allow-empty", "-m", `sign snapshot from ${hostnameSafe()} @ ${iso8601()}`])) {
-    die("签名失败,未推送");
-  }
-  const signedTree = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
-  const signed = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-  if (signedTree !== reviewedTree || !signed || !commitIsTrusted(mirror, signed)) {
-    die("签名没有覆盖已审阅的树,未推送");
-  }
-}
-function cmdTrustKey(pubFile, priv) {
-  if (!pubFile || !isFile(pubFile)) {
-    die("用法: omarsync trust-key --pubkey <ssh公钥> [--privkey 私钥]");
-  }
-  refuseInsideMirror(pubFile);
-  if (priv && !isFile(priv)) {
-    die(`私钥不存在: ${priv}`);
-  }
-  if (priv) {
-    refuseInsideMirror(priv);
-  }
-  const [keyType, keyData] = (readTextFile(pubFile) ?? "").trim().split(/\s+/);
-  if (!keyType) {
-    die("不是 ssh 公钥");
-  }
-  recordTrustedSigner(keyType, keyData ?? "", priv);
-}
-
-function available() {
-  return resolveTool("mise") !== void 0;
-}
-function miseBin() {
-  const bin = resolveTool("mise");
-  if (!bin) {
-    die("mise 未安装。运行: omarchy pkg add mise");
-  }
-  return bin;
-}
-function miseCapture(args, mergeStderr = false) {
-  const result = capture(miseBin(), ["dot", ...args], assignments());
-  return { ok: result.code === 0, out: mergeStderr ? result.stdout + result.stderr : result.stdout };
-}
-function featureOk() {
-  return miseCapture(["status", "-J"]).ok;
-}
-function status() {
-  const { ok, out } = miseCapture(["status", "-J"]);
-  if (!ok) {
-    return void 0;
-  }
-  try {
-    return JSON.parse(out);
-  } catch {
-    return void 0;
-  }
-}
-function pathsJson() {
-  const { ok, out } = miseCapture(["paths", "-J"]);
-  if (!ok) {
-    return void 0;
-  }
-  try {
-    return JSON.parse(out);
-  } catch {
-    return void 0;
-  }
-}
-function trackedRels() {
-  const result = /* @__PURE__ */ new Set();
-  const data = pathsJson();
-  for (const entry of data?.entries ?? []) {
-    if (typeof entry.path === "string") {
-      result.add(entry.path.replace(/^~\//, ""));
-    }
-  }
-  return result;
-}
-function currentExcludes() {
-  return [...pathsJson()?.exclude ?? []];
-}
-function track(rel) {
-  return miseCapture(["track", "-y", `~/${rel}`]).ok;
-}
-function untrack(rel) {
-  return miseCapture(["untrack", `~/${rel}`]).ok;
-}
-function excludeAdd(glob) {
-  return miseCapture(["exclude", glob]).ok;
-}
-function excludeDel(glob) {
-  return miseCapture(["include", glob]).ok;
-}
-function save() {
-  const { ok, out } = miseCapture(["save"], true);
-  if (!ok) {
-    return void 0;
-  }
-  return !out.includes("nothing changed");
-}
-function unsavedFiles() {
-  const unsaved = status()?.history?.unsaved;
-  if (!Array.isArray(unsaved)) {
-    return void 0;
-  }
-  const files = [];
-  for (const item of unsaved) {
-    if (typeof item === "string") {
-      files.push(item);
-    } else if (item && typeof item === "object" && "path" in item && typeof item.path === "string") {
-      files.push(item.path);
-    }
-  }
-  return files;
-}
-function snapshotDiff(from, to) {
-  if (!isFullSha(from) || !isFullSha(to) || !isDir(historyRepo())) {
-    return "";
-  }
-  return gitCapture(["--git-dir", historyRepo(), "diff", "--stat", "--patch", "--no-color", from, to]).out;
-}
-function headSnapshot() {
-  const { ok, out } = miseCapture(["history", "ls", "-J"]);
-  if (!ok) {
-    return void 0;
-  }
-  try {
-    const data = JSON.parse(out);
-    const snapshot = data[0]?.tree?.snapshot;
-    return typeof snapshot === "string" ? snapshot : void 0;
-  } catch {
-    return void 0;
-  }
-}
-function normOrigin(url) {
-  return url.replace(/\/+$/, "").replace(/\.git$/, "");
-}
-function historySync() {
-  const data = status();
-  const syncInfo = data?.history?.sync;
-  return syncInfo && typeof syncInfo === "object" ? syncInfo : void 0;
-}
-function originUrl() {
-  const syncInfo = historySync();
-  if (syncInfo) {
-    return typeof syncInfo.origin === "string" ? syncInfo.origin : "";
-  }
-  const { out } = miseCapture(["status"], true);
-  const line = /Setup repository: ([^\n]+)/.exec(out)?.[1]?.trim();
-  if (line && !line.startsWith("none")) {
-    return line;
-  }
-  const repo = /Repository\n\s*([^\n]+)/.exec(out)?.[1]?.trim();
-  if (repo && !repo.startsWith("none")) {
-    return repo;
-  }
-  return "";
-}
-function originBranch() {
-  const syncInfo = historySync();
-  const branch = syncInfo?.branch;
-  return typeof branch === "string" ? branch : "";
-}
-function originConnected() {
-  return originUrl() !== "";
-}
-function originMatches(url, branch) {
-  const got = normOrigin(originUrl());
-  if (got === "" || got !== normOrigin(url)) {
-    return false;
-  }
-  const gotBranch = originBranch();
-  return gotBranch === "" || gotBranch === branch;
-}
-function connect(url, branch) {
-  if (url === "") {
-    return { ok: false, out: "metadata repository is not configured" };
-  }
-  if (originMatches(url, branch)) {
-    return { ok: true, out: "" };
-  }
-  return originSet(url, branch);
-}
-function originSet(url, branch = "main") {
-  return miseCapture(["origin", "set", url, "--branch", branch, "--sync", "manual", "-y"], true);
-}
-function sync(fetchOnly) {
-  const args = ["sync"];
-  if (fetchOnly) {
-    args.push("--fetch-only");
-  }
-  const first = miseCapture(args, true);
-  if (first.ok || fetchOnly || !first.out.includes("allow-plaintext-history")) {
-    return first;
-  }
-  log.warn("mise 因某次保存看起来像密钥而拒绝发布;私有历史仍然发布");
-  return miseCapture([...args, "--allow-plaintext-history"], true);
-}
-function historyRepo() {
-  return join(homedir(), ".local", "state", "mise", "history", "repo.git");
-}
-function snapshotEntry(tree, path) {
-  if (!isFullSha(tree)) {
-    return void 0;
-  }
-  const out = gitOut(["--git-dir", historyRepo(), "ls-tree", "-z", tree, "--", path]);
-  if (!out) {
-    return void 0;
-  }
-  const match = /^(\d+) \w+ ([0-9a-f]{40})\t(.+)$/.exec(out.replace(/\0$/, ""));
-  if (!match || match[3] !== path) {
-    return void 0;
-  }
-  return { mode: match[1], blob: match[2] };
-}
-function snapshotChangedPaths(baseTree, localTree) {
-  if (!isFullSha(baseTree) || !isFullSha(localTree)) {
-    return [];
-  }
-  const out = gitOut([
-    "--git-dir",
-    historyRepo(),
-    "diff",
-    "--name-status",
-    "--no-renames",
-    baseTree,
-    localTree,
-    "--",
-    "home"
-  ]);
-  if (!out) {
-    return [];
-  }
-  const changes = [];
-  for (const line of out.split("\n")) {
-    const [status2, path] = line.split("	");
-    if (!status2 || !path || !path.startsWith("home/")) {
-      continue;
-    }
-    changes.push({ path, status: status2 === "A" ? "A" : status2 === "D" ? "D" : "M" });
-  }
-  return changes;
-}
-function emptySnapshot() {
-  return gitOut(["--git-dir", historyRepo(), "hash-object", "-t", "tree", "/dev/null"]);
-}
-function snapshotPaths(tree) {
-  if (!isFullSha(tree)) {
-    return [];
-  }
-  const out = gitOut(["--git-dir", historyRepo(), "ls-tree", "-r", "--name-only", tree]);
-  return out ? out.split("\n").filter((line) => line !== "") : [];
-}
-function commitForSnapshot(snapshot) {
-  if (!isFullSha(snapshot) || !isDir(historyRepo())) {
-    return void 0;
-  }
-  const out = gitOut(["--git-dir", historyRepo(), "log", "--all", "--format=%H %T"]);
-  if (!out) {
-    return void 0;
-  }
-  for (const line of out.split("\n")) {
-    const [commit, tree] = line.split(" ");
-    if (tree === snapshot && isFullSha(commit)) {
-      return commit;
-    }
-  }
-  return void 0;
-}
-function checkpointIndexed(commit) {
-  if (!isFullSha(commit)) {
-    return false;
-  }
-  const { ok, out } = miseCapture(["history", "ls", "-J", "-n", "0"]);
-  if (!ok) {
-    return false;
-  }
-  try {
-    const rows = JSON.parse(out);
-    return Array.isArray(rows) && rows.some((row) => row.commit === commit);
-  } catch {
-    return false;
-  }
-}
-function upstreamSnapshot() {
-  const raw = readTextFile(`${dirname(historyRepo())}/sync.json`);
-  if (!raw) {
-    return void 0;
-  }
-  try {
-    const data = JSON.parse(raw);
-    const commit = typeof data.upstream_commit === "string" ? data.upstream_commit : void 0;
-    if (!isFullSha(commit)) {
-      return void 0;
-    }
-    return gitOut(["--git-dir", historyRepo(), "rev-parse", "--verify", "--quiet", `${commit}^{tree}`]);
-  } catch {
-    return void 0;
-  }
-}
-function rollbackTo(commit, dryRun = false) {
-  const args = ["rollback", "--to", `commit:${commit}`, "--all", "-y"];
-  if (dryRun) {
-    args.push("--dry-run");
-  }
-  return miseCapture(args, true);
-}
-function pull(options = {}) {
-  const args = ["pull", "-y"];
-  if (options.takeRemoteAll) {
-    args.push("--take-remote-all");
-  }
-  if (options.dryRun) {
-    args.push("--dry-run");
-  }
-  return miseCapture(args, true);
-}
-function conflicts() {
-  return miseCapture(["conflicts"], true);
-}
-function diff() {
-  return miseCapture(["diff"], true);
-}
-function incomingPending() {
-  if (!available()) {
-    return false;
-  }
-  const { out } = miseCapture(["status"], true);
-  if (/incoming change\(s\) pending/.test(out)) {
-    return true;
-  }
-  const n = /(\d+)\s+incoming/.exec(out)?.[1];
-  return n !== void 0 && n !== "0";
-}
-
-const DEFAULT_PUSH_IGNORE = `# Omarsync push-ignore（本机文件，永不上传）
-# 普通行：相对 $HOME 的路径或 glob
-# plugin:<id> 忽略插件；package:<name> 忽略包
-#
-# 默认：输入法插件会按机器重新生成这些文件
-.config/fcitx5/conf/classicui.conf
-.config/fcitx5/conf/notifications.conf
-.config/fcitx5/config
-.config/fcitx5/profile
-# 插件生成的绝对符号链接
-.local/bin/omarchy.ime
-.local/bin/ime-manager
-# 应用写入本机绝对路径的启动器
-.local/share/applications/claude-code-url-handler.desktop
-# 硬件/内核包由每台机器自己决定
-package:amd-ucode
-package:intel-ucode
-package:linux
-package:linux-headers
-package:linux-firmware
-package:linux-omarchy
-package:linux-omarchy-headers
-`;
-function ensurePushIgnore() {
-  const file = paths.pushIgnoreFile;
-  if (isFile(file)) {
-    return;
-  }
-  try {
-    mkdirSync(dirname(file), { recursive: true });
-    writeFileSync(file, DEFAULT_PUSH_IGNORE);
-  } catch {
-  }
-}
-const PLUGIN_ID$1 = /^[A-Za-z0-9._-]+$/;
-const PACKAGE_NAME = /^[A-Za-z0-9@._+:~-]+$/;
-function normalizePath(raw, line) {
-  let path = raw.trim();
-  const home = homedir();
-  if (path.startsWith(`${home}/`)) {
-    path = path.slice(home.length + 1);
-  } else if (path.startsWith("/")) {
-    die(`push-ignore 第 ${line} 行必须相对于 $HOME`);
-  } else if (path.startsWith("~/")) {
-    path = path.slice(2);
-  } else if (path.startsWith("home/")) {
-    path = path.slice(5);
-  }
-  path = path.replace(/\/+$/, "");
-  if (path === "" || path.includes("\n") || path.includes("\0")) {
-    die(`push-ignore 第 ${line} 行不是有效路径`);
-  }
-  if (path.split("/").includes("..")) {
-    die(`push-ignore 第 ${line} 行不允许包含 '..'`);
-  }
-  return path;
-}
-function parsePushIgnore(text) {
-  const patterns = [];
-  const plugins = /* @__PURE__ */ new Set();
-  const packages = /* @__PURE__ */ new Set();
-  const lines = text.split("\n");
-  for (const [index, raw] of lines.entries()) {
-    const line = raw.trim();
-    if (line === "" || line.startsWith("#")) {
-      continue;
-    }
-    const number = index + 1;
-    if (line.startsWith("plugin:")) {
-      const id = line.slice(7).trim();
-      if (!PLUGIN_ID$1.test(id)) {
-        die(`push-ignore 第 ${number} 行不是合法插件 id: ${id}`);
-      }
-      plugins.add(id);
-      continue;
-    }
-    if (line.startsWith("package:")) {
-      const name = line.slice(8).trim();
-      if (!PACKAGE_NAME.test(name)) {
-        die(`push-ignore 第 ${number} 行不是合法包名: ${name}`);
-      }
-      packages.add(name);
-      continue;
-    }
-    patterns.push(normalizePath(line, number));
-  }
-  return { patterns, plugins, packages };
-}
-function loadPushIgnore() {
-  const file = paths.pushIgnoreFile;
-  if (!isFile(file)) {
-    return { patterns: [], plugins: /* @__PURE__ */ new Set(), packages: /* @__PURE__ */ new Set() };
-  }
-  return parsePushIgnore(readTextFile(file) ?? "");
-}
-function normalizeCandidate(path) {
-  let value = path.trim();
-  if (value.startsWith("~/")) {
-    value = value.slice(2);
-  } else if (value.startsWith("home/")) {
-    value = value.slice(5);
-  } else if (value.startsWith(`${homedir()}/`)) {
-    value = value.slice(homedir().length + 1);
-  }
-  return value.replace(/^\/+/, "").replace(/\/+$/, "");
-}
-function hasGlob(pattern) {
-  return pattern.includes("*") || pattern.includes("?") || pattern.includes("[");
-}
-function pathIgnored(ignore, path) {
-  const rel = normalizeCandidate(path);
-  for (const pattern of ignore.patterns) {
-    if (matchesGlob(rel, pattern)) {
-      return true;
-    }
-    if (!hasGlob(pattern) && (rel === pattern || rel.startsWith(`${pattern}/`))) {
-      return true;
-    }
-  }
-  return false;
-}
-function pushIgnoreExcludes(ignore) {
-  const globs = /* @__PURE__ */ new Set();
-  for (const pattern of ignore.patterns) {
-    globs.add(`~/${pattern}`);
-    if (!hasGlob(pattern)) {
-      globs.add(`~/${pattern}/**`);
-    }
-  }
-  return [...globs];
-}
-
-const BANNED_PATHS = [
-  ".ssh",
-  ".config/gh",
-  ".config/git",
-  ".config/omarsync",
-  ".gnupg",
-  ".aws",
-  ".kube",
-  ".docker",
-  ".netrc",
-  ".npmrc",
-  ".config/npm",
-  ".password-store",
-  ".local/share/keyrings",
-  ".local/state/omarsync",
-  ".config/doubao-murmur",
-  ".var",
-  // mise 自身的配置与状态:同步它们会循环
-  ".config/mise",
-  ".local/share/mise",
-  ".local/state/mise"
-];
-const PLUGINS_REL = ".config/omarchy/plugins";
-function bannedBasename(base) {
-  return base.startsWith("id_rsa") || base.startsWith("id_ecdsa") || base.startsWith("id_ed25519") || base === "credentials" || base === "credentials.json" || base.endsWith(".pem") || base.endsWith(".key");
-}
-function assertSafeRel(rel) {
-  if (rel === "" || rel === "." || rel === "..") {
-    die(`非法 scope 路径: '${rel}'`);
-  }
-  if (rel.startsWith("/")) {
-    die(`scope 路径必须相对于 $HOME: '${rel}'`);
-  }
-  if (rel.includes("..")) {
-    die(`scope 路径不允许包含 '..': '${rel}'`);
-  }
-  if (rel.includes("\n")) {
-    die("scope 路径不允许包含换行");
-  }
-  if (rel.includes("*") || rel.includes("?")) {
-    die(`scope 路径不允许包含通配符: '${rel}'`);
-  }
-  if (rel === PLUGINS_REL || rel.startsWith(`${PLUGINS_REL}/`)) {
-    die(`scope 路径 '${rel}' 指向插件目录;插件只通过签名快照同步`);
-  }
-  for (const banned of BANNED_PATHS) {
-    if (rel === banned || rel.startsWith(`${banned}/`) || banned.startsWith(`${rel}/`)) {
-      die(`scope 路径 '${rel}' 涉及秘密位置 ${banned}`);
-    }
-  }
-  const base = rel.split("/").pop() ?? "";
-  if (bannedBasename(base)) {
-    die(`scope 路径 '${rel}' 指向凭证文件`);
-  }
-}
-function ensureLocalScope(root) {
-  if (isFile(paths.scopeFile)) {
-    return;
-  }
-  mkdirSync(dirname(paths.scopeFile), { recursive: true });
-  copyFileSync(`${root}/omarsync.scope.example`, paths.scopeFile);
-  chmodSync(paths.scopeFile, 420);
-}
-function readScope(file) {
-  const data = readTextFile(file);
-  if (data === void 0) {
-    return [];
-  }
-  const entries = [];
-  for (const raw of data.split("\n")) {
-    const line = raw.trim();
-    if (line === "" || line.startsWith("#")) {
-      continue;
-    }
-    const pipe = line.indexOf("|");
-    const rel = (pipe === -1 ? line : line.slice(0, pipe)).trim();
-    const csv = pipe === -1 ? "" : line.slice(pipe + 1);
-    assertSafeRel(rel);
-    const excludes = csv.split(",").map((part) => part.trim()).filter((part) => part !== "");
-    entries.push({ rel, excludes });
-  }
-  return entries;
-}
-const CONST_EXCLUDES = [
-  "**/.git/**",
-  "**/.git",
-  "**/node_modules/**",
-  "**/node_modules",
-  // 应用把 API key 放在配置旁边的 .env 里。任何 scope 都不同步。
-  "**/.env",
-  "**/.env.*",
-  "~/.config/omarsync/**",
-  "~/.config/omarsync",
-  "~/.config/omarchy/plugins/**",
-  "~/.config/omarchy/plugins",
-  // 各机器本地备份文件(形如 xxx.<主机名>-bak.<时间戳>),永不随同步走
-  "**/*-bak.*"
-];
-function patternToGlobs(root, pattern) {
-  const globs = [];
-  const base = `~/${root}`;
-  if (pattern.endsWith("/")) {
-    const dir = pattern.slice(0, -1);
-    globs.push(`${base}/${dir}/**`, `${base}/${dir}`);
-    if (!dir.includes("/")) {
-      globs.push(`${base}/**/${dir}/**`, `${base}/**/${dir}`);
-    }
-  } else if (pattern.includes("/")) {
-    globs.push(`${base}/${pattern}`);
-  } else {
-    globs.push(`${base}/${pattern}`, `${base}/**/${pattern}`);
-  }
-  return globs;
-}
-function desiredExcludes(entries) {
-  const set = new Set(CONST_EXCLUDES);
-  for (const entry of entries) {
-    for (const pattern of entry.excludes) {
-      for (const glob of patternToGlobs(entry.rel, pattern)) {
-        set.add(glob);
-      }
-    }
-  }
-  for (const glob of pushIgnoreExcludes(loadPushIgnore())) {
-    set.add(glob);
-  }
-  return set;
-}
-function reconcile(entries) {
-  if (!available()) {
-    die("mise 未安装。运行: omarchy pkg add mise");
-  }
-  if (!featureOk()) {
-    die("mise dot 在这台机器上不工作;检查 `mise dot status`");
-  }
-  const desired = desiredExcludes(entries);
-  const have = new Set(currentExcludes());
-  for (const glob of desired) {
-    if (!have.has(glob) && !excludeAdd(glob)) {
-      log.warn(`添加排除规则失败 ${glob}`);
-    }
-  }
-  const wanted = new Set(entries.map((entry) => entry.rel));
-  const trackedNow = trackedRels();
-  for (const rel of wanted) {
-    if (!trackedNow.has(rel)) {
-      if (track(rel)) {
-        log.info(`tracking ${rel}`);
-      } else {
-        log.warn(`track 失败 ${rel}`);
-      }
-    }
-  }
-  for (const rel of trackedRels()) {
-    if (!wanted.has(rel)) {
-      if (untrack(rel)) {
-        log.info(`untracked ${rel}(不在 scope 里)`);
-      } else {
-        log.warn(`untrack 失败 ${rel}`);
-      }
-    }
-  }
-  for (const glob of currentExcludes()) {
-    if (!desired.has(glob) && !excludeDel(glob)) {
-      log.warn(`移除排除规则失败 ${glob}`);
-    }
-  }
-}
-
-const HOME$4 = homedir();
-function hooksSourceDir() {
-  return `${HOME$4}/.config/omarsync-hooks/post-apply.d`;
-}
-function hookNames(dir) {
-  if (!isDir(dir)) {
-    return [];
-  }
-  const names = [];
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (entry.isFile()) {
-      names.push(entry.name);
-    }
-  }
-  return names.sort();
-}
-function exportHooks(dest) {
-  rmrf(`${dest}/hooks`);
-  const src = hooksSourceDir();
-  if (!isDir(src)) {
-    return;
-  }
-  mkdirSync(`${dest}/hooks/post-apply.d`, { recursive: true });
-  for (const name of hookNames(src)) {
-    if (/^[A-Za-z0-9._-]+$/.test(name)) {
-      copyFileSync(`${src}/${name}`, `${dest}/hooks/post-apply.d/${name}`);
-      chmodSync(`${dest}/hooks/post-apply.d/${name}`, statSync(`${src}/${name}`).mode);
-    }
-  }
-}
-function listHooks(mirror) {
-  return hookNames(`${mirror}/hooks/post-apply.d`);
-}
-function isExec(path) {
-  try {
-    accessSync(path, constants.X_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
-function runHooks(mirror, allowExec) {
-  const dir = `${mirror}/hooks/post-apply.d`;
-  if (!allowExec) {
-    if (isDir(dir)) {
-      log.warn("跳过 post-apply hooks;可执行内容恢复需要可信签名");
-    }
-    return true;
-  }
-  if (!isDir(dir)) {
-    return true;
-  }
-  let failed = false;
-  for (const name of hookNames(dir)) {
-    const path = `${dir}/${name}`;
-    if (!isExec(path)) {
-      chmodSync(path, 493);
-    }
-    log.info(`运行 hook ${name}`);
-    if (!run("/usr/bin/bash", [path], assignments())) {
-      log.warn(`hook ${name} 失败`);
-      failed = true;
-    }
-  }
-  return !failed;
-}
-function refreshUserServices() {
-  const systemctl = resolveTool("systemctl");
-  if (!systemctl) {
-    return true;
-  }
-  const wanted = readScope(paths.scopeFile).some(
-    (entry) => entry.rel === ".config/systemd/user" || entry.rel.startsWith(".config/systemd/user/") || entry.rel === ".config/systemd"
-  );
-  if (!wanted || !isDir(`${HOME$4}/.config/systemd/user`)) {
-    return true;
-  }
-  const runtime = process.env["XDG_RUNTIME_DIR"];
-  if (!runtime || runtime === "" || !exists(`${runtime}/systemd/private`)) {
-    return true;
-  }
-  const systemdEnv = [`XDG_RUNTIME_DIR=${runtime}`];
-  if (process.env["DBUS_SESSION_BUS_ADDRESS"]) {
-    systemdEnv.push(`DBUS_SESSION_BUS_ADDRESS=${process.env["DBUS_SESSION_BUS_ADDRESS"]}`);
-  }
-  if (!run(systemctl, ["--user", "daemon-reload"])) {
-    log.warn("systemctl --user daemon-reload 失败");
-  }
-  const find = resolveTool("find");
-  const out = find ? capture(find, [`${HOME$4}/.config/systemd/user`, "-type", "l", "-path", "*.target.wants/*", "-printf", "%f\n"]).stdout : "";
-  for (const unit of out.split("\n")) {
-    if (!unit.endsWith(".service")) {
-      continue;
-    }
-    const loadState = capture(systemctl, ["--user", "show", "-p", "LoadState", "--value", unit], systemdEnv).stdout.trim();
-    if (loadState === "not-found") {
-      log.warn(`跳过未安装的服务 ${unit}`);
-      continue;
-    }
-    if (!run(systemctl, ["--user", "start", unit])) {
-      log.warn(`无法启动 ${unit};配置已同步,可稍后手动处理`);
-    }
-  }
-  return true;
+const SHA40 = /^[0-9a-f]{40}$/;
+function parseRemote(url) {
+  const cleaned = url.trim().replace(/\.git$/, "");
+  const match = /(?:https:\/\/github\.com\/|git@github\.com:)([^/]+\/[^/]+)$/.exec(cleaned);
+  return match ? match[1] : "";
+}
+function porcelainPath(line) {
+  const rest = line.slice(3);
+  const arrow = rest.indexOf(" -> ");
+  return arrow >= 0 ? rest.slice(arrow + 4) : rest;
+}
+function collectRepoState() {
+  const state = {
+    initialized: false,
+    branch: "",
+    remote: "",
+    dirty: false,
+    behind: null,
+    ahead: null,
+    remoteCommit: "",
+    changedFiles: [],
+    lastCommitTime: "",
+    error: ""
+  };
+  const repo = paths.configRepo;
+  if (!isDir(`${repo}/.git`)) {
+    return state;
+  }
+  if (gitOut(repo, ["rev-parse", "--is-inside-work-tree"]) !== "true") {
+    return state;
+  }
+  state.initialized = true;
+  state.branch = gitOut(repo, ["symbolic-ref", "--short", "HEAD"]) ?? "";
+  const remoteUrl = gitOut(repo, ["remote", "get-url", "origin"]) ?? "";
+  state.remote = parseRemote(remoteUrl);
+  state.lastCommitTime = gitOut(repo, ["log", "-1", "--format=%cI"]) ?? "";
+  const porcelain = gitOut(repo, ["status", "--porcelain=v1", "-uall"]) ?? "";
+  const lines = porcelain === "" ? [] : porcelain.split("\n");
+  state.dirty = lines.length > 0;
+  state.changedFiles = lines.slice(0, 30).map(porcelainPath);
+  const upstream = gitOut(repo, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"]);
+  if (!upstream) {
+    state.behind = 0;
+    state.ahead = 0;
+    return state;
+  }
+  const fetched = gitCapture(repo, ["fetch", "--quiet", "origin", state.branch || upstream.split("/").pop()]);
+  if (!fetched.ok) {
+    state.error = "could not fetch origin";
+    state.behind = 0;
+    state.ahead = 0;
+    return state;
+  }
+  const counts = gitOut(repo, ["rev-list", "--left-right", "--count", "HEAD...@{upstream}"]) ?? "0	0";
+  const [aheadText, behindText] = counts.split(/\s+/);
+  state.ahead = Number(aheadText ?? 0);
+  state.behind = Number(behindText ?? 0);
+  const tip = gitOut(repo, ["rev-parse", "@{upstream}"]) ?? "";
+  state.remoteCommit = SHA40.test(tip) ? tip : "";
+  return state;
 }
 
 function ghInstalled() {
   return resolveTool("gh") !== void 0;
 }
-function ghBin() {
+function ghLoggedIn() {
   const bin = resolveTool("gh");
   if (!bin) {
-    die("GitHub CLI 未安装。运行: omarchy pkg add github-cli");
+    return false;
   }
-  return bin;
-}
-function gh(args) {
-  return run(ghBin(), args, assignments());
-}
-function ghCapture(args) {
-  const result = capture(ghBin(), args, assignments());
-  return { ok: result.code === 0, out: result.stdout };
-}
-function ghLoggedIn() {
-  return ghInstalled() && ghCapture(["auth", "status"]).ok;
+  return capture(bin, ["auth", "status"]).code === 0;
 }
 function githubUser() {
-  if (!ghLoggedIn()) {
-    return void 0;
-  }
-  const { ok, out } = ghCapture(["api", "user", "--jq", ".login"]);
-  const user = out.trim();
-  return ok && user !== "" ? user : void 0;
-}
-
-const PLUGIN_ID = "io.github.lukebest.omarsync";
-const MAX_FILE_SIZE = "50m";
-const BACKUP_KEEP = 5;
-function omarchy(args) {
-  const bin = resolveTool("omarchy");
-  if (!bin) {
-    die("omarchy 不在可信目录里");
-  }
-  return run(bin, args);
-}
-function omarchyShell(args) {
-  const bin = resolveTool("omarchy-shell");
-  if (!bin) {
-    die("omarchy-shell 不在可信目录里");
-  }
-  return run(bin, args);
-}
-function rsync(args) {
-  const bin = resolveTool("rsync");
-  if (!bin) {
-    die("rsync 不可用");
-  }
-  return run(bin, args);
-}
-function notify(headline, body) {
-  if (process.env["OMARSYNC_NOTIFY"] !== "1") {
-    return;
-  }
-  const bin = resolveTool("omarchy-notification-send");
-  if (!bin) {
-    return;
-  }
-  const args = ["--app-name", "omarsync", headline];
-  if (body !== "") {
-    args.push(body);
-  }
-  run(bin, args);
-}
-function dotBranch() {
-  return "dotfiles";
-}
-function dotRepoName() {
-  return configGet("REPO", readTextFile) ?? "";
-}
-function dotOriginUrl() {
-  const override = process.env["OMARSYNC_DOT_ORIGIN"];
-  if (override && override !== "") {
-    return override;
-  }
-  const repo = dotRepoName();
-  if (repo === "") {
-    return "";
-  }
-  return `https://github.com/${repo}.git`;
-}
-function discardRemoteScope(mirror) {
-  if (!isDir(mirror)) {
-    return;
-  }
-  const file = `${mirror}/omarsync.scope`;
-  if (exists(file) || isLink(file)) {
-    try {
-      unlinkSync(file);
-    } catch {
-    }
-  }
-  if (isDir(`${mirror}/.git`) && gitOut(["-C", mirror, "ls-files", "--error-unmatch", "--", "omarsync.scope"])) {
-    git(["-C", mirror, "rm", "-q", "--ignore-unmatch", "--", "omarsync.scope"]);
-  }
-}
-function ensureIdentity(mirror) {
-  let email = configGet("SIGNING_EMAIL", readTextFile);
-  let name = configGet("SIGNING_NAME", readTextFile);
-  if (!email) {
-    if (ghLoggedIn()) {
-      if (!name) {
-        const { ok, out } = ghCapture(["api", "user", "--jq", ".name // .login"]);
-        if (ok) {
-          name = out.trimEnd();
-        }
-      }
-      const login = ghCapture(["api", "user", "--jq", ".login"]).out.trim();
-      const id = ghCapture(["api", "user", "--jq", ".id"]).out.trim();
-      if (login !== "" && id !== "") {
-        email = `${id}+${login}@users.noreply.github.com`;
-      }
-    }
-    email ??= "omarsync@localhost";
-  }
-  git(["-C", mirror, "config", "user.name", name && name !== "" ? name : "omarsync"]);
-  git(["-C", mirror, "config", "user.email", email]);
-  const signingKey = configGet("SIGNING_KEY", readTextFile);
-  if (signingKey && isFile(signingKey)) {
-    git(["-C", mirror, "config", "gpg.format", "ssh"]);
-    git(["-C", mirror, "config", "user.signingkey", signingKey]);
-    git(["-C", mirror, "config", "commit.gpgsign", "true"]);
-  }
-}
-
-function pacmanBin() {
-  return resolveTool("pacman");
-}
-function flatpakBin() {
-  return resolveTool("flatpak");
-}
-function flatpak(args) {
-  const bin = flatpakBin();
-  if (!bin) {
-    die("flatpak 不在可信目录里");
-  }
-  return run(bin, args);
-}
-function flatpakCapture(args) {
-  const bin = flatpakBin();
-  if (!bin) {
-    die("flatpak 不在可信目录里");
-  }
-  const result = capture(bin, args);
-  return { ok: result.code === 0, out: result.stdout };
-}
-function filterIgnoredPackages(text, ignored) {
-  return text.split("\n").filter((line) => !ignored.has(line.trim())).join("\n");
-}
-function exportPackages(dest) {
-  mkdirSync(`${dest}/packages`, { recursive: true });
-  const pacman = pacmanBin();
-  const ignored = loadPushIgnore().packages;
-  if (pacman) {
-    writeFileSync(`${dest}/packages/pacman.txt`, filterIgnoredPackages(capture(pacman, ["-Qqen"]).stdout, ignored));
-    writeFileSync(`${dest}/packages/aur.txt`, filterIgnoredPackages(capture(pacman, ["-Qqem"]).stdout, ignored));
-  } else {
-    writeFileSync(`${dest}/packages/pacman.txt`, "");
-    writeFileSync(`${dest}/packages/aur.txt`, "");
-  }
-  exportFlatpaks(dest);
-}
-function flatpakRemoteUrlOk(url) {
-  return url.length <= 300 && /^https:\/\/[A-Za-z0-9._~:/?#&=%+-]+$/.test(url) && !url.includes("..");
-}
-function exportFlatpaks(dest) {
-  const outPath = `${dest}/packages/flatpak.txt`;
-  if (!flatpakBin()) {
-    writeFileSync(outPath, "");
-    return;
-  }
-  const remoteUrls = /* @__PURE__ */ new Map();
-  for (const line of flatpakCapture(["remotes", "--user", "--columns=name,url"]).out.split("\n")) {
-    const match = /^(\S+)\s+(\S+)/.exec(line);
-    if (match && /^[A-Za-z0-9._-]+$/.test(match[1])) {
-      remoteUrls.set(match[1], flatpakRemoteUrlOk(match[2]) ? match[2] : "");
-    }
-  }
-  const lines = [];
-  const ignored = loadPushIgnore().packages;
-  for (const line of flatpakCapture(["list", "--user", "--app", "--columns=application,origin,branch,active"]).out.split("\n")) {
-    const match = /^(\S+)\s+(\S+)\s+(\S+)/.exec(line);
-    if (!match) {
-      continue;
-    }
-    const [, app, origin, branch] = match;
-    if (!/^[A-Za-z0-9._-]+$/.test(app) || !/^[A-Za-z0-9._-]+$/.test(origin) || !/^[A-Za-z0-9._-]+$/.test(branch)) {
-      continue;
-    }
-    if (ignored.has(app)) {
-      continue;
-    }
-    let commit = flatpakCapture(["info", "--user", "--show-commit", app]).out.trimEnd();
-    if (!/^[0-9a-f]{64}$/.test(commit)) {
-      commit = "";
-    }
-    lines.push([app, origin, branch, commit, remoteUrls.get(origin) ?? ""].join("	"));
-  }
-  writeFileSync(outPath, lines.length > 0 ? `${lines.join("\n")}
-` : "");
-}
-function userFlatpakRemoteExists(name) {
-  return flatpakCapture(["remotes", "--user", "--columns=name"]).out.split("\n").some((line) => line.trim() === name);
-}
-function ensureUserFlatpakRemote(name, url) {
-  if (userFlatpakRemoteExists(name)) {
-    return true;
-  }
-  if (name === "flathub") {
-    url = "https://dl.flathub.org/repo/flathub.flatpakrepo";
-  }
-  if (!flatpakRemoteUrlOk(url)) {
-    return false;
-  }
-  return flatpak(["remote-add", "--user", "--if-not-exists", name, url]);
-}
-function validPkgName(name) {
-  return /^[A-Za-z0-9@._+%-]+$/.test(name);
-}
-function pkgInstalled(pkg) {
-  const pacman = pacmanBin();
-  return pacman !== void 0 && capture(pacman, ["-Q", pkg]).code === 0;
-}
-function readPkgList(path) {
-  const data = readTextFile(path);
-  const pkgs = [];
-  const ignored = loadPushIgnore().packages;
-  if (!data) {
-    return pkgs;
-  }
-  for (const line of data.split("\n")) {
-    const pkg = line.trim();
-    if (pkg === "" || pkg.startsWith("#") || ignored.has(pkg)) {
-      continue;
-    }
-    if (!validPkgName(pkg)) {
-      die(`拒绝异常的包名: ${pkg}`);
-    }
-    if (!pkgInstalled(pkg)) {
-      pkgs.push(pkg);
-    }
-  }
-  return pkgs;
-}
-function installMissingPackages(mirror) {
-  let failed = false;
-  const official = readPkgList(`${mirror}/packages/pacman.txt`);
-  if (official.length > 0) {
-    log.info(`安装 ${official.length} 个官方包`);
-    if (!omarchy(["pkg", "add", ...official])) {
-      log.warn("官方包安装失败");
-      failed = true;
-    }
-  } else {
-    log.info("官方包已全部安装");
-  }
-  const aur = readPkgList(`${mirror}/packages/aur.txt`);
-  if (aur.length > 0) {
-    log.warn(`不安装 AUR 包(未钉住的构建配方): ${aur.join(" ")}`);
-    log.warn("如需安装,请自己找钉住 commit 的 PKGBUILD");
-  }
-  if (!installMissingFlatpaks(mirror)) {
-    failed = true;
-  }
-  return !failed;
-}
-function installMissingFlatpaks(mirror) {
-  const listPath = `${mirror}/packages/flatpak.txt`;
-  if (!flatpakBin() || !isFile(listPath)) {
-    return true;
-  }
-  let failed = false;
-  for (const line of (readTextFile(listPath) ?? "").split("\n")) {
-    const match = /^([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t?([^\t]*)/.exec(line);
-    if (!match || match[1] === "") {
-      continue;
-    }
-    const [, app, origin, branch, commit, url] = match;
-    if (!/^[A-Za-z0-9._-]+$/.test(app)) {
-      die(`拒绝异常的 flatpak id: ${app}`);
-    }
-    if (loadPushIgnore().packages.has(app)) {
-      continue;
-    }
-    if (!/^[A-Za-z0-9._-]+$/.test(origin)) {
-      die(`拒绝异常的 flatpak origin: ${origin}`);
-    }
-    if (!/^[A-Za-z0-9._-]+$/.test(branch)) {
-      die(`拒绝异常的 flatpak branch: ${branch}`);
-    }
-    if (commit !== "" && !/^[0-9a-f]{64}$/.test(commit)) {
-      die(`拒绝异常的 flatpak commit: ${commit}`);
-    }
-    if (url !== "" && !flatpakRemoteUrlOk(url)) {
-      die(`拒绝异常的 flatpak remote URL(origin ${origin})`);
-    }
-    if (!flatpakCapture(["info", "--user", app]).ok) {
-      if (!ensureUserFlatpakRemote(origin, url)) {
-        log.warn(`跳过 flatpak ${app};这台机器没有 remote ${origin} 且没有下载 URL`);
-        continue;
-      }
-      log.info(`安装 flatpak ${app}(来自 ${origin})`);
-      if (!flatpak(["install", "--user", "--noninteractive", "--app", origin, app])) {
-        log.warn(`安装 flatpak ${app} 失败`);
-        failed = true;
-        continue;
-      }
-    }
-    if (commit !== "") {
-      log.info(`钉住 flatpak ${app} 到 ${commit}`);
-      if (!flatpak(["update", "--user", "--noninteractive", `--commit=${commit}`, app])) {
-        log.warn(`钉住 flatpak ${app} 到 ${commit} 失败`);
-        failed = true;
-      }
-    }
-  }
-  return !failed;
-}
-
-const HOME$3 = homedir();
-function pluginDir(id) {
-  return `${HOME$3}/.config/omarchy/plugins/${id}`;
-}
-function validPluginId(id) {
-  return /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(id) && !id.includes("..") && !id.startsWith("omarchy.");
-}
-function httpsPluginUrl(url) {
-  return !url.includes("..") && /^https:\/\/[A-Za-z0-9._~:/?#%+-]+$/.test(url);
-}
-function localPluginUrl(url) {
-  return url.startsWith("file:///") && !url.includes("..") && !url.includes("\n");
-}
-function skipSet() {
-  const set = /* @__PURE__ */ new Set();
-  for (const line of (readTextFile(paths.pluginsSkipFile) ?? "").split("\n")) {
-    const id = line.trim();
-    if (id !== "" && !id.startsWith("#")) {
-      set.add(id);
-    }
-  }
-  for (const id of loadPushIgnore().plugins) {
-    set.add(id);
-  }
-  return set;
-}
-function listPlugins() {
-  const bin = resolveTool("omarchy");
+  const bin = resolveTool("gh");
   if (!bin) {
     return void 0;
   }
-  const result = capture(bin, ["plugin", "list", "--json"]);
-  if (result.code !== 0) {
-    return void 0;
-  }
-  try {
-    const data = JSON.parse(result.stdout);
-    return Array.isArray(data) ? data : void 0;
-  } catch {
-    return void 0;
-  }
-}
-function exportPlugins(dest, mode) {
-  const listing = listPlugins();
-  if (!listing) {
-    if (mode === "check") {
-      return false;
-    }
-    if (isFile(`${dest}/plugins.json`)) {
-      log.warn("插件清单不可用;保留现有 plugins.json");
-      return true;
-    }
-    writeFileSync(`${dest}/plugins.json`, "[]\n");
-    log.warn("插件清单不可用;写入了空的 plugins.json");
-    return true;
-  }
-  if (mode === "apply") {
-    rmrf(`${dest}/plugins-local`);
-  }
-  const skip = skipSet();
-  const records = [];
-  for (const row of listing) {
-    if (row.firstParty === true || typeof row.id !== "string") {
-      continue;
-    }
-    const id = row.id;
-    if (skip.has(id)) {
-      log.info(`插件 ${id} 在 plugins-skip 里;不导出`);
-      continue;
-    }
-    if (!validPluginId(id) || id === PLUGIN_ID) {
-      continue;
-    }
-    const enabled = row.enabled === true;
-    const dir = pluginDir(id);
-    let url;
-    let rev;
-    if (isDir(`${dir}/.git`)) {
-      url = gitOut(["-C", dir, "remote", "get-url", "origin"]);
-      rev = gitOut(["-C", dir, "rev-parse", "--verify", "HEAD"]);
-      if (!isFullSha(rev)) {
-        rev = void 0;
-      }
-    }
-    if (url && httpsPluginUrl(url) && rev) {
-      records.push({ id, url, commit: rev, enabled, local: false });
-    } else if (isDir(dir)) {
-      copyLocalPlugin(dir, `${dest}/plugins-local/${id}`);
-      records.push({ id, url: "", commit: "", enabled, local: true });
-    }
-  }
-  records.sort((a, b) => a.id < b.id ? -1 : 1);
-  writeFileSync(`${dest}/plugins.json`, `${JSON.stringify(records, void 0, 2)}
-`);
-  return true;
-}
-function copyLocalPlugin(src, dest) {
-  mkdirSync(dest, { recursive: true });
-  rsync([
-    "-a",
-    "--delete",
-    `--max-size=${MAX_FILE_SIZE}`,
-    "--exclude",
-    ".git/",
-    "--exclude",
-    "node_modules/",
-    // 解释器缓存是机器生成的,每次跑都变,同步只会制造噪音
-    "--exclude",
-    "__pycache__/",
-    "--exclude",
-    "*.pyc",
-    `${src}/`,
-    `${dest}/`
-  ]);
-  const find = resolveTool("find");
-  const out = find ? capture(find, [dest, "-type", "l", "-print"]).stdout : "";
-  for (const line of out.split("\n")) {
-    if (line !== "") {
-      try {
-        unlinkSync(line);
-        log.warn(`从插件快照移除符号链接: ${line.slice(dest.length + 1)}`);
-      } catch {
-      }
-    }
-  }
-}
-function installMissingPlugins(mirror, allowExec) {
-  const file = `${mirror}/plugins.json`;
-  if (!isFile(file)) {
-    return true;
-  }
-  if (!allowExec) {
-    log.warn("跳过插件安装;可执行内容恢复需要可信签名");
-    return true;
-  }
-  let data;
-  try {
-    data = JSON.parse(readTextFile(file) ?? "[]");
-  } catch {
-    die("plugins.json 不是合法 JSON");
-  }
-  if (!Array.isArray(data)) {
-    die("plugins.json 必须是数组");
-  }
-  const skip = skipSet();
-  const currentEnabled = new Set(
-    (listPlugins() ?? []).filter((row) => row.enabled === true && typeof row.id === "string").map((row) => row.id)
-  );
-  const toEnable = /* @__PURE__ */ new Set();
-  let failed = false;
-  let installedAny = false;
-  for (const row of data) {
-    const id = typeof row["id"] === "string" ? row["id"] : "";
-    const url = typeof row["url"] === "string" ? row["url"] : "";
-    const rev = typeof row["commit"] === "string" ? row["commit"] : "";
-    const enabled = row["enabled"] === true;
-    if (!validPluginId(id)) {
-      log.warn("跳过 id 非法的插件");
-      continue;
-    }
-    if (id === PLUGIN_ID) {
-      continue;
-    }
-    if (skip.has(id)) {
-      log.info(`插件 ${id} 在 plugins-skip 里;不安装`);
-      continue;
-    }
-    const dest = pluginDir(id);
-    if (isDir(dest)) {
-      if (rev !== "" && isDir(`${dest}/.git`)) {
-        const head = gitOut(["-C", dest, "rev-parse", "--verify", "HEAD"]);
-        if (head !== rev) {
-          log.warn(`插件 ${id} 当前在 ${head ?? "unknown"},快照记录 ${rev};保持不动`);
-        }
-      }
-      if (enabled && !currentEnabled.has(id)) {
-        toEnable.add(id);
-      }
-      continue;
-    }
-    const tmp = `${mktempDir()}`;
-    let okToInstall = false;
-    if ((httpsPluginUrl(url) || localPluginUrl(url)) && isFullSha(rev)) {
-      if (!git(["clone", "--quiet", "--no-checkout", url, `${tmp}/plugin`])) {
-        log.warn(`克隆插件 ${id} 失败(${url})`);
-        rmrf(tmp);
-        failed = true;
-        continue;
-      }
-      if (!git(["-C", `${tmp}/plugin`, "checkout", "--quiet", "--detach", rev])) {
-        log.warn(`插件 ${id} 不含 commit ${rev}`);
-        rmrf(tmp);
-        failed = true;
-        continue;
-      }
-      if (gitOut(["-C", `${tmp}/plugin`, "rev-parse", "--verify", "HEAD"]) !== rev) {
-        log.warn(`插件 ${id} 检出的不是 ${rev}`);
-        rmrf(tmp);
-        failed = true;
-        continue;
-      }
-      okToInstall = true;
-    } else if (row["local"] === true && isDir(`${mirror}/plugins-local/${id}`)) {
-      mkdirSync(`${tmp}/plugin`, { recursive: true });
-      rsync(["-a", `${mirror}/plugins-local/${id}/`, `${tmp}/plugin/`]);
-      okToInstall = true;
-    } else {
-      log.warn(`不安装插件 ${id};既没有钉住的 https commit 也没有本地快照`);
-      rmrf(tmp);
-      continue;
-    }
-    if (okToInstall) {
-      if (!omarchy(["plugin", "validate", `${tmp}/plugin`])) {
-        log.warn(`插件 ${id} 校验失败;不安装`);
-        rmrf(tmp);
-        failed = true;
-        continue;
-      }
-      mkdirSync(`${HOME$3}/.config/omarchy/plugins`, { recursive: true });
-      rmrf(dest);
-      const mv = resolveTool("mv");
-      if (!mv || capture(mv, [`${tmp}/plugin`, dest]).code !== 0) {
-        log.warn(`移动插件 ${id} 到 ${dest} 失败`);
-        rmrf(tmp);
-        failed = true;
-        continue;
-      }
-      rmrf(tmp);
-      log.info(`已安装插件 ${id}`);
-      installedAny = true;
-      if (enabled) {
-        toEnable.add(id);
-      }
-    }
-  }
-  if (installedAny && process.env["OMARSYNC_SKIP_LIVE"] !== "1" && resolveTool("omarchy-shell")) {
-    if (!omarchyShell(["shell", "rescanPlugins"])) {
-      log.warn("shell 插件重扫失败");
-    }
-  }
-  if (process.env["OMARSYNC_SKIP_LIVE"] !== "1") {
-    for (const id of toEnable) {
-      if (!omarchy(["plugin", "enable", id])) {
-        log.warn(`启用插件 ${id} 失败`);
-      }
-    }
-  }
-  return !failed;
+  const result = capture(bin, ["api", "user", "--jq", ".login"]);
+  const user = result.stdout.trim();
+  return result.code === 0 && user !== "" ? user : void 0;
 }
 
-const HOME$2 = homedir();
-function walkIgnored(dir, rel, ignored, out) {
-  let entries;
-  try {
-    entries = readdirSync(dir, { withFileTypes: true });
-  } catch {
-    return;
-  }
-  for (const entry of entries) {
-    if (entry.name === ".git" || entry.name === "node_modules") {
-      continue;
-    }
-    const child = rel === "" ? entry.name : `${rel}/${entry.name}`;
-    if (entry.isDirectory()) {
-      walkIgnored(`${dir}/${entry.name}`, child, ignored, out);
-    } else if (pathIgnored(ignored, child)) {
-      out.add(child);
-    }
-  }
-}
-function stashIgnoredPaths() {
-  const ignored = loadPushIgnore();
-  const root = mktempDir();
-  const ignoredFiles = /* @__PURE__ */ new Set();
-  const roots = new Set(trackedRels());
-  for (const entry of readScope(paths.scopeFile)) {
-    roots.add(entry.rel);
-  }
-  for (const relRoot of roots) {
-    const dir = `${HOME$2}/${relRoot}`;
-    if (isDir(dir)) {
-      walkIgnored(dir, relRoot, ignored, ignoredFiles);
-    }
-  }
-  for (const rel of ignoredFiles) {
-    const source = `${HOME$2}/${rel}`;
-    const target = `${root}/${rel}`;
-    try {
-      const stat = lstatSync(source);
-      mkdirSync(dirname(target), { recursive: true });
-      rmrf(target);
-      if (stat.isSymbolicLink()) {
-        symlinkSync(readlinkSync(source), target);
-      } else if (stat.isFile()) {
-        copyFileSync(source, target);
-        chmodSync(target, stat.mode);
-      }
-    } catch {
-    }
-  }
-  return { root, paths: ignoredFiles };
-}
-function restoreIgnoredPaths(stash) {
-  for (const rel of stash.paths) {
-    const source = `${stash.root}/${rel}`;
-    const target = `${HOME$2}/${rel}`;
-    try {
-      const stat = lstatSync(source);
-      mkdirSync(dirname(target), { recursive: true });
-      rmrf(target);
-      if (stat.isSymbolicLink()) {
-        symlinkSync(readlinkSync(source), target);
-      } else if (stat.isFile()) {
-        copyFileSync(source, target);
-        chmodSync(target, stat.mode);
-      }
-    } catch {
-    }
-  }
-  rmrf(stash.root);
-}
-function removeRemoteIgnoredPaths(stash, snapshot) {
-  const ignored = loadPushIgnore();
-  for (const path of snapshotPaths(snapshot)) {
-    if (!path.startsWith("home/")) {
-      continue;
-    }
-    const rel = path.slice(5);
-    if (pathIgnored(ignored, rel) && !stash.paths.has(rel)) {
-      rmrf(`${HOME$2}/${rel}`);
-    }
-  }
-}
-
-const HOME$1 = homedir();
-const EMPTY_TREE$1 = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
-function pruneBackups() {
-  const root = paths.backupDir;
-  if (!isDir(root)) {
-    return;
-  }
-  const names = readdirSync(root).sort();
-  for (const name of names.slice(0, Math.max(0, names.length - BACKUP_KEEP))) {
-    rmrf(`${root}/${name}`);
-  }
-}
-function backupTree() {
-  const date = resolveTool("date");
-  const stamp = (date ? capture(date, ["+%Y%m%d-%H%M%S"]).stdout.trim() : "") || "unknown";
-  const dest = `${paths.backupDir}/${stamp}`;
-  for (const entry of readScope(paths.scopeFile)) {
-    const src = `${HOME$1}/${entry.rel}`;
-    if (exists(src) || isLink(src)) {
-      const parent = `${dest}/home/${dirname(entry.rel)}`;
-      mkdirSync(parent, { recursive: true });
-      rsync(["-a", src, `${parent}/`]);
-    }
-  }
-  const state = `${HOME$1}/.local/state/omarchy/current`;
-  if (isDir(state)) {
-    mkdirSync(`${dest}/current`, { recursive: true });
-    const theme = readTextFile(`${state}/theme.name`);
-    if (theme) {
-      writeFileSync(`${dest}/current/theme.name`, theme);
-    }
-    const bg = `${state}/background`;
-    if (isLink(bg) || exists(bg)) {
-      const target = realpath$1(bg);
-      if (target) {
-        writeFileSync(`${dest}/current/background.path`, `${target}
-`);
-      }
-    }
-  }
-  return dest;
-}
-function themeBackgroundCandidates(theme, rel) {
-  if (theme === "") {
-    return [];
-  }
-  return [
-    `${HOME$1}/.local/state/omarchy/current/theme/${rel}`,
-    `${HOME$1}/.config/omarchy/themes/${theme}/${rel}`,
-    `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/themes/${theme}/${rel}`
-  ];
-}
-function foreignThemeRelative(path) {
-  for (const marker of ["/.local/state/omarchy/current/theme/", "/.local/share/omarchy/themes/"]) {
-    const index = path.indexOf(marker);
-    if (index !== -1) {
-      const rest = path.slice(index + marker.length);
-      const slash = rest.indexOf("/");
-      return marker.includes("/current/theme/") ? rest : slash === -1 ? void 0 : rest.slice(slash + 1);
-    }
-  }
-  return void 0;
-}
-function resolveBackgroundTarget(theme, background) {
-  const candidates = [];
-  if (background.startsWith("rel:")) {
-    candidates.push(`${HOME$1}/.config/omarchy/backgrounds/${background.slice(5)}`);
-  } else if (background.startsWith("theme:")) {
-    candidates.push(...themeBackgroundCandidates(theme, background.slice(6)));
-  } else if (background.startsWith("abs:")) {
-    const absolute = background.slice(4);
-    candidates.push(absolute);
-    const rel = foreignThemeRelative(absolute);
-    if (rel !== void 0 && !isFile(absolute)) {
-      candidates.push(...themeBackgroundCandidates(theme, rel));
-    }
-  }
-  return candidates.find((path) => isFile(path)) ?? candidates[0] ?? "";
-}
-function applyCurrent(mirror, withExec) {
-  const theme = (readTextFile(`${mirror}/current/theme.name`) ?? "").replaceAll(/\s+/g, "");
-  const background = (readTextFile(`${mirror}/current/background`) ?? "").replaceAll(/\s+/g, "");
-  const state = `${HOME$1}/.local/state/omarchy/current`;
-  if (process.env["OMARSYNC_SKIP_LIVE"] === "1") {
-    mkdirSync(state, { recursive: true });
-    if (theme !== "") {
-      writeFileSync(`${state}/theme.name`, `${theme}
-`);
-    }
-    const target = resolveBackgroundTarget(theme, background);
-    if (target !== "" && isFile(target)) {
-      rmrf(`${state}/background`);
-      symlinkSync(target, `${state}/background`);
-    }
-    return true;
-  }
-  if (!withExec) {
-    if (theme !== "" || background !== "") {
-      log.info("已跳过主题切换;可执行内容恢复需要可信签名");
-    }
-    return true;
-  }
-  let failed = false;
-  if (theme !== "") {
-    log.info(`设置主题 ${theme}`);
-    if (!omarchy(["theme", "set", theme])) {
-      log.warn(`设置主题 ${theme} 失败`);
-      failed = true;
-    }
-  }
-  if (background !== "") {
-    const target = resolveBackgroundTarget(theme, background);
-    if (target !== "" && exists(target)) {
-      log.info(`设置壁纸 ${target}`);
-      if (!omarchy(["theme", "bg", "set", target])) {
-        log.warn("设置壁纸失败");
-        failed = true;
-      }
-    } else {
-      log.warn(`壁纸文件不存在,保留当前壁纸: ${target}`);
-    }
-  }
-  return !failed;
-}
-function hyprInstanceSignature() {
-  const runtime = process.env["XDG_RUNTIME_DIR"] ?? "";
-  if (!/^\/run\/user\/\d+/.test(runtime) || !isDir(`${runtime}/hypr`)) {
-    return void 0;
-  }
-  const found = [];
-  for (const name of readdirSync(`${runtime}/hypr`)) {
-    if (/^[0-9a-f]+_[0-9]+_[0-9]+$/.test(name) && isDir(`${runtime}/hypr/${name}`) && isFile(`${runtime}/hypr/${name}/hyprland.lock`)) {
-      found.push(name);
-    }
-  }
-  return found.length === 1 ? found[0] : void 0;
-}
-function reloadDesktop() {
-  if (process.env["OMARSYNC_SKIP_LIVE"] === "1") {
-    return;
-  }
-  if (resolveTool("omarchy-shell")) {
-    if (!omarchyShell(["shell", "reloadConfig"])) {
-      log.warn("shell reload 失败");
-    }
-  }
-  const hyprctl = resolveTool("hyprctl");
-  if (!hyprctl) {
-    return;
-  }
-  const sig = hyprInstanceSignature();
-  if (!sig) {
-    log.warn("跳过 hyprctl reload;这个用户没有唯一的 Hyprland 会话");
-    return;
-  }
-  const result = capture(hyprctl, ["reload"], [
-    `XDG_RUNTIME_DIR=${process.env["XDG_RUNTIME_DIR"] ?? ""}`,
-    `HYPRLAND_INSTANCE_SIGNATURE=${sig}`
-  ]);
-  if (result.code !== 0) {
-    log.warn("hyprctl reload 失败");
-  }
-}
-function assertPinned(mirror, sha) {
-  if (!isFullSha(sha)) {
-    die("拒绝激活未钉住的版本");
-  }
-  const head = gitOut(["-C", mirror, "rev-parse", "--verify", "HEAD"]);
-  if (head !== sha) {
-    die(`镜像 HEAD ${head ?? "?"} 不是审阅过的 commit ${sha}`);
-  }
-  if (gitCapture(["-C", mirror, "symbolic-ref", "-q", "HEAD"]).ok) {
-    die("镜像挂在分支上,拒绝应用");
-  }
-}
-const HOOKS_REL = ".config/omarchy/hooks";
-function stashOmarchyHooks() {
-  const src = `${HOME$1}/${HOOKS_REL}`;
-  const existed = exists(src) || isLink(src);
-  const tmp = mktempDir();
-  if (existed && !rsync(["-a", src, `${tmp}/`])) {
-    die("无法在不可信的 apply 之前保留 ~/.config/omarchy/hooks");
-  }
-  return { tmp, existed };
-}
-function restoreOmarchyHooks(stash) {
-  const dst = `${HOME$1}/${HOOKS_REL}`;
-  rmrf(dst);
-  if (stash.existed && stash.tmp !== "") {
-    const saved = `${stash.tmp}/hooks`;
-    if (exists(saved) || isLink(saved)) {
-      mkdirSync(`${HOME$1}/.config/omarchy`, { recursive: true });
-      rsync(["-a", saved, `${HOME$1}/.config/omarchy/`]);
-    }
-  }
-  if (stash.tmp !== "") {
-    rmrf(stash.tmp);
-  }
-  log.info("已跳过 Omarchy hooks,保留本机原样");
-}
-function prepareDotfiles() {
-  if (!available()) {
-    log.warn("mise 未安装;跳过 dotfiles。运行: omarchy pkg add mise");
-    return false;
-  }
-  const url = dotOriginUrl();
-  const branch = dotBranch();
-  const already = originMatches(url, branch);
-  const connected = connect(url, branch);
-  if (!connected.ok) {
-    log.warn(`无法连接 mise dot origin ${url === "" ? "(未配置)" : url}`);
-    if (connected.out.trim() !== "") {
-      log.warn(connected.out);
-    }
-    return false;
-  }
-  if (!already) {
-    log.info(`已连接 mise dot origin ${url} 分支 ${branch}`);
-  }
-  const fetch = sync(true);
-  if (!fetch.ok) {
-    log.warn(`mise fetch 失败: ${fetch.out}`);
-    return false;
-  }
-  return true;
-}
-function signedMiseHead(mirror) {
-  const raw = readTextFile(`${mirror}/omarsync.json`);
-  if (!raw) {
-    return void 0;
-  }
-  try {
-    const data = JSON.parse(raw);
-    const head = typeof data.miseHead === "string" ? data.miseHead : void 0;
-    return isFullSha(head) ? head : void 0;
-  } catch {
-    return void 0;
-  }
-}
-function syncDotfiles(mirror) {
-  if (!prepareDotfiles()) {
-    return false;
-  }
-  const snapshot = signedMiseHead(mirror);
-  if (!snapshot) {
-    log.warn("签名提交没有 miseHead;拒绝应用可变的 dotfiles 分支");
-    return false;
-  }
-  let commit = commitForSnapshot(snapshot);
-  if (!commit) {
-    log.warn(`已抓取的历史里没有签名的 miseHead ${snapshot};拒绝应用分支尖端`);
-    return false;
-  }
-  if (!checkpointIndexed(commit)) {
-    const upstream = upstreamSnapshot();
-    if (upstream !== snapshot) {
-      log.warn("远程 dotfiles 尖端与签名快照不一致;拒绝导入可变的远端版本");
-      return false;
-    }
-    log.info("签名快照尚未导入 mise 历史;采用远程版本并解决本机冲突");
-    const pulled = pull({ takeRemoteAll: true });
-    if (!pulled.ok) {
-      log.warn(`mise pull 导入快照失败: ${pulled.out}`);
-      return false;
-    }
-    commit = commitForSnapshot(snapshot);
-    if (!commit || !checkpointIndexed(commit)) {
-      log.warn(`mise pull 后仍找不到 checkpoint ${snapshot}`);
-      return false;
-    }
-  }
-  log.info(`按签名的 miseHead ${snapshot} 恢复文件`);
-  const rolled = rollbackTo(commit);
-  if (!rolled.ok) {
-    log.warn(`mise rollback 失败: ${rolled.out}`);
-    return false;
-  }
-  return true;
-}
-function applyMirror(mirror, withPackages, sha, withExec) {
-  assertPinned(mirror, sha);
-  log.info(`激活 commit ${sha}`);
-  const backup = backupTree();
-  log.info(`已备份现有文件到 ${backup}`);
-  let failed = false;
-  const hooksStash = withExec ? void 0 : stashOmarchyHooks();
-  const ignoredStash = stashIgnoredPaths();
-  let filesOk = false;
-  try {
-    filesOk = syncDotfiles(mirror);
-    if (filesOk) {
-      const snapshot = signedMiseHead(mirror);
-      if (snapshot) {
-        removeRemoteIgnoredPaths(ignoredStash, snapshot);
-      }
-    }
-  } finally {
-    restoreIgnoredPaths(ignoredStash);
-  }
-  if (!filesOk) {
-    failed = true;
-  }
-  if (hooksStash) {
-    restoreOmarchyHooks(hooksStash);
-  }
-  if (filesOk) {
-    if (!applyCurrent(mirror, withExec)) {
-      failed = true;
-    }
-  } else {
-    log.info("已跳过主题切换;文件没有对上签名的 miseHead");
-  }
-  reloadDesktop();
-  if (withPackages) {
-    if (!installMissingPackages(mirror)) {
-      failed = true;
-    }
-  } else {
-    log.info("跳过官方包安装");
-  }
-  if (!installMissingPlugins(mirror, withExec)) {
-    failed = true;
-  }
-  if (withExec) {
-    if (!refreshUserServices()) {
-      failed = true;
-    }
-  } else {
-    log.info("已跳过用户服务启动");
-  }
-  if (!runHooks(mirror, withExec)) {
-    failed = true;
-  }
-  assertPinned(mirror, sha);
-  pruneBackups();
-  return !failed;
-}
-function showChanges(mirror, sha) {
-  const applied = (readTextFile(appliedStampFile()) ?? "").trim();
-  let base;
-  let firstApply = false;
-  if (!isFullSha(applied)) {
-    base = EMPTY_TREE$1;
-    firstApply = true;
-    log.info("没有应用过的 commit;首次应用,下面展示完整快照供审阅");
-  } else if (applied === sha) {
-    log.info("这台机器已经应用过这个 commit");
-    return;
-  } else if (!gitCapture(["-C", mirror, "cat-file", "-e", `${applied}^{commit}`]).ok) {
-    log.info(`上次应用的 commit ${applied} 不在镜像里;无法 diff`);
-    return;
-  } else {
-    base = applied;
-    log.info(`自上次应用的 commit ${applied.slice(0, 12)} 以来的更改:`);
-  }
-  if (!firstApply) {
-    const logOut = gitOut(["-C", mirror, "log", "--oneline", "--no-decorate", `${base}..${sha}`]);
-    if (logOut && /\S/.test(logOut)) {
-      for (const line of logOut.split("\n")) {
-        log.info(`  commit ${line}`);
-      }
-    }
-  }
-  const stat = gitOut(["-C", mirror, "diff", "--stat", base, sha]);
-  if (stat && /\S/.test(stat)) {
-    for (const line of stat.split("\n")) {
-      log.info(`  ${line}`);
-    }
-  } else {
-    log.info("  (元数据无变化)");
-  }
-  const reviewFiles = ["plugins.json", "packages/pacman.txt", "packages/flatpak.txt", "current/theme.name", "current/background"];
-  let review = "";
-  for (const file of reviewFiles) {
-    const d = gitOut(["-C", mirror, "diff", "--color=never", base, sha, "--", file]);
-    if (d && /\S/.test(d)) {
-      process.stdout.write(`${d}
-`);
-      review += `${d}
-`;
-    }
-  }
-  if (review !== "") {
-    if (reviewWithVsCode(["-C", mirror, base, sha, "--", ...reviewFiles])) {
-      return;
-    }
-    const reviewFile = `${paths.stateDir}/pending-apply.diff`;
-    const heading = firstApply ? "首次应用(完整快照)" : `自 ${base} 到 ${sha}`;
-    writeFileSync(reviewFile, `${heading} 的元数据更改
-
-${review}`);
-    log.info(`完整 diff 已写入 ${reviewFile}`);
-    openInEditor([reviewFile]);
-  }
-}
-function previewApply(mirror, sha, withExec) {
-  log.info(`commit ${sha}`);
-  log.info("文件(mise dot 跟踪):");
-  for (const entry of readScope(paths.scopeFile)) {
-    log.info(`  ${entry.rel}`);
-  }
-  const snapshot = signedMiseHead(mirror);
-  const pinned = snapshot ? commitForSnapshot(snapshot) : void 0;
-  if (pinned && snapshot) {
-    log.info(`文件将恢复到签名的 miseHead ${snapshot}`);
-    const { out } = rollbackTo(pinned, true);
-    if (/\S/.test(out)) {
-      for (const line of out.split("\n")) {
-        log.info(`  ${line}`);
-      }
-    }
-  } else {
-    log.info("没有签名的 miseHead;不会应用 dotfiles 分支");
-  }
-  const pac = readTextFile(`${mirror}/packages/pacman.txt`);
-  if (pac) {
-    const n = pac.split("\n").filter((line) => line.trim() !== "").length;
-    log.info(`官方包清单: ${n} 个`);
-  }
-  const fp = readTextFile(`${mirror}/packages/flatpak.txt`);
-  if (fp) {
-    log.info("flatpak:");
-    for (const line of fp.split("\n")) {
-      const app = /^([^\t]+)/.exec(line)?.[1];
-      if (app && app !== "") {
-        log.info(`  ${app}`);
-      }
-    }
-  }
-  const pj = readTextFile(`${mirror}/plugins.json`);
-  if (pj) {
-    try {
-      const data = JSON.parse(pj);
-      if (Array.isArray(data)) {
-        log.info("插件:");
-        for (const row of data) {
-          const note = row["local"] === true ? "(本地快照)" : typeof row["commit"] === "string" ? row["commit"] : "";
-          log.info(`  ${String(row["id"])} ${note}`);
-        }
-      }
-    } catch {
-    }
-  }
-  for (const name of listHooks(mirror)) {
-    log.info(`hook ${name}`);
-  }
-  if (!withExec) {
-    log.info("插件与 hooks 不会执行");
-    log.info("主题切换和 Omarchy hooks 会被跳过");
-  }
-}
-
-function requireMirror$2() {
-  if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
-  }
-  return paths.mirrorDir;
-}
-async function executeApply(options) {
-  const expected = options.commit ?? "";
-  if (!isFullSha(expected)) {
-    die("apply 需要 --commit <40位sha>(你审阅过的那个 commit)");
-  }
-  const mirror = requireMirror$2();
-  const branch = configGet("BRANCH", readTextFile) ?? "main";
-  const sha = resolveRemoteSha(mirror, branch);
-  if (sha !== expected) {
-    die(`origin/${branch} 现在是 ${sha},不是你审阅的 ${expected}`);
-  }
-  let force = options.force === true;
-  if (force) {
-    log.warn(`强制应用 ${sha};跳过了签名检查`);
-  } else {
-    const first = firstApplyAvailable();
-    if (!commitIsTrusted(mirror, sha)) {
-      if (first) {
-        acceptFirstApply(mirror, sha);
-      } else if (await confirm(`commit ${sha} 不可信。仍要应用吗?只应用配置;插件与 hooks 保持关闭。`)) {
-        force = true;
-        log.warn(`强制应用 ${sha};跳过了签名检查`);
-      } else {
-        await trustRemoteSigner(mirror, sha, options.trustSigner === true);
-      }
-    }
-    if (!commitIsTrusted(mirror, sha) && !first && !force) {
-      requireTrustedCommit(mirror, sha);
-    }
-  }
-  checkoutPinnedCommit(mirror, sha);
-  let withExec = false;
-  if (force || options.noExec === true) {
-    log.info("插件与 hooks 将被跳过");
-  } else if (commitIsTrusted(mirror, sha)) {
-    withExec = true;
-    log.info(`已审阅签名 commit ${sha}`);
-  } else {
-    log.info(`已审阅首个 commit ${sha};签名之前插件与 hooks 保持关闭`);
-  }
-  if (available() && !prepareDotfiles()) {
-    die("mise 抓不到 dotfiles 分支,未应用任何内容");
-  }
-  showChanges(mirror, sha);
-  previewApply(mirror, sha, withExec);
-  if (!await confirm("应用这份快照?")) {
-    die("快照未应用");
-  }
-  if (applyMirror(mirror, options.noPackages !== true, sha, withExec)) {
-    markApplied(sha);
-    log.info(`已应用 ${sha}`);
-    return;
-  }
-  log.warn(`应用 ${sha} 完成但有错误;配置已写入,备份已保留`);
-  process.exitCode = 1;
-}
-
-function executeConflicts() {
-  if (!available()) {
-    die("mise 未安装。运行: omarchy pkg add mise");
-  }
-  const { out } = conflicts();
-  if (!/\S/.test(out)) {
-    log.info("没有同步冲突");
-    return;
-  }
-  for (const line of out.split("\n")) {
-    log.info(`  ${line}`);
-  }
-  log.info("解决方式:编辑对应文件后运行 mise dot save;或整体采用远程: mise dot pull --take-remote-all");
-  const editor = process.env["VISUAL"] ?? process.env["EDITOR"];
-  if (!editor || !stdinIsTty()) {
-    return;
-  }
-  const home = process.env["HOME"] ?? "";
-  const files = out.split("\n").map((line) => line.trim()).filter((line) => line.startsWith("~/") || line.startsWith(`${home}/`));
-  if (files.length === 0) {
-    return;
-  }
-  log.info(`用 ${editor} 打开 ${files.length} 个冲突文件`);
-  const quoted = files.map((f) => `'${(f.startsWith("~/") ? `${home}/${f.slice(2)}` : f).replaceAll("'", "'\\''")}'`).join(" ");
-  spawnSync(`${editor} ${quoted}`, { shell: true, stdio: "inherit" });
-}
-
-function executeDoctor() {
-  let missing = false;
-  for (const tool of ["git", "rsync", "node", "mise"]) {
-    if (resolveTool(tool)) {
-      log.info(`ok  ${tool}`);
-    } else {
-      log.warn(`missing ${tool}${tool === "mise" ? "。运行: omarchy pkg add mise" : ""}`);
-      missing = true;
-    }
-  }
-  if (ghInstalled()) {
-    if (ghLoggedIn()) {
-      log.info(`ok  gh (${githubUser() ?? "?"})`);
-    } else {
-      log.warn("gh 已安装但未登录。运行: omarsync login");
-    }
-  } else {
-    log.warn("missing gh。运行: omarchy pkg add github-cli");
-    missing = true;
-  }
-  if (available()) {
-    if (featureOk()) {
-      log.info("ok  mise dot");
-    } else {
-      log.warn("mise dot 不工作;检查 `mise dot status`");
-      missing = true;
-    }
-    if (originConnected()) {
-      log.info("ok  mise dot origin 已连接");
-    } else {
-      log.warn("mise dot origin 未连接。运行: omarsync init");
-    }
-  }
-  if (isDir(`${paths.mirrorDir}/.git`)) {
-    const repo = configGet("REPO", readTextFile) ?? "";
-    const branch = configGet("BRANCH", readTextFile) ?? "main";
-    log.info(`ok  镜像 ${paths.mirrorDir}(${repo} ${branch})`);
-  } else {
-    log.warn("镜像未初始化。运行: omarsync init");
-  }
-  return missing ? 1 : 0;
-}
-
-function validRepoName(name) {
-  return /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(name);
-}
-function ensureDotfilesRepo() {
-  if (!available()) {
-    log.warn("mise 未安装;跳过 dotfiles 分支。运行: omarchy pkg add mise");
-    return;
-  }
-  const url = dotOriginUrl();
-  const branch = dotBranch();
-  if (url === "") {
-    log.warn("元数据仓库未配置;跳过 dotfiles 分支");
-    return;
-  }
-  if (originMatches(url, branch)) {
-    return;
-  }
-  const connected = originSet(url, branch);
-  if (!connected.ok) {
-    log.warn(`无法连接 mise dot origin ${url}`);
-    if (connected.out.trim() !== "") {
-      log.warn(connected.out);
-    }
-    return;
-  }
-  log.info(`已连接 mise dot origin ${url} 分支 ${branch}`);
-  if (incomingPending()) {
-    const stash = stashIgnoredPaths();
-    try {
-      const pull$1 = pull({ takeRemoteAll: true });
-      if (!pull$1.ok) {
-        log.warn(`mise adopt pull 失败: ${pull$1.out}`);
-      } else {
-        const snapshot = headSnapshot();
-        if (snapshot) {
-          removeRemoteIgnoredPaths(stash, snapshot);
-        }
-      }
-    } finally {
-      restoreIgnoredPaths(stash);
-    }
-  } else {
-    reconcile(readScope(paths.scopeFile));
-  }
-}
-function executeInit(repoArg) {
-  let repo = repoArg ?? "";
-  const user = githubUser();
-  if (!process.env["OMARSYNC_ORIGIN"]) {
-    if (!ghInstalled()) {
-      die("GitHub CLI 未安装。运行: omarchy pkg add github-cli");
-    }
-    if (!ghLoggedIn()) {
-      die("未登录 GitHub。运行: omarsync login");
-    }
-    if (!user) {
-      die("读取不到 GitHub 用户");
-    }
-    if (repo === "") {
-      repo = `${user}/omarchy-config`;
-    }
-    if (!validRepoName(repo)) {
-      die(`仓库名必须形如 owner/name: ${repo}`);
-    }
-    if (!ghCapture(["repo", "view", repo]).ok) {
-      const [owner, name] = repo.split("/");
-      if (owner !== user) {
-        die(`仓库 ${repo} 不存在,也不属于 ${user}`);
-      }
-      log.info(`创建私有仓库 ${repo}`);
-      gh(["repo", "create", name, "--private", "--description", "Omarchy configuration synced by omarsync"]);
-    }
-  } else {
-    if (repo === "") {
-      repo = "local/omarchy-config";
-    }
-    if (!validRepoName(repo)) {
-      die(`仓库名必须形如 owner/name: ${repo}`);
-    }
-  }
-  const branch = "main";
-  const url = process.env["OMARSYNC_ORIGIN"] || `https://github.com/${repo}.git`;
-  const mirror = paths.mirrorDir;
-  mkdirSync(paths.stateDir, { recursive: true });
-  if (isDir(`${mirror}/.git`)) {
-    if (gitOut(["-C", mirror, "remote", "get-url", "origin"])) {
-      git(["-C", mirror, "remote", "set-url", "origin", url]);
-    } else {
-      git(["-C", mirror, "remote", "add", "origin", url]);
-    }
-  } else {
-    mkdirSync(mirror, { recursive: true });
-    git(["-C", mirror, "init", "-b", branch]);
-    git(["-C", mirror, "remote", "add", "origin", url]);
-    if (git(["-C", mirror, "fetch", "--quiet", "origin", branch]) && gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", `refs/remotes/origin/${branch}^{commit}`])) {
-      const sha = gitOut(["-C", mirror, "rev-parse", "--verify", `refs/remotes/origin/${branch}^{commit}`]);
-      checkoutPinnedCommit(mirror, sha);
-      log.info(`已钉住 ${sha}`);
-    } else {
-      log.info(`远程分支 ${branch} 是空的`);
-    }
-  }
-  ensureLocalScope(new URL("../..", import.meta.url).pathname);
-  ensureIdentity(mirror);
-  configSet("REPO", repo);
-  configSet("BRANCH", branch);
-  log.info(`已初始化 ${repo} 于 ${mirror}`);
-  ensureDotfilesRepo();
-}
-
-function executeLogin() {
-  if (!ghInstalled()) {
-    die("GitHub CLI 未安装。运行: omarchy pkg add github-cli");
-  }
-  if (ghLoggedIn()) {
-    log.info(`已登录 ${githubUser() ?? "?"}`);
-    gh(["auth", "setup-git"]);
-    return;
-  }
-  if (!stdinIsTty()) {
-    die("GitHub 登录需要终端。运行: omarsync login");
-  }
-  gh(["auth", "login", "-h", "github.com", "-p", "https", "-w"]);
-  gh(["auth", "setup-git"]);
-  log.info(`已登录 ${githubUser() ?? "?"}`);
-}
-
-function treePaths(mirror, rev) {
-  const listed = gitCapture(["-C", mirror, "ls-tree", "-r", "--name-only", rev]);
-  if (!listed.ok) {
-    return void 0;
-  }
-  return listed.out.split("\n").filter((line) => line !== "");
-}
-function withoutHome(pathsInTree) {
-  return pathsInTree.filter((name) => name !== "home" && !name.startsWith("home/")).sort();
-}
-function samePaths(left, right) {
-  return left.length === right.length && left.every((name, index) => name === right[index]);
-}
-function worktreeClean(mirror) {
-  const status = gitCapture(["-C", mirror, "status", "--porcelain", "--untracked-files=all"]);
-  return status.ok && status.out.trim() === "";
-}
-function onlyHomeRemoved(mirror, before, after) {
-  const diff = gitCapture(["-C", mirror, "diff", "--name-only", "--no-renames", before, after]);
-  if (!diff.ok) {
-    return false;
-  }
-  const names = diff.out.split("\n").filter((line) => line !== "");
-  return names.length > 0 && names.every((name) => name === "home" || name.startsWith("home/"));
-}
-async function dropLegacyHome(mirror, branch) {
-  if (!isDir(`${mirror}/home`)) {
-    return;
-  }
-  const head = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-  if (!isFullSha(head)) {
-    die("镜像没有完整提交,拒绝签名也未推送");
-  }
-  requireTrustedRemoteTip(mirror, head);
-  if (!worktreeClean(mirror)) {
-    die("镜像有未提交的改动,拒绝在迁移时签名");
-  }
-  const before = treePaths(mirror, head);
-  if (!before) {
-    die("读不到当前树,未签名也未推送");
-  }
-  const kept = withoutHome(before);
-  log.info(`可信提交 ${head}。删除 home/ 之后会留下这些文件:`);
-  if (kept.length === 0) {
-    log.info("  (没有其他文件)");
-  } else {
-    for (const name of kept) {
-      log.info(`  ${name}`);
-    }
-  }
-  if (!await confirm("签名并发布去掉 home/ 之后的这棵树?")) {
-    die("已取消,未签名也未推送");
-  }
-  const again = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-  const againPaths = isFullSha(again) ? treePaths(mirror, again) : void 0;
-  if (again !== head || !commitIsTrusted(mirror, head) || !againPaths || !samePaths(withoutHome(againPaths), kept) || !worktreeClean(mirror)) {
-    die("审阅期间树变了,未签名也未推送");
-  }
-  if (!git(["-C", mirror, "rm", "-rq", "home"])) {
-    git(["-C", mirror, "reset", "--hard", head]);
-    die("移除 home/ 失败,未签名也未推送");
-  }
-  if (!git(["-C", mirror, "commit", "-S", "-m", "drop file mirror; dotfiles moved to mise history"])) {
-    git(["-C", mirror, "reset", "--hard", head]);
-    die("迁移提交签名失败,未推送");
-  }
-  const signed = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-  const parent = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^"]);
-  const after = isFullSha(signed) ? treePaths(mirror, signed) : void 0;
-  if (parent !== head || !isFullSha(signed) || !commitIsTrusted(mirror, signed) || !after || !samePaths([...after].sort(), kept) || !onlyHomeRemoved(mirror, head, signed)) {
-    git(["-C", mirror, "reset", "--hard", head]);
-    die("签名没有覆盖已审阅的迁移,未推送");
-  }
-  if (!git(["-C", mirror, "push", "--quiet", "-u", "origin", `HEAD:${branch}`])) {
-    die("git push 失败,迁移提交未发布");
-  }
-  log.info("已移除旧文件镜像(仍可从 git 历史找回)");
-}
-async function executeMigrate() {
-  if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
-  }
-  const mirror = paths.mirrorDir;
-  const branch = configGet("BRANCH", readTextFile) ?? "main";
-  log.info("迁移到 mise dot 布局");
-  ensureDotfilesRepo();
-  if (available() && originConnected()) {
-    reconcile(readScope(paths.scopeFile));
-    if (save() === void 0) {
-      die("迁移过程中 mise dot save 失败");
-    }
-    const { ok, out } = sync(false);
-    if (!ok) {
-      die(`迁移过程中 mise dot sync 失败: ${out}`);
-    }
-  } else {
-    log.warn("mise dot origin 未连接;dotfiles 未迁移");
-  }
-  await dropLegacyHome(mirror, branch);
-  log.info(`迁移完成;旧备份在 ${paths.backupDir},可手动删除`);
-}
-
-function requireMirror$1() {
-  if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
-  }
-  return paths.mirrorDir;
-}
-function executePull() {
-  const mirror = requireMirror$1();
-  const branch = configGet("BRANCH", readTextFile) ?? "main";
-  const sha = resolveRemoteSha(mirror, branch);
-  requireTrustedRemoteTip(mirror, sha);
-  checkoutPinnedCommit(mirror, sha);
-  if (available()) {
-    sync(true);
-  }
-  log.info(`已钉住 ${sha}`);
-  log.info("下一步: omarsync apply --commit " + sha + "(会先展示更改再请你确认)");
-}
-
-const HOME = homedir();
-function exportCurrent(dest) {
-  const state = `${HOME}/.local/state/omarchy/current`;
-  mkdirSync(`${dest}/current`, { recursive: true });
-  const theme = (readTextFile(`${state}/theme.name`) ?? "").replaceAll(/\s+/g, "");
-  writeFileSync(`${dest}/current/theme.name`, `${theme}
-`);
-  let record = "";
-  const bg = `${state}/background`;
-  const target = isLink(bg) || exists(bg) ? realpath$1(bg) : void 0;
-  const base = `${HOME}/.config/omarchy/backgrounds`;
-  const themeBases = [
-    `${state}/theme/`,
-    `${HOME}/.config/omarchy/themes/${theme}/`,
-    `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/themes/${theme}/`
-  ];
-  const themeBase = theme === "" ? void 0 : themeBases.find((path) => target?.startsWith(path));
-  if (target?.startsWith(`${base}/`)) {
-    record = `rel:${target.slice(base.length + 1)}`;
-  } else if (target && themeBase) {
-    record = `theme:${target.slice(themeBase.length)}`;
-  } else if (target) {
-    record = `abs:${target}`;
-  }
-  writeFileSync(`${dest}/current/background`, `${record}
-`);
-}
-function writeMeta(dest, miseHead) {
-  let version = "unknown";
-  const vf = `${process.env["OMARCHY_PATH"] ?? "/usr/share/omarchy"}/version`;
-  const v = readTextFile(vf);
-  if (v) {
-    version = v.replaceAll(/\s+/g, "");
-  }
-  const data = {
-    schemaVersion: 2,
-    host: hostnameSafe(),
-    omarchyVersion: version,
-    pushedAt: iso8601(),
-    miseHead: miseHead ?? null
-  };
-  writeFileSync(`${dest}/omarsync.json`, `${JSON.stringify(data)}
-`);
-}
-function exportLocalInto(dest) {
-  exportCurrent(dest);
-  exportPackages(dest);
-  exportPlugins(dest, "apply");
-  exportHooks(dest);
-}
-function readRemotePlugins(dest) {
-  const raw = gitOut(["-C", dest, "show", "HEAD:plugins.json"]);
-  if (!raw) {
-    return [];
-  }
-  try {
-    const data = JSON.parse(raw);
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
-}
-function mergePackageText(group, remote, local) {
-  if (group === "flatpak") {
-    const rows = /* @__PURE__ */ new Map();
-    for (const line of remote.split("\n")) {
-      const app = line.split("	")[0]?.trim();
-      if (app) {
-        rows.set(app, line);
-      }
-    }
-    for (const line of local.split("\n")) {
-      const app = line.split("	")[0]?.trim();
-      if (app) {
-        rows.set(app, line);
-      }
-    }
-    return [...rows.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([, line]) => line).join("\n") + (rows.size > 0 ? "\n" : "");
-  }
-  const names = /* @__PURE__ */ new Set();
-  for (const line of remote.split("\n")) {
-    const name = line.trim();
-    if (name !== "" && !name.startsWith("#")) {
-      names.add(name);
-    }
-  }
-  for (const line of local.split("\n")) {
-    const name = line.trim();
-    if (name !== "" && !name.startsWith("#")) {
-      names.add(name);
-    }
-  }
-  return [...names].sort().join("\n") + (names.size > 0 ? "\n" : "");
-}
-function collectSelectedInto(dest, miseHead, plan, localTmp) {
-  discardRemoteScope(dest);
-  if (plan.current.selected) {
-    mkdirSync(`${dest}/current`, { recursive: true });
-    for (const name of ["theme.name", "background"]) {
-      const source = `${localTmp}/current/${name}`;
-      if (isFile(source)) {
-        copyFileSync(source, `${dest}/current/${name}`);
-      }
-    }
-  }
-  for (const item of plan.hooks) {
-    if (!item.selected) {
-      continue;
-    }
-    const relative = `hooks/post-apply.d/${item.name}`;
-    const target = `${dest}/${relative}`;
-    const source = `${localTmp}/${relative}`;
-    if (item.status === "D") {
-      rmrf(target);
-      continue;
-    }
-    if (isFile(source)) {
-      mkdirSync(`${dest}/hooks/post-apply.d`, { recursive: true });
-      copyFileSync(source, target);
-      chmodSync(target, statSync(source).mode);
-    }
-  }
-  for (const item of plan.packages) {
-    if (!item.selected) {
-      continue;
-    }
-    const relative = `packages/${item.group}.txt`;
-    const remote = gitOut(["-C", dest, "show", `HEAD:${relative}`]) ?? "";
-    const local = readTextFile(`${localTmp}/${relative}`) ?? "";
-    const merged = mergePackageText(item.group, remote, local);
-    mkdirSync(`${dest}/packages`, { recursive: true });
-    writeFileSync(`${dest}/${relative}`, merged);
-  }
-  const remotePlugins = readRemotePlugins(dest);
-  const plugins = /* @__PURE__ */ new Map();
-  for (const row of remotePlugins) {
-    if (typeof row.id === "string") {
-      plugins.set(row.id, row);
-    }
-  }
-  let localPlugins = [];
-  try {
-    const parsed = JSON.parse(readTextFile(`${localTmp}/plugins.json`) ?? "[]");
-    if (Array.isArray(parsed)) {
-      localPlugins = parsed;
-    }
-  } catch {
-    localPlugins = [];
-  }
-  const localById = /* @__PURE__ */ new Map();
-  for (const row of localPlugins) {
-    if (typeof row.id === "string") {
-      localById.set(row.id, row);
-    }
-  }
-  for (const item of plan.plugins) {
-    if (!item.selected) {
-      continue;
-    }
-    const target = `${dest}/plugins-local/${item.id}`;
-    if (item.status === "D") {
-      plugins.delete(item.id);
-      rmrf(target);
-      continue;
-    }
-    const row = localById.get(item.id);
-    if (!row) {
-      continue;
-    }
-    plugins.set(item.id, row);
-    rmrf(target);
-    if (row.local === true && isDir(`${localTmp}/plugins-local/${item.id}`)) {
-      mkdirSync(`${dest}/plugins-local`, { recursive: true });
-      cpSync(`${localTmp}/plugins-local/${item.id}`, target, { recursive: true });
-    }
-  }
-  if (plan.plugins.some((item) => item.selected)) {
-    mkdirSync(dest, { recursive: true });
-    writeFileSync(
-      `${dest}/plugins.json`,
-      `${JSON.stringify([...plugins.values()].sort((a, b) => String(a.id).localeCompare(String(b.id))), void 0, 2)}
-`
-    );
-  }
-  writeMeta(dest, miseHead);
-}
-function treesDiffer(left, right) {
-  if (isDir(left) || isDir(right)) {
-    const diff = resolveTool("diff");
-    if (!diff) {
-      return true;
-    }
-    return capture(diff, ["-rq", left, right]).code !== 0;
-  }
-  if (!isFile(left) && !isFile(right)) {
-    return false;
-  }
-  const cmp = resolveTool("cmp");
-  if (!cmp) {
-    return true;
-  }
-  return capture(cmp, ["-s", left, right]).code !== 0;
-}
-function packageLines(text, group) {
-  const lines = /* @__PURE__ */ new Map();
-  for (const line of (text ?? "").split("\n")) {
-    if (line.trim() === "" || line.startsWith("#")) {
-      continue;
-    }
-    const id = (group === "flatpak" ? line.split("	")[0] : line.trim()) ?? "";
-    if (id !== "") {
-      lines.set(id, line);
-    }
-  }
-  return lines;
-}
-function packagesDirty(mirror, tmp, ignoredPackages) {
-  for (const group of ["pacman", "aur", "flatpak"]) {
-    const relative = `packages/${group}.txt`;
-    const remote = packageLines(readTextFile(`${mirror}/${relative}`), group);
-    const local = packageLines(readTextFile(`${tmp}/${relative}`), group);
-    for (const id of ignoredPackages) {
-      remote.delete(id);
-      local.delete(id);
-    }
-    for (const [id, line] of local) {
-      if (remote.get(id) !== line) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-function canonicalStringify(value) {
-  if (Array.isArray(value)) {
-    return `[${value.map(canonicalStringify).join(",")}]`;
-  }
-  if (value !== null && typeof value === "object") {
-    const entries = Object.entries(value).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => `${JSON.stringify(key)}:${canonicalStringify(item)}`);
-    return `{${entries.join(",")}}`;
-  }
-  return JSON.stringify(value);
-}
-function pluginRecords(text, ignored) {
-  const records = /* @__PURE__ */ new Map();
-  try {
-    const rows = JSON.parse(text ?? "[]");
-    for (const row of rows) {
-      if (typeof row.id === "string" && !ignored.has(row.id)) {
-        records.set(row.id, canonicalStringify(row));
-      }
-    }
-  } catch {
-  }
-  return records;
-}
-function mirrorDirty(mirror) {
-  const tmp = mktempDir();
-  try {
-    const ignored = loadPushIgnore();
-    exportCurrent(tmp);
-    exportPackages(tmp);
-    const pluginsKnown = exportPlugins(tmp, "check");
-    let dirty = treesDiffer(`${mirror}/current`, `${tmp}/current`);
-    if (!dirty && packagesDirty(mirror, tmp, ignored.packages)) {
-      dirty = true;
-    }
-    if (!dirty && pluginsKnown) {
-      const remotePlugins = pluginRecords(readTextFile(`${mirror}/plugins.json`), ignored.plugins);
-      const localPlugins = pluginRecords(readTextFile(`${tmp}/plugins.json`), ignored.plugins);
-      if (remotePlugins.size !== localPlugins.size) {
-        dirty = true;
-      } else {
-        for (const [id, record] of localPlugins) {
-          if (remotePlugins.get(id) !== record) {
-            dirty = true;
-            break;
-          }
-        }
-      }
-      if (!dirty && ignored.plugins.size === 0 && (isDir(`${mirror}/plugins-local`) || isDir(`${tmp}/plugins-local`))) {
-        if (treesDiffer(`${mirror}/plugins-local`, `${tmp}/plugins-local`)) {
-          dirty = true;
-        }
-      }
-    }
-    if (!dirty) {
-      const out = gitOut(["-C", mirror, "status", "--porcelain"]);
-      if (out && /\S/.test(out)) {
-        dirty = true;
-      }
-    }
-    return dirty;
-  } finally {
-    rmrf(tmp);
-  }
-}
-
-function readCounts(mirror, branch) {
-  const ls = gitCapture(["-C", mirror, "ls-remote", "--exit-code", "--heads", "origin", branch]);
-  if (ls.code === 2) {
-    return [0, 0, ""];
-  }
-  if (!ls.ok || !gitCapture(["-C", mirror, "fetch", "--quiet", "origin", branch]).ok) {
-    return void 0;
-  }
-  let sha = gitOut(["-C", mirror, "rev-parse", "--verify", `refs/remotes/origin/${branch}^{commit}`]);
-  if (!isFullSha(sha)) {
-    sha = void 0;
-  }
-  const head = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-  if (!head) {
-    const remoteCount = sha ? Number(gitOut(["-C", mirror, "rev-list", "--count", sha]) ?? 0) : 0;
-    return [remoteCount, 0, sha ?? ""];
-  }
-  if (!sha) {
-    return [0, 0, ""];
-  }
-  const headTree = gitOut(["-C", mirror, "rev-parse", "--verify", `${head}^{tree}`]);
-  const remoteTree = gitOut(["-C", mirror, "rev-parse", "--verify", `${sha}^{tree}`]);
-  if (headTree && remoteTree && headTree === remoteTree) {
-    return [0, 0, sha];
-  }
-  const behind = Number(gitOut(["-C", mirror, "rev-list", "--count", `HEAD..${sha}`]) ?? 0);
-  const ahead = Number(gitOut(["-C", mirror, "rev-list", "--count", `${sha}..HEAD`]) ?? 0);
-  return [behind, ahead, sha];
-}
 function isRunning() {
   if (process.env["OMARSYNC_LOCK_HELD"] === "1") {
     return false;
@@ -7854,127 +10215,41 @@ function isRunning() {
     return false;
   }
   mkdirSync(dirname(paths.lockFile), { recursive: true });
-  return !run(flock, ["-n", paths.lockFile, "-c", "true"]);
-}
-function miseDirty() {
-  if (!available() || !featureOk()) {
-    return false;
-  }
-  const unsaved = unsavedFiles();
-  if (unsaved !== void 0) {
-    const ignored = loadPushIgnore();
-    return unsaved.some((name) => !pathIgnored(ignored, name));
-  }
-  return /\S/.test(diff().out.replace(/^mise files: all files are applied\s*$/m, ""));
-}
-function changedFiles() {
-  const repo = join(homedir(), ".local", "state", "mise", "history", "repo.git");
-  if (!isDir(repo)) {
-    return [];
-  }
-  const out = gitOut([`--git-dir=${repo}`, "show", "--name-only", "--format=", "HEAD"]) ?? "";
-  const files = [];
-  const seen = /* @__PURE__ */ new Set();
-  for (const line of out.split("\n")) {
-    const rel = line.replace(/^home\//, "");
-    if (rel !== "" && !seen.has(rel)) {
-      seen.add(rel);
-      files.push(rel);
-      if (files.length >= 30) {
-        break;
-      }
-    }
-  }
-  return files;
+  const result = spawnSync(flock, ["-n", paths.lockFile, "-c", "true"]);
+  return result.status !== 0;
 }
 function collect() {
+  const repoState = collectRepoState();
   const st = {
-    ghInstalled: false,
+    ghInstalled: ghInstalled(),
     loggedIn: false,
     user: "",
-    repo: configGet("REPO", readTextFile) ?? "",
-    dotRepo: dotRepoName(),
-    dotBranch: dotBranch(),
-    branch: configGet("BRANCH", readTextFile) ?? "main",
-    initialized: false,
-    dirty: false,
-    behind: null,
-    ahead: null,
-    remoteCommit: "",
+    repo: repoState.remote,
+    // 面板有"打开文件分支"入口;新架构只有一个仓库一个分支,两个字段同源
+    dotRepo: repoState.remote,
+    dotBranch: repoState.branch || "main",
+    branch: repoState.branch || "main",
+    initialized: repoState.initialized,
+    dirty: repoState.dirty,
+    behind: repoState.behind,
+    ahead: repoState.ahead,
+    remoteCommit: repoState.remoteCommit,
     pinnedCommit: "",
-    remoteSigned: false,
-    remoteSignature: "none",
+    // 私有仓库 + 无签名门:所有远程内容一视同仁
+    remoteSigned: true,
+    remoteSignature: "trusted",
     signerFingerprint: "",
-    hasTrustedKeys: false,
+    hasTrustedKeys: true,
     firstApply: false,
-    lastPush: { host: "", time: "", omarchyVersion: "" },
-    running: false,
-    error: "",
-    miseConnected: false,
-    changedFiles: []
+    lastPush: { host: hostnameSafe(), time: repoState.lastCommitTime, omarchyVersion: "" },
+    running: isRunning(),
+    error: repoState.error,
+    miseConnected: available() && repoState.initialized,
+    changedFiles: repoState.changedFiles
   };
-  if (ghInstalled()) {
-    st.ghInstalled = true;
-    if (ghLoggedIn()) {
-      st.loggedIn = true;
-      st.user = githubUser() ?? "";
-    }
-  }
-  if (isRunning()) {
-    st.running = true;
-  }
-  if (available()) {
-    st.miseConnected = originConnected();
-  }
-  if (isDir(`${paths.mirrorDir}/.git`)) {
-    st.initialized = true;
-    const mirror = paths.mirrorDir;
-    if (!st.running) {
-      let dirty = mirrorDirty(mirror);
-      if (!dirty) {
-        dirty = miseDirty();
-        if (dirty) {
-          const unsaved = unsavedFiles();
-          const ignored = loadPushIgnore();
-          const visible = (unsaved ?? []).filter((name) => !pathIgnored(ignored, name));
-          st.changedFiles = visible.length > 0 ? visible.map((name) => name.replace(/^~\//, "")).slice(0, 30) : changedFiles();
-        }
-      }
-      st.dirty = dirty;
-      const counts = readCounts(mirror, st.branch);
-      if (counts) {
-        const [behind, ahead, tip] = counts;
-        st.behind = behind;
-        st.ahead = ahead;
-        if (isFullSha(tip)) {
-          st.remoteCommit = tip;
-          st.hasTrustedKeys = trustedKeysPresent();
-          const { state, fingerprint } = commitSignatureState(mirror, tip);
-          st.remoteSignature = state;
-          st.signerFingerprint = fingerprint;
-          st.remoteSigned = state === "trusted";
-          st.firstApply = firstApplyAvailable();
-        }
-      } else {
-        st.error = "could not fetch origin";
-      }
-      if (!gitCapture(["-C", mirror, "symbolic-ref", "-q", "HEAD"]).ok) {
-        const head = gitOut(["-C", mirror, "rev-parse", "--verify", "HEAD"]);
-        if (isFullSha(head)) {
-          st.pinnedCommit = head;
-        }
-      }
-    }
-    const metaRaw = readTextFile(join(mirror, "omarsync.json"));
-    if (metaRaw) {
-      try {
-        const data = JSON.parse(metaRaw);
-        st.lastPush.host = displayToken(data.host);
-        st.lastPush.time = displayTime(data.pushedAt);
-        st.lastPush.omarchyVersion = displayToken(data.omarchyVersion);
-      } catch {
-      }
-    }
+  if (st.ghInstalled && ghLoggedIn()) {
+    st.loggedIn = true;
+    st.user = githubUser() ?? "";
   }
   return st;
 }
@@ -7996,1069 +10271,148 @@ function executeStatus(json) {
   const githubState = st.loggedIn ? st.user : st.ghInstalled ? "signed out" : "cli missing";
   log.info(`github: ${githubState}`);
   log.info(`repo: ${st.repo === "" ? "<unset>" : st.repo} (${st.branch})`);
-  log.info(`mirror: ${st.initialized ? "ready" : "not initialized"}`);
-  log.info(`mise dot: ${st.miseConnected ? "connected" : "not connected"}`);
+  log.info(`local: ${st.initialized ? paths.configRepo : "not initialized"}`);
+  log.info(`mise dot: ${st.miseConnected ? "available" : "unavailable"}`);
   log.info(`local changes: ${st.dirty ? "yes" : "no"}`);
   log.info(`behind: ${String(st.behind)}  ahead: ${String(st.ahead)}`);
-  if (st.remoteCommit !== "") {
-    log.info(`signature: ${st.remoteSignature}${st.signerFingerprint === "" ? "" : ` ${st.signerFingerprint}`}`);
-  }
   if (st.lastPush.time !== "") {
-    log.info(`last push: ${st.lastPush.time} from ${st.lastPush.host}`);
+    log.info(`last commit: ${st.lastPush.time} on ${st.lastPush.host}`);
   }
   if (st.error !== "") {
     log.warn(st.error);
   }
 }
-
-const DOTFILES_SHADOW = "refs/omarsync/dotfiles-tip";
-const REMOTE_REF = "refs/omarsync/remote-dotfiles";
-function history(args) {
-  return ["--git-dir", historyRepo(), ...args];
-}
-function showFromTree(tree, path) {
-  return gitOut(history(["show", `${tree}:${path}`]));
-}
-function readManifest(tree) {
-  const raw = showFromTree(tree, ".mise-history/manifest.json");
-  if (!raw) {
-    return void 0;
-  }
-  try {
-    return JSON.parse(raw);
-  } catch {
-    die(`mise 清单不是合法 JSON: ${tree}:.mise-history/manifest.json`);
-  }
-}
-function mergeManifest(base, local, selected, deleted, ignored) {
-  const merged = base ? { ...base } : local ? { ...local } : { enrollment: [], exclude: [], permissions: {} };
-  const basePermissions = { ...merged.permissions ?? {} };
-  const localPermissions = { ...local?.permissions ?? {} };
-  const baseEnrollment = [...merged.enrollment ?? []];
-  const localEnrollment = [...local?.enrollment ?? []];
-  const excluded = new Set(pushIgnoreExcludes(ignored));
-  if (!base && Array.isArray(merged.exclude)) {
-    merged.exclude = merged.exclude.filter((item) => typeof item !== "string" || !excluded.has(item));
-  }
-  const excludeGlobs = new Set(
-    Array.isArray(merged.exclude) ? merged.exclude.filter((item) => typeof item === "string") : []
-  );
-  if (Array.isArray(local?.exclude)) {
-    for (const item of local.exclude) {
-      if (typeof item === "string" && !excluded.has(item)) {
-        excludeGlobs.add(item);
-      }
-    }
-  }
-  merged.exclude = [...excludeGlobs];
-  for (const path of selected) {
-    const already = baseEnrollment.some((entry) => {
-      const root = entry && typeof entry === "object" && typeof entry.path === "string" ? entry.path : "";
-      return root !== "" && (path === root || path.startsWith(`${root}/`));
-    });
-    if (!already) {
-      const source = localEnrollment.find((entry) => {
-        const root = entry && typeof entry === "object" && typeof entry.path === "string" ? entry.path : "";
-        return root !== "" && (path === root || path.startsWith(`${root}/`));
-      });
-      if (source) {
-        baseEnrollment.push(source);
-      }
-    }
-    const localPermission = localPermissions[path];
-    if (localPermission === void 0) {
-      delete basePermissions[path];
-    } else if (basePermissions[path] !== localPermission) {
-      basePermissions[path] = localPermission;
-    }
-  }
-  for (const path of deleted) {
-    delete basePermissions[path];
-  }
-  merged.enrollment = baseEnrollment;
-  merged.permissions = basePermissions;
-  return merged;
-}
-function writeManifest(indexFile, manifest) {
-  const tmp = mktempDir();
-  const file = join(tmp, "manifest.json");
-  try {
-    mkdirSync(tmp, { recursive: true });
-    writeFileSync(file, `${JSON.stringify(manifest, void 0, 2)}
-`);
-    const blob = gitOut(history(["hash-object", "-w", "--", file]));
-    if (!blob || !gitCaptureEnv(
-      history(["update-index", "--add", "--cacheinfo", `100644,${blob},.mise-history/manifest.json`]),
-      [`GIT_INDEX_FILE=${indexFile}`]
-    ).ok) {
-      die("无法写入合并后的 mise 清单");
-    }
-  } finally {
-    rmrf(tmp);
-  }
-}
-function forbiddenPath(path) {
-  const local = path.replace(/^home\//, "");
-  const parts = local.split("/");
-  return parts.includes(".git") || parts.includes("node_modules") || /(^|\/)\.env(\.|$)/.test(local) || local.startsWith(".config/omarchy/plugins") || local.startsWith(".config/omarsync") || local.startsWith(".ssh") || local.startsWith(".gnupg");
-}
-function validateTree(tree) {
-  const out = gitOut(history(["ls-tree", "-r", "--name-only", tree]));
-  for (const path of (out ?? "").split("\n")) {
-    if (path === "") {
-      continue;
-    }
-    if (forbiddenPath(path)) {
-      die(`选择性发布拒绝敏感/禁用路径: ${path}`);
-    }
-    if (path.startsWith("home/")) {
-      assertSafeRel(path.slice(5));
-    }
-  }
-}
-function fetchRemoteDotfiles(url, branch) {
-  const has = gitCapture(["ls-remote", "--exit-code", "--heads", url, branch]);
-  if (has.code === 2) {
-    const empty = emptySnapshot();
-    if (!empty) {
-      die("无法取得空树对象");
-    }
-    return { tree: empty };
-  }
-  if (!has.ok) {
-    die(`无法读取远程 dotfiles 分支 ${branch}`);
-  }
-  if (!git(history(["fetch", "--quiet", "--no-tags", url, `+refs/heads/${branch}:${REMOTE_REF}`]))) {
-    die("抓取远程 dotfiles 失败");
-  }
-  const commit = gitOut(history(["rev-parse", "--verify", "--quiet", `${REMOTE_REF}^{commit}`]));
-  const tree = commit ? gitOut(history(["rev-parse", "--verify", `${commit}^{tree}`])) : void 0;
-  if (!isFullSha(commit) || !isFullSha(tree)) {
-    die("远程 dotfiles 没有解析出树");
-  }
-  return { commit, tree };
-}
-function pendingExcludeAdds(remoteTree, localTree, ignored) {
-  const localManifest = readManifest(localTree);
-  if (!localManifest) {
-    return [];
-  }
-  const baseManifest = readManifest(remoteTree);
-  const merged = mergeManifest(baseManifest, localManifest, [], [], ignored);
-  const baseSet = new Set(
-    Array.isArray(baseManifest?.exclude) ? baseManifest.exclude.filter((item) => typeof item === "string") : []
-  );
-  return (Array.isArray(merged.exclude) ? merged.exclude : []).filter((item) => typeof item === "string").filter((glob) => !baseSet.has(glob));
-}
-function buildSelectedDotfiles(remote, localTree, selectedPaths2, selectedDeletes, ignored) {
-  const localManifest = readManifest(localTree);
-  if (!localManifest) {
-    die("本机 mise 快照没有 manifest.json");
-  }
-  const baseManifest = readManifest(remote.tree);
-  const mergedManifest = mergeManifest(baseManifest, localManifest, selectedPaths2, selectedDeletes, ignored);
-  const manifestChanged = !baseManifest || !isDeepStrictEqual(baseManifest, mergedManifest);
-  if (selectedPaths2.length === 0 && selectedDeletes.length === 0 && !manifestChanged) {
-    return { tree: remote.tree };
-  }
-  const tmp = mkdtempSync(join(dirname(historyRepo()), ".omarsync-index-"));
-  const indexFile = join(tmp, "index");
-  try {
-    if (!gitCapture(history(["read-tree", `--index-output=${indexFile}`, remote.tree])).ok) {
-      die("无法读取远程 dotfiles 树");
-    }
-    const deleteInput = selectedDeletes.map((path) => `0 ${"0".repeat(40)}	${path}
-`).join("");
-    if (deleteInput !== "") {
-      const result = gitCaptureInputEnv(history(["update-index", "--index-info"]), [
-        `GIT_INDEX_FILE=${indexFile}`
-      ], deleteInput);
-      if (!result.ok) {
-        die("无法从树里删除勾选路径");
-      }
-    }
-    for (const path of selectedPaths2) {
-      const entry = snapshotEntry(localTree, path);
-      if (!entry) {
-        die(`本机快照里没有 ${path}`);
-      }
-      const result = gitCaptureEnv(
-        history(["update-index", "--add", "--cacheinfo", `${entry.mode},${entry.blob},${path}`]),
-        [`GIT_INDEX_FILE=${indexFile}`]
-      );
-      if (!result.ok) {
-        die(`无法写入树路径 ${path}`);
-      }
-    }
-    if (manifestChanged) {
-      writeManifest(indexFile, mergedManifest);
-    }
-    const tree = gitOutEnv(history(["write-tree"]), [`GIT_INDEX_FILE=${indexFile}`]);
-    if (!isFullSha(tree)) {
-      die("无法写出选择性发布树");
-    }
-    validateTree(tree);
-    const parent = remote.commit;
-    const args = history(["-c", "user.name=mise", "-c", "user.email=mise@localhost", "commit-tree", tree]);
-    if (parent) {
-      args.push("-p", parent);
-    }
-    const message = [
-      `sync selected from ${hostnameSafe()} @ ${iso8601()}`,
-      "",
-      `Mise-History: ${JSON.stringify({ trigger: "save", description_source: "computed", task: null, labels: [], omitted: [], incomplete: [], operation: null })}`,
-      "Mise-History-Matcher: 2"
-    ].join("\n");
-    args.push("-m", message);
-    const commit = gitOut(args);
-    if (!isFullSha(commit)) {
-      die("无法创建 dotfiles 提交");
-    }
-    if (!git(history(["update-ref", DOTFILES_SHADOW, commit]))) {
-      die("无法更新本机 dotfiles shadow ref");
-    }
-    log.info(`已构造选择性快照 ${tree} (${commit.slice(0, 10)})`);
-    return { tree, commit };
-  } finally {
-    rmrf(tmp);
-  }
-}
-function importDotfilesCommit(mirror, commit) {
-  if (!isFullSha(commit)) {
-    return false;
-  }
-  return git([
-    "-C",
-    mirror,
-    "fetch",
-    "--quiet",
-    "--no-tags",
-    historyRepo(),
-    `${DOTFILES_SHADOW}:refs/omarsync/dotfiles-publish`
-  ]);
-}
-function selectedPaths(plan) {
-  const writes = [];
-  const deletes = [];
-  for (const item of plan.files) {
-    if (!item.selected) {
-      continue;
-    }
-    if (item.status === "D") {
-      deletes.push(item.path);
-    } else {
-      writes.push(item.path);
-    }
-  }
-  return { writes, deletes };
-}
-function remoteMiseHead(mirror) {
-  const raw = gitOut(["-C", mirror, "show", "HEAD:omarsync.json"]);
-  if (!raw) {
-    return void 0;
-  }
-  try {
-    const head = JSON.parse(raw).miseHead;
-    const sha = typeof head === "string" ? head : void 0;
-    return isFullSha(sha) ? sha : void 0;
-  } catch {
-    return void 0;
-  }
-}
-function assertMiseHead(mirror, expected) {
-  const actual = remoteMiseHead(mirror);
-  if (actual !== expected) {
-    die(`签名前 miseHead 不一致:期望 ${expected},实际 ${actual ?? "<空>"}`);
-  }
+function refreshStatusFile() {
+  writeJson(collect());
 }
 
-function show(mirror, path) {
-  return gitOut(["-C", mirror, "show", `HEAD:${path}`]);
-}
-function blobOf(mirror, file) {
-  return gitOut(["-C", mirror, "hash-object", "--", file]);
-}
-function remoteHooks(mirror) {
-  const out = gitOut(["-C", mirror, "ls-tree", "-r", "--name-only", "HEAD", "hooks/post-apply.d"]);
-  if (!out) {
-    return [];
-  }
-  return out.split("\n").filter((line) => line !== "").map((line) => line.slice("hooks/post-apply.d/".length));
-}
-function localHooks(localTmp) {
-  const dir = `${localTmp}/hooks/post-apply.d`;
-  if (!isDir(dir)) {
-    return [];
-  }
-  return readdirSync(dir).sort();
-}
-function sameFile(localFile, mirror, remotePath) {
-  if (!isFile(localFile)) {
-    return false;
-  }
-  const remoteBlob = gitOut(["-C", mirror, "rev-parse", `HEAD:${remotePath}`]);
-  const localBlob = blobOf(mirror, localFile);
-  return remoteBlob !== void 0 && localBlob !== void 0 && remoteBlob === localBlob;
-}
-function localPlugins(localTmp) {
-  const map = /* @__PURE__ */ new Map();
-  try {
-    const rows = JSON.parse(readTextFile(`${localTmp}/plugins.json`) ?? "[]");
-    for (const row of rows) {
-      if (typeof row.id === "string" && row.id !== "") {
-        map.set(row.id, row);
-      }
-    }
-  } catch {
-  }
-  return map;
-}
-function remotePlugins(mirror) {
-  const map = /* @__PURE__ */ new Map();
-  const raw = show(mirror, "plugins.json");
-  if (!raw) {
-    return map;
-  }
-  try {
-    const rows = JSON.parse(raw);
-    for (const row of rows) {
-      if (typeof row.id === "string" && row.id !== "") {
-        map.set(row.id, row);
-      }
-    }
-  } catch {
-  }
-  return map;
-}
-function packageText(mirror, group) {
-  return show(mirror, `packages/${group}.txt`) ?? "";
-}
-function localPackageText(localTmp, group) {
-  return readTextFile(`${localTmp}/packages/${group}.txt`) ?? "";
-}
-function packageId(line, group) {
-  return group === "flatpak" ? (line.split("	")[0] ?? "").trim() : line.trim();
-}
-function packageMap(text, group, ignored) {
-  const map = /* @__PURE__ */ new Map();
-  for (const line of text.split("\n")) {
-    const id = packageId(line, group);
-    if (id !== "" && !ignored.has(id) && !line.startsWith("#")) {
-      map.set(id, line);
-    }
-  }
-  return map;
-}
-function packageChanged(remote, local) {
-  for (const [id, line] of local) {
-    if (remote.get(id) !== line) {
-      return true;
-    }
-  }
-  return false;
-}
-function currentText(mirror, localTmp) {
-  const names = ["current/theme.name", "current/background"];
-  const remote = names.map((name) => (show(mirror, name) ?? "").trim()).join("\0");
-  const local = names.map((name) => (readTextFile(`${localTmp}/${name}`) ?? "").trim()).join("\0");
-  return { remote, local };
-}
-function createPlan(mirror, baseTree, localTree, localTmp, ignored) {
-  const files = [];
-  for (const change of snapshotChangedPaths(baseTree, localTree)) {
-    if (pathIgnored(ignored, change.path)) {
-      continue;
-    }
-    files.push({
-      path: change.path,
-      status: change.status,
-      selected: change.status !== "D"
-    });
-  }
-  files.sort((a, b) => a.path.localeCompare(b.path));
-  const local = localPlugins(localTmp);
-  const remote = remotePlugins(mirror);
-  const plugins = [];
-  for (const [id, record] of local) {
-    if (ignored.plugins.has(id)) {
-      continue;
-    }
-    const previous = remote.get(id);
-    const status = previous === void 0 ? "A" : "M";
-    const changed = previous === void 0 || !isDeepStrictEqual(previous, record) || record.local === true;
-    if (changed) {
-      plugins.push({ id, status, selected: true });
-    }
-  }
-  for (const id of remote.keys()) {
-    if (ignored.plugins.has(id) || local.has(id)) {
-      continue;
-    }
-    plugins.push({ id, status: "D", selected: false });
-  }
-  plugins.sort((a, b) => a.id.localeCompare(b.id));
-  const remoteHookNames = remoteHooks(mirror);
-  const localHookNames = localHooks(localTmp);
-  const hookNames = /* @__PURE__ */ new Set([...remoteHookNames, ...localHookNames]);
-  const hooks = [];
-  for (const name of [...hookNames].sort()) {
-    const remotePath = `hooks/post-apply.d/${name}`;
-    const localFile = `${localTmp}/${remotePath}`;
-    const inRemote = remoteHookNames.includes(name);
-    const inLocal = localHookNames.includes(name);
-    const same = inRemote && inLocal && sameFile(localFile, mirror, remotePath);
-    if (same) {
-      continue;
-    }
-    const status = !inRemote ? "A" : !inLocal ? "D" : "M";
-    hooks.push({ name, status, selected: status !== "D" });
-  }
-  const packages = [];
-  for (const group of ["pacman", "aur", "flatpak"]) {
-    const remoteMap = packageMap(packageText(mirror, group), group, ignored.packages);
-    const localMap = packageMap(localPackageText(localTmp, group), group, ignored.packages);
-    if (packageChanged(remoteMap, localMap)) {
-      packages.push({ group, status: remoteMap.size === 0 ? "A" : "M", selected: true });
-    }
-  }
-  const current = currentText(mirror, localTmp);
-  return {
-    files,
-    plugins,
-    hooks,
-    packages,
-    current: {
-      selected: current.remote !== current.local,
-      status: current.remote === "" ? "A" : "M",
-      candidate: current.remote !== current.local
-    },
-    ignored
-  };
-}
-function fileLine(item) {
-  return `- [${item.selected ? "x" : " "}] file | ${item.status} | ${item.path}`;
-}
-function pluginLine(item) {
-  return `- [${item.selected ? "x" : " "}] plugin | ${item.status} | ${item.id}`;
-}
-function hookLine(item) {
-  return `- [${item.selected ? "x" : " "}] hook | ${item.status} | ${item.name}`;
-}
-function packageLine(item) {
-  return `- [${item.selected ? "x" : " "}] package | ${item.status} | ${item.group}`;
-}
-function section(title, lines) {
-  return lines.length === 0 ? [] : [`## ${title}`, ...lines, ""];
-}
-function writeSelectionFile(plan) {
-  const deletes = plan.files.filter((item) => item.status === "D").map(fileLine);
-  const upserts = plan.files.filter((item) => item.status !== "D").map(fileLine);
-  const lines = [
-    "# Omarsync 推送选择",
-    "# [x] = 发布这项改动,[ ] = 跳过(远程保持原样)。只改方括号里的 x/空格,不要删行或改其他内容。",
-    "# 行内字母:A=本机新增,M=已修改,D=远程有而本机没有(勾选即从远程删除,默认不勾=保留远程)。",
-    "# 改完保存,回终端确认。",
-    "",
-    ...section(
-      `将从远程删除(${deletes.length})——本机 scope 未跟踪或已删除;默认保留远程,勾选才删`,
-      deletes
-    ),
-    ...section(`将发布的文件(${upserts.length})——新增/修改,默认发布`, upserts),
-    ...section(`插件(${plan.plugins.length})——A 新增 / M 修改`, plan.plugins.map(pluginLine)),
-    ...section(
-      `包清单(${plan.packages.length})——pacman / aur / flatpak 按组,选中与远程取并集`,
-      plan.packages.map(packageLine)
-    ),
-    ...section(`apply 钩子(${plan.hooks.length})`, plan.hooks.map(hookLine)),
-    ...plan.current.candidate ? section("主题与壁纸(元数据)", [
-      `- [${plan.current.selected ? "x" : " "}] current | ${plan.current.status} |`
-    ]) : []
-  ];
-  const file = `${paths.stateDir}/pending-push.selection`;
-  try {
-    mkdirSync(paths.stateDir, { recursive: true });
-    writeFileSync(file, lines.join("\n"));
-  } catch {
-    die(`无法写选择清单 ${file}`);
-  }
-  return file;
-}
-function parseLine(raw, number) {
-  const line = raw.trim();
-  if (line === "" || line.startsWith("#")) {
-    return void 0;
-  }
-  const match = /^- \[([ xX])\] ([a-z]+) \| ([AMD]) \| ?(.*)$/.exec(line);
-  if (!match) {
-    die(`选择清单第 ${number} 行无法解析;不要改动格式`);
-  }
-  return {
-    selected: match[1].toLowerCase() === "x",
-    kind: match[2],
-    status: match[3],
-    value: match[4].trim()
-  };
-}
-function readSelectionFile(plan) {
-  const file = `${paths.stateDir}/pending-push.selection`;
-  const text = readTextFile(file);
-  if (text === void 0) {
-    die(`选择清单不存在: ${file}`);
-  }
-  const seen = /* @__PURE__ */ new Set();
-  const failure = (key, number) => die(`选择清单第 ${number} 行重复或未知条目: ${key}`);
-  for (const [index, raw] of text.split("\n").entries()) {
-    const parsed = parseLine(raw, index + 1);
-    if (!parsed) {
-      continue;
-    }
-    const key = `${parsed.kind}:${parsed.value}`;
-    if (seen.has(key)) {
-      failure(key, index + 1);
-    }
-    seen.add(key);
-    if (parsed.kind === "file") {
-      const item = plan.files.find((candidate) => candidate.path === parsed.value);
-      if (!item || item.status !== parsed.status) {
-        failure(key, index + 1);
-      }
-      item.selected = parsed.selected;
-    } else if (parsed.kind === "plugin") {
-      const item = plan.plugins.find((candidate) => candidate.id === parsed.value);
-      if (!item || item.status !== parsed.status) {
-        failure(key, index + 1);
-      }
-      item.selected = parsed.selected;
-    } else if (parsed.kind === "hook") {
-      const item = plan.hooks.find((candidate) => candidate.name === parsed.value);
-      if (!item || item.status !== parsed.status) {
-        failure(key, index + 1);
-      }
-      item.selected = parsed.selected;
-    } else if (parsed.kind === "package") {
-      const item = plan.packages.find((candidate) => candidate.group === parsed.value);
-      if (!item || item.status !== parsed.status) {
-        failure(key, index + 1);
-      }
-      item.selected = parsed.selected;
-    } else if (parsed.kind === "current") {
-      if (!plan.current.candidate) {
-        failure(key, index + 1);
-      }
-      if (parsed.value !== "" || parsed.status !== plan.current.status) {
-        failure(key, index + 1);
-      }
-      plan.current.selected = parsed.selected;
-    } else {
-      failure(key, index + 1);
-    }
-  }
-  for (const item of plan.files) {
-    if (!seen.has(`file:${item.path}`)) {
-      die(`选择清单缺少文件条目: ${item.path}`);
-    }
-  }
-  for (const item of plan.plugins) {
-    if (!seen.has(`plugin:${item.id}`)) {
-      die(`选择清单缺少插件条目: ${item.id}`);
-    }
-  }
-  for (const item of plan.hooks) {
-    if (!seen.has(`hook:${item.name}`)) {
-      die(`选择清单缺少 hook 条目: ${item.name}`);
-    }
-  }
-  for (const item of plan.packages) {
-    if (!seen.has(`package:${item.group}`)) {
-      die(`选择清单缺少包清单条目: ${item.group}`);
-    }
-  }
-  if (plan.current.candidate && !seen.has("current:")) {
-    die("选择清单缺少 current 条目");
-  }
-  if (!plan.files.some((item) => item.selected) && !plan.plugins.some((item) => item.selected) && !plan.hooks.some((item) => item.selected) && !plan.packages.some((item) => item.selected) && !plan.current.selected) {
-    log.warn("本次没有任何选择;不会发布变化");
-  }
-  return plan;
-}
-
-function requireMirror() {
-  if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
-  }
-  return paths.mirrorDir;
-}
-function remoteHasBranch(mirror, branch) {
-  return gitCapture(["-C", mirror, "ls-remote", "--exit-code", "--heads", "origin", branch]).ok;
-}
-function headTree(mirror) {
-  return gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD^{tree}"]);
-}
-function discardTimestampOnlyChange(mirror) {
-  const names = gitOut(["-C", mirror, "diff", "--cached", "--name-only"]);
-  if (names !== "omarsync.json") {
-    return;
-  }
-  const parse = (raw) => {
-    if (!raw) {
-      return void 0;
-    }
-    try {
-      const data = JSON.parse(raw);
-      const { pushedAt: _pushedAt, ...content } = data;
-      return content;
-    } catch {
-      return void 0;
-    }
-  };
-  const previous = parse(gitOut(["-C", mirror, "show", "HEAD:omarsync.json"]));
-  const staged = parse(gitOut(["-C", mirror, "show", ":omarsync.json"]));
-  if (previous && staged && isDeepStrictEqual(previous, staged)) {
-    git(["-C", mirror, "restore", "--staged", "--worktree", "--source=HEAD", "--", "omarsync.json"]);
-    log.info("仅推送时间变化,未创建新快照");
-  }
-}
-async function reviewMergedTree(mirror, reviewedCommit, reviewedTree, skipConfirm) {
-  const finalTree = headTree(mirror);
-  if (!finalTree) {
-    die("无法读取合并后的树");
-  }
-  if (finalTree === reviewedTree) {
-    return reviewedTree;
-  }
-  const finalDiff = gitCapture(["-C", mirror, "diff", "--color=never", reviewedTree, "HEAD"]).out;
-  if (skipConfirm) {
-    git(["-C", mirror, "reset", "--hard", reviewedCommit]);
-    die("合并后的树和已确认的不一样,自动推送不会签名");
-  }
-  if (/\S/.test(finalDiff)) {
-    mkdirSync(paths.stateDir, { recursive: true });
-    const reviewFile = `${paths.stateDir}/pending-push.diff`;
-    writeFileSync(reviewFile, `===== 合并后的最终 diff =====
-${finalDiff}
-`);
-    if (reviewWithVsCode(["-C", mirror, reviewedTree, "HEAD"])) {
-      log.info("合并改写了已确认的树,已在 VS Code 左右对比中展示最终 diff");
-    } else {
-      log.info(`合并改写了已确认的树。最终 diff 已写入 ${reviewFile}`);
-      openInEditor([reviewFile]);
-    }
-  } else {
-    log.info("合并改写了已确认的树");
-  }
-  if (!await confirm("签名并发布这份合并后的树?")) {
-    git(["-C", mirror, "reset", "--hard", reviewedCommit]);
-    die("已取消,未签名也未推送");
-  }
-  const accepted = headTree(mirror);
-  if (accepted !== finalTree) {
-    git(["-C", mirror, "reset", "--hard", reviewedCommit]);
-    die("审阅期间树又变了,未签名也未推送");
-  }
-  return finalTree;
-}
-function normalizedRemote(url) {
-  return url.replace(/\/+$/, "").replace(/\.git$/, "");
-}
-function reviewPushDiff(mirror, baseTree, selectedTree, hasMetaChanges) {
-  if (!vsCodeDiffAvailable()) {
-    return false;
-  }
-  log.info("正在用 VS Code 左右对比;关闭当前 diff 标签可继续下一个文件");
-  if (hasMetaChanges && !reviewWithVsCode(["-C", mirror, "--cached"])) {
-    return false;
-  }
-  if (baseTree !== selectedTree) {
-    return reviewWithVsCode([
-      "--git-dir",
-      historyRepo(),
-      baseTree,
-      selectedTree,
-      "--",
-      "home"
-    ]);
-  }
-  return true;
-}
-function planHasCandidates(plan) {
-  return plan.files.length > 0 || plan.plugins.length > 0 || plan.hooks.length > 0 || plan.packages.length > 0 || plan.current.candidate;
-}
-function planHasSelection(plan) {
-  return plan.files.some((item) => item.selected) || plan.plugins.some((item) => item.selected) || plan.hooks.some((item) => item.selected) || plan.packages.some((item) => item.selected) || plan.current.selected;
-}
-function refreshRemoteMain(mirror, branch) {
-  if (!remoteHasBranch(mirror, branch)) {
-    return void 0;
-  }
-  if (!git(["-C", mirror, "fetch", "--quiet", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`])) {
-    die("fetch 远程 metadata 失败");
-  }
-  const tip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", `origin/${branch}`]);
-  if (!isFullSha(tip)) {
-    die("fetch 后读不到远程 metadata 尖端");
-  }
-  requireTrustedRemoteTip(mirror, tip);
-  return tip;
-}
-async function executePush(skipConfirm = false) {
-  const mirror = requireMirror();
-  const branch = configGet("BRANCH", readTextFile) ?? "main";
-  ensurePushSigner();
-  ensureIdentity(mirror);
-  const remoteMain = refreshRemoteMain(mirror, branch);
-  const localTip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-  if (remoteMain) {
-    if (localTip && localTip !== remoteMain) {
-      log.warn("丢弃本地未发布的 metadata 镜像,从远程基线重新构造");
-    }
-    if (!git(["-C", mirror, "reset", "--hard", remoteMain])) {
-      die("无法切到远程 metadata 基线");
-    }
-    git(["-C", mirror, "clean", "-fd"]);
-  }
-  preparePushBranch(mirror, branch);
-  if (dotOriginUrl() === "") {
-    die("dotfiles origin 未配置;先运行 omarsync setup");
-  }
-  const remoteHead = remoteMain ? remoteMiseHead(mirror) : void 0;
-  const dot = fetchRemoteDotfiles(dotOriginUrl(), dotBranch());
-  if (remoteMain && remoteHead && dot.tree !== remoteHead) {
-    die("远程 dotfiles 尖端与签名 miseHead 不一致;先修复远程再 push");
-  }
-  if (!remoteMain && dot.commit) {
-    die("远程已有 dotfiles 分支但没有签名的 metadata 基线;拒绝自动发布");
-  }
-  const baseTree = remoteHead ?? dot.tree;
-  if (!available()) {
-    die("选择性 push 需要 mise;运行: omarchy pkg add mise");
-  }
-  if (!originConnected()) {
-    log.warn("mise dot origin 未连接;本次仍按配置 URL 选择性发布,但 pull/apply 前需要 setup");
-  }
-  ensurePushIgnore();
-  reconcile(readScope(paths.scopeFile));
-  const saved = save();
-  if (saved === void 0) {
-    die("mise dot save 失败");
-  }
-  if (saved) {
-    log.info("mise dot 检查点已保存");
-  }
-  const localTree = headSnapshot();
-  if (!isFullSha(localTree)) {
-    die("读取不到本机 mise 快照");
-  }
-  const localTmp = mktempDir();
-  try {
-    exportLocalInto(localTmp);
-    const ignored = loadPushIgnore();
-    const plan = createPlan(mirror, baseTree, localTree, localTmp, ignored);
-    const excludeAdds = pendingExcludeAdds(baseTree, localTree, ignored);
-    if (excludeAdds.length > 0) {
-      log.info(`将发布 ${excludeAdds.length} 条本机 exclude 规则(与远程并集,规避 mise 整字段合并冲突):`);
-      for (const glob of excludeAdds) {
-        log.info(`  ${glob}`);
-      }
-    }
-    if (!planHasCandidates(plan) && excludeAdds.length === 0) {
-      log.info("没有需要推送的变化");
-      executeStatus(false);
-      return;
-    }
-    if (!planHasSelection(plan) && excludeAdds.length === 0) {
-      log.info("没有需要发布的新增/修改;远程有而本机未跟踪的路径默认保留远程,本次不推送");
-      executeStatus(false);
-      return;
-    }
-    if (!skipConfirm && stdinIsTty() && planHasCandidates(plan)) {
-      const selectionFile = writeSelectionFile(plan);
-      log.info(`选择清单已写入 ${selectionFile}`);
-      openInEditor([selectionFile]);
-      if (!await confirm("选择完成并继续?")) {
-        die("已取消,未推送");
-      }
-      readSelectionFile(plan);
-      if (!planHasSelection(plan) && excludeAdds.length === 0) {
-        die("没有勾选任何内容,已取消");
-      }
-    } else if (!planHasSelection(plan) && excludeAdds.length === 0) {
-      log.info("没有需要发布的变化(删除项默认不选)");
-      executeStatus(false);
-      return;
-    }
-    const { writes, deletes } = selectedPaths(plan);
-    const built = buildSelectedDotfiles(dot, localTree, writes, deletes, ignored);
-    collectSelectedInto(mirror, built.tree, plan, localTmp);
-    git(["-C", mirror, "add", "-A"]);
-    discardTimestampOnlyChange(mirror);
-    const metaStat = gitCapture(["-C", mirror, "diff", "--cached", "--stat"]).out;
-    const metaDiff = gitCapture(["-C", mirror, "diff", "--cached", "--color=never"]).out;
-    const fileDiff = built.tree === baseTree ? "" : snapshotDiff(baseTree, built.tree);
-    let review = "";
-    if (/\S/.test(metaDiff)) {
-      review += `===== 元数据 diff(omarchy-config)=====
-${metaDiff}
-`;
-    }
-    if (/\S/.test(fileDiff)) {
-      review += `===== 文件 diff(dotfiles 分支)=====
-${fileDiff}
-`;
-    }
-    if (review !== "") {
-      mkdirSync(paths.stateDir, { recursive: true });
-      const reviewFile = `${paths.stateDir}/pending-push.diff`;
-      writeFileSync(reviewFile, review);
-      log.info(`完整 diff 已写入 ${reviewFile}`);
-      if (!skipConfirm && !reviewPushDiff(mirror, baseTree, built.tree, /\S/.test(metaDiff))) {
-        openInEditor([reviewFile]);
-      }
-    }
-    if (/\S/.test(metaStat)) {
-      log.info("元数据变化:");
-      for (const line of metaStat.split("\n")) {
-        log.info(`  ${line}`);
-      }
-    }
-    if (!skipConfirm && !await confirm("发布这份选择后的快照到远程仓库?")) {
-      die("已取消,未推送");
-    }
-    const hasMetaChanges = !gitCapture(["-C", mirror, "diff", "--cached", "--quiet"]).ok;
-    if (!built.commit && built.tree === baseTree && !hasMetaChanges) {
-      log.info("没有实际变化,未推送");
-      executeStatus(false);
-      return;
-    }
-    if (hasMetaChanges) {
-      if (!git(["-C", mirror, "commit", "-S", "-m", `sync selected from ${hostnameSafe()} @ ${iso8601()}`])) {
-        die("本地提交签名失败,未推送");
-      }
-    } else {
-      log.info("没有新的元数据变化;只发布已构造的 dotfiles 提交");
-    }
-    const reviewedCommit = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", "HEAD"]);
-    const reviewedTree = headTree(mirror);
-    if (!reviewedCommit || !reviewedTree) {
-      die("无法读取已审阅的提交");
-    }
-    const currentMain = refreshRemoteMain(mirror, branch);
-    if (remoteMain !== currentMain) {
-      die("远程 metadata 在审阅期间变化;请重新运行 push");
-    }
-    const currentDot = fetchRemoteDotfiles(dotOriginUrl(), dotBranch());
-    if (currentDot.commit !== dot.commit || currentDot.tree !== dot.tree) {
-      die("远程 dotfiles 在审阅期间变化;请重新运行 push");
-    }
-    const treeToSign = await reviewMergedTree(mirror, reviewedCommit, reviewedTree, skipConfirm);
-    signReviewedTip(mirror, treeToSign);
-    assertMiseHead(mirror, built.tree);
-    if (built.commit) {
-      if (!importDotfilesCommit(mirror, built.commit)) {
-        die("无法把 dotfiles 提交导入 metadata 镜像");
-      }
-    }
-    const mirrorUrl = gitOut(["-C", mirror, "remote", "get-url", "origin"]) ?? "";
-    if (built.commit && normalizedRemote(mirrorUrl) !== normalizedRemote(dotOriginUrl())) {
-      die("选择性 push 目前要求 metadata 与 dotfiles 在同一个远程仓库");
-    }
-    const pushArgs = ["-C", mirror, "push", "--quiet", "--atomic"];
-    if (remoteMain) {
-      pushArgs.push(`--force-with-lease=refs/heads/${branch}:${remoteMain}`);
-    }
-    if (dot.commit) {
-      pushArgs.push(`--force-with-lease=refs/heads/${dotBranch()}:${dot.commit}`);
-    }
-    pushArgs.push("origin", `HEAD:${branch}`);
-    if (built.commit) {
-      pushArgs.push(`refs/omarsync/dotfiles-publish:refs/heads/${dotBranch()}`);
-    }
-    if (!git(pushArgs)) {
-      die("atomic push 失败;远程未改变");
-    }
-    log.info(`已原子推送 ${branch}${built.commit ? ` 和 ${dotBranch()}` : ""}`);
-    if (!originConnected()) {
-      const connected = connect(dotOriginUrl(), dotBranch());
-      if (connected.ok) {
-        log.info(`已连接 mise dot origin 分支 ${dotBranch()}`);
-      } else {
-        log.warn("dotfiles 已发布,但 mise origin 仍未连接;重新运行 setup 即可");
-      }
-    }
-    notify("omarsync", `已推送 ${configGet("REPO", readTextFile) ?? ""}`);
-    executeStatus(false);
-  } finally {
-    rmrf(localTmp);
-  }
-}
-
-const EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
-function fetchRemoteTip(mirror, branch) {
-  if (!git(["-C", mirror, "fetch", "--quiet", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`])) {
-    die("fetch 失败,未签名也未推送");
-  }
-  const tip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", `origin/${branch}^{commit}`]);
-  if (!isFullSha(tip)) {
-    die("远程分支没有完整提交,未签名也未推送");
-  }
-  return tip;
-}
-function reviewSnapshot(mirror, sha) {
-  const history = gitOut(["-C", mirror, "rev-list", sha]);
-  if (history === void 0) {
-    die("读不到远程历史,未签名也未推送");
-  }
-  const ancestors = history.split("\n").filter((line) => line !== "");
-  const base = ancestors.find((commit) => commitIsTrusted(mirror, commit)) ?? EMPTY_TREE;
-  const range = base === EMPTY_TREE ? sha : `${base}..${sha}`;
-  const commits = gitCapture(["-C", mirror, "log", "--format=%H %s", range]);
-  if (!commits.ok) {
-    die("无法读取远程提交历史,未签名也未推送");
-  }
-  if (/\S/.test(commits.out)) {
-    log.info("待审阅的远程提交:");
-    for (const line of commits.out.trimEnd().split("\n")) {
-      log.info(`  ${line}`);
-    }
-  }
-  if (reviewWithVsCode(["-C", mirror, base, sha])) {
-    return;
-  }
-  const diff = gitCapture(["-C", mirror, "diff", "--full-index", "--stat", "--patch", "--no-color", base, sha]);
-  if (!diff.ok) {
-    die("无法生成远程快照审阅 diff,未签名也未推送");
-  }
-  mkdirSync(paths.stateDir, { recursive: true });
-  const reviewFile = `${paths.stateDir}/repair-remote.diff`;
-  const origin = base === EMPTY_TREE ? "没有可信祖先;以下 diff 覆盖完整快照" : `可信祖先: ${base}`;
-  writeFileSync(reviewFile, `===== 待审阅的远程提交 =====
-${commits.out}
-
-===== ${origin} =====
-${diff.out}`);
-  log.info(`完整远程快照 diff 已写入 ${reviewFile}`);
-  openInEditor([reviewFile]);
-}
-async function executeRepairRemote(commit) {
-  if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
-  }
-  if (!isFullSha(commit)) {
-    die("用法: omarsync repair-remote --commit <远程尖端的40位sha>");
-  }
-  const mirror = paths.mirrorDir;
-  const branch = configGet("BRANCH", readTextFile) ?? "main";
-  const remoteTip = fetchRemoteTip(mirror, branch);
-  if (commit !== remoteTip) {
-    die(`指定提交不是当前远程尖端 ${remoteTip};拒绝为旧提交或其他提交签名`);
-  }
-  if (commitIsTrusted(mirror, commit)) {
-    log.info("远程尖端已是可信签名,无需修复");
-    return;
-  }
-  reviewSnapshot(mirror, commit);
-  if (!await confirm("确认你已审阅这份完整远程快照,用本机密钥补签名并推送?")) {
-    die("已取消,未签名也未推送");
-  }
-  if (fetchRemoteTip(mirror, branch) !== commit) {
-    die("审阅期间远程尖端变了,未签名也未推送");
-  }
-  ensurePushSigner();
-  const tree = gitOut(["-C", mirror, "rev-parse", "--verify", `${commit}^{tree}`]);
-  if (!isFullSha(tree)) {
-    die("读不到已审阅的树,未签名也未推送");
-  }
-  const signed = gitOut([
-    "-C",
-    mirror,
-    "commit-tree",
-    "-S",
-    tree,
-    "-p",
-    commit,
-    "-m",
-    `trust reviewed remote snapshot from ${hostnameSafe()} @ ${iso8601()}`
-  ]);
-  if (!isFullSha(signed) || !commitIsTrusted(mirror, signed)) {
-    die("签名提交创建或校验失败,未推送");
-  }
-  if (gitOut(["-C", mirror, "rev-parse", "--verify", `${signed}^{tree}`]) !== tree || gitOut(["-C", mirror, "rev-parse", "--verify", `${signed}^`]) !== commit) {
-    die("签名没有覆盖已审阅的远程快照,未推送");
-  }
-  if (!git(["-C", mirror, "push", "--quiet", "origin", `${signed}:refs/heads/${branch}`])) {
-    die("git push 失败,远程可能已变化;未覆盖远程");
-  }
-  fetchRemoteTip(mirror, branch);
-  log.info("已为审阅过的远程快照补签名;现在运行 omarsync push 发布本地提交");
-  executeStatus(false);
-}
-
-function executeSetup() {
-  if (!stdinIsTty()) {
-    die("setup 需要终端。运行: omarsync setup");
+function executeApply(options) {
+  const repo = paths.configRepo;
+  const state = collectRepoState();
+  if (!state.initialized) {
+    die(`配置仓库不存在或不是 git 仓库: ${repo}`);
   }
   if (!available()) {
-    log.info("安装 mise");
-    if (!omarchy(["pkg", "add", "mise"])) {
-      die("安装 mise 失败");
+    die("mise 不可用,无法部署");
+  }
+  if (state.dirty) {
+    die("本地有未提交改动,请先 push 或 stash 后再 apply");
+  }
+  if ((state.behind ?? 0) === 0) {
+    log.info("远程没有新提交,直接执行 mise dot apply");
+  } else {
+    log.info(`快进拉取 ${state.behind} 个远程提交…`);
+    if (!git(repo, ["pull", "--ff-only"])) {
+      die("git pull --ff-only 失败(历史可能已分叉),请在仓库里手动解决后重试");
     }
   }
-  if (!ghInstalled()) {
-    log.info("安装 GitHub CLI");
-    if (!omarchy(["pkg", "add", "github-cli"])) {
-      die("安装 github-cli 失败");
+  log.info("执行 mise dot apply…");
+  if (!dotApply()) {
+    die("mise dot apply 失败,见上方输出");
+  }
+  log.info("应用完成");
+  refreshStatusFile();
+}
+
+function executeDoctor() {
+  const checks = [];
+  for (const tool of ["git", "node", "mise", "gh", "flock"]) {
+    const bin = resolveTool(tool);
+    checks.push({ name: tool, ok: bin !== void 0, detail: bin ?? "未在可信目录中找到" });
+  }
+  const state = collectRepoState();
+  checks.push({
+    name: "config repo",
+    ok: state.initialized,
+    detail: state.initialized ? paths.configRepo : "仓库不存在"
+  });
+  if (state.initialized) {
+    checks.push({ name: "origin", ok: state.remote !== "", detail: state.remote || "未配置 origin" });
+    checks.push({
+      name: "upstream",
+      ok: (gitOut(paths.configRepo, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"]) ?? "") !== "",
+      detail: state.branch || "(detached)"
+    });
+    const miseStatus = dotStatus();
+    checks.push({
+      name: "mise trust",
+      ok: miseStatus.ok,
+      detail: miseStatus.ok ? "配置受信任" : miseStatus.stderr.trim() || "mise dot status 失败,试试 mise trust"
+    });
+  }
+  let failed = 0;
+  for (const check of checks) {
+    const mark = check.ok ? "✓" : "✗";
+    process.stdout.write(`${mark} ${check.name.padEnd(12)} ${check.detail}
+`);
+    if (!check.ok) {
+      failed += 1;
     }
   }
-  if (!ghLoggedIn()) {
-    executeLogin();
-  }
-  ensurePushIgnore();
-  if (!isDir(`${paths.mirrorDir}/.git`)) {
-    executeInit(void 0);
-  } else {
-    ensureDotfilesRepo();
-  }
-  const branch = configGet("BRANCH", readTextFile) ?? "main";
-  if (isDir(`${paths.mirrorDir}/.git`) && !git(["-C", paths.mirrorDir, "fetch", "--quiet", "origin", branch])) {
-    log.warn(`无法刷新远程分支 ${branch};当前提示可能仍是旧状态`);
-  }
-  const sha = gitOut(["-C", paths.mirrorDir, "rev-parse", "--verify", "--quiet", `refs/remotes/origin/${branch}^{commit}`]);
-  if (sha) {
-    log.info(`仓库已有 commit ${sha}`);
-    log.info("打开面板选择 apply(先审阅再应用)");
-  } else {
-    log.info("仓库是空的");
-    log.info("打开面板选择 push");
-  }
-  executeStatus(false);
+  return failed === 0 ? 0 : 1;
 }
 
-async function executeTrustSigner(commit, yes) {
-  if (!isDir(`${paths.mirrorDir}/.git`)) {
-    die("未初始化。运行: omarsync init");
+function notify(message) {
+  if (process.env["OMARSYNC_NOTIFY"] !== "1") {
+    return;
   }
-  if (!isFullSha(commit)) {
-    die("用法: omarsync trust-signer --commit <远程尖端的40位sha>");
+  const bin = resolveTool("notify-send");
+  if (bin) {
+    run(bin, ["Omarsync", message]);
   }
-  const mirror = paths.mirrorDir;
-  const branch = configGet("BRANCH", readTextFile) ?? "main";
-  if (!git(["-C", mirror, "fetch", "--quiet", "origin", branch])) {
-    die("fetch 失败,未修改信任名单");
+}
+async function executePush(yes, message) {
+  const repo = paths.configRepo;
+  const initial = collectRepoState();
+  if (!initial.initialized) {
+    die(`配置仓库不存在或不是 git 仓库: ${repo}`);
   }
-  const tip = gitOut(["-C", mirror, "rev-parse", "--verify", "--quiet", `origin/${branch}^{commit}`]);
-  if (tip !== commit) {
-    die(`指定提交不是当前远程尖端 ${tip ?? "?"};拒绝信任旧提交或其他提交`);
+  const adopted = adoptChanged();
+  if (!adopted.ok && /\S/.test(adopted.stderr)) {
+    log.warn(`mise dot add --changed 未完全成功(继续执行): ${adopted.stderr.trim()}`);
   }
-  await trustRemoteSigner(mirror, commit, yes);
-  executeStatus(false);
+  if (!git(repo, ["add", "-A"])) {
+    die("git add 失败");
+  }
+  const staged = gitOut(repo, ["diff", "--cached", "--name-only"]) ?? "";
+  if (staged === "") {
+    log.info("没有需要推送的改动");
+    refreshStatusFile();
+    return;
+  }
+  const files = staged.split("\n").filter((line) => line !== "");
+  log.info(`本次发布 ${files.length} 个文件:`);
+  if (!git(repo, ["diff", "--cached", "--stat"])) {
+    die("无法生成 diff 统计");
+  }
+  if (!yes) {
+    const ok = await confirm("确认提交并推送到远程?");
+    if (!ok) {
+      die("已取消,改动仍在暂存区");
+    }
+  }
+  const commitMessage = message && message !== "" ? message : `sync: ${hostnameSafe()} ${iso8601().slice(0, 16).replace("T", " ")}`;
+  if (!git(repo, ["commit", "-m", commitMessage])) {
+    die("git commit 失败");
+  }
+  const upstream = gitOut(repo, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"]);
+  const pushed = upstream ? git(repo, ["push"]) : git(repo, ["push", "-u", "origin", initial.branch || "main"]);
+  if (!pushed) {
+    const detail = gitCapture(repo, ["push"]).stderr.trim();
+    die(`git push 失败${detail === "" ? "" : `: ${detail}`}`);
+  }
+  log.info("推送完成");
+  notify(`${files.length} 个文件已推送`);
+  refreshStatusFile();
 }
 
-const cli = a$1("omarsync", {
+const cli = a$2("omarsync", {
   packageName: "omarsync",
-  packageVersion: "2.0.1"
+  packageVersion: "3.0.0"
 });
 cli.addCommand({
   name: "status",
-  description: "显示同步状态(仓库、镜像、本机策略)",
+  description: "聚合 git 与 mise dot 状态,落盘 status.json 供面板读取",
   options: [
     {
       name: "json",
@@ -9071,193 +10425,61 @@ cli.addCommand({
   }
 });
 cli.addCommand({
-  name: "doctor",
-  description: "依赖体检(git/rsync/node/mise/gh、镜像与 dotfiles 仓库)",
-  execute: () => {
-    process.exitCode = executeDoctor();
-  }
-});
-cli.addCommand({
-  name: "pull",
-  description: "只抓取远程快照;可信签名的提交才钉住,不写任何活文件(下一步用 apply 审阅)",
-  execute: () => {
-    executePull();
-  }
-});
-cli.addCommand({
   name: "push",
-  description: "手动存检查点,展示元数据与文件 diff,确认后签名并发布",
+  description: "回写 copy 改动,暂存并在终端审阅 diff,确认后提交推送",
   options: [
     {
       name: "yes",
       type: Boolean,
-      description: "跳过发布确认(供面板自动推送使用)"
+      description: "跳过确认(供面板自动推送使用)"
     },
     {
       name: "notify",
       type: Boolean,
       description: "推送完成后弹出桌面通知"
+    },
+    {
+      name: "message",
+      type: String,
+      description: "自定义提交信息(默认按主机名和时间生成)"
     }
   ],
   execute: async ({ options }) => {
     if (options["notify"] === true) {
       process.env["OMARSYNC_NOTIFY"] = "1";
     }
-    await executePush(options["yes"] === true);
-  }
-});
-cli.addCommand({
-  name: "login",
-  description: "登录 GitHub(浏览器流程)",
-  execute: () => {
-    executeLogin();
-  }
-});
-cli.addCommand({
-  name: "init",
-  description: "初始化:创建/连接元数据仓库,并把 mise 连到同一仓库的 dotfiles 分支",
-  options: [
-    {
-      name: "repo",
-      type: String,
-      description: "仓库名,形如 owner/name(默认 <你>/omarchy-config)"
-    }
-  ],
-  execute: ({ options }) => {
-    executeInit(typeof options["repo"] === "string" ? options["repo"] : void 0);
-  }
-});
-cli.addCommand({
-  name: "setup",
-  description: "一键装机引导:装依赖、登录 GitHub、初始化仓库",
-  execute: () => {
-    executeSetup();
-  }
-});
-cli.addCommand({
-  name: "repair-remote",
-  description: "审阅旧的不可信远程快照,确认后补一个树不变的签名提交并推送",
-  options: [
-    {
-      name: "commit",
-      type: String,
-      description: "要审阅的当前远程尖端40位commit sha(必填)"
-    }
-  ],
-  execute: async ({ options }) => {
-    await executeRepairRemote(typeof options["commit"] === "string" ? options["commit"] : void 0);
-  }
-});
-cli.addCommand({
-  name: "migrate",
-  description: "老格式迁移:当前提交须已可信签名,确认剩余文件后才删除 home/ 并签名推送",
-  execute: async () => {
-    await executeMigrate();
+    await executePush(options["yes"] === true, typeof options["message"] === "string" ? options["message"] : void 0);
   }
 });
 cli.addCommand({
   name: "apply",
-  description: "审阅自上次应用以来的全部更改,确认后才写入(需要 --commit)。不可信时跳过插件、钩子、主题和用户服务",
+  description: "快进拉取远程改动并执行 mise dot apply",
   options: [
     {
+      // 兼容旧面板调用;新架构不钉 sha,值被忽略
       name: "commit",
       type: String,
-      description: "你审阅过的 40 位 commit sha(必填)"
+      description: "已废弃,仅为兼容旧面板保留"
     },
     {
-      name: "no-packages",
+      // 兼容旧面板的自动化调用
+      name: "yes",
       type: Boolean,
-      description: "跳过官方包安装"
-    },
-    {
-      name: "no-exec",
-      type: Boolean,
-      description: "跳过插件与 hooks"
-    },
-    {
-      name: "trust-signer",
-      type: Boolean,
-      description: "信任这个 commit 的签名者(免确认)"
-    },
-    {
-      name: "force",
-      type: Boolean,
-      description: "跳过签名检查,只应用配置(插件与 hooks 关闭)"
+      description: "已废弃,仅为兼容旧面板保留"
     }
   ],
-  execute: async ({ options }) => {
-    await executeApply({
+  execute: ({ options }) => {
+    executeApply({
       commit: typeof options["commit"] === "string" ? options["commit"] : void 0,
-      noPackages: options["no-packages"] === true,
-      noExec: options["no-exec"] === true,
-      trustSigner: options["trust-signer"] === true,
-      force: options["force"] === true
+      yes: options["yes"] === true
     });
   }
 });
 cli.addCommand({
-  name: "conflicts",
-  description: "列出 mise dot 同步冲突,用本机编辑器打开审阅",
+  name: "doctor",
+  description: "体检:git/mise/node/gh/flock 与配置仓库、信任状态",
   execute: () => {
-    executeConflicts();
-  }
-});
-cli.addCommand({
-  name: "trust-signer",
-  description: "从远程提交自带的签名提取公钥,核对指纹后加入信任名单(无需手动拷贝公钥)",
-  options: [
-    {
-      name: "commit",
-      type: String,
-      description: "远程尖端的 40 位 commit sha(必填)"
-    },
-    {
-      name: "yes",
-      type: Boolean,
-      description: "跳过指纹确认(仅供自动化)"
-    }
-  ],
-  execute: async ({ options }) => {
-    await executeTrustSigner(
-      typeof options["commit"] === "string" ? options["commit"] : void 0,
-      options["yes"] === true
-    );
-  }
-});
-cli.addCommand({
-  name: "trust-key",
-  description: "把一把 ssh 公钥加入信任名单(可附私钥作为签名密钥)",
-  options: [
-    {
-      name: "pubkey",
-      type: String,
-      description: "ssh 公钥文件路径(必填)"
-    },
-    {
-      name: "privkey",
-      type: String,
-      description: "对应私钥路径(可选)"
-    }
-  ],
-  execute: ({ options }) => {
-    cmdTrustKey(
-      typeof options["pubkey"] === "string" ? options["pubkey"] : void 0,
-      typeof options["privkey"] === "string" ? options["privkey"] : void 0
-    );
-  }
-});
-cli.addCommand({
-  name: "scope-path",
-  description: "打印本机 scope 文件路径(不存在则从示例复制一份)",
-  execute: () => {
-    const root = new URL("../..", import.meta.url).pathname;
-    try {
-      ensureLocalScope(root);
-    } catch {
-      die(`scope 示例不存在: ${root}/omarsync.scope.example`);
-    }
-    process.stdout.write(`${paths.scopeFile}
-`);
+    process.exitCode = executeDoctor();
   }
 });
 await cli.run();

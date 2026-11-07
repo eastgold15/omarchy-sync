@@ -1,115 +1,49 @@
-import { isDir } from "../lib/exec";
-import { applyMirror, prepareDotfiles, previewApply, showChanges } from "../lib/apply";
-import { die, log, readTextFile } from "../lib/log";
+import { git } from "../lib/git";
+import { log, die } from "../lib/log";
 import * as mise from "../lib/mise";
-import { configGet, paths } from "../lib/paths";
-import {
-    acceptFirstApply,
-    checkoutPinnedCommit,
-    commitIsTrusted,
-    firstApplyAvailable,
-    isFullSha,
-    markApplied,
-    requireTrustedCommit,
-    resolveRemoteSha,
-    trustRemoteSigner,
-} from "../lib/trust";
-import { confirm } from "../lib/util";
+import { paths } from "../lib/paths";
+import { collectRepoState } from "../lib/repo";
+import { refreshStatusFile } from "./status";
 
-// apply:审阅自上次应用以来的全部更改,人工 y 确认后才写入。
-// 信任链:可信签名 → 全量(含插件/hooks);首次应用/force → 仅配置。对应旧版 cmd_apply。
+// apply:快进拉取远程 → mise dot apply 同步链接与 copy 文件。
+// --commit 仅为兼容旧面板的调用形式,新架构不需要钉 sha(普通 git 分支,无签名门)。
 
-export interface ApplyOptions {
-    readonly commit?: string;
-    readonly noPackages?: boolean;
-    readonly noExec?: boolean;
-    readonly trustSigner?: boolean;
-    readonly force?: boolean;
-}
+export function executeApply(options: { commit?: string; yes?: boolean }): void {
+    void options;
 
-function requireMirror(): string {
-    if (!isDir(`${paths.mirrorDir}/.git`)) {
-        die("未初始化。运行: omarsync init");
+    const repo = paths.configRepo;
+    const state = collectRepoState();
+
+    if (!state.initialized) {
+        die(`配置仓库不存在或不是 git 仓库: ${repo}`);
     }
 
-    return paths.mirrorDir;
-}
-
-export async function executeApply(options: ApplyOptions): Promise<void> {
-    const expected = options.commit ?? "";
-
-    if (!isFullSha(expected)) {
-        die("apply 需要 --commit <40位sha>(你审阅过的那个 commit)");
+    if (!mise.available()) {
+        die("mise 不可用,无法部署");
     }
 
-    const mirror = requireMirror();
-    const branch = configGet("BRANCH", readTextFile) ?? "main";
-    const sha = resolveRemoteSha(mirror, branch);
-
-    if (sha !== expected) {
-        die(`origin/${branch} 现在是 ${sha},不是你审阅的 ${expected}`);
+    // 工作区有未提交改动时,ff 拉取可能失败或覆盖现场;先让用户自己处理
+    if (state.dirty) {
+        die("本地有未提交改动,请先 push 或 stash 后再 apply");
     }
 
-    let force = options.force === true;
-
-    if (force) {
-        log.warn(`强制应用 ${sha};跳过了签名检查`);
+    if ((state.behind ?? 0) === 0) {
+        log.info("远程没有新提交,直接执行 mise dot apply");
     } else {
-        const first = firstApplyAvailable();
+        log.info(`快进拉取 ${state.behind} 个远程提交…`);
 
-        if (!commitIsTrusted(mirror, sha)) {
-            if (first) {
-                acceptFirstApply(mirror, sha);
-                // 非交互默认拒绝(未带 --trust-signer 则失败)
-            } else if (await confirm(`commit ${sha} 不可信。仍要应用吗?只应用配置;插件与 hooks 保持关闭。`)) {
-                force = true;
-                log.warn(`强制应用 ${sha};跳过了签名检查`);
-            } else {
-                // 不走 force:核对指纹后把签名者加入信任名单,本次 apply 即可带插件与 hooks
-                await trustRemoteSigner(mirror, sha, options.trustSigner === true);
-            }
-        }
-
-        if (!commitIsTrusted(mirror, sha) && !first && !force) {
-            requireTrustedCommit(mirror, sha);
+        // ff-only:绝不产生隐式 merge commit;分叉时明确报错让人处理
+        if (!git(repo, ["pull", "--ff-only"])) {
+            die("git pull --ff-only 失败(历史可能已分叉),请在仓库里手动解决后重试");
         }
     }
 
-    checkoutPinnedCommit(mirror, sha);
+    log.info("执行 mise dot apply…");
 
-    let withExec = false;
-
-    if (force || options.noExec === true) {
-        log.info("插件与 hooks 将被跳过");
-    } else if (commitIsTrusted(mirror, sha)) {
-        withExec = true;
-        log.info(`已审阅签名 commit ${sha}`);
-    } else {
-        log.info(`已审阅首个 commit ${sha};签名之前插件与 hooks 保持关闭`);
+    if (!mise.dotApply()) {
+        die("mise dot apply 失败,见上方输出");
     }
 
-    // 先连上 dotfiles 分支再抓取,让预览反映真实待应用内容。
-    // 没跑过 setup 的机器这里才会第一次 origin set。
-    if (mise.available() && !prepareDotfiles()) {
-        die("mise 抓不到 dotfiles 分支,未应用任何内容");
-    }
-
-    // 合并前必须看到更改:元数据 diff(自上次应用以来)+ 文件 dry-run 计划
-    showChanges(mirror, sha);
-    previewApply(mirror, sha, withExec);
-
-    // 必须人工确认;非交互(无终端)直接拒绝,绝不默认应用
-    if (!(await confirm("应用这份快照?"))) {
-        die("快照未应用");
-    }
-
-    if (applyMirror(mirror, options.noPackages !== true, sha, withExec)) {
-        markApplied(sha);
-        log.info(`已应用 ${sha}`);
-
-        return;
-    }
-
-    log.warn(`应用 ${sha} 完成但有错误;配置已写入,备份已保留`);
-    process.exitCode = 1;
+    log.info("应用完成");
+    refreshStatusFile();
 }
